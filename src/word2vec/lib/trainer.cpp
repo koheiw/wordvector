@@ -49,6 +49,7 @@ namespace w2v {
         
         // NOTE: consider setting size elsewhere
         m_matrixSize = sharedData.trainSettings->size * sharedData.corpus->types.size();
+        m_random = sharedData.trainSettings->random;
         
         for (uint8_t i = 0; i < _trainSettings->threads; ++i) {
             m_threads.emplace_back(new trainThread_t(i, sharedData));
@@ -57,14 +58,11 @@ namespace w2v {
 
     void trainer_t::operator()(std::vector<float> &_trainMatrix) noexcept {
         // input matrix initialized with small random values
-        std::random_device randomDevice;
-        std::mt19937_64 randomGenerator(randomDevice());
+        std::mt19937_64 randomGenerator(m_random);
         std::uniform_real_distribution<float> rndMatrixInitializer(-0.005f, 0.005f);
         _trainMatrix.resize(m_matrixSize);
         std::generate(_trainMatrix.begin(), _trainMatrix.end(), [&]() {
-            float v = (float)(Rcpp::runif(1, -0.005f, 0.005f)[0]);
-            return v;
-            //return rndMatrixInitializer(randomGenerator); // NOTE:: pass random number seed?
+            return rndMatrixInitializer(randomGenerator);
         });
         
         for (auto &i:m_threads) {

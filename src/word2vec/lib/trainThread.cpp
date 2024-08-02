@@ -10,7 +10,7 @@
 
 namespace w2v {
     trainThread_t::trainThread_t(uint8_t _id, const sharedData_t &_sharedData) :
-            m_sharedData(_sharedData), m_randomDevice(), m_randomGenerator(m_randomDevice()),
+            m_sharedData(_sharedData), m_randomGenerator(m_sharedData.trainSettings->random),
             m_rndWindowShift(0, static_cast<short>((m_sharedData.trainSettings->window - 1))),
             m_downSampling(), m_nsDistribution(), m_hiddenLayerVals(), m_hiddenLayerErrors(),
             m_thread() {

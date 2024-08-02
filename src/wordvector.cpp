@@ -70,6 +70,7 @@ Rcpp::List w2v_train(Rcpp::List texts_,
   trainSettings.iterations = iterations;
   trainSettings.alpha = alpha;
   trainSettings.withSG = withSG;
+  trainSettings.random = (uint32_t)(Rcpp::runif(1)[0] * std::numeric_limits<uint32_t>::max());
   //trainSettings.wordDelimiterChars = wordDelimiterChars;
   //trainSettings.endOfSentenceChars = endOfSentenceChars;
   Rcpp::XPtr<w2v::w2vModel_t> model(new w2v::w2vModel_t(), true);
