@@ -6,7 +6,7 @@ SOURCES = word2vec/lib/huffmanTree.cpp \
 			word2vec/lib/trainer.cpp \
 			word2vec/lib/trainThread.cpp \
 			word2vec/lib/word2vec.cpp \
-			rcpp_word2vec.cpp \
+			wordvector.cpp \
 			RcppExports.cpp
 
 OBJECTS = $(SOURCES:.cpp=.o)
