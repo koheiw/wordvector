@@ -12,7 +12,7 @@
 Rcpp::List w2v_train(Rcpp::List texts_, 
                      Rcpp::CharacterVector types_, 
                      std::string modelFile = "", 
-                     uint16_t minWordFreq = 5,
+                     uint16_t minWordFreq = 5, // TODO: remove
                      uint16_t size = 100,
                      uint8_t window = 5,
                      uint16_t expTableSize = 1000,
@@ -58,7 +58,7 @@ Rcpp::List w2v_train(Rcpp::List texts_,
   // return out2;
   
   w2v::trainSettings_t trainSettings;
-  trainSettings.minWordFreq = minWordFreq;
+  trainSettings.minWordFreq = minWordFreq; // TODO: remove
   trainSettings.size = size;
   trainSettings.window = window;
   trainSettings.expTableSize = expTableSize;
