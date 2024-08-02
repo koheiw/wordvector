@@ -128,6 +128,7 @@ word2vec <- function(x,
 
 #' @inherit word2vec title description params details seealso return references
 #' @export
+#' @importFrom quanteda dfm featfreq tokens_keep
 #' @examples 
 #' \dontshow{if(require(udpipe))\{}
 #' library(udpipe)
@@ -183,7 +184,10 @@ word2vec.tokens <- function(x,
     iter <- as.integer(iter)
     lr <- as.numeric(lr)
     skipgram <- as.logical(type %in% "skip-gram")
-   
+    
+    f <- featfreq(dfm(x, tolower = FALSE))
+    x <- tokens_keep(x, names(f[f >= min_count]), valuetype = "fixed", case_insensitive = TRUE)
+    
     model <- w2v_train(x, attr(x, "types"), minWordFreq = min_count,
                        size = dim, window = window, #expTableSize = expTableSize, expValueMax = expValueMax, 
                        sample = sample, withHS = hs, negative = negative, threads = threads, iterations = iter,
