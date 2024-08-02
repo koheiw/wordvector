@@ -75,7 +75,6 @@ Rcpp::List w2v_train(Rcpp::List texts_,
   Rcpp::XPtr<w2v::w2vModel_t> model(new w2v::w2vModel_t(), true);
   bool trained;
   
-  std::size_t vocWords;
   std::size_t trainWords;
   std::size_t totalWords;
   if (verbose) { // NOTE: consider removing progress bar
@@ -122,7 +121,7 @@ Rcpp::List w2v_train(Rcpp::List texts_,
       Rcpp::Named("n") = totalWords,
       Rcpp::Named("n_vocabulary") = trainWords
     ),
-    Rcpp::Named("vocabulary") = vocWords,
+    Rcpp::Named("vocabulary") = types.size(),
     Rcpp::Named("success") = success,
     Rcpp::Named("error_log") = model->errMsg(),
     Rcpp::Named("control") = Rcpp::List::create(
