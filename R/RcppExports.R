@@ -2,22 +2,22 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 w2v_train <- function(texts_, types_, modelFile = "", minWordFreq = 5L, size = 100L, window = 5L, expTableSize = 1000L, expValueMax = 6L, sample = 0.001, withHS = FALSE, negative = 5L, threads = 1L, iterations = 5L, alpha = 0.05, withSG = FALSE, verbose = FALSE, normalize = TRUE) {
-    .Call('_word2vec_w2v_train', PACKAGE = 'word2vec', texts_, types_, modelFile, minWordFreq, size, window, expTableSize, expValueMax, sample, withHS, negative, threads, iterations, alpha, withSG, verbose, normalize)
+    .Call('_wordvector_w2v_train', PACKAGE = 'wordvector', texts_, types_, modelFile, minWordFreq, size, window, expTableSize, expValueMax, sample, withHS, negative, threads, iterations, alpha, withSG, verbose, normalize)
 }
 
 w2v_dictionary <- function(ptr) {
-    .Call('_word2vec_w2v_dictionary', PACKAGE = 'word2vec', ptr)
+    .Call('_wordvector_w2v_dictionary', PACKAGE = 'wordvector', ptr)
 }
 
 w2v_embedding <- function(ptr, x) {
-    .Call('_word2vec_w2v_embedding', PACKAGE = 'word2vec', ptr, x)
+    .Call('_wordvector_w2v_embedding', PACKAGE = 'wordvector', ptr, x)
 }
 
 w2v_nearest <- function(ptr, x, top_n = 10L, min_distance = 0.0) {
-    .Call('_word2vec_w2v_nearest', PACKAGE = 'word2vec', ptr, x, top_n, min_distance)
+    .Call('_wordvector_w2v_nearest', PACKAGE = 'wordvector', ptr, x, top_n, min_distance)
 }
 
 w2v_nearest_vector <- function(ptr, x, top_n = 10L, min_distance = 0.0) {
-    .Call('_word2vec_w2v_nearest_vector', PACKAGE = 'word2vec', ptr, x, top_n, min_distance)
+    .Call('_wordvector_w2v_nearest_vector', PACKAGE = 'wordvector', ptr, x, top_n, min_distance)
 }
 
