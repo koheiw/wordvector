@@ -26,7 +26,7 @@ namespace w2v {
                       corpus,
                       _trainProgressCallback)(_trainMatrix);
 
-            // NOTE: directly make matrix from _trainMatrix
+            // NOTE: consider directly make matrix from _trainMatrix
             std::size_t wordIndex = 0;
             for (auto const &i : corpus->types) {
                 //Rcpp::Rcout << i << "\n";

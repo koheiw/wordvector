@@ -89,12 +89,16 @@ namespace w2v {
                 for (size_t i = 0; i < text.size(); ++i) {
 
                     auto &word = text[i];
-                    if (word == 0) { // padding
+                    // ignore padding
+                    if (word == 0) { 
                         continue; 
                     }
-
-                    threadProcessedWords++;
+                    // ignore infrequent words
+                    if (m_sharedData.corpus->frequency[word - 1] < m_sharedData.trainSettings->minWordFreq) {
+                        continue;
+                    }
                     
+                    threadProcessedWords++;
                     if (m_sharedData.trainSettings->sample > 0.0f) {
                         if ((*m_downSampling)(m_sharedData.corpus->frequency[word - 1], m_randomGenerator)) {
                             continue; // skip this word
