@@ -40,6 +40,7 @@
 #' }
 #' @seealso \code{\link{predict.word2vec}}, \code{\link{as.matrix.word2vec}}, \code{\link{word2vec}}, \code{\link{word2vec.character}}, \code{\link{word2vec.list}}
 #' @export
+#' @useDynLib wordvector
 #' @examples
 #' \dontshow{if(require(udpipe))\{}
 #' library(udpipe)
@@ -161,13 +162,11 @@ word2vec.tokens <- function(x,
                           type = c("cbow", "skip-gram"),
                           dim = 50, window = ifelse(type == "cbow", 5L, 10L), 
                           iter = 5L, lr = 0.05, hs = FALSE, negative = 5L, sample = 0.001, min_count = 5L, 
-                          stopwords = integer(),
                           threads = 1L,
                           ...){
     
     #x <- lapply(x, as.character)
     type <- match.arg(type)
-    stopwords <- as.integer(stopwords)
     model <- file.path(tempdir(), "w2v.bin")
     #expTableSize <- 1000L
     #expValueMax <- 6L
@@ -185,36 +184,12 @@ word2vec.tokens <- function(x,
     lr <- as.numeric(lr)
     skipgram <- as.logical(type %in% "skip-gram")
     
-    f <- featfreq(dfm(x, tolower = FALSE))
-    x <- tokens_keep(x, names(f[f >= min_count]), valuetype = "fixed", case_insensitive = TRUE)
-    
+    x <- tokens_trim(x, min_termfreq = min_count, termfreq_type = "count")
     model <- w2v_train(x, attr(x, "types"), minWordFreq = min_count,
-                       size = dim, window = window, #expTableSize = expTableSize, expValueMax = expValueMax, 
+                       size = dim, window = window,
                        sample = sample, withHS = hs, negative = negative, threads = threads, iterations = iter,
                        alpha = lr, withSG = skipgram, ...)
-    model$data$stopwords <- stopwords
     model
-}
-
-#' @export
-word2vec.list <- function(x, ...){
-    if (!is.character(attr(x, "types"))) {
-        x <- serialize(x, stopwords)
-        class(x) <- "tokens"
-    }
-    word2vec(x, ...)
-}
-
-serialize <- function(x, stopwords) {
-    vocaburary <- unique(unlist(x, use.names = FALSE))
-    vocaburary <- setdiff(vocaburary, stopwords)
-    x <- lapply(x, function(x) {
-        v <- fastmatch::fmatch(x, vocaburary)
-        v[is.na(v)] <- 0L
-        return(v)
-    })
-    attr(x, "types") <- vocaburary
-    return(x)
 }
 
 #' @title Get the word vectors of a word2vec model

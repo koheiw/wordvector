@@ -11,8 +11,8 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // w2v_train
-Rcpp::List w2v_train(Rcpp::List texts_, Rcpp::CharacterVector types_, std::string modelFile, uint16_t minWordFreq, uint16_t size, uint8_t window, uint16_t expTableSize, uint8_t expValueMax, float sample, bool withHS, uint8_t negative, uint8_t threads, uint8_t iterations, float alpha, bool withSG, bool verbose, bool normalize, uint32_t random);
-RcppExport SEXP _wordvector_w2v_train(SEXP texts_SEXP, SEXP types_SEXP, SEXP modelFileSEXP, SEXP minWordFreqSEXP, SEXP sizeSEXP, SEXP windowSEXP, SEXP expTableSizeSEXP, SEXP expValueMaxSEXP, SEXP sampleSEXP, SEXP withHSSEXP, SEXP negativeSEXP, SEXP threadsSEXP, SEXP iterationsSEXP, SEXP alphaSEXP, SEXP withSGSEXP, SEXP verboseSEXP, SEXP normalizeSEXP, SEXP randomSEXP) {
+Rcpp::List w2v_train(Rcpp::List texts_, Rcpp::CharacterVector types_, std::string modelFile, uint16_t minWordFreq, uint16_t size, uint8_t window, uint16_t expTableSize, uint8_t expValueMax, float sample, bool withHS, uint8_t negative, uint8_t threads, uint8_t iterations, float alpha, bool withSG, bool verbose, bool normalize);
+RcppExport SEXP _wordvector_w2v_train(SEXP texts_SEXP, SEXP types_SEXP, SEXP modelFileSEXP, SEXP minWordFreqSEXP, SEXP sizeSEXP, SEXP windowSEXP, SEXP expTableSizeSEXP, SEXP expValueMaxSEXP, SEXP sampleSEXP, SEXP withHSSEXP, SEXP negativeSEXP, SEXP threadsSEXP, SEXP iterationsSEXP, SEXP alphaSEXP, SEXP withSGSEXP, SEXP verboseSEXP, SEXP normalizeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -33,8 +33,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type withSG(withSGSEXP);
     Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
     Rcpp::traits::input_parameter< bool >::type normalize(normalizeSEXP);
-    Rcpp::traits::input_parameter< uint32_t >::type random(randomSEXP);
-    rcpp_result_gen = Rcpp::wrap(w2v_train(texts_, types_, modelFile, minWordFreq, size, window, expTableSize, expValueMax, sample, withHS, negative, threads, iterations, alpha, withSG, verbose, normalize, random));
+    rcpp_result_gen = Rcpp::wrap(w2v_train(texts_, types_, modelFile, minWordFreq, size, window, expTableSize, expValueMax, sample, withHS, negative, threads, iterations, alpha, withSG, verbose, normalize));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -91,7 +90,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_wordvector_w2v_train", (DL_FUNC) &_wordvector_w2v_train, 18},
+    {"_wordvector_w2v_train", (DL_FUNC) &_wordvector_w2v_train, 17},
     {"_wordvector_w2v_dictionary", (DL_FUNC) &_wordvector_w2v_dictionary, 1},
     {"_wordvector_w2v_embedding", (DL_FUNC) &_wordvector_w2v_embedding, 2},
     {"_wordvector_w2v_nearest", (DL_FUNC) &_wordvector_w2v_nearest, 4},
