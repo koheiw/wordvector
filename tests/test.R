@@ -11,37 +11,22 @@ toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>%
     tokens_tolower()
 ndoc(toks)
 
-set.seed(1234)
-mod <- wordvector:::w2v_train(toks, types(toks), verbose = TRUE, size = 300, 
-                             iterations = 5, minWordFreq = 5, threads = 4)
-head(coef(as.textmodel_lss(t(as.matrix(mod)), "good")))
-
-predict(mod, c("people", "american"), type = "nearest")
-
 dfmt <- dfm(toks, remove_padding = TRUE) %>% 
     dfm_trim(min_termfreq = 5)
-lss <- textmodel_lss(dfmt, c("good" = 1, "bad" = -1), cache = TRUE)
-head(coef(lss))
-tail(coef(lss))
+# lss0 <- textmodel_lss(dfmt, c("good" = 1, "bad" = -1), cache = TRUE)
+# head(coef(lss0), 20)
+# tail(coef(lss0), 20)
+lss0 <- textmodel_lss(dfmt, "bad", cache = TRUE)
+head(coef(lss0), 20)
 
-lss2 <- as.textmodel_lss(t(as.matrix(mod)), c("good" = 1, "bad" = -1))
-head(coef(lss2))
-tail(coef(lss2))
+set.seed(1234)
+mod <- word2vec(toks, dim = 100, iter = 5, min_count = 5, type = "skip-gram",
+                verbose = TRUE, threads = 4)
+#lss <- as.textmodel_lss(t(as.matrix(mod)), c("good" = 1, "bad" = -1))
+#head(coef(lss), 20)
+#tail(coef(lss), 20)
+lss <- as.textmodel_lss(t(as.matrix(mod)), "bad")
+head(coef(lss), 20)
 
-lis <- as.list(toks)
-mod_lis <- wodvector(lis, dim = 50, iter = 5, min_count = 5,
-                    verbose = TRUE, threads = 4)
-emb_lis   <- as.matrix(mod_lis)
-dim(emb_lis)
-pred_lis <- predict(mod_lis, c("people", "American"), type = "nearest")
-
-#saveRDS(mod_lis, "tests/wodvector_v04.RDS")
-
-microbenchmark::microbenchmark(
-    "lis" = wodvector(lis, dim = 50, iter = 5, min_count = 5,
-                     verbose = FALSE, threads = 10),
-    "txt" = wodvector(txt, dim = 50, iter = 5, split = c("[ \n]", "\n"), min_count = 5,
-                     verbose = FALSE, threads = 10),
-    times = 10
-)
-
+pred <- predict(mod, c("good", "bad"), type = "nearest")
+pred
