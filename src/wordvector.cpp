@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include <iomanip>
-#include "word2vec.hpp"
+#include "word2vec/word2vec.hpp"
 #include <unordered_map>
 
 // [[Rcpp::depends(RcppProgress)]]

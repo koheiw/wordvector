@@ -1,11 +1,11 @@
 PKG_LIBS = -pthread
-PKG_CPPFLAGS = -pthread -DSTRICT_R_HEADERS -I./word2vec/include -I./word2vec/lib
+PKG_CPPFLAGS = -pthread -DSTRICT_R_HEADERS 
 
-SOURCES = word2vec/lib/huffmanTree.cpp \
-			word2vec/lib/nsDistribution.cpp \
-			word2vec/lib/trainer.cpp \
-			word2vec/lib/trainThread.cpp \
-			word2vec/lib/word2vec.cpp \
+SOURCES = word2vec/huffmanTree.cpp \
+			word2vec/nsDistribution.cpp \
+			word2vec/trainer.cpp \
+			word2vec/trainThread.cpp \
+			word2vec/word2vec.cpp \
 			wordvector.cpp \
 			RcppExports.cpp
 
