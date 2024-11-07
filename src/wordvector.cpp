@@ -9,23 +9,22 @@
 
 // [[Rcpp::depends(RcppProgress)]]
 // [[Rcpp::export]]
-Rcpp::List w2v_train(Rcpp::List texts_, 
-                     Rcpp::CharacterVector types_, 
-                     std::string modelFile = "", 
-                     uint16_t minWordFreq = 5, // TODO: remove
-                     uint16_t size = 100,
-                     uint8_t window = 5,
-                     uint16_t expTableSize = 1000,
-                     uint8_t expValueMax = 6,
-                     float sample = 0.001,
-                     bool withHS = false,
-                     uint8_t negative = 5,
-                     uint8_t threads = 1,
-                     uint8_t iterations = 5,
-                     float alpha = 0.05,
-                     bool withSG = false,
-                     bool verbose = false,
-                     bool normalize = true) {
+Rcpp::List cpp_w2v(Rcpp::List texts_, 
+                   Rcpp::CharacterVector types_, 
+                   std::string modelFile = "", 
+                   uint16_t size = 100,
+                   uint8_t window = 5,
+                   uint16_t expTableSize = 1000,
+                   uint8_t expValueMax = 6,
+                   float sample = 0.001,
+                   bool withHS = false,
+                   uint8_t negative = 5,
+                   uint8_t threads = 1,
+                   uint8_t iterations = 5,
+                   float alpha = 0.05,
+                   bool withSG = false,
+                   bool verbose = false,
+                   bool normalize = true) {
   
   
   /*
@@ -57,30 +56,27 @@ Rcpp::List w2v_train(Rcpp::List texts_,
   // 
   // return out2;
   
-  w2v::trainSettings_t trainSettings;
-  trainSettings.minWordFreq = minWordFreq; // TODO: remove
-  trainSettings.size = size;
-  trainSettings.window = window;
-  trainSettings.expTableSize = expTableSize;
-  trainSettings.expValueMax = expValueMax;
-  trainSettings.sample = sample;
-  trainSettings.withHS = withHS;
-  trainSettings.negative = negative;
-  trainSettings.threads = threads;
-  trainSettings.iterations = iterations;
-  trainSettings.alpha = alpha;
-  trainSettings.withSG = withSG;
-  trainSettings.random = (uint32_t)(Rcpp::runif(1)[0] * std::numeric_limits<uint32_t>::max());
-  //trainSettings.wordDelimiterChars = wordDelimiterChars;
-  //trainSettings.endOfSentenceChars = endOfSentenceChars;
+  w2v::trainSettings_t ts;
+  ts.size = size;
+  ts.window = window;
+  ts.expTableSize = expTableSize;
+  ts.expValueMax = expValueMax;
+  ts.sample = sample;
+  ts.withHS = withHS;
+  ts.negative = negative;
+  ts.threads = threads;
+  ts.iterations = iterations;
+  ts.alpha = alpha;
+  ts.withSG = withSG;
+  ts.random = (uint32_t)(Rcpp::runif(1)[0] * std::numeric_limits<uint32_t>::max());
+  //ts.wordDelimiterChars = wordDelimiterChars;
+  //ts.endOfSentenceChars = endOfSentenceChars;
   Rcpp::XPtr<w2v::w2vModel_t> model(new w2v::w2vModel_t(), true);
   bool trained;
   
-  std::size_t trainWords;
-  std::size_t totalWords;
   if (verbose) { // NOTE: consider removing progress bar
     Progress p(100, true);
-    trained = model->train(trainSettings, corpus, 
+    trained = model->train(ts, corpus, 
                            [&p] (float _alpha, float _percent) {
                              /*
                               std::cout << '\r'
@@ -96,7 +92,7 @@ Rcpp::List w2v_train(Rcpp::List texts_,
                            }
     );
   } else {
-    trained = model->train(trainSettings, corpus, nullptr);
+    trained = model->train(ts, corpus, nullptr);
   }
   Rcpp::Rcout << "Training done\n";
   //return Rcpp::List::create();
@@ -116,17 +112,11 @@ Rcpp::List w2v_train(Rcpp::List texts_,
   // Return model + model information
   Rcpp::List out = Rcpp::List::create(
     Rcpp::Named("model") = model,
-    Rcpp::Named("data") = Rcpp::List::create(
-      //Rcpp::Named("file") = trainFile,
-      //Rcpp::Named("stopwords") = stopWordsFile,
-      Rcpp::Named("n") = totalWords,
-      Rcpp::Named("n_vocabulary") = trainWords
-    ),
     Rcpp::Named("vocabulary") = types.size(),
     Rcpp::Named("success") = success,
     Rcpp::Named("error_log") = model->errMsg(),
+    // NOTE: move to R
     Rcpp::Named("control") = Rcpp::List::create(
-      Rcpp::Named("min_count") = minWordFreq,
       Rcpp::Named("dim") = size,
       Rcpp::Named("window") = window,
       Rcpp::Named("iter") = iterations,

@@ -20,10 +20,10 @@
 #include <stdexcept>
 
 typedef std::vector<std::string> types_t;
-// typedef std::vector<std::string> words_t;
-// typedef std::vector<std::string> text_t;
-typedef std::vector<int> words_t;
-typedef std::vector<int> text_t;
+typedef std::vector<unsigned int> words_t;
+typedef std::vector<unsigned int> text_t;
+// typedef std::vector<int> words_t;
+// typedef std::vector<int> text_t;
 typedef std::vector<text_t> texts_t;
 typedef std::vector<size_t> frequency_t;
 

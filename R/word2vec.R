@@ -185,10 +185,10 @@ word2vec.tokens <- function(x,
     skipgram <- as.logical(type %in% "skip-gram")
     
     x <- tokens_trim(x, min_termfreq = min_count, termfreq_type = "count")
-    model <- w2v_train(x, attr(x, "types"), minWordFreq = min_count,
-                       size = dim, window = window,
-                       sample = sample, withHS = hs, negative = negative, threads = threads, iterations = iter,
-                       alpha = lr, withSG = skipgram, ...)
+    model <- cpp_w2v(x, attr(x, "types"), 
+                     size = dim, window = window,
+                     sample = sample, withHS = hs, negative = negative, threads = threads, iterations = iter,
+                     alpha = lr, withSG = skipgram, ...)
     model
 }
 
