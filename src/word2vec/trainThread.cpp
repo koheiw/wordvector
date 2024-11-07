@@ -55,10 +55,11 @@ namespace w2v {
             
             std::size_t threadProcessedWords = 0;
             std::size_t prvThreadProcessedWords = 0;
-
-            auto wordsPerAllThreads = m_sharedData.trainSettings->iterations
-                                      * m_sharedData.corpus->trainWords;
-            auto wordsPerAlpha = wordsPerAllThreads / 10000;
+            
+            // for progressCallback
+            auto wordsPerAllThreads = m_sharedData.trainSettings->iterations * m_sharedData.corpus->trainWords;
+            //auto wordsPerAlpha = wordsPerAllThreads / 10000;
+            auto wordsPerAlpha = wordsPerAllThreads / 100;
 
             for (std::size_t h = range.first; h <= range.second; ++h) {
 
@@ -67,8 +68,7 @@ namespace w2v {
                     *m_sharedData.processedWords += threadProcessedWords - prvThreadProcessedWords;
                     prvThreadProcessedWords = threadProcessedWords;
 
-                    float ratio =
-                            static_cast<float>(*(m_sharedData.processedWords)) / wordsPerAllThreads;
+                    float ratio = static_cast<float>(*(m_sharedData.processedWords)) / wordsPerAllThreads;
 
                     auto curAlpha = m_sharedData.trainSettings->alpha * (1 - ratio);
                     if (curAlpha < m_sharedData.trainSettings->alpha * 0.0001f) {

@@ -1,6 +1,6 @@
 #include <Rcpp.h>
-#include <progress.hpp>
-#include <progress_bar.hpp>
+//#include <progress.hpp>
+//#include <progress_bar.hpp>
 
 #include <iostream>
 #include <iomanip>
@@ -75,20 +75,21 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
   bool trained;
   
   if (verbose) { // NOTE: consider removing progress bar
-    Progress p(100, true);
+    //Progress p(100, true);
     trained = model->train(ts, corpus, 
-                           [&p] (float _alpha, float _percent) {
-                             /*
+                           //[&p] (float _alpha, float _percent) {
+                           [] (float _alpha, float _percent) {
+                             
                               std::cout << '\r'
                                         << "alpha: "
                                         << std::fixed << std::setprecision(6)
                                         << _alpha
                                         << ", progress: "
                                         << std::fixed << std::setprecision(2)
-                                        << _percent << "%"
-                                        << std::flush;
-                              */
-                             p.update(_percent);
+                                        << _percent << "%\n";
+                                        //<< std::flush;
+                              
+                             //p.update(round(_percent));
                            }
     );
   } else {
