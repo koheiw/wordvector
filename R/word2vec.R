@@ -185,11 +185,12 @@ word2vec.tokens <- function(x,
     skipgram <- as.logical(type %in% "skip-gram")
     
     x <- tokens_trim(x, min_termfreq = min_count, termfreq_type = "count")
-    model <- cpp_w2v(x, attr(x, "types"), 
+    result <- cpp_w2v(x, attr(x, "types"), 
                      size = dim, window = window,
-                     sample = sample, withHS = hs, negative = negative, threads = threads, iterations = iter,
+                     sample = sample, withHS = hs, negative = negative, 
+                     threads = threads, iterations = iter,
                      alpha = lr, withSG = skipgram, ...)
-    model
+    return(result)
 }
 
 #' @title Get the word vectors of a word2vec model
