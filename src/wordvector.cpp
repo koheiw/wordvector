@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <iomanip>
+#include <chrono>
 #include "word2vec/word2vec.hpp"
 #include <unordered_map>
 
@@ -109,26 +110,34 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
   
   if (verbose) { // NOTE: consider removing progress bar
     //Progress p(100, true);
-    trained = model.train(ts, corpus, 
-                           //[&p] (float _alpha, float _percent) {
-                           [] (float _alpha, float _percent) {
-                             
-                              std::cout << '\r'
-                                        << "alpha: "
-                                        << std::fixed << std::setprecision(6)
-                                        << _alpha
-                                        << ", progress: "
-                                        << std::fixed << std::setprecision(2)
-                                        << _percent << "%\n";
-                                        //<< std::flush;
-                              
-                             //p.update(round(_percent));
-                           }
-    );
+    if (withSG) {
+        printf("Training Skip-gram model with %d dimensions\n", size);
+    } else {
+        printf("Training CBOW model with %d dimensions\n", size);
+    }
+    
+    printf(" ...using xxxxxx in %d iterations\n", iterations);
+    // if (withHS) {
+    //     printf(" ...using hierarchical softmax in %d iterations\n", iterations);
+    // } else {
+    //     printf(" ...using full softmax in %d iterations\n", iterations);
+    // }
+      
+    auto start = std::chrono::high_resolution_clock::now();
+    int percent = 0;
+    trained = model.train(ts, corpus, [&start, &percent] (float _alpha, float _percent) {
+        if (_percent >= percent) {
+           auto end = std::chrono::high_resolution_clock::now();
+           auto diff = std::chrono::duration<double, std::milli>(end - start);
+           double msec = diff.count();
+           printf(" ......progress %2d%% ", percent);
+           printf("elapsed time: %.2f seconds (alpha: %.4f)\n", msec / 1000, _alpha);
+           percent += 10; 
+        };
+    });
   } else {
     trained = model.train(ts, corpus, nullptr);
   }
-  Rcpp::Rcout << "Training done\n";
   //return Rcpp::List::create();
   bool success = true;
   if (!trained) {
@@ -141,7 +150,9 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
   if (normalize) {
     //Rcpp::Rcout << "Finished training: finalising with embedding normalisation" << std::endl;
     model.normalize();
+    printf(" ...normalizing vectors\n");
   }
+  printf(" ...complete\n");
   
   // Return model + model information
   Rcpp::List out = Rcpp::List::create(
