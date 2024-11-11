@@ -27,18 +27,18 @@ Rcpp::NumericMatrix as_matrix(w2v::w2vModel_t model) {
     } 
 
     std::vector<float> mat;
-    mat.reserve(words.size() * model.vectorSize());
-    for (size_t i = 0; i < words.size(); i++) {
-        auto p = model.vector(words[i]);
+    mat.reserve(model.vectorSize() * words.size());
+    for (size_t j = 0; j < words.size(); j++) {
+        auto p = model.vector(words[j]);
         if (p != nullptr) {
             std::vector<float> vec = *p;
             mat.insert(mat.end(), vec.begin(), vec.end());
         }
     }
     
-    Rcpp::NumericMatrix mat_(words.size(), model.vectorSize(), mat.begin());
-    rownames(mat_) = encode(words); 
-    return mat_;
+    Rcpp::NumericMatrix mat_(model.vectorSize(), words.size(), mat.begin());
+    colnames(mat_) = encode(words); 
+    return Rcpp::transpose(mat_);
 }
 
 // [[Rcpp::export]]
