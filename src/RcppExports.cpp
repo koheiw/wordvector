@@ -36,34 +36,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// w2v_dictionary
-std::vector<std::string> w2v_dictionary(SEXP ptr);
-RcppExport SEXP _wordvector_w2v_dictionary(SEXP ptrSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type ptr(ptrSEXP);
-    rcpp_result_gen = Rcpp::wrap(w2v_dictionary(ptr));
-    return rcpp_result_gen;
-END_RCPP
-}
-// w2v_embedding
-Rcpp::NumericMatrix w2v_embedding(SEXP ptr, Rcpp::StringVector x);
-RcppExport SEXP _wordvector_w2v_embedding(SEXP ptrSEXP, SEXP xSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type ptr(ptrSEXP);
-    Rcpp::traits::input_parameter< Rcpp::StringVector >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(w2v_embedding(ptr, x));
-    return rcpp_result_gen;
-END_RCPP
-}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_wordvector_cpp_w2v", (DL_FUNC) &_wordvector_cpp_w2v, 16},
-    {"_wordvector_w2v_dictionary", (DL_FUNC) &_wordvector_w2v_dictionary, 1},
-    {"_wordvector_w2v_embedding", (DL_FUNC) &_wordvector_w2v_embedding, 2},
     {NULL, NULL, 0}
 };
 

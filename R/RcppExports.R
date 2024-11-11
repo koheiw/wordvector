@@ -5,11 +5,3 @@ cpp_w2v <- function(texts_, types_, modelFile = "", size = 100L, window = 5L, ex
     .Call('_wordvector_cpp_w2v', PACKAGE = 'wordvector', texts_, types_, modelFile, size, window, expTableSize, expValueMax, sample, withHS, negative, threads, iterations, alpha, withSG, verbose, normalize)
 }
 
-w2v_dictionary <- function(ptr) {
-    .Call('_wordvector_w2v_dictionary', PACKAGE = 'wordvector', ptr)
-}
-
-w2v_embedding <- function(ptr, x) {
-    .Call('_wordvector_w2v_embedding', PACKAGE = 'wordvector', ptr, x)
-}
-
