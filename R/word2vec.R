@@ -220,6 +220,19 @@ as.matrix.word2vec_trained <- function(x, encoding='UTF-8', ...){
     as.matrix.word2vec(x)
 }
 
+#' Create distributed representation of documents
+#' @export
+doc2vec <- function(x, model = NULL, ...) {
+    if (is.null(model))
+        model <- word2vec(x, ...)
+    wov <- as.matrix(model)
+    dfmt <- dfm(x)
+    dfmt <- dfm_match(dfmt, rownames(wov))
+    dov <- tcrossprod(dfmt, t(wov)) # NOTE: consider using proxyC
+    dov <- dov / sqrt(rowSums(dov ^ 2) / ncol(dov))
+    return(dov)
+}
+
 
 #' @title Save a word2vec model to disk
 #' @description Save a word2vec model as a binary file to disk or as a text file
