@@ -1,12 +1,9 @@
 #include <Rcpp.h>
-//#include <progress.hpp>
-//#include <progress_bar.hpp>
-
-#include <iostream>
-#include <iomanip>
+//#include <iostream>
+//#include <iomanip>
 #include <chrono>
-#include "word2vec/word2vec.hpp"
 #include <unordered_map>
+#include "word2vec/word2vec.hpp"
 
 Rcpp::CharacterVector encode(std::vector<std::string> types){
     Rcpp::CharacterVector types_(types.size());
@@ -84,12 +81,6 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
   w2v::corpus_t corpus(texts, types);
   corpus.setWordFreq();
       
-  // Rcpp::List out2 = Rcpp::List::create(
-  //     Rcpp::Named("frequency") = corpus.frequency
-  // );
-  // 
-  // return out2;
-  
   w2v::trainSettings_t ts;
   ts.size = size;
   ts.window = window;
@@ -103,13 +94,11 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
   ts.alpha = alpha;
   ts.withSG = withSG;
   ts.random = (uint32_t)(Rcpp::runif(1)[0] * std::numeric_limits<uint32_t>::max());
-  //ts.wordDelimiterChars = wordDelimiterChars;
-  //ts.endOfSentenceChars = endOfSentenceChars;
+  
   w2v::w2vModel_t model;
   bool trained;
   
-  if (verbose) { // NOTE: consider removing progress bar
-    //Progress p(100, true);
+  if (verbose) {
     if (withSG) {
         printf("Training Skip-gram model with %d dimensions\n", size);
     } else {
@@ -138,7 +127,7 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
   } else {
     trained = model.train(ts, corpus, nullptr);
   }
-  //return Rcpp::List::create();
+  
   bool success = true;
   if (!trained) {
     Rcpp::Rcout << "Training failed: " << model.errMsg() << std::endl;
@@ -148,7 +137,6 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
   // - original code dumps data to disk, next imports it and during import normalisation happens after which we can do nearest calculations
   // - the R wrapper only writes to disk at request so we need to normalise upfront in order to do directly nearest calculations
   if (normalize) {
-    //Rcpp::Rcout << "Finished training: finalising with embedding normalisation" << std::endl;
     model.normalize();
     printf(" ...normalizing vectors\n");
   }
@@ -173,8 +161,6 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
       Rcpp::Named("sample") = sample,
       Rcpp::Named("expTableSize") = expTableSize,
       Rcpp::Named("expValueMax") = expValueMax
-      //Rcpp::Named("split_words") = wordDelimiterChars,
-      //Rcpp::Named("split_sents") = endOfSentenceChars
     )
   );
   out.attr("class") = "textmodel_word2vec";
