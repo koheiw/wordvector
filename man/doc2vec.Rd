@@ -4,7 +4,7 @@
 \alias{doc2vec}
 \title{Create distributed representation of documents}
 \usage{
-doc2vec(x, model = NULL, ...)
+doc2vec(...)
 }
 \description{
 Create distributed representation of documents

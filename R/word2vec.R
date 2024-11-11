@@ -196,7 +196,6 @@ word2vec.tokens <- function(x,
 #' @title Get the word vectors of a word2vec model
 #' @description Get the word vectors of a word2vec model as a dense matrix.
 #' @param x a word2vec model as returned by \code{\link{word2vec}} or \code{\link{read.word2vec}}
-#' @param encoding set the encoding of the row names to the specified encoding. Defaults to 'UTF-8'.
 #' @param ... not used
 #' @return a matrix with the word vectors where the rownames are the words from the model vocabulary
 #' @export
@@ -207,19 +206,19 @@ word2vec.tokens <- function(x,
 #' model <- read.word2vec(path)
 #' 
 #' embedding <- as.matrix(model)
-as.matrix.word2vec <- function(x, encoding='UTF-8', ...){
+as.matrix.textmodel_word2vec <- function(x, ...){
     return(x$model) 
-}
-
-
-#' @export
-as.matrix.word2vec_trained <- function(x, encoding='UTF-8', ...){
-    return(x$model)
 }
 
 #' Create distributed representation of documents
 #' @export
-doc2vec <- function(x, model = NULL, ...) {
+doc2vec <- function(...) {
+    UseMethod("doc2vec")
+}
+
+#' @export
+#' @method doc2vec tokens
+doc2vec.tokens <- function(x, model = NULL, ...) {
     if (is.null(model))
         model <- word2vec(x, ...)
     wov <- as.matrix(model)

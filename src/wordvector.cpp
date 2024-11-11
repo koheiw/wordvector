@@ -166,7 +166,7 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
       //Rcpp::Named("split_sents") = endOfSentenceChars
     )
   );
-  out.attr("class") = "word2vec_trained";
+  out.attr("class") = "textmodel_word2vec";
   return out;
 }
 
