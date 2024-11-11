@@ -221,67 +221,67 @@ namespace w2v {
             return nullptr;
         }
 
-        /**
-         * Calculates distance between two vectors.
-         * @param _what first vector
-         * @param _whith second vector
-         * @returns distance
-        */
-        inline float distance(const vector_t &_what, const vector_t &_with) const noexcept {
-            assert(m_vectorSize == _what.size());
-            assert(m_vectorSize == _with.size());
+        // /**
+        //  * Calculates distance between two vectors.
+        //  * @param _what first vector
+        //  * @param _whith second vector
+        //  * @returns distance
+        // */
+        // inline float distance(const vector_t &_what, const vector_t &_with) const noexcept {
+        //     assert(m_vectorSize == _what.size());
+        //     assert(m_vectorSize == _with.size());
+        // 
+        //     float ret = 0.0f;
+        //     for (uint16_t i = 0; i < m_vectorSize; ++i) {
+        //         ret += _what[i] * _with[i];
+        //     }
+        //     if (ret > 0.0f) {
+        //         return  std::sqrt(ret / m_vectorSize);
+        //     }
+        //     return 0.0f;
+        // }
 
-            float ret = 0.0f;
-            for (uint16_t i = 0; i < m_vectorSize; ++i) {
-                ret += _what[i] * _with[i];
-            }
-            if (ret > 0.0f) {
-                return  std::sqrt(ret / m_vectorSize);
-            }
-            return 0.0f;
-        }
-
-        /**
-         * Finds nearest vectors to a specified one
-         * @param _vec find nearest vectors for this specified vector
-         * @param _nearest storage of found nearest vectors ordered descending by distance to specified vector
-         * @param _amount max. amount of nearest vectors
-         * @param _minDistance min. distance between vectors
-        */
-        inline void nearest(const vector_t &_vec,
-                            std::vector<std::pair<key_t, float>> &_nearest,
-                            std::size_t _amount,
-                            float _minDistance = 0.0f) const noexcept {
-            assert(m_vectorSize == _vec.size());
-
-            _nearest.clear();
-
-            std::priority_queue<std::pair<key_t, float>,
-                    std::vector<std::pair<key_t, float>>,
-                    nearestCmp_t> nearestVecs;
-
-            float entryLevel = 0.0f;
-            for (auto const &i:m_map) {
-                auto match = distance(_vec, i.second);
-                if ((match > 0.9999f) || (match < _minDistance)) { // 1.0f is not guarantied
-                    continue;
-                }
-                if (match > entryLevel) {
-                    nearestVecs.emplace(std::pair<key_t, float>(i.first, match));
-                    if (nearestVecs.size() > _amount) {
-                        nearestVecs.pop();
-                        entryLevel = nearestVecs.top().second;
-                    }
-                }
-            }
-
-            auto nSize = nearestVecs.size();
-            _nearest.resize(nSize);
-            for (auto j = nSize; j > 0; --j) {
-                _nearest[j - 1] = nearestVecs.top();
-                nearestVecs.pop();
-            }
-        }
+        // /**
+        //  * Finds nearest vectors to a specified one
+        //  * @param _vec find nearest vectors for this specified vector
+        //  * @param _nearest storage of found nearest vectors ordered descending by distance to specified vector
+        //  * @param _amount max. amount of nearest vectors
+        //  * @param _minDistance min. distance between vectors
+        // */
+        // inline void nearest(const vector_t &_vec,
+        //                     std::vector<std::pair<key_t, float>> &_nearest,
+        //                     std::size_t _amount,
+        //                     float _minDistance = 0.0f) const noexcept {
+        //     assert(m_vectorSize == _vec.size());
+        // 
+        //     _nearest.clear();
+        // 
+        //     std::priority_queue<std::pair<key_t, float>,
+        //             std::vector<std::pair<key_t, float>>,
+        //             nearestCmp_t> nearestVecs;
+        // 
+        //     float entryLevel = 0.0f;
+        //     for (auto const &i:m_map) {
+        //         auto match = distance(_vec, i.second);
+        //         if ((match > 0.9999f) || (match < _minDistance)) { // 1.0f is not guarantied
+        //             continue;
+        //         }
+        //         if (match > entryLevel) {
+        //             nearestVecs.emplace(std::pair<key_t, float>(i.first, match));
+        //             if (nearestVecs.size() > _amount) {
+        //                 nearestVecs.pop();
+        //                 entryLevel = nearestVecs.top().second;
+        //             }
+        //         }
+        //     }
+        // 
+        //     auto nSize = nearestVecs.size();
+        //     _nearest.resize(nSize);
+        //     for (auto j = nSize; j > 0; --j) {
+        //         _nearest[j - 1] = nearestVecs.top();
+        //         nearestVecs.pop();
+        //     }
+        // }
 
         /// @returns vector size of model
         inline uint16_t vectorSize() const noexcept {return m_vectorSize;}
@@ -348,82 +348,82 @@ namespace w2v {
         }
     };
 
-    /**
-     * @brief storage model of pairs key&vector where key type is std::size_t (document ID)
-     *
-     * Model is derived from model_t class and implements save/load methods
-    */
-    class d2vModel_t: public model_t<std::size_t> {
-    public:
-        explicit d2vModel_t(uint16_t _vectorSize): model_t<std::size_t>() {
-            m_vectorSize = _vectorSize;
-        }
+    // /**
+    //  * @brief storage model of pairs key&vector where key type is std::size_t (document ID)
+    //  *
+    //  * Model is derived from model_t class and implements save/load methods
+    // */
+    // class d2vModel_t: public model_t<std::size_t> {
+    // public:
+    //     explicit d2vModel_t(uint16_t _vectorSize): model_t<std::size_t>() {
+    //         m_vectorSize = _vectorSize;
+    //     }
+    // 
+    //     /// add/replace new _vector with unique _id to the model
+    //     void set(std::size_t _id, const vector_t &_vector, bool _checkUnique = false) {
+    //         if (_checkUnique) {
+    //             for (auto const &i:m_map) {
+    //                 auto match = distance(_vector, i.second);
+    //                 if (match > 0.9999f) { // 1.0f is not guarantied
+    //                     return;
+    //                 }
+    //             }
+    //         }
+    // 
+    //         m_map[_id] = _vector;
+    //         m_mapSize = m_map.size();
+    //     }
+    //     /// remove _vector with unique _id from the model
+    //     void erase(std::size_t _id) {
+    //         m_map.erase(_id);
+    //         m_mapSize = m_map.size();
+    //     }
+    //     /// saves document vectors to file with _modelFile name
+    //     //bool save(const std::string &_modelFile) const noexcept override;
+    //     /// loads document vectors from file with _modelFile name
+    //     //bool load(const std::string &_modelFile, bool normalize = true) noexcept override;
+    // };
 
-        /// add/replace new _vector with unique _id to the model
-        void set(std::size_t _id, const vector_t &_vector, bool _checkUnique = false) {
-            if (_checkUnique) {
-                for (auto const &i:m_map) {
-                    auto match = distance(_vector, i.second);
-                    if (match > 0.9999f) { // 1.0f is not guarantied
-                        return;
-                    }
-                }
-            }
+    // /**
+    //  * @brief word2vec class implements vector representation of a word
+    //  *
+    //  * word2vec class is derived from w2vBase_t and inherits vector operations
+    // */
+    // class word2vec_t: public vector_t {
+    // public:
+    //     /** Constructs an empty word2vec object
+    //      * @param _model w2vModel_t type object of a pretrained model
+    //      */
+    //     explicit word2vec_t(const std::unique_ptr<w2vModel_t> &_model): vector_t(_model->vectorSize()) {}
+    // 
+    //     /** Constructs a word2vec object
+    //      * @param _model w2vModel_t type object of a pretrained model
+    //      * @param _word word to be converted to a vector
+    //      */
+    //     word2vec_t(const std::unique_ptr<w2vModel_t> &_model, const std::string &_word):
+    //             vector_t(_model->vectorSize()) {
+    //         auto i = _model->vector(_word);
+    //         if (i != nullptr) {
+    //             std::copy(i->begin(), i->end(), begin());
+    //         }
+    //     }
+    // };
 
-            m_map[_id] = _vector;
-            m_mapSize = m_map.size();
-        }
-        /// remove _vector with unique _id from the model
-        void erase(std::size_t _id) {
-            m_map.erase(_id);
-            m_mapSize = m_map.size();
-        }
-        /// saves document vectors to file with _modelFile name
-        //bool save(const std::string &_modelFile) const noexcept override;
-        /// loads document vectors from file with _modelFile name
-        //bool load(const std::string &_modelFile, bool normalize = true) noexcept override;
-    };
-
-    /**
-     * @brief word2vec class implements vector representation of a word
-     *
-     * word2vec class is derived from w2vBase_t and inherits vector operations
-    */
-    class word2vec_t: public vector_t {
-    public:
-        /** Constructs an empty word2vec object
-         * @param _model w2vModel_t type object of a pretrained model
-         */
-        explicit word2vec_t(const std::unique_ptr<w2vModel_t> &_model): vector_t(_model->vectorSize()) {}
-
-        /** Constructs a word2vec object
-         * @param _model w2vModel_t type object of a pretrained model
-         * @param _word word to be converted to a vector
-         */
-        word2vec_t(const std::unique_ptr<w2vModel_t> &_model, const std::string &_word):
-                vector_t(_model->vectorSize()) {
-            auto i = _model->vector(_word);
-            if (i != nullptr) {
-                std::copy(i->begin(), i->end(), begin());
-            }
-        }
-    };
-
-    /**
-     * @brief doc2vec class implements vector representation of a document
-     *
-     * doc2vec class is derived from w2vBase_t and inherits vector operations
-    */
-    class doc2vec_t: public vector_t {
-    public:
-        /** Constructs doc2vec object
-         * @param _model w2vModel_t type object of a pretrained model
-         * @param _doc text document to be converted to a vector
-         */
-        doc2vec_t(const Rcpp::XPtr<w2vModel_t> &_model,
-                  const std::string &_doc,
-                  const std::string &_wordDelimiterChars = " \n,.-!?:;/\"#$%&'()*+<=>@[]\\^_`{|}~\t\v\f\r");
-    };
+    // /**
+    //  * @brief doc2vec class implements vector representation of a document
+    //  *
+    //  * doc2vec class is derived from w2vBase_t and inherits vector operations
+    // */
+    // class doc2vec_t: public vector_t {
+    // public:
+    //     /** Constructs doc2vec object
+    //      * @param _model w2vModel_t type object of a pretrained model
+    //      * @param _doc text document to be converted to a vector
+    //      */
+    //     doc2vec_t(const Rcpp::XPtr<w2vModel_t> &_model,
+    //               const std::string &_doc,
+    //               const std::string &_wordDelimiterChars = " \n,.-!?:;/\"#$%&'()*+<=>@[]\\^_`{|}~\t\v\f\r");
+    // };
 
 }
 #endif // WORD2VEC_WORD2VEC_HPP

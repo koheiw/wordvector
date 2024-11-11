@@ -13,11 +13,3 @@ w2v_embedding <- function(ptr, x) {
     .Call('_wordvector_w2v_embedding', PACKAGE = 'wordvector', ptr, x)
 }
 
-w2v_nearest <- function(ptr, x, top_n = 10L, min_distance = 0.0) {
-    .Call('_wordvector_w2v_nearest', PACKAGE = 'wordvector', ptr, x, top_n, min_distance)
-}
-
-w2v_nearest_vector <- function(ptr, x, top_n = 10L, min_distance = 0.0) {
-    .Call('_wordvector_w2v_nearest_vector', PACKAGE = 'wordvector', ptr, x, top_n, min_distance)
-}
-

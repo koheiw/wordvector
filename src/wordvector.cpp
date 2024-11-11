@@ -194,73 +194,73 @@ Rcpp::NumericMatrix w2v_embedding(SEXP ptr, Rcpp::StringVector x) {
   return embedding;
 }
 
-// [[Rcpp::export]]
-Rcpp::DataFrame w2v_nearest(SEXP ptr, 
-                            std::string x, 
-                            std::size_t top_n = 10,
-                            float min_distance = 0.0) {
-  Rcpp::XPtr<w2v::w2vModel_t> model(ptr);
-  std::unordered_map<std::string, w2v::vector_t> m_map = model->map();
-  auto const &i = m_map.find(x);
-  w2v::vector_t vec;
-  if (i != m_map.end()) {
-    vec = i->second;
-  }else{
-    Rcpp::stop("Could not find the word in the dictionary: " + x);
-  }
-  std::vector<std::pair<std::string, float>> nearest;
-  model->nearest(vec, nearest, top_n, min_distance);
-  
-  std::vector<std::string> keys;
-  std::vector<float> distance;
-  std::vector<int> rank;
-  int r = 0;
-  for(auto kv : nearest) {
-    keys.push_back(kv.first);
-    distance.push_back(kv.second);
-    r = r + 1;
-    rank.push_back(r);
-  } 
-  Rcpp::DataFrame out = Rcpp::DataFrame::create(
-    Rcpp::Named("term1") = x,
-    Rcpp::Named("term2") = keys,
-    Rcpp::Named("similarity") = distance,
-    Rcpp::Named("rank") = rank,
-    Rcpp::Named("stringsAsFactors") = false
-  );
-  return out;
-}
-
-
-// [[Rcpp::export]]
-Rcpp::List w2v_nearest_vector(SEXP ptr, 
-                              const std::vector<float> &x, 
-                              std::size_t top_n = 10,
-                              float min_distance = 0.0) {
-  Rcpp::XPtr<w2v::w2vModel_t> model(ptr);
-  w2v::vector_t *vec = new w2v::vector_t(x);
-  
-  std::vector<std::pair<std::string, float>> nearest;
-  model->nearest(*vec, nearest, top_n, min_distance);
-  
-  std::vector<std::string> keys;
-  std::vector<float> distance;
-  std::vector<int> rank;
-  int r = 0;
-  for(auto kv : nearest) {
-    keys.push_back(kv.first);
-    distance.push_back(kv.second);
-    r = r + 1;
-    rank.push_back(r);
-  } 
-  Rcpp::DataFrame out = Rcpp::DataFrame::create(
-    Rcpp::Named("term") = keys,
-    Rcpp::Named("similarity") = distance,
-    Rcpp::Named("rank") = rank,
-    Rcpp::Named("stringsAsFactors") = false
-  );
-  return out;
-}
+// // [[Rcpp::export]]
+// Rcpp::DataFrame w2v_nearest(SEXP ptr, 
+//                             std::string x, 
+//                             std::size_t top_n = 10,
+//                             float min_distance = 0.0) {
+//   Rcpp::XPtr<w2v::w2vModel_t> model(ptr);
+//   std::unordered_map<std::string, w2v::vector_t> m_map = model->map();
+//   auto const &i = m_map.find(x);
+//   w2v::vector_t vec;
+//   if (i != m_map.end()) {
+//     vec = i->second;
+//   }else{
+//     Rcpp::stop("Could not find the word in the dictionary: " + x);
+//   }
+//   std::vector<std::pair<std::string, float>> nearest;
+//   model->nearest(vec, nearest, top_n, min_distance);
+//   
+//   std::vector<std::string> keys;
+//   std::vector<float> distance;
+//   std::vector<int> rank;
+//   int r = 0;
+//   for(auto kv : nearest) {
+//     keys.push_back(kv.first);
+//     distance.push_back(kv.second);
+//     r = r + 1;
+//     rank.push_back(r);
+//   } 
+//   Rcpp::DataFrame out = Rcpp::DataFrame::create(
+//     Rcpp::Named("term1") = x,
+//     Rcpp::Named("term2") = keys,
+//     Rcpp::Named("similarity") = distance,
+//     Rcpp::Named("rank") = rank,
+//     Rcpp::Named("stringsAsFactors") = false
+//   );
+//   return out;
+// }
+// 
+// 
+// // [[Rcpp::export]]
+// Rcpp::List w2v_nearest_vector(SEXP ptr, 
+//                               const std::vector<float> &x, 
+//                               std::size_t top_n = 10,
+//                               float min_distance = 0.0) {
+//   Rcpp::XPtr<w2v::w2vModel_t> model(ptr);
+//   w2v::vector_t *vec = new w2v::vector_t(x);
+//   
+//   std::vector<std::pair<std::string, float>> nearest;
+//   model->nearest(*vec, nearest, top_n, min_distance);
+//   
+//   std::vector<std::string> keys;
+//   std::vector<float> distance;
+//   std::vector<int> rank;
+//   int r = 0;
+//   for(auto kv : nearest) {
+//     keys.push_back(kv.first);
+//     distance.push_back(kv.second);
+//     r = r + 1;
+//     rank.push_back(r);
+//   } 
+//   Rcpp::DataFrame out = Rcpp::DataFrame::create(
+//     Rcpp::Named("term") = keys,
+//     Rcpp::Named("similarity") = distance,
+//     Rcpp::Named("rank") = rank,
+//     Rcpp::Named("stringsAsFactors") = false
+//   );
+//   return out;
+// }
 
 /* NOTE: temporarily disabled
  

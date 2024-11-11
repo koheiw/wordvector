@@ -59,41 +59,11 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// w2v_nearest
-Rcpp::DataFrame w2v_nearest(SEXP ptr, std::string x, std::size_t top_n, float min_distance);
-RcppExport SEXP _wordvector_w2v_nearest(SEXP ptrSEXP, SEXP xSEXP, SEXP top_nSEXP, SEXP min_distanceSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type ptr(ptrSEXP);
-    Rcpp::traits::input_parameter< std::string >::type x(xSEXP);
-    Rcpp::traits::input_parameter< std::size_t >::type top_n(top_nSEXP);
-    Rcpp::traits::input_parameter< float >::type min_distance(min_distanceSEXP);
-    rcpp_result_gen = Rcpp::wrap(w2v_nearest(ptr, x, top_n, min_distance));
-    return rcpp_result_gen;
-END_RCPP
-}
-// w2v_nearest_vector
-Rcpp::List w2v_nearest_vector(SEXP ptr, const std::vector<float>& x, std::size_t top_n, float min_distance);
-RcppExport SEXP _wordvector_w2v_nearest_vector(SEXP ptrSEXP, SEXP xSEXP, SEXP top_nSEXP, SEXP min_distanceSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type ptr(ptrSEXP);
-    Rcpp::traits::input_parameter< const std::vector<float>& >::type x(xSEXP);
-    Rcpp::traits::input_parameter< std::size_t >::type top_n(top_nSEXP);
-    Rcpp::traits::input_parameter< float >::type min_distance(min_distanceSEXP);
-    rcpp_result_gen = Rcpp::wrap(w2v_nearest_vector(ptr, x, top_n, min_distance));
-    return rcpp_result_gen;
-END_RCPP
-}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_wordvector_cpp_w2v", (DL_FUNC) &_wordvector_cpp_w2v, 16},
     {"_wordvector_w2v_dictionary", (DL_FUNC) &_wordvector_w2v_dictionary, 1},
     {"_wordvector_w2v_embedding", (DL_FUNC) &_wordvector_w2v_embedding, 2},
-    {"_wordvector_w2v_nearest", (DL_FUNC) &_wordvector_w2v_nearest, 4},
-    {"_wordvector_w2v_nearest_vector", (DL_FUNC) &_wordvector_w2v_nearest_vector, 4},
     {NULL, NULL, 0}
 };
 

@@ -15,7 +15,6 @@
   negative = 5L,
   sample = 0.001,
   min_count = 5L,
-  stopwords = integer(),
   threads = 1L,
   ...
 )
@@ -40,8 +39,6 @@
 \item{sample}{threshold for occurrence of words. Defaults to 0.001}
 
 \item{min_count}{integer indicating the number of time a word should occur to be considered as part of the training vocabulary. Defaults to 5.}
-
-\item{stopwords}{a character vector of stopwords to exclude from training}
 
 \item{threads}{number of CPU threads to use. Defaults to 1.}
 
