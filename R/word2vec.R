@@ -231,8 +231,9 @@ doc2vec.tokens <- function(x, model = NULL, ...) {
 
 #' @export
 synonyms <- function(model, terms, n = 10) {
+    mat <- as.matrix(model)
     sapply(terms, function(term) {
-        sim <- proxyC::simil(mod$model[term,,drop = FALSE], mod$model)
-        head(names(sort(colSums(sim), decreasing = TRUE)), n)
+        sim <- proxyC::simil(mat[term,,drop = FALSE], mat)
+        head(names(sort(Matrix::colSums(sim), decreasing = TRUE)), n)
     })
 }
