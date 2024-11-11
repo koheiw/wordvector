@@ -228,3 +228,11 @@ doc2vec.tokens <- function(x, model = NULL, ...) {
     dov <- dov / sqrt(Matrix::rowSums(dov ^ 2) / ncol(dov))
     return(dov)
 }
+
+#' @export
+synonyms <- function(model, terms, n = 10) {
+    sapply(terms, function(term) {
+        sim <- proxyC::simil(mod$model[term,,drop = FALSE], mod$model)
+        head(names(sort(colSums(sim), decreasing = TRUE)), n)
+    })
+}
