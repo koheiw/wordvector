@@ -208,16 +208,13 @@ word2vec.tokens <- function(x,
 #' 
 #' embedding <- as.matrix(model)
 as.matrix.word2vec <- function(x, encoding='UTF-8', ...){
-    words <- w2v_dictionary(x$model)
-    x <- w2v_embedding(x$model, words)
-    Encoding(rownames(x)) <- encoding
-    x 
+    return(x$model) 
 }
 
 
 #' @export
 as.matrix.word2vec_trained <- function(x, encoding='UTF-8', ...){
-    as.matrix.word2vec(x)
+    return(x$model)
 }
 
 #' Create distributed representation of documents
@@ -228,7 +225,7 @@ doc2vec <- function(x, model = NULL, ...) {
     wov <- as.matrix(model)
     dfmt <- dfm(x)
     dfmt <- dfm_match(dfmt, rownames(wov))
-    dov <- tcrossprod(dfmt, t(wov)) # NOTE: consider using proxyC
-    dov <- dov / sqrt(rowSums(dov ^ 2) / ncol(dov))
+    dov <- Matrix::tcrossprod(dfmt, t(wov)) # NOTE: consider using proxyC
+    dov <- dov / sqrt(Matrix::rowSums(dov ^ 2) / ncol(dov))
     return(dov)
 }

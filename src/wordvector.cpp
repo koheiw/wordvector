@@ -7,7 +7,40 @@
 #include "word2vec/word2vec.hpp"
 #include <unordered_map>
 
-// [[Rcpp::depends(RcppProgress)]]
+Rcpp::CharacterVector encode(std::vector<std::string> types){
+    Rcpp::CharacterVector types_(types.size());
+    for (std::size_t i = 0; i < types.size(); i++) {
+        Rcpp::String type_ = types[i];
+        type_.set_encoding(CE_UTF8);
+        types_[i] = type_;
+    }
+    return(types_);
+}
+
+Rcpp::NumericMatrix as_matrix(w2v::w2vModel_t model) {
+    
+    std::unordered_map<std::string, w2v::vector_t> m_map = model.map();
+    std::vector<std::string> words;
+    words.reserve(m_map.size());
+    for(auto it : m_map) {
+        words.push_back(it.first);
+    } 
+
+    std::vector<float> mat;
+    mat.reserve(words.size() * model.vectorSize());
+    for (size_t i = 0; i < words.size(); i++) {
+        auto p = model.vector(words[i]);
+        if (p != nullptr) {
+            std::vector<float> vec = *p;
+            mat.insert(mat.end(), vec.begin(), vec.end());
+        }
+    }
+    
+    Rcpp::NumericMatrix mat_(words.size(), model.vectorSize(), mat.begin());
+    rownames(mat_) = encode(words); 
+    return mat_;
+}
+
 // [[Rcpp::export]]
 Rcpp::List cpp_w2v(Rcpp::List texts_, 
                    Rcpp::CharacterVector types_, 
@@ -71,12 +104,12 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
   ts.random = (uint32_t)(Rcpp::runif(1)[0] * std::numeric_limits<uint32_t>::max());
   //ts.wordDelimiterChars = wordDelimiterChars;
   //ts.endOfSentenceChars = endOfSentenceChars;
-  Rcpp::XPtr<w2v::w2vModel_t> model(new w2v::w2vModel_t(), true);
+  w2v::w2vModel_t model;
   bool trained;
   
   if (verbose) { // NOTE: consider removing progress bar
     //Progress p(100, true);
-    trained = model->train(ts, corpus, 
+    trained = model.train(ts, corpus, 
                            //[&p] (float _alpha, float _percent) {
                            [] (float _alpha, float _percent) {
                              
@@ -93,13 +126,13 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
                            }
     );
   } else {
-    trained = model->train(ts, corpus, nullptr);
+    trained = model.train(ts, corpus, nullptr);
   }
   Rcpp::Rcout << "Training done\n";
   //return Rcpp::List::create();
   bool success = true;
   if (!trained) {
-    Rcpp::Rcout << "Training failed: " << model->errMsg() << std::endl;
+    Rcpp::Rcout << "Training failed: " << model.errMsg() << std::endl;
     success = false;
   }
   // NORMALISE UPFRONT - DIFFERENT THAN ORIGINAL CODE 
@@ -107,15 +140,16 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
   // - the R wrapper only writes to disk at request so we need to normalise upfront in order to do directly nearest calculations
   if (normalize) {
     //Rcpp::Rcout << "Finished training: finalising with embedding normalisation" << std::endl;
-    model->normalize();
+    model.normalize();
   }
   
   // Return model + model information
   Rcpp::List out = Rcpp::List::create(
-    Rcpp::Named("model") = model,
+    Rcpp::Named("model") = as_matrix(model),
+    //Rcpp::Named("model") = model,
     Rcpp::Named("vocabulary") = types.size(),
     Rcpp::Named("success") = success,
-    Rcpp::Named("error_log") = model->errMsg(),
+    Rcpp::Named("error_log") = model.errMsg(),
     // NOTE: move to R
     Rcpp::Named("control") = Rcpp::List::create(
       Rcpp::Named("dim") = size,
@@ -193,6 +227,8 @@ Rcpp::NumericMatrix w2v_embedding(SEXP ptr, Rcpp::StringVector x) {
   }
   return embedding;
 }
+
+
 
 // // [[Rcpp::export]]
 // Rcpp::DataFrame w2v_nearest(SEXP ptr, 

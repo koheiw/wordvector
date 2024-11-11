@@ -16,5 +16,5 @@ Encoding: UTF-8
 RoxygenNote: 7.3.2
 Depends: R (>= 2.10)
 Imports: Rcpp (>= 0.11.5), stats, fastmatch, quanteda (>= 4.1.0)
-LinkingTo: Rcpp, RcppProgress
-Suggests: udpipe
+LinkingTo: Rcpp
+
