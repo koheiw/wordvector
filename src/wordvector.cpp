@@ -17,7 +17,7 @@ Rcpp::CharacterVector encode(std::vector<std::string> types){
 
 Rcpp::NumericMatrix as_matrix(w2v::w2vModel_t model) {
     
-    std::unordered_map<std::string, w2v::vector_t> m_map = model.map();
+    std::unordered_map<std::string, std::vector<float>> m_map = model.map();
     std::vector<std::string> words;
     words.reserve(m_map.size());
     for(auto it : m_map) {
@@ -27,9 +27,11 @@ Rcpp::NumericMatrix as_matrix(w2v::w2vModel_t model) {
     std::vector<float> mat;
     mat.reserve(model.vectorSize() * words.size());
     for (size_t j = 0; j < words.size(); j++) {
-        auto p = model.vector(words[j]);
-        if (p != nullptr) {
-            std::vector<float> vec = *p;
+        //auto p = model.vector(words[j]);
+        auto it = m_map.find(words[j]);
+        if (it != m_map.end()) {
+            //std::vector<float> vec = *p;
+            std::vector<float> vec = it->second;
             mat.insert(mat.end(), vec.begin(), vec.end());
         }
     }
@@ -71,8 +73,6 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
    uint8_t iterations = 5; ///< train iterations
    float alpha = 0.05f; ///< starting learn rate
    bool withSG = false; ///< use Skip-Gram instead of CBOW
-   std::string wordDelimiterChars = " \n,.-!?:;/\"#$%&'()*+<=>@[]\\^_`{|}~\t\v\f\r";
-   std::string endOfSentenceChars = ".\n?!";
    */
   
   texts_t texts = Rcpp::as<texts_t>(texts_);

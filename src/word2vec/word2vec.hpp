@@ -92,9 +92,6 @@ namespace w2v {
         float alpha = 0.05f; ///< starting learn rate
         bool withSG = false; ///< use Skip-Gram instead of CBOW
         uint32_t random = 1234; /// < random number seed
-        // TODO: remove
-        std::string wordDelimiterChars = " \n,.-!?:;/\"#$%&'()*+<=>@[]\\^_`{|}~\t\v\f\r";
-        std::string endOfSentenceChars = ".\n?!";
         trainSettings_t() = default;
     };
 
@@ -103,73 +100,73 @@ namespace w2v {
      *
      * w2vBase class implements basic vector operations such us "+", "-", "=" and "=="
     */
-    class vector_t: public std::vector<float> {
-    public:
-        vector_t(): std::vector<float>() {}
+    // class vector_t: public std::vector<float> {
+    // public:
+    //     vector_t(): std::vector<float>() {}
         /// Constructs an empty vector with size _size
-        explicit vector_t(std::size_t _size): std::vector<float>(_size, 0.0f) {}
+        //explicit vector_t(std::size_t _size): std::vector<float>(_size, 0.0f) {}
 
         /// Constructs a vector from std::vector
-        explicit vector_t(const std::vector<float> &_vector): std::vector<float>(_vector) {}
+        //explicit vector_t(const std::vector<float> &_vector): std::vector<float>(_vector) {}
 
         /// @returns summarized w2vBase object
-        vector_t &operator+=(const vector_t &_from) {
-            if (this != &_from) {
-                assert(size() == _from.size());
-
-                for (std::size_t i = 0; i <  size(); ++i) {
-                    (*this)[i] += _from[i];
-                }
-                float med = 0.0f;
-                for (auto const &i:(*this)) {
-                    med += i * i;
-                }
-                if (med <= 0.0f) {
-                    throw std::runtime_error("word2vec: can not create vector");
-                }
-                med = std::sqrt(med / this->size());
-                for (auto &i:(*this)) {
-                    i /= med;
-                }
-            }
-
-            return *this;
-        }
+        // vector_t &operator+=(const vector_t &_from) {
+        //     if (this != &_from) {
+        //         assert(size() == _from.size());
+        // 
+        //         for (std::size_t i = 0; i <  size(); ++i) {
+        //             (*this)[i] += _from[i];
+        //         }
+        //         float med = 0.0f;
+        //         for (auto const &i:(*this)) {
+        //             med += i * i;
+        //         }
+        //         if (med <= 0.0f) {
+        //             throw std::runtime_error("word2vec: can not create vector");
+        //         }
+        //         med = std::sqrt(med / this->size());
+        //         for (auto &i:(*this)) {
+        //             i /= med;
+        //         }
+        //     }
+        // 
+        //     return *this;
+        // }
 
         /// @returns substracted w2vBase object
-        vector_t &operator-=(const vector_t &_from) {
-            if (this != &_from) {
-                assert(size() == _from.size());
+        // vector_t &operator-=(const vector_t &_from) {
+        //     if (this != &_from) {
+        //         assert(size() == _from.size());
+        // 
+        //         for (std::size_t i = 0; i < size(); ++i) {
+        //             (*this)[i] -= _from[i];
+        //         }
+        //         float med = 0.0f;
+        //         for (auto const &i:(*this)) {
+        //             med += i * i;
+        //         }
+        //         if (med <= 0.0f) {
+        //             throw std::runtime_error("word2vec: can not create vector");
+        //         }
+        //         med = std::sqrt(med / this->size());
+        //         for (auto &i:(*this)) {
+        //             i /= med;
+        //         }
+        //     }
+        // 
+        //     return *this;
+        // }
 
-                for (std::size_t i = 0; i < size(); ++i) {
-                    (*this)[i] -= _from[i];
-                }
-                float med = 0.0f;
-                for (auto const &i:(*this)) {
-                    med += i * i;
-                }
-                if (med <= 0.0f) {
-                    throw std::runtime_error("word2vec: can not create vector");
-                }
-                med = std::sqrt(med / this->size());
-                for (auto &i:(*this)) {
-                    i /= med;
-                }
-            }
-
-            return *this;
-        }
-
-        friend vector_t operator+(vector_t _what, const vector_t &_with) {
-            _what += _with;
-            return _what;
-        }
-
-        friend vector_t operator-(vector_t _what, const vector_t &_with) {
-            _what -= _with;
-            return _what;
-        }
-    };
+        // friend vector_t operator+(vector_t _what, const vector_t &_with) {
+        //     _what += _with;
+        //     return _what;
+        // }
+        // 
+        // friend vector_t operator-(vector_t _what, const vector_t &_with) {
+        //     _what -= _with;
+        //     return _what;
+        // }
+    //};
 
     /**
      * @brief base class of a vectors model
@@ -181,7 +178,7 @@ namespace w2v {
     template <class key_t>
     class model_t {
     protected:
-        using map_t = std::unordered_map<key_t, vector_t>;
+        using map_t = std::unordered_map<key_t, std::vector<float>>;
 
         map_t m_map;
         uint16_t m_vectorSize = 0;
@@ -212,14 +209,14 @@ namespace w2v {
          * @param _key key value uniquely identifying vector in model
          * @returns pointer to the vector or nullptr if no such key found
         */
-        inline const vector_t *vector(const key_t &_key) const noexcept {
-            auto const &i = m_map.find(_key);
-            if (i != m_map.end()) {
-                return &i->second;
-            }
-
-            return nullptr;
-        }
+        // inline const vector_t *vector(const key_t &_key) const noexcept {
+        //     auto const &i = m_map.find(_key);
+        //     if (i != m_map.end()) {
+        //         return &i->second;
+        //     }
+        // 
+        //     return nullptr;
+        // }
 
         /// @returns vector size of model
         inline uint16_t vectorSize() const noexcept {return m_vectorSize;}
@@ -268,19 +265,19 @@ namespace w2v {
          * Normalise vectors
          */
         inline void normalize() {
-            for(auto &kv : m_map) {
+            for(auto &it : m_map) {
                 // normalize vector
-                auto &v = kv.second;
+                auto &v = it.second;
                 float med = 0.0f;
-                for (auto const &j:v) {
+                for (auto const &j : v) {
                     med += j * j;
                 }
                 if (med <= 0.0f) {
                     throw std::runtime_error("failed to normalize vectors");
                 }
                 med = std::sqrt(med / v.size());
-                for (auto &j:v) {
-                    j /= med;
+                for (auto &j : v) {
+                    j = j / med;
                 }
             } 
         }
