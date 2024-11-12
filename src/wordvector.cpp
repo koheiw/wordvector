@@ -75,6 +75,15 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
     bool withSG = false; ///< use Skip-Gram instead of CBOW
     */
     
+    if (verbose) {
+        if (withSG) {
+            printf("Training Skip-gram model with %d dimensions\n", size);
+        } else {
+            printf("Training CBOW model with %d dimensions\n", size);
+        }
+        printf(" ...initializing\n");
+    }
+
     texts_t texts = Rcpp::as<texts_t>(texts_);
     types_t types = Rcpp::as<types_t>(types_);
     
@@ -99,11 +108,6 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
     bool trained;
   
     if (verbose) {
-        if (withSG) {
-            printf("Training Skip-gram model with %d dimensions\n", size);
-        } else {
-            printf("Training CBOW model with %d dimensions\n", size);
-        }
         if (withHS) {
             printf(" ...Hierarchical Softmax in %d iterations\n", iterations);
         } else {

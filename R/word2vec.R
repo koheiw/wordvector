@@ -182,6 +182,7 @@ word2vec.tokens <- function(x,
     lr <- as.numeric(lr)
     skipgram <- as.logical(type %in% "skip-gram")
     
+    # NOTE: use tokens_xptr
     x <- tokens_trim(x, min_termfreq = min_count, termfreq_type = "count")
     result <- cpp_w2v(x, attr(x, "types"), 
                      size = dim, window = window,
