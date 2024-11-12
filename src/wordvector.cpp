@@ -100,18 +100,16 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
   
   if (verbose) {
     if (withSG) {
-        printf("Training Skip-gram model with %d dimensions\n", size);
+      printf("Training Skip-gram model with %d dimensions\n", size);
     } else {
-        printf("Training CBOW model with %d dimensions\n", size);
+      printf("Training CBOW model with %d dimensions\n", size);
     }
-    
-    printf(" ...using xxxxxx in %d iterations\n", iterations);
-    // if (withHS) {
-    //     printf(" ...using hierarchical softmax in %d iterations\n", iterations);
-    // } else {
-    //     printf(" ...using full softmax in %d iterations\n", iterations);
-    // }
-      
+    if (withHS) {
+      printf(" ...Hierarchical Softmax in %d iterations\n", iterations);
+    } else {
+      printf(" ...Negative Sampling in %d iterations\n", iterations);
+    }
+
     auto start = std::chrono::high_resolution_clock::now();
     int percent = 0;
     trained = model.train(ts, corpus, [&start, &percent] (float _alpha, float _percent) {
@@ -119,7 +117,7 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
            auto end = std::chrono::high_resolution_clock::now();
            auto diff = std::chrono::duration<double, std::milli>(end - start);
            double msec = diff.count();
-           printf(" ......progress %2d%% ", percent);
+           printf(" ......process %2d%% ", percent);
            printf("elapsed time: %.2f seconds (alpha: %.4f)\n", msec / 1000, _alpha);
            percent += 10; 
         };
