@@ -25,20 +25,21 @@ toks_grp <- tokens_group(toks)
 lis <- as.list(toks)
 lis_grp <- as.list(toks_grp)
 
-#feat <- names(topfeatures(dfm(toks), 20))
-feat <- c("people", "government", "us", "world", "country")
-doc <- tail(docnames(toks_grp))
+feat <- names(topfeatures(dfm(toks), 20))
+#feat <- c("people", "government", "us", "world", "country")
+doc <- tail(docnames(toks_grp), 20)
 
 test_that("Skip-gram models are similar", {
-    
-    wdv <- wordvector::word2vec(toks, dim = 50, iter = 5, min_count = 100, type = "skip-gram",
+    skip_on_cran()
+    set.seed(1234)
+    wdv <- wordvector::word2vec(toks, dim = 100, iter = 20, min_count = 0, type = "skip-gram",
                                 verbose = FALSE, threads = 1, sample = 0)
-    w2v <- word2vec::word2vec(lis, dim = 50, iter = 5, min_count = 100, type = "skip-gram",
+    w2v <- word2vec::word2vec(lis, dim = 100, iter = 20, min_count = 0, type = "skip-gram",
                               verbose = FALSE, threads = 1, sample = 0)
     
     expect_true(all(
-        jaccard(synonyms(wdv, feat, 100),
-                synonyms(w2v, feat, 100)) > 0.9
+        correlation(proxyC::simil(as.matrix(wdv)[feat,]),
+                    proxyC::simil(as.matrix(w2v)[feat,])) > 0.8
     ))
     
     dov <- wordvector::doc2vec(toks_grp, wdv)
@@ -51,15 +52,15 @@ test_that("Skip-gram models are similar", {
 })
 
 test_that("CBOW models are similar", {
-    
-    wdv <- wordvector::word2vec(toks, dim = 100, iter = 10, min_count = 100, type = "cbow",
+    skip_on_cran()
+    set.seed(1234)
+    wdv <- wordvector::word2vec(toks, dim = 100, iter = 20, min_count = 0, type = "cbow",
                                 verbose = FALSE, threads = 1, sample = 0)
-    w2v <- word2vec::word2vec(lis, dim = 100, iter = 10, min_count = 100, type = "cbow",
+    w2v <- word2vec::word2vec(lis, dim = 100, iter = 20, min_count = 0, type = "cbow",
                               verbose = FALSE, threads = 1, sample = 0)
-    
     expect_true(all(
-        jaccard(synonyms(wdv, feat, 100),
-                synonyms(w2v, feat, 100)) > 0.9
+        correlation(proxyC::simil(as.matrix(wdv)[feat,]),
+                    proxyC::simil(as.matrix(w2v)[feat,])) > 0.8
     ))
     
     dov <- wordvector::doc2vec(toks_grp, wdv)
@@ -70,3 +71,13 @@ test_that("CBOW models are similar", {
                     proxyC::simil(d2v[doc,])) > 0.8
     ))
 })
+
+# set.seed(1234)
+# wdv <- wordvector::word2vec(toks, dim = 50, iter = 10, min_count = 5, type = "skip-gram",
+#                             verbose = TRUE, threads = 1, sample = 0, negative = 100)
+# 
+# synonyms(wdv, feat, 10)
+# 
+# correlation(proxyC::simil(as.matrix(wdv)[feat,]),
+#             proxyC::simil(as.matrix(w2v)[feat,]))
+
