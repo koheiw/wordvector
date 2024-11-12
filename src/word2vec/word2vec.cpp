@@ -27,13 +27,13 @@ namespace w2v {
                       _trainProgressCallback)(_trainMatrix);
 
             std::size_t wordIndex = 0;
-            for (auto const &i : corpus->types) {
-                //Rcpp::Rcout << i << "\n";
-                auto &v = m_map[i];
-                v.resize(m_vectorSize);
+            for (auto const &type : corpus->types) {
+                //Rcpp::Rcout << type << "\n";
+                auto &vec = m_map[type];
+                vec.resize(m_vectorSize);
                 std::copy(&_trainMatrix[wordIndex * m_vectorSize],
                           &_trainMatrix[(wordIndex + 1) * m_vectorSize],
-                          &v[0]);
+                          &vec[0]);
                 wordIndex++;
             }
 
