@@ -60,90 +60,90 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
                    bool normalize = true) {
   
   
-  /*
-   uint16_t minWordFreq = 5; ///< discard words that appear less than minWordFreq times
-   uint16_t size = 100; ///< word vector size
-   uint8_t window = 5; ///< skip length between words
-   uint16_t expTableSize = 1000; ///< exp(x) / (exp(x) + 1) values lookup table size
-   uint8_t expValueMax = 6; ///< max value in the lookup table
-   float sample = 1e-3f; ///< threshold for occurrence of words
-   bool withHS = false; ///< use hierarchical softmax instead of negative sampling
-   uint8_t negative = 5; ///< negative examples number
-   uint8_t threads = 12; ///< train threads number
-   uint8_t iterations = 5; ///< train iterations
-   float alpha = 0.05f; ///< starting learn rate
-   bool withSG = false; ///< use Skip-Gram instead of CBOW
-   */
-  
-  texts_t texts = Rcpp::as<texts_t>(texts_);
-  types_t types = Rcpp::as<types_t>(types_);
-  
-  w2v::corpus_t corpus(texts, types);
-  corpus.setWordFreq();
+    /*
+    uint16_t minWordFreq = 5; ///< discard words that appear less than minWordFreq times
+    uint16_t size = 100; ///< word vector size
+    uint8_t window = 5; ///< skip length between words
+    uint16_t expTableSize = 1000; ///< exp(x) / (exp(x) + 1) values lookup table size
+    uint8_t expValueMax = 6; ///< max value in the lookup table
+    float sample = 1e-3f; ///< threshold for occurrence of words
+    bool withHS = false; ///< use hierarchical softmax instead of negative sampling
+    uint8_t negative = 5; ///< negative examples number
+    uint8_t threads = 12; ///< train threads number
+    uint8_t iterations = 5; ///< train iterations
+    float alpha = 0.05f; ///< starting learn rate
+    bool withSG = false; ///< use Skip-Gram instead of CBOW
+    */
+    
+    texts_t texts = Rcpp::as<texts_t>(texts_);
+    types_t types = Rcpp::as<types_t>(types_);
+    
+    w2v::corpus_t corpus(texts, types);
+    corpus.setWordFreq();
       
-  w2v::trainSettings_t ts;
-  ts.size = size;
-  ts.window = window;
-  ts.expTableSize = expTableSize;
-  ts.expValueMax = expValueMax;
-  ts.sample = sample;
-  ts.withHS = withHS;
-  ts.negative = negative;
-  ts.threads = threads;
-  ts.iterations = iterations;
-  ts.alpha = alpha;
-  ts.withSG = withSG;
-  ts.random = (uint32_t)(Rcpp::runif(1)[0] * std::numeric_limits<uint32_t>::max());
+    w2v::trainSettings_t ts;
+    ts.size = size;
+    ts.window = window;
+    ts.expTableSize = expTableSize;
+    ts.expValueMax = expValueMax;
+    ts.sample = sample;
+    ts.withHS = withHS;
+    ts.negative = negative;
+    ts.threads = threads;
+    ts.iterations = iterations;
+    ts.alpha = alpha;
+    ts.withSG = withSG;
+    ts.random = (uint32_t)(Rcpp::runif(1)[0] * std::numeric_limits<uint32_t>::max());
+    
+    w2v::w2vModel_t model;
+    bool trained;
   
-  w2v::w2vModel_t model;
-  bool trained;
-  
-  if (verbose) {
-    if (withSG) {
-      printf("Training Skip-gram model with %d dimensions\n", size);
+    if (verbose) {
+        if (withSG) {
+            printf("Training Skip-gram model with %d dimensions\n", size);
+        } else {
+            printf("Training CBOW model with %d dimensions\n", size);
+        }
+        if (withHS) {
+            printf(" ...Hierarchical Softmax in %d iterations\n", iterations);
+        } else {
+            printf(" ...Negative Sampling in %d iterations\n", iterations);
+        }
+        
+        auto start = std::chrono::high_resolution_clock::now();
+        int percent = 0;
+        trained = model.train(ts, corpus, [&start, &percent] (float _alpha, float _percent) {
+          if (_percent >= percent) {
+             auto end = std::chrono::high_resolution_clock::now();
+             auto diff = std::chrono::duration<double, std::milli>(end - start);
+             double msec = diff.count();
+             printf(" ......process %2d%% ", percent);
+             printf("elapsed time: %.2f seconds (alpha: %.4f)\n", msec / 1000, _alpha);
+             percent += 10; 
+          };
+        });
     } else {
-      printf("Training CBOW model with %d dimensions\n", size);
+        trained = model.train(ts, corpus, nullptr);
     }
-    if (withHS) {
-      printf(" ...Hierarchical Softmax in %d iterations\n", iterations);
-    } else {
-      printf(" ...Negative Sampling in %d iterations\n", iterations);
+    
+    bool success = true;
+    if (!trained) {
+        Rcpp::Rcout << "Training failed: " << model.errMsg() << std::endl;
+        success = false;
     }
-
-    auto start = std::chrono::high_resolution_clock::now();
-    int percent = 0;
-    trained = model.train(ts, corpus, [&start, &percent] (float _alpha, float _percent) {
-        if (_percent >= percent) {
-           auto end = std::chrono::high_resolution_clock::now();
-           auto diff = std::chrono::duration<double, std::milli>(end - start);
-           double msec = diff.count();
-           printf(" ......process %2d%% ", percent);
-           printf("elapsed time: %.2f seconds (alpha: %.4f)\n", msec / 1000, _alpha);
-           percent += 10; 
-        };
-    });
-  } else {
-    trained = model.train(ts, corpus, nullptr);
-  }
-  
-  bool success = true;
-  if (!trained) {
-    Rcpp::Rcout << "Training failed: " << model.errMsg() << std::endl;
-    success = false;
-  }
-  // NORMALISE UPFRONT - DIFFERENT THAN ORIGINAL CODE 
-  // - original code dumps data to disk, next imports it and during import normalisation happens after which we can do nearest calculations
-  // - the R wrapper only writes to disk at request so we need to normalise upfront in order to do directly nearest calculations
-  if (normalize) {
-    model.normalize();
+    // NORMALISE UPFRONT - DIFFERENT THAN ORIGINAL CODE 
+    // - original code dumps data to disk, next imports it and during import normalisation happens after which we can do nearest calculations
+    // - the R wrapper only writes to disk at request so we need to normalise upfront in order to do directly nearest calculations
+    if (normalize) {
+        model.normalize();
+        if (verbose)
+            printf(" ...normalizing vectors\n");
+    }
     if (verbose)
-      printf(" ...normalizing vectors\n");
-  }
-  if (verbose)
-    printf(" ...complete\n");
-  
-  // Return model + model information
-  Rcpp::List out = Rcpp::List::create(
+        printf(" ...complete\n");
+    
+    // Return model + model information
+    Rcpp::List out = Rcpp::List::create(
     Rcpp::Named("model") = as_matrix(model),
     //Rcpp::Named("model") = model,
     Rcpp::Named("vocabulary") = types.size(),
@@ -151,19 +151,19 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
     Rcpp::Named("error_log") = model.errMsg(),
     // NOTE: move to R
     Rcpp::Named("control") = Rcpp::List::create(
-      Rcpp::Named("dim") = size,
-      Rcpp::Named("window") = window,
-      Rcpp::Named("iter") = iterations,
-      Rcpp::Named("lr") = alpha,
-      Rcpp::Named("skipgram") = withSG,
-      Rcpp::Named("hs") = withHS,
-      Rcpp::Named("negative") = negative,
-      Rcpp::Named("sample") = sample,
-      Rcpp::Named("expTableSize") = expTableSize,
-      Rcpp::Named("expValueMax") = expValueMax
+        Rcpp::Named("dim") = size,
+        Rcpp::Named("window") = window,
+        Rcpp::Named("iter") = iterations,
+        Rcpp::Named("lr") = alpha,
+        Rcpp::Named("skipgram") = withSG,
+        Rcpp::Named("hs") = withHS,
+        Rcpp::Named("negative") = negative,
+        Rcpp::Named("sample") = sample,
+        Rcpp::Named("expTableSize") = expTableSize,
+        Rcpp::Named("expValueMax") = expValueMax
     )
-  );
-  out.attr("class") = "textmodel_word2vec";
-  return out;
+    );
+    out.attr("class") = "textmodel_word2vec";
+    return out;
 }
 
