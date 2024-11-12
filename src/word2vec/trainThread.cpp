@@ -58,8 +58,7 @@ namespace w2v {
             
             // for progressCallback
             auto wordsPerAllThreads = m_sharedData.trainSettings->iterations * m_sharedData.corpus->trainWords;
-            //auto wordsPerAlpha = wordsPerAllThreads / 10000;
-            auto wordsPerAlpha = wordsPerAllThreads / 100;
+            auto wordsPerAlpha = wordsPerAllThreads / 10000;
 
             for (std::size_t h = range.first; h <= range.second; ++h) {
 
