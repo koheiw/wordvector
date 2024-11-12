@@ -68,10 +68,10 @@ namespace w2v {
                     trainWords++;
                 }
             }
-            Rcpp::Rcout << "trainWords: " << trainWords << "\n";
-            Rcpp::Rcout << "totalWords: " << totalWords << "\n";
-            Rcpp::Rcout << "frequency.size(): " << frequency.size() << "\n";
-            Rcpp::Rcout << "types.size(): " << types.size() << "\n";
+            // Rcpp::Rcout << "trainWords: " << trainWords << "\n";
+            // Rcpp::Rcout << "totalWords: " << totalWords << "\n";
+            // Rcpp::Rcout << "frequency.size(): " << frequency.size() << "\n";
+            // Rcpp::Rcout << "types.size(): " << types.size() << "\n";
         }
     };
     

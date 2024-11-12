@@ -138,9 +138,11 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
   // - the R wrapper only writes to disk at request so we need to normalise upfront in order to do directly nearest calculations
   if (normalize) {
     model.normalize();
-    printf(" ...normalizing vectors\n");
+    if (verbose)
+      printf(" ...normalizing vectors\n");
   }
-  printf(" ...complete\n");
+  if (verbose)
+    printf(" ...complete\n");
   
   // Return model + model information
   Rcpp::List out = Rcpp::List::create(
