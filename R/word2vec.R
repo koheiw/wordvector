@@ -165,9 +165,7 @@ word2vec.tokens <- function(x,
                           threads = 1L,
                           ...){
     
-    #x <- lapply(x, as.character)
     type <- match.arg(type)
-    model <- file.path(tempdir(), "w2v.bin")
     #expTableSize <- 1000L
     #expValueMax <- 6L
     #expTableSize <- as.integer(expTableSize)
@@ -200,13 +198,17 @@ word2vec.tokens <- function(x,
 #' @return a matrix with the word vectors where the rownames are the words from the model vocabulary
 #' @export
 #' @seealso \code{\link{word2vec}}, \code{\link{read.word2vec}}
-#' @export
 #' @examples 
 #' path  <- system.file(package = "word2vec", "models", "example.bin")
 #' model <- read.word2vec(path)
 #' 
 #' embedding <- as.matrix(model)
 as.matrix.textmodel_word2vec <- function(x, ...){
+    return(x$model) 
+}
+
+#' @export
+as.matrix.textmodel_doc2vec <- function(x, ...){
     return(x$model) 
 }
 
@@ -225,8 +227,9 @@ doc2vec.tokens <- function(x, model = NULL, ...) {
     dfmt <- dfm(x)
     dfmt <- dfm_match(dfmt, rownames(wov))
     dov <- Matrix::tcrossprod(dfmt, t(wov)) # NOTE: consider using proxyC
-    dov <- dov / sqrt(Matrix::rowSums(dov ^ 2) / ncol(dov))
-    return(dov)
+    model$model <- dov / sqrt(Matrix::rowSums(dov ^ 2) / ncol(dov))
+    class(model) <- "textmodel_doc2vec"
+    return(model)
 }
 
 #' @export
