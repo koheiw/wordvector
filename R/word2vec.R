@@ -183,6 +183,7 @@ word2vec.tokens <- function(x,
     skipgram <- as.logical(type %in% "skip-gram")
     
     # NOTE: use tokens_xptr
+    #x <- as.tokenx_xptr(x)
     x <- tokens_trim(x, min_termfreq = min_count, termfreq_type = "count")
     result <- cpp_w2v(x, attr(x, "types"), 
                      size = dim, window = window,
@@ -234,8 +235,9 @@ doc2vec.tokens <- function(x, model = NULL, ...) {
 }
 
 #' @export
-synonyms <- function(model, terms, n = 10) {
+synonyms <- function(model, terms, n = 10) { # NOTE: consider changing to neighbors()
     mat <- as.matrix(model)
+    terms <- unlist(quanteda::pattern2fixed(terms, rownames(mat)))
     sapply(terms, function(term) {
         sim <- proxyC::simil(mat[term,,drop = FALSE], mat)
         head(names(sort(Matrix::colSums(sim), decreasing = TRUE)), n)
