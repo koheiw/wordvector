@@ -129,6 +129,24 @@ namespace w2v {
         inline std::size_t modelSize() const noexcept {return m_mapSize;}
         /// @returns error message
         inline std::string errMsg() const noexcept {return m_errMsg;}
+        
+        /// Normalise vectors
+        inline void normalize() {
+            for(auto &it : m_map) {
+                // normalize vector
+                auto &vec = it.second;
+                float ss = 0.0f;
+                for (auto const &v : vec) {
+                    ss += v * v;
+                }
+                if (ss <= 0.0f) 
+                    throw std::runtime_error("failed to normalize vectors");
+                float d = std::sqrt(ss / vec.size());
+                for (auto &v : vec) {
+                    v = v / d;
+                }
+            } 
+        }
     };
 
     /**
@@ -166,26 +184,6 @@ namespace w2v {
                    const corpus_t &_corpus,
                    trainProgressCallback_t _trainProgressCallback) noexcept;
 
-        /**
-         * Normalise vectors
-         */
-        inline void normalize() {
-            for(auto &it : m_map) {
-                // normalize vector
-                auto &v = it.second;
-                float med = 0.0f;
-                for (auto const &j : v) {
-                    med += j * j;
-                }
-                if (med <= 0.0f) {
-                    throw std::runtime_error("failed to normalize vectors");
-                }
-                med = std::sqrt(med / v.size());
-                for (auto &j : v) {
-                    j = j / med;
-                }
-            } 
-        }
     };
 }
 #endif // WORD2VEC_WORD2VEC_HPP
