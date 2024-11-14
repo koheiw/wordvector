@@ -4,6 +4,8 @@
 #include <chrono>
 #include <unordered_map>
 #include "word2vec/word2vec.hpp"
+#include "tokens.h"
+//using namespace quanteda;
 
 Rcpp::CharacterVector encode(std::vector<std::string> types){
     Rcpp::CharacterVector types_(types.size());
@@ -41,8 +43,11 @@ Rcpp::NumericMatrix as_matrix(w2v::w2vModel_t model) {
     return Rcpp::transpose(mat_);
 }
 
+//typedef XPtr<TokensObj> TokensPtr;
+
 // [[Rcpp::export]]
-Rcpp::List cpp_w2v(Rcpp::List texts_, 
+Rcpp::List cpp_w2v(//TokensPtr xptr,
+                   Rcpp::List texts_, 
                    Rcpp::CharacterVector types_, 
                    std::string modelFile = "", 
                    uint16_t size = 100,
@@ -86,6 +91,8 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
 
     texts_t texts = Rcpp::as<texts_t>(texts_);
     types_t types = Rcpp::as<types_t>(types_);
+    //texts_t texts = xptr->texts;
+    //types_t types = xptr->types;
     
     w2v::corpus_t corpus(texts, types);
     corpus.setWordFreq();
