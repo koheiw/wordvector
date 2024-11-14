@@ -1,6 +1,8 @@
+library(testthat)
 library(quanteda)
 library(wordvector)
 library(word2vec)
+options(wordvector_threads = 1)
 
 jaccard <- function(a, b) {
     mapply(function(x, y) {length(intersect(x, y)) / length(union(x, y))},
@@ -32,8 +34,9 @@ doc <- tail(docnames(toks_grp), 20)
 test_that("Skip-gram models are similar", {
     skip_on_cran()
     set.seed(1234)
+    
     wdv <- wordvector::word2vec(toks, dim = 100, iter = 20, min_count = 0, type = "skip-gram",
-                                verbose = FALSE, threads = 1, sample = 0)
+                                verbose = FALSE, sample = 0)
     w2v <- word2vec::word2vec(lis, dim = 100, iter = 20, min_count = 0, type = "skip-gram",
                               verbose = FALSE, threads = 1, sample = 0)
     
@@ -42,7 +45,7 @@ test_that("Skip-gram models are similar", {
                     proxyC::simil(as.matrix(w2v)[feat,])) > 0.8
     ))
     
-    dov <- wordvector::doc2vec(toks_grp, wdv)
+    dov <- as.matrix(wordvector::doc2vec(toks_grp, wdv))
     d2v <- word2vec::doc2vec(w2v, newdata = sapply(lis_grp, paste, collapse = " "))
     
     expect_true(all(
@@ -54,8 +57,9 @@ test_that("Skip-gram models are similar", {
 test_that("CBOW models are similar", {
     skip_on_cran()
     set.seed(1234)
+    
     wdv <- wordvector::word2vec(toks, dim = 100, iter = 20, min_count = 0, type = "cbow",
-                                verbose = FALSE, threads = 1, sample = 0)
+                                verbose = FALSE, sample = 0)
     w2v <- word2vec::word2vec(lis, dim = 100, iter = 20, min_count = 0, type = "cbow",
                               verbose = FALSE, threads = 1, sample = 0)
     expect_true(all(
@@ -63,7 +67,7 @@ test_that("CBOW models are similar", {
                     proxyC::simil(as.matrix(w2v)[feat,])) > 0.8
     ))
     
-    dov <- wordvector::doc2vec(toks_grp, wdv)
+    dov <- as.matrix(wordvector::doc2vec(toks_grp, wdv))
     d2v <- word2vec::doc2vec(w2v, newdata = sapply(lis_grp, paste, collapse = " "))
     
     expect_true(all(
@@ -80,4 +84,6 @@ test_that("CBOW models are similar", {
 # 
 # correlation(proxyC::simil(as.matrix(wdv)[feat,]),
 #             proxyC::simil(as.matrix(w2v)[feat,]))
+
+
 
