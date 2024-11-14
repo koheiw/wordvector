@@ -237,8 +237,9 @@ doc2vec.tokens <- function(x, model = NULL, ...) {
 #' @examples
 #' analogy(mod, ~ japan - tokyo)
 #' @export
-analogy <- function(model, formula, n = 10) {
+analogy <- function(model, formula, n = 10, method = c("cosine", "dot")) {
     
+    method <- match.arg(method)
     emb <- t(as.matrix(model))
     if (!identical(class(formula), "formula"))
         stop("The object for 'formula' should be a formula")
@@ -262,11 +263,15 @@ analogy <- function(model, formula, n = 10) {
     }
     
     v <- emb[,names(weight), drop = FALSE] %*% weight
-    s <- Matrix::rowSums(proxyC::simil(emb, v, margin = 2, use_nan = TRUE))
-    # without normalization (from word2vec)
-    # suppressWarnings({
-    #     s <- rowSums(sqrt(crossprod(emb, v) / nrow(emb))) 
-    # })
+    if (method == "dot") {
+        #without normalization (from word2vec)
+        suppressWarnings({
+            s <- rowSums(sqrt(crossprod(emb, v) / nrow(emb)))
+        })
+    } else {
+        # NOTE: consider exposing the method argument
+        s <- Matrix::rowSums(proxyC::simil(emb, v, margin = 2, use_nan = TRUE))
+    }
     s <- head(sort(s, decreasing = TRUE), n)
     res <- data.frame(word = names(s), 
                       cosine = s, row.names = NULL)
