@@ -14,7 +14,7 @@
 #include <vector>
 #include <unordered_map>
 #include <queue>
-#include <memory>
+//#include <memory>
 #include <functional>
 #include <cmath>
 #include <stdexcept>
@@ -30,7 +30,7 @@ typedef std::vector<size_t> frequency_t;
 namespace w2v {
     
     /**
-     * @brief corpus stores tokens and stopwords     
+     * @brief corpus stores tokens
      */    
     class corpus_t final {
     public:
@@ -40,10 +40,10 @@ namespace w2v {
         size_t totalWords;
         size_t trainWords;
         
-        // Constructors
+        // constructors
         corpus_t(): texts() {}
         corpus_t(texts_t _texts, types_t _types): 
-             texts(_texts), types(_types) {}
+                 texts(_texts), types(_types) {}
 
         void setWordFreq() {
             
@@ -96,79 +96,6 @@ namespace w2v {
     };
 
     /**
-     * @brief base class of a vector itself and vector operations
-     *
-     * w2vBase class implements basic vector operations such us "+", "-", "=" and "=="
-    */
-    // class vector_t: public std::vector<float> {
-    // public:
-    //     vector_t(): std::vector<float>() {}
-        /// Constructs an empty vector with size _size
-        //explicit vector_t(std::size_t _size): std::vector<float>(_size, 0.0f) {}
-
-        /// Constructs a vector from std::vector
-        //explicit vector_t(const std::vector<float> &_vector): std::vector<float>(_vector) {}
-
-        /// @returns summarized w2vBase object
-        // vector_t &operator+=(const vector_t &_from) {
-        //     if (this != &_from) {
-        //         assert(size() == _from.size());
-        // 
-        //         for (std::size_t i = 0; i <  size(); ++i) {
-        //             (*this)[i] += _from[i];
-        //         }
-        //         float med = 0.0f;
-        //         for (auto const &i:(*this)) {
-        //             med += i * i;
-        //         }
-        //         if (med <= 0.0f) {
-        //             throw std::runtime_error("word2vec: can not create vector");
-        //         }
-        //         med = std::sqrt(med / this->size());
-        //         for (auto &i:(*this)) {
-        //             i /= med;
-        //         }
-        //     }
-        // 
-        //     return *this;
-        // }
-
-        /// @returns substracted w2vBase object
-        // vector_t &operator-=(const vector_t &_from) {
-        //     if (this != &_from) {
-        //         assert(size() == _from.size());
-        // 
-        //         for (std::size_t i = 0; i < size(); ++i) {
-        //             (*this)[i] -= _from[i];
-        //         }
-        //         float med = 0.0f;
-        //         for (auto const &i:(*this)) {
-        //             med += i * i;
-        //         }
-        //         if (med <= 0.0f) {
-        //             throw std::runtime_error("word2vec: can not create vector");
-        //         }
-        //         med = std::sqrt(med / this->size());
-        //         for (auto &i:(*this)) {
-        //             i /= med;
-        //         }
-        //     }
-        // 
-        //     return *this;
-        // }
-
-        // friend vector_t operator+(vector_t _what, const vector_t &_with) {
-        //     _what += _with;
-        //     return _what;
-        // }
-        // 
-        // friend vector_t operator-(vector_t _what, const vector_t &_with) {
-        //     _what -= _with;
-        //     return _what;
-        // }
-    //};
-
-    /**
      * @brief base class of a vectors model
      *
      * Model is a storage of pairs key&vector, it implements some basic functionality related to vectors storage -
@@ -185,15 +112,7 @@ namespace w2v {
         std::size_t m_mapSize = 0;
         mutable std::string m_errMsg;
 
-        const std::string wrongFormatErrMsg = "model: wrong model file format";
-
-    private:
-        struct nearestCmp_t final {
-            inline bool operator()(const std::pair<key_t, float> &_left,
-                                   const std::pair<key_t, float> &_right) const noexcept {
-                return _left.second > _right.second;
-            }
-        };
+        //const std::string wrongFormatErrMsg = "model: wrong model file format";
 
     public:
         /// constructs a model
@@ -203,20 +122,6 @@ namespace w2v {
 
         /// Direct access to the word-vector map
         const map_t &map() {return m_map;}
-
-        /**
-         * Vector access by key value
-         * @param _key key value uniquely identifying vector in model
-         * @returns pointer to the vector or nullptr if no such key found
-        */
-        // inline const vector_t *vector(const key_t &_key) const noexcept {
-        //     auto const &i = m_map.find(_key);
-        //     if (i != m_map.end()) {
-        //         return &i->second;
-        //     }
-        // 
-        //     return nullptr;
-        // }
 
         /// @returns vector size of model
         inline uint16_t vectorSize() const noexcept {return m_vectorSize;}
