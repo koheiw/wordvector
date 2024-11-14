@@ -234,12 +234,55 @@ doc2vec.tokens <- function(x, model = NULL, ...) {
     return(model)
 }
 
+#' @examples
+#' analogy(mod, ~ japan - tokyo)
+#' @export
+analogy <- function(model, formula, n = 10) {
+    
+    emb <- t(as.matrix(model))
+    if (!identical(class(formula), "formula"))
+        stop("The object for 'formula' should be a formula")
+    
+    f <- tail(as.character(formula), 1)
+    match <- stringi::stri_match_all_regex(f, "([+-] )?([\\w]+)")[[1]]
+    match[,2] <- stringi::stri_trim(match[,2])
+    match[,2][is.na(match[,2])] <- "+"
+    weight <- numeric()
+    for (i in seq_len(nrow(match))) {
+        m <- match[i,]
+        if (!m[3] %in% colnames(emb)) {
+            warning('"', m[3],  '" is not found')
+            next
+        }
+        if (m[2] == "-") {
+            weight <- c(weight, structure(-1.0, names = m[3]))
+        } else if (m[2] == "+") {
+            weight <- c(weight, structure(1.0, names = m[3]))
+        }
+    }
+    
+    v <- emb[,names(weight), drop = FALSE] %*% weight
+    s <- Matrix::rowSums(proxyC::simil(emb, v, margin = 2, use_nan = TRUE))
+    # without normalization (from word2vec)
+    # suppressWarnings({
+    #     s <- rowSums(sqrt(crossprod(emb, v) / nrow(emb))) 
+    # })
+    s <- head(sort(s, decreasing = TRUE), n)
+    res <- data.frame(word = names(s), 
+                      cosine = s, row.names = NULL)
+    attr(res, "formula") <- formula
+    attr(res, "weight") <- weight
+    return(res)
+}
+
+
+
 #' @export
 synonyms <- function(model, terms, n = 10) { # NOTE: consider changing to neighbors()
-    mat <- as.matrix(model)
-    terms <- unlist(quanteda::pattern2fixed(terms, rownames(mat)))
+    emb <- as.matrix(model)
+    terms <- intersect(terms, rownames(emb))
+    sim <- proxyC::simil(emb[terms,,drop = FALSE], emb)
     sapply(terms, function(term) {
-        sim <- proxyC::simil(mat[term,,drop = FALSE], mat)
-        head(names(sort(Matrix::colSums(sim), decreasing = TRUE)), n)
+        head(names(sort(Matrix::colSums(sim[term,,drop = FALSE]), decreasing = TRUE)), n)
     })
 }
