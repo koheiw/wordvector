@@ -224,14 +224,18 @@ doc2vec <- function(...) {
 #' @export
 #' @method doc2vec tokens
 doc2vec.tokens <- function(x, model = NULL, ...) {
-    if (is.null(model))
-        model <- word2vec(x, ...)
-    wov <- as.matrix(model)
-    dfmt <- dfm(x)
-    dfmt <- dfm_match(dfmt, rownames(wov))
-    dov <- Matrix::tcrossprod(dfmt, t(wov)) # NOTE: consider using proxyC
-    model$model <- dov / sqrt(Matrix::rowSums(dov ^ 2) / ncol(dov))
-    class(model) <- "textmodel_docvector"
+    if (is.null(model)) {
+        result <- word2vec(x, ...)
+    } else {
+        if (!identical(class(model), "textmodel_wordvector"))
+            stop("The object for 'model' must be a trained textmodel_wordvector")
+        result <- model
+    }
+    wov <- as.matrix(result)
+    dfmt <- dfm_match(dfm(x, remove_padding = TRUE), rownames(wov))
+    dov <- Matrix::tcrossprod(dfmt, t(wov)) # NOTE: consider using proxyC::prod
+    result$model <- dov / sqrt(Matrix::rowSums(dov ^ 2) / ncol(dov))
+    class(result) <- "textmodel_docvector"
     result$call <- try(match.call(sys.function(-1), call = sys.call(-1)), silent = TRUE)
     return(result)
 }
