@@ -12,9 +12,13 @@ lsa.tokens <- function(x, dim = 50, min_count = 5L, engine = c("RSpectra", "irlb
     x <- tokens_trim(x, min_termfreq = min_count, termfreq_type = "count")
     x <- dfm(x, remove_padding = TRUE)
     if (engine %in% c("RSpectra", "irlba", "rsvd")) {
-        if (verbose)
-            cat(sprintf("Performing SVD by %s...\n", engine))
+        if (verbose) {
+            cat(sprintf("Performing SVD into %d dimensions\n", dim))
+            cat(sprintf("...using %s\n", engine))
+        }
         svd <- get_svd(x, dim, engine, weight, ...)
+        if (verbose)
+            cat("...complete\n")
         wov <- svd$v
         rownames(wov) <- featnames(x)
     }
