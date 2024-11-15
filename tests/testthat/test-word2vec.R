@@ -13,7 +13,7 @@ wov <- word2vec(toks, dim = 50, iter = 10, min_count = 0, sample = 0)
 dov <- doc2vec(toks_grp, wov)
 dov_nm <- doc2vec(toks_grp, min_count = 10, sample = 0)
 
-test_that("word2vec words", {
+test_that("word2vec works", {
     
     # wordvector
     expect_equal(
@@ -29,6 +29,16 @@ test_that("word2vec words", {
         wov$min_count, 0L
     )
     
+    expect_output(
+        print(wov),
+        paste(
+        "",
+        "Call:",
+        "word2vec(x = toks, dim = 50, min_count = 0, iter = 10, sample = 0)",
+        "",
+        "50 dimensions; 9,280 words.", sep = "\n"), fixed = TRUE
+    )
+    
     # docvector with model
     expect_equal(
         dim(dov$model), c(59, 50)
@@ -41,6 +51,16 @@ test_that("word2vec words", {
     )
     expect_equal(
         dov$min_count, 0L
+    )
+    
+    expect_output(
+        print(dov),
+        paste(
+            "",
+            "Call:",
+            "doc2vec(toks_grp, wov)",
+            "",
+            "50 dimensions; 59 documents.", sep = "\n"), fixed = TRUE
     )
     
     # docvector without model
@@ -108,3 +128,7 @@ test_that("doc2vec works with different objects", {
         "The object for 'model' must be a trained textmodel_wordvector"
     )
 })
+
+
+print(wov)
+

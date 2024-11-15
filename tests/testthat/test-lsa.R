@@ -29,6 +29,16 @@ test_that("word2vec words", {
         wov$min_count, 0L
     )
     
+    expect_output(
+        print(wov),
+        paste(
+            "",
+            "Call:",
+            "lsa(x = toks, dim = 50, min_count = 0, sample = 0)",
+            "",
+            "50 dimensions; 9,280 words.", sep = "\n"), fixed = TRUE
+    )
+    
     # docvector with model
     expect_equal(
         dim(dov$model), c(59, 50)
@@ -41,6 +51,16 @@ test_that("word2vec words", {
     )
     expect_equal(
         dov$min_count, 0L
+    )
+    
+    expect_output(
+        print(dov),
+        paste(
+            "",
+            "Call:",
+            "doc2vec(toks_grp, wov)",
+            "",
+            "50 dimensions; 59 documents.", sep = "\n"), fixed = TRUE
     )
     
     # docvector without model

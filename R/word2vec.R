@@ -194,6 +194,35 @@ word2vec.tokens <- function(x, dim = 50, type = c("cbow", "skip-gram"),
     return(result)
 }
 
+#' Print method for trained word vectors
+#' @param x for print method, the object to be printed
+#' @param ... unused
+#' @method print textmodel_wordvector
+#' @keywords internal
+#' @export
+print.textmodel_wordvector <- function(x, ...) {
+    cat("\nCall:\n")
+    print(x$call)
+    cat("\n", prettyNum(x$dim, big.mark = ","), " dimensions; ",
+        prettyNum(nrow(x$model), big.mark = ","), " words.",
+        "\n", sep = "")
+}
+
+#' Print method for trained document vectors
+#' @param x for print method, the object to be printed
+#' @param ... unused
+#' @method print textmodel_docvector
+#' @keywords internal
+#' @export
+print.textmodel_docvector <- function(x, ...) {
+    cat("\nCall:\n")
+    print(x$call)
+    cat("\n", prettyNum(x$dim, big.mark = ","), " dimensions; ",
+        prettyNum(nrow(x$model), big.mark = ","), " documents.",
+"\n", sep = "")
+}
+
+
 #' @title Get the word vectors of a word2vec model
 #' @description Get the word vectors of a word2vec model as a dense matrix.
 #' @param x a word2vec model as returned by \code{\link{word2vec}} or \code{\link{read.word2vec}}

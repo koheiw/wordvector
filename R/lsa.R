@@ -1,6 +1,12 @@
 #' @export
 lsa <- function(x, dim = 50, min_count = 5L, engine = c("RSpectra", "irlba", "rsvd"), 
                 weight = "count", verbose = FALSE, ...) {
+    UseMethod("lsa")   
+}
+
+#' @export
+lsa.tokens <- function(x, dim = 50, min_count = 5L, engine = c("RSpectra", "irlba", "rsvd"), 
+                       weight = "count", verbose = FALSE, ...) {
     
     engine <- match.arg(engine)
     x <- tokens_trim(x, min_termfreq = min_count, termfreq_type = "count")
@@ -14,6 +20,7 @@ lsa <- function(x, dim = 50, min_count = 5L, engine = c("RSpectra", "irlba", "rs
     }
     result <- list(
         model = wov,
+        dim = dim,
         min_count = min_count,
         engine = engine,
         weight = weight,
