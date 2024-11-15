@@ -9,24 +9,24 @@ toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>%
     tokens_tolower()
 toks_grp <- tokens_group(toks)
 
-wdv <- lsa(toks, dim = 50, min_count = 0, sample = 0)
-dov <- doc2vec(toks_grp, wdv)
+wov <- lsa(toks, dim = 50, min_count = 0, sample = 0)
+dov <- doc2vec(toks_grp, wov)
 #dov_nm <- doc2vec(toks_grp, min_count = 10, sample = 0)
 
 test_that("word2vec words", {
     
     # wordvector
     expect_equal(
-        class(wdv), "textmodel_wordvector"
+        class(wov), "textmodel_wordvector"
     )
     expect_equal(
-        dim(wdv$model), c(9280, 50)
+        dim(wov$model), c(9280, 50)
     )
     expect_equal(
-        wdv$weight, "count"
+        wov$weight, "count"
     )
     expect_equal(
-        wdv$min_count, 0L
+        wov$min_count, 0L
     )
     
     # docvector with model
@@ -60,13 +60,13 @@ test_that("word2vec words", {
 
 test_that("analogy works", {
     
-    ana1 <- analogy(wdv, ~ us)
+    ana1 <- analogy(wov, ~ us)
     expect_true(ana1$word[1] == "us")
     expect_true(ana1$similarity[1] == 1.0)
     expect_identical(attr(ana1, "weight"), 
                      c("us" = 1))
     
-    ana2 <- analogy(wdv, ~ people - us)
+    ana2 <- analogy(wov, ~ people - us)
     expect_true(ana2$word[1] != "us")
     expect_true(ana2$similarity[1] < 1.0)
     expect_identical(attr(ana2, "weight"), 
@@ -76,14 +76,14 @@ test_that("analogy works", {
 
 test_that("synonyms works", {
     
-    syno1 <- synonyms(wdv, c("us"))
+    syno1 <- synonyms(wov, c("us"))
     expect_true(is.matrix(syno1))
     expect_identical(
         syno1[1,],
         c("us" = "us")
     )
     
-    syno2 <- synonyms(wdv, c("us", "people"))
+    syno2 <- synonyms(wov, c("us", "people"))
     expect_true(is.matrix(syno2))
     expect_identical(
         syno2[1,],
