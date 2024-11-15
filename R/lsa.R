@@ -35,8 +35,16 @@ lsa.tokens <- function(x, dim = 50, min_count = 5L, engine = c("RSpectra", "irlb
     return(result)
 }
 
-get_svd <- function(x, k, engine, weight = "count", ...) {
-    x <- quanteda::dfm_weight(x, scheme = weight)
+get_svd <- function(x, k, engine, weight = "count", reduce = FALSE, ...) {
+    if (reduce) {
+        x <- quanteda::dfm_weight(x, weights = 1 / sqrt(featfreq(x)))
+    } else {
+        if (weight == "sqrt") {
+            x@x <- sqrt(x@x)
+        } else {
+            x <- quanteda::dfm_weight(x, scheme = weight)
+        }
+    }
     if (engine == "RSpectra") {
         result <- RSpectra::svds(as(x, "dgCMatrix"), k = k, nu = 0, nv = k, ...)
     } else if (engine == "rsvd") {
