@@ -117,11 +117,10 @@
 #' nn
 #' 
 #' \dontshow{\} # End of main if statement running only if the required packages are installed}
-word2vec <- function(x, 
-                     type = c("cbow", "skip-gram"),
-                     dim = 50, window = ifelse(type == "cbow", 5L, 10L), 
-                     iter = 5L, lr = 0.05, hs = FALSE, negative = 5L, sample = 0.001, min_count = 5L, 
-                     ...) {
+word2vec <- function(x, dim = 50, type = c("cbow", "skip-gram"),
+                     min_count = 5L, window = ifelse(type == "cbow", 5L, 10L), 
+                     iter = 5L, lr = 0.05, hs = FALSE, negative = 5L, 
+                     sample = 0.001, verbose = FALSE, ...) {
     UseMethod("word2vec")
 }
 
@@ -158,8 +157,8 @@ word2vec <- function(x,
 #' \dontshow{\} # End of main if statement running only if the required packages are installed}
 word2vec.tokens <- function(x, dim = 50, type = c("cbow", "skip-gram"), 
                             min_count = 5L, window = ifelse(type == "cbow", 5L, 10L), 
-                            iter = 5L, lr = 0.05, hs = FALSE, negative = 5L, sample = 0.001, 
-                            ...){
+                            iter = 5L, lr = 0.05, hs = FALSE, negative = 5L, 
+                            sample = 0.001, verbose = FALSE, ...) {
     
     type <- match.arg(type)
     #expTableSize <- 1000L
@@ -185,7 +184,9 @@ word2vec.tokens <- function(x, dim = 50, type = c("cbow", "skip-gram"),
                      size = dim, window = window,
                      sample = sample, withHS = hs, negative = negative, 
                      threads = get_threads(), iterations = iter,
-                     alpha = lr, withSG = skipgram, ...)
+                     alpha = lr, withSG = skipgram, verbose = verbose, ...)
+    if (!is.null(result$message))
+        stop("Failed to train word2vec (", result$message, ")")
     result$type <- type
     result$min_count <- min_count
     result$concatenator <- meta(x, field = "concatenator", type = "object")
@@ -232,7 +233,7 @@ doc2vec.tokens <- function(x, model = NULL, ...) {
     model$model <- dov / sqrt(Matrix::rowSums(dov ^ 2) / ncol(dov))
     class(model) <- "textmodel_docvector"
     result$call <- try(match.call(sys.function(-1), call = sys.call(-1)), silent = TRUE)
-    return(model)
+    return(result)
 }
 
 #' @examples
