@@ -6,26 +6,27 @@
 \usage{
 word2vec(
   x,
-  type = c("cbow", "skip-gram"),
   dim = 50,
+  type = c("cbow", "skip-gram"),
+  min_count = 5L,
   window = ifelse(type == "cbow", 5L, 10L),
   iter = 5L,
   lr = 0.05,
   hs = FALSE,
   negative = 5L,
   sample = 0.001,
-  min_count = 5L,
-  stopwords = character(),
-  threads = 1L,
+  verbose = FALSE,
   ...
 )
 }
 \arguments{
 \item{x}{a character vector with text or the path to the file on disk containing training data or a list of tokens. See the examples.}
 
+\item{dim}{dimension of the word vectors. Defaults to 50.}
+
 \item{type}{the type of algorithm to use, either 'cbow' or 'skip-gram'. Defaults to 'cbow'}
 
-\item{dim}{dimension of the word vectors. Defaults to 50.}
+\item{min_count}{integer indicating the number of time a word should occur to be considered as part of the training vocabulary. Defaults to 5.}
 
 \item{window}{skip length between words. Defaults to 5.}
 
@@ -39,13 +40,11 @@ word2vec(
 
 \item{sample}{threshold for occurrence of words. Defaults to 0.001}
 
-\item{min_count}{integer indicating the number of time a word should occur to be considered as part of the training vocabulary. Defaults to 5.}
+\item{...}{further arguments passed on to the methods \code{\link{word2vec.character}}, \code{\link{word2vec.list}} as well as the C++ function \code{w2v_train} - for expert use only}
 
 \item{stopwords}{a character vector of stopwords to exclude from training}
 
 \item{threads}{number of CPU threads to use. Defaults to 1.}
-
-\item{...}{further arguments passed on to the methods \code{\link{word2vec.character}}, \code{\link{word2vec.list}} as well as the C++ function \code{w2v_train} - for expert use only}
 }
 \value{
 an object of class \code{w2v_trained} which is a list with elements 
