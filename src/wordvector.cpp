@@ -58,7 +58,7 @@ Rcpp::NumericMatrix as_matrix(w2v::w2vModel_t model) {
  uint8_t iterations = 5; ///< train iterations
  float alpha = 0.05f; ///< starting learn rate
  bool withSG = false; ///< use Skip-Gram instead of CBOW
- */
+*/
 
 // [[Rcpp::export]]
 Rcpp::List cpp_w2v(Rcpp::List texts_, 
