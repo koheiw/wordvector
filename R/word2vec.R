@@ -178,7 +178,7 @@ word2vec.tokens <- function(x, dim = 50, type = c("cbow", "skip-gram"),
     lr <- as.numeric(lr)
     skipgram <- as.logical(type %in% "skip-gram")
     
-    # NOTE: use tokens_xptr
+    # NOTE: use tokens_xptr?
     #x <- as.tokenx_xptr(x)
     x <- tokens_trim(x, min_termfreq = min_count, termfreq_type = "count")
     result <- cpp_w2v(as.tokens(x), attr(x, "types"), 
@@ -231,6 +231,7 @@ doc2vec.tokens <- function(x, model = NULL, ...) {
     dov <- Matrix::tcrossprod(dfmt, t(wov)) # NOTE: consider using proxyC
     model$model <- dov / sqrt(Matrix::rowSums(dov ^ 2) / ncol(dov))
     class(model) <- "textmodel_docvector"
+    result$call <- try(match.call(sys.function(-1), call = sys.call(-1)), silent = TRUE)
     return(model)
 }
 
@@ -264,7 +265,6 @@ analogy <- function(model, formula, n = 10, method = c("cosine", "dot")) {
     
     v <- emb[,names(weight), drop = FALSE] %*% weight
     if (method == "dot") {
-        #without normalization (from word2vec)
         suppressWarnings({
             s <- rowSums(sqrt(crossprod(emb, v) / nrow(emb)))
         })
