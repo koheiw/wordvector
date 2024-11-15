@@ -157,24 +157,33 @@ Rcpp::List cpp_w2v(//TokensPtr xptr,
     Rcpp::List out = Rcpp::List::create(
     Rcpp::Named("model") = as_matrix(model),
     //Rcpp::Named("model") = model,
-    Rcpp::Named("vocabulary") = types.size(),
-    Rcpp::Named("success") = success,
-    Rcpp::Named("error_log") = model.errMsg(),
+    //Rcpp::Named("vocabulary") = types.size(),
+    //Rcpp::Named("success") = success,
+    //Rcpp::Named("error_log") = model.errMsg(),
+    Rcpp::Named("dim") = size,
+    Rcpp::Named("type") = "", // placeholder 
+    Rcpp::Named("min_count") = 0L, // placeholder 
+    Rcpp::Named("window") = window,
+    Rcpp::Named("iter") = iterations,
+    Rcpp::Named("lr") = alpha,
+    Rcpp::Named("hs") = withHS,
+    Rcpp::Named("negative") = negative,
+    Rcpp::Named("sample") = sample
     // NOTE: move to R
-    Rcpp::Named("control") = Rcpp::List::create(
-        Rcpp::Named("dim") = size,
-        Rcpp::Named("window") = window,
-        Rcpp::Named("iter") = iterations,
-        Rcpp::Named("lr") = alpha,
-        Rcpp::Named("skipgram") = withSG,
-        Rcpp::Named("hs") = withHS,
-        Rcpp::Named("negative") = negative,
-        Rcpp::Named("sample") = sample,
-        Rcpp::Named("expTableSize") = expTableSize,
-        Rcpp::Named("expValueMax") = expValueMax
-    )
+    // Rcpp::Named("control") = Rcpp::List::create(
+    //     //Rcpp::Named("dim") = size,
+    //     //Rcpp::Named("window") = window,
+    //     //Rcpp::Named("iter") = iterations,
+    //     //Rcpp::Named("lr") = alpha,
+    //     //Rcpp::Named("skipgram") = withSG,
+    //     //Rcpp::Named("hs") = withHS,
+    //     //Rcpp::Named("negative") = negative,
+    //     //Rcpp::Named("sample") = sample,
+    //     //Rcpp::Named("expTableSize") = expTableSize,
+    //     //Rcpp::Named("expValueMax") = expValueMax
+    // )
     );
-    out.attr("class") = "textmodel_word2vec";
+    out.attr("class") = "textmodel_wordvector";
     return out;
 }
 

@@ -121,8 +121,6 @@ word2vec <- function(x,
                      type = c("cbow", "skip-gram"),
                      dim = 50, window = ifelse(type == "cbow", 5L, 10L), 
                      iter = 5L, lr = 0.05, hs = FALSE, negative = 5L, sample = 0.001, min_count = 5L, 
-                     stopwords = character(),
-                     threads = 1L,
                      ...) {
     UseMethod("word2vec")
 }
@@ -158,12 +156,10 @@ word2vec <- function(x,
 #' modelb <- word2vec(x = txt, dim = 15, iter = 20, split = c(" \n\r", "\n\r"))
 #' all.equal(as.matrix(modela), as.matrix(modelb))
 #' \dontshow{\} # End of main if statement running only if the required packages are installed}
-word2vec.tokens <- function(x,
-                          type = c("cbow", "skip-gram"),
-                          dim = 50, window = ifelse(type == "cbow", 5L, 10L), 
-                          iter = 5L, lr = 0.05, hs = FALSE, negative = 5L, sample = 0.001, min_count = 5L, 
-                          threads = 1L,
-                          ...){
+word2vec.tokens <- function(x, dim = 50, type = c("cbow", "skip-gram"), 
+                            min_count = 5L, window = ifelse(type == "cbow", 5L, 10L), 
+                            iter = 5L, lr = 0.05, hs = FALSE, negative = 5L, sample = 0.001, 
+                            ...){
     
     type <- match.arg(type)
     #expTableSize <- 1000L
@@ -177,7 +173,7 @@ word2vec.tokens <- function(x,
     sample <- as.numeric(sample)
     hs <- as.logical(hs)
     negative <- as.integer(negative)
-    threads <- as.integer(threads)
+    #threads <- as.integer(threads)
     iter <- as.integer(iter)
     lr <- as.numeric(lr)
     skipgram <- as.logical(type %in% "skip-gram")
@@ -185,11 +181,15 @@ word2vec.tokens <- function(x,
     # NOTE: use tokens_xptr
     #x <- as.tokenx_xptr(x)
     x <- tokens_trim(x, min_termfreq = min_count, termfreq_type = "count")
-    result <- cpp_w2v(x, attr(x, "types"), 
+    result <- cpp_w2v(as.tokens(x), attr(x, "types"), 
                      size = dim, window = window,
                      sample = sample, withHS = hs, negative = negative, 
-                     threads = threads, iterations = iter,
+                     threads = get_threads(), iterations = iter,
                      alpha = lr, withSG = skipgram, ...)
+    result$type <- type
+    result$min_count <- min_count
+    result$concatenator <- meta(x, field = "concatenator", type = "object")
+    result$call <- try(match.call(sys.function(-1), call = sys.call(-1)), silent = TRUE)
     return(result)
 }
 
@@ -205,12 +205,12 @@ word2vec.tokens <- function(x,
 #' model <- read.word2vec(path)
 #' 
 #' embedding <- as.matrix(model)
-as.matrix.textmodel_word2vec <- function(x, ...){
+as.matrix.textmodel_wordvector <- function(x, ...){
     return(x$model) 
 }
 
 #' @export
-as.matrix.textmodel_doc2vec <- function(x, ...){
+as.matrix.textmodel_docvector <- function(x, ...){
     return(x$model) 
 }
 
@@ -230,7 +230,7 @@ doc2vec.tokens <- function(x, model = NULL, ...) {
     dfmt <- dfm_match(dfmt, rownames(wov))
     dov <- Matrix::tcrossprod(dfmt, t(wov)) # NOTE: consider using proxyC
     model$model <- dov / sqrt(Matrix::rowSums(dov ^ 2) / ncol(dov))
-    class(model) <- "textmodel_doc2vec"
+    class(model) <- "textmodel_docvector"
     return(model)
 }
 
@@ -274,7 +274,7 @@ analogy <- function(model, formula, n = 10, method = c("cosine", "dot")) {
     }
     s <- head(sort(s, decreasing = TRUE), n)
     res <- data.frame(word = names(s), 
-                      cosine = s, row.names = NULL)
+                      similarity = s, row.names = NULL)
     attr(res, "formula") <- formula
     attr(res, "weight") <- weight
     return(res)
