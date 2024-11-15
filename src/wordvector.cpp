@@ -2,7 +2,9 @@
 //#include <iostream>
 //#include <iomanip>
 #include <chrono>
+#include <thread>
 #include <unordered_map>
+#include <mutex>
 #include "word2vec/word2vec.hpp"
 #include "tokens.h"
 //using namespace quanteda;
@@ -43,13 +45,24 @@ Rcpp::NumericMatrix as_matrix(w2v::w2vModel_t model) {
     return Rcpp::transpose(mat_);
 }
 
-//typedef XPtr<TokensObj> TokensPtr;
+/*
+ uint16_t minWordFreq = 5; ///< discard words that appear less than minWordFreq times
+ uint16_t size = 100; ///< word vector size
+ uint8_t window = 5; ///< skip length between words
+ uint16_t expTableSize = 1000; ///< exp(x) / (exp(x) + 1) values lookup table size
+ uint8_t expValueMax = 6; ///< max value in the lookup table
+ float sample = 1e-3f; ///< threshold for occurrence of words
+ bool withHS = false; ///< use hierarchical softmax instead of negative sampling
+ uint8_t negative = 5; ///< negative examples number
+ uint8_t threads = 12; ///< train threads number
+ uint8_t iterations = 5; ///< train iterations
+ float alpha = 0.05f; ///< starting learn rate
+ bool withSG = false; ///< use Skip-Gram instead of CBOW
+ */
 
 // [[Rcpp::export]]
-Rcpp::List cpp_w2v(//TokensPtr xptr,
-                   Rcpp::List texts_, 
+Rcpp::List cpp_w2v(Rcpp::List texts_, 
                    Rcpp::CharacterVector types_, 
-                   std::string modelFile = "", 
                    uint16_t size = 100,
                    uint8_t window = 5,
                    uint16_t expTableSize = 1000,
@@ -64,29 +77,14 @@ Rcpp::List cpp_w2v(//TokensPtr xptr,
                    bool verbose = false,
                    bool normalize = true) {
   
-  
-    /*
-    uint16_t minWordFreq = 5; ///< discard words that appear less than minWordFreq times
-    uint16_t size = 100; ///< word vector size
-    uint8_t window = 5; ///< skip length between words
-    uint16_t expTableSize = 1000; ///< exp(x) / (exp(x) + 1) values lookup table size
-    uint8_t expValueMax = 6; ///< max value in the lookup table
-    float sample = 1e-3f; ///< threshold for occurrence of words
-    bool withHS = false; ///< use hierarchical softmax instead of negative sampling
-    uint8_t negative = 5; ///< negative examples number
-    uint8_t threads = 12; ///< train threads number
-    uint8_t iterations = 5; ///< train iterations
-    float alpha = 0.05f; ///< starting learn rate
-    bool withSG = false; ///< use Skip-Gram instead of CBOW
-    */
-    
     if (verbose) {
         if (withSG) {
-            printf("Training Skip-gram model with %d dimensions\n", size);
+            Rprintf("Training Skip-gram model with %d dimensions\n", size);
         } else {
-            printf("Training CBOW model with %d dimensions\n", size);
+            Rprintf("Training CBOW model with %d dimensions\n", size);
         }
-        printf(" ...initializing\n");
+        Rprintf(" ...using %d threads for distributed computing\n", threads);
+        Rprintf(" ...initializing\n");
     }
 
     texts_t texts = Rcpp::as<texts_t>(texts_);
@@ -105,42 +103,46 @@ Rcpp::List cpp_w2v(//TokensPtr xptr,
     ts.sample = sample;
     ts.withHS = withHS;
     ts.negative = negative;
-    ts.threads = threads;
+    ts.threads = threads > 0 ? threads : std::thread::hardware_concurrency();
     ts.iterations = iterations;
     ts.alpha = alpha;
     ts.withSG = withSG;
     ts.random = (uint32_t)(Rcpp::runif(1)[0] * std::numeric_limits<uint32_t>::max());
-    
+
     w2v::w2vModel_t model;
     bool trained;
   
     if (verbose) {
         if (withHS) {
-            printf(" ...Hierarchical Softmax in %d iterations\n", iterations);
+            Rprintf(" ...Hierarchical Softmax in %d iterations\n", iterations);
         } else {
-            printf(" ...Negative Sampling in %d iterations\n", iterations);
+            Rprintf(" ...Negative Sampling in %d iterations\n", iterations);
         }
         
         auto start = std::chrono::high_resolution_clock::now();
-        int percent = 0;
-        trained = model.train(ts, corpus, [&start, &percent] (float _alpha, float _percent) {
-          if (_percent >= percent) {
-             auto end = std::chrono::high_resolution_clock::now();
-             auto diff = std::chrono::duration<double, std::milli>(end - start);
-             double msec = diff.count();
-             printf(" ......process %2d%% ", percent);
-             printf("elapsed time: %.2f seconds (alpha: %.4f)\n", msec / 1000, _alpha);
-             percent += 10; 
-          };
+        int iter = 0;
+        std::mutex mtx;
+        trained = model.train(ts, corpus, [&start, &iter, &mtx] (int _iter, float _alpha) {
+        mtx.lock();
+        if (_iter > iter) {
+            iter = _iter;
+            auto end = std::chrono::high_resolution_clock::now();
+            auto diff = std::chrono::duration<double, std::milli>(end - start);
+            double msec = diff.count();
+            Rprintf(" ......iteration %d ", iter);
+            Rprintf("elapsed time: %.2f seconds (alpha: %.4f)\n", msec / 1000, _alpha);
+        };
+        mtx.unlock();
         });
     } else {
         trained = model.train(ts, corpus, nullptr);
     }
     
-    bool success = true;
     if (!trained) {
-        Rcpp::Rcout << "Training failed: " << model.errMsg() << std::endl;
-        success = false;
+        Rcpp::List out = Rcpp::List::create(
+            Rcpp::Named("message") = model.errMsg()
+        );
+        return out;
     }
     // NORMALISE UPFRONT - DIFFERENT THAN ORIGINAL CODE 
     // - original code dumps data to disk, next imports it and during import normalisation happens after which we can do nearest calculations
@@ -148,10 +150,10 @@ Rcpp::List cpp_w2v(//TokensPtr xptr,
     if (normalize) {
         model.normalize();
         if (verbose)
-            printf(" ...normalizing vectors\n");
+            Rprintf(" ...normalizing vectors\n");
     }
     if (verbose)
-        printf(" ...complete\n");
+        Rprintf(" ...complete\n");
     
     // Return model + model information
     Rcpp::List out = Rcpp::List::create(

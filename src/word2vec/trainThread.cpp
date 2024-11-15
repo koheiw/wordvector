@@ -51,7 +51,7 @@ namespace w2v {
 
     void trainThread_t::worker(std::vector<float> &_trainMatrix) noexcept {
         
-        for (auto g = m_sharedData.trainSettings->iterations; g > 0; --g) {
+        for (auto g = 1; g <= m_sharedData.trainSettings->iterations; ++g) {
             
             std::size_t threadProcessedWords = 0;
             std::size_t prvThreadProcessedWords = 0;
@@ -59,25 +59,21 @@ namespace w2v {
             // for progressCallback
             auto wordsPerAllThreads = m_sharedData.trainSettings->iterations * m_sharedData.corpus->trainWords;
             auto wordsPerAlpha = wordsPerAllThreads / 10000;
-
+            
+            float alpha = 0;
             for (std::size_t h = range.first; h <= range.second; ++h) {
 
-                // calc alpha
+                // calculate alpha
                 if (threadProcessedWords - prvThreadProcessedWords > wordsPerAlpha) { // next 0.01% processed
                     *m_sharedData.processedWords += threadProcessedWords - prvThreadProcessedWords;
                     prvThreadProcessedWords = threadProcessedWords;
 
                     float ratio = static_cast<float>(*(m_sharedData.processedWords)) / wordsPerAllThreads;
-
-                    auto curAlpha = m_sharedData.trainSettings->alpha * (1 - ratio);
-                    if (curAlpha < m_sharedData.trainSettings->alpha * 0.0001f) {
-                        curAlpha = m_sharedData.trainSettings->alpha * 0.0001f;
+                    alpha = m_sharedData.trainSettings->alpha * (1 - ratio);
+                    if (alpha < m_sharedData.trainSettings->alpha * 0.0001f) {
+                        alpha = m_sharedData.trainSettings->alpha * 0.0001f;
                     }
-                    (*m_sharedData.alpha) = curAlpha;
-
-                    if (m_sharedData.progressCallback != nullptr) {
-                        m_sharedData.progressCallback(curAlpha, ratio * 100.0f);
-                    }
+                    (*m_sharedData.alpha) = alpha;
                 }
                 
                 text_t text = m_sharedData.corpus->texts[h];
@@ -111,6 +107,10 @@ namespace w2v {
                 } else {
                     cbow(sentence, _trainMatrix);
                 }
+            }
+            // print progress
+            if (m_sharedData.progressCallback != nullptr) {
+                m_sharedData.progressCallback(g, alpha);
             }
         }
     }
