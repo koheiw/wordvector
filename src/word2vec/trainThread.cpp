@@ -118,6 +118,7 @@ namespace w2v {
     inline void trainThread_t::cbow(const std::vector<unsigned int> &_sentence,
                                     std::vector<float> &_trainMatrix) noexcept {
         
+        // NOTE: define K = m_sharedData.trainSettings->size here
         if (_sentence.size() == 0)
             return;
         for (std::size_t i = 0; i < _sentence.size(); ++i) {
@@ -127,6 +128,7 @@ namespace w2v {
 
             auto rndShift = m_rndWindowShift(m_randomGenerator);
             std::size_t cw = 0;
+            // NOTE: define token = _sentence[posRndWindow] here;
             for (auto j = rndShift; j < m_sharedData.trainSettings->window * 2 + 1 - rndShift; ++j) {
                 if (j == m_sharedData.trainSettings->window) {
                     continue;
@@ -145,6 +147,7 @@ namespace w2v {
             if (cw == 0) {
                 continue;
             }
+            // NOTE: j should be k
             for (std::size_t j = 0; j < m_sharedData.trainSettings->size; j++) {
                 (*m_hiddenLayerVals)[j] /= cw;
             }
