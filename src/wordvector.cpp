@@ -57,7 +57,7 @@ Rcpp::NumericMatrix as_matrix(w2v::w2vModel_t model) {
  uint8_t threads = 12; ///< train threads number
  uint8_t iterations = 5; ///< train iterations
  float alpha = 0.05f; ///< starting learn rate
- bool withSG = false; ///< use Skip-Gram instead of CBOW
+ int algorithm = 1; ///< 1:CBOW 2:Skip-Gram
 */
 
 // [[Rcpp::export]]
@@ -73,15 +73,15 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
                    uint8_t threads = 1,
                    uint8_t iterations = 5,
                    float alpha = 0.05,
-                   bool withSG = false,
+                   int algorithm = 1,
                    bool verbose = false,
                    bool normalize = true) {
   
     if (verbose) {
-        if (withSG) {
-            Rprintf("Training Skip-gram model with %d dimensions\n", size);
-        } else {
+        if (algorithm == 1) {
             Rprintf("Training CBOW model with %d dimensions\n", size);
+        } else if (algorithm == 2) {
+            Rprintf("Training Skip-gram model with %d dimensions\n", size);
         }
         Rprintf(" ...using %d threads for distributed computing\n", threads);
         Rprintf(" ...initializing\n");
@@ -106,7 +106,7 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
     ts.threads = threads > 0 ? threads : std::thread::hardware_concurrency();
     ts.iterations = iterations;
     ts.alpha = alpha;
-    ts.withSG = withSG;
+    ts.algorithm = algorithm;
     ts.random = (uint32_t)(Rcpp::runif(1)[0] * std::numeric_limits<uint32_t>::max());
 
     w2v::w2vModel_t model;

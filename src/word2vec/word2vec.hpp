@@ -90,7 +90,7 @@ namespace w2v {
         uint8_t threads = 12; ///< train threads number
         uint8_t iterations = 5; ///< train iterations
         float alpha = 0.05f; ///< starting learn rate
-        bool withSG = false; ///< use Skip-Gram instead of CBOW
+        int algorithm = 1; ///< 1:CBOW 2:Skip-Gram
         uint32_t random = 1234; /// < random number seed
         trainSettings_t() = default;
     };
