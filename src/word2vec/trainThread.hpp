@@ -59,6 +59,7 @@ namespace w2v {
         std::random_device m_randomDevice;
         std::mt19937_64 m_randomGenerator;
         std::uniform_int_distribution<short> m_rndWindowShift;
+        std::uniform_int_distribution<short> m_rndWindow;
         std::unique_ptr<downSampling_t> m_downSampling;
         std::unique_ptr<nsDistribution_t> m_nsDistribution;
         std::unique_ptr<std::vector<float>> m_hiddenLayerVals;
@@ -90,11 +91,15 @@ namespace w2v {
 
         inline void cbow(const std::vector<unsigned int> &_sentence,
                          std::vector<float> &_trainMatrix) noexcept;
+        inline void cbow2(const std::vector<unsigned int> &_sentence,
+                         std::vector<float> &_trainMatrix) noexcept;
         inline void skipGram(const std::vector<unsigned int> &_sentence,
                              std::vector<float> &_trainMatrix) noexcept;
-        inline void  hierarchicalSoftmax(std::size_t _index,
-                                         std::vector<float> &_hiddenLayer,
-                                         std::vector<float> &_trainLayer, std::size_t _trainLayerShift) noexcept;
+        inline void skipGram2(const std::vector<unsigned int> &_sentence,
+                             std::vector<float> &_trainMatrix) noexcept;
+        inline void hierarchicalSoftmax(std::size_t _index,
+                                        std::vector<float> &_hiddenLayer,
+                                        std::vector<float> &_trainLayer, std::size_t _trainLayerShift) noexcept;
         inline void negativeSampling(std::size_t _index,
                                      std::vector<float> &_hiddenLayer,
                                      std::vector<float> &_trainLayer, std::size_t _trainLayerShift) noexcept;

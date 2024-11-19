@@ -155,7 +155,7 @@ word2vec <- function(x, dim = 50, type = c("cbow", "skip-gram"),
 #' modelb <- word2vec(x = txt, dim = 15, iter = 20, split = c(" \n\r", "\n\r"))
 #' all.equal(as.matrix(modela), as.matrix(modelb))
 #' \dontshow{\} # End of main if statement running only if the required packages are installed}
-word2vec.tokens <- function(x, dim = 50, type = c("cbow", "skip-gram"), 
+word2vec.tokens <- function(x, dim = 50, type = c("cbow", "skip-gram", "cbow2", "skip-gram2"), 
                             min_count = 5L, window = ifelse(type == "cbow", 5L, 10L), 
                             iter = 5L, lr = 0.05, hs = FALSE, negative = 5L, 
                             sample = 0.001, verbose = FALSE, ...) {
@@ -175,16 +175,17 @@ word2vec.tokens <- function(x, dim = 50, type = c("cbow", "skip-gram"),
     #threads <- as.integer(threads)
     iter <- as.integer(iter)
     lr <- as.numeric(lr)
-    algorithm <- as.logical(type %in% "skip-gram")
+    algorithm <- match(type, c("cbow", "skip-gram", "cbow2", "skip-gram2"))
     
     # NOTE: use tokens_xptr?
     #x <- as.tokenx_xptr(x)
-    x <- tokens_trim(x, min_termfreq = min_count, termfreq_type = "count")
+    #x <- tokens_trim(x, min_termfreq = min_count, termfreq_type = "count")
     result <- cpp_w2v(as.tokens(x), attr(x, "types"), 
-                     size = dim, window = window,
-                     sample = sample, withHS = hs, negative = negative, 
-                     threads = get_threads(), iterations = iter,
-                     alpha = lr, algorithm = algorithm, verbose = verbose, ...)
+                      minWordFreq = min_count,
+                      size = dim, window = window,
+                      sample = sample, withHS = hs, negative = negative, 
+                      threads = get_threads(), iterations = iter,
+                      alpha = lr, algorithm = algorithm, verbose = verbose, ...)
     if (!is.null(result$message))
         stop("Failed to train word2vec (", result$message, ")")
     result$type <- type

@@ -63,6 +63,7 @@ Rcpp::NumericMatrix as_matrix(w2v::w2vModel_t model) {
 // [[Rcpp::export]]
 Rcpp::List cpp_w2v(Rcpp::List texts_, 
                    Rcpp::CharacterVector types_, 
+                   uint16_t minWordFreq = 5,
                    uint16_t size = 100,
                    uint8_t window = 5,
                    uint16_t expTableSize = 1000,
@@ -96,6 +97,7 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
     corpus.setWordFreq();
       
     w2v::trainSettings_t ts;
+    ts.minWordFreq = minWordFreq;
     ts.size = size;
     ts.window = window;
     ts.expTableSize = expTableSize;
@@ -171,6 +173,7 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
     Rcpp::Named("hs") = withHS,
     Rcpp::Named("negative") = negative,
     Rcpp::Named("sample") = sample
+    
     // NOTE: move to R
     // Rcpp::Named("control") = Rcpp::List::create(
     //     //Rcpp::Named("dim") = size,
