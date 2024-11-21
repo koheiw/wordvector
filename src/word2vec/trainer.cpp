@@ -10,49 +10,48 @@
 #include "trainer.hpp"
 
 namespace w2v {
-    trainer_t::trainer_t(const std::shared_ptr<trainSettings_t> &_trainSettings,
+    trainer_t::trainer_t(const std::shared_ptr<settings_t> &_settings,
                          const std::shared_ptr<corpus_t> &_corpus,
                          std::function<void(float, float)> _progressCallback): m_threads() {
-        trainThread_t::sharedData_t sharedData;
+        trainThread_t::data_t data;
 
-        if (!_trainSettings) {
+        if (!_settings) {
             throw std::runtime_error("train settings are not initialized");
         }
-        sharedData.trainSettings = _trainSettings;
+        data.settings = _settings;
 
         if (!_corpus) {
             throw std::runtime_error("corpus is object is not initialized");
         }
-        sharedData.corpus = _corpus;
+        data.corpus = _corpus;
         
-        sharedData.bpWeights.reset(new std::vector<float>(_trainSettings->size * _corpus->types.size(), 0.0f));
-        sharedData.expTable.reset(new std::vector<float>(_trainSettings->expTableSize));
-        for (uint16_t i = 0; i < _trainSettings->expTableSize; ++i) {
+        data.bpWeights.reset(new std::vector<float>(_settings->size * _corpus->types.size(), 0.0f));
+        data.expTable.reset(new std::vector<float>(_settings->expTableSize));
+        for (uint16_t i = 0; i < _settings->expTableSize; ++i) {
             // Precompute the exp() table
-            (*sharedData.expTable)[i] =
-                    exp((i / static_cast<float>(_trainSettings->expTableSize) * 2.0f - 1.0f)
-                                           * _trainSettings->expValueMax);
+            (*data.expTable)[i] = exp((i / static_cast<float>(_settings->expTableSize) * 2.0f - 1.0f) *
+                                            _settings->expValueMax);
             // Precompute f(x) = x / (x + 1)
-            (*sharedData.expTable)[i] = (*sharedData.expTable)[i] / ((*sharedData.expTable)[i] + 1.0f);
+            (*data.expTable)[i] = (*data.expTable)[i] / ((*data.expTable)[i] + 1.0f);
         }
         
-        if (_trainSettings->withHS) {
-            sharedData.huffmanTree.reset(new huffmanTree_t(_corpus->frequency));;
+        if (_settings->withHS) {
+            data.huffmanTree.reset(new huffmanTree_t(_corpus->frequency));;
         }
 
         if (_progressCallback != nullptr) {
-            sharedData.progressCallback = _progressCallback;
+            data.progressCallback = _progressCallback;
         }
 
-        sharedData.processedWords.reset(new std::atomic<std::size_t>(0));
-        sharedData.alpha.reset(new std::atomic<float>(_trainSettings->alpha));
+        data.processedWords.reset(new std::atomic<std::size_t>(0));
+        data.alpha.reset(new std::atomic<float>(_settings->alpha));
         
         // NOTE: consider setting size elsewhere
-        m_matrixSize = sharedData.trainSettings->size * sharedData.corpus->types.size();
-        m_random = sharedData.trainSettings->random;
+        m_matrixSize = data.settings->size * data.corpus->types.size();
+        m_random = data.settings->random;
         
-        for (uint8_t i = 0; i < _trainSettings->threads; ++i) {
-            m_threads.emplace_back(new trainThread_t(i, sharedData));
+        for (uint8_t i = 0; i < _settings->threads; ++i) {
+            m_threads.emplace_back(new trainThread_t(i, data));
         }
     }
 

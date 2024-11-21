@@ -35,10 +35,10 @@ namespace w2v {
     class trainThread_t final {
     public:
         /**
-         * @brief sharedData structure holds all common data used by train threads
+         * @brief data structure holds all common data used by train threads
         */
-        struct sharedData_t final {
-            std::shared_ptr<trainSettings_t> trainSettings; ///< trainSettings structure
+        struct data_t final {
+            std::shared_ptr<settings_t> settings; ///< settings structure
             //std::shared_ptr<vocabulary_t> vocabulary; ///< words data
             std::shared_ptr<corpus_t> corpus; ///< train data 
             //std::shared_ptr<fileMapper_t> fileMapper; /// NOTE: remove
@@ -54,7 +54,7 @@ namespace w2v {
         std::pair<std::size_t, std::size_t> range;
         
     private:
-        sharedData_t m_sharedData;
+        data_t m_data;
         
         std::random_device m_randomDevice;
         std::mt19937_64 m_randomGenerator;
@@ -70,9 +70,9 @@ namespace w2v {
         /**
          * Constructs train thread local data
          * @param _id thread ID, starting from 0
-         * @param _sharedData sharedData object instantiated outside of the thread
+         * @param _data data object instantiated outside of the thread
         */
-        trainThread_t(uint8_t _id, const sharedData_t &_sharedData);
+        trainThread_t(uint8_t _id, const data_t &_data);
 
         /**
          * Launchs the thread

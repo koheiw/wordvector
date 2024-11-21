@@ -96,20 +96,20 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
     w2v::corpus_t corpus(texts, types);
     corpus.setWordFreq();
       
-    w2v::trainSettings_t ts;
-    ts.minWordFreq = minWordFreq;
-    ts.size = size;
-    ts.window = window;
-    ts.expTableSize = expTableSize;
-    ts.expValueMax = expValueMax;
-    ts.sample = sample;
-    ts.withHS = withHS;
-    ts.negative = negative;
-    ts.threads = threads > 0 ? threads : std::thread::hardware_concurrency();
-    ts.iterations = iterations;
-    ts.alpha = alpha;
-    ts.algorithm = algorithm;
-    ts.random = (uint32_t)(Rcpp::runif(1)[0] * std::numeric_limits<uint32_t>::max());
+    w2v::settings_t settings;
+    settings.minWordFreq = minWordFreq;
+    settings.size = size;
+    settings.window = window;
+    settings.expTableSize = expTableSize;
+    settings.expValueMax = expValueMax;
+    settings.sample = sample;
+    settings.withHS = withHS;
+    settings.negative = negative;
+    settings.threads = threads > 0 ? threads : std::thread::hardware_concurrency();
+    settings.iterations = iterations;
+    settings.alpha = alpha;
+    settings.algorithm = algorithm;
+    settings.random = (uint32_t)(Rcpp::runif(1)[0] * std::numeric_limits<uint32_t>::max());
 
     w2v::w2vModel_t model;
     bool trained;
@@ -124,7 +124,7 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
         auto start = std::chrono::high_resolution_clock::now();
         int iter = 0;
         std::mutex mtx;
-        trained = model.train(ts, corpus, [&start, &iter, &mtx] (int _iter, float _alpha) {
+        trained = model.train(settings, corpus, [&start, &iter, &mtx] (int _iter, float _alpha) {
         mtx.lock();
         if (_iter > iter) {
             iter = _iter;
@@ -137,7 +137,7 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
         mtx.unlock();
         });
     } else {
-        trained = model.train(ts, corpus, nullptr);
+        trained = model.train(settings, corpus, nullptr);
     }
     
     if (!trained) {

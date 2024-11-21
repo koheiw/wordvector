@@ -76,9 +76,9 @@ namespace w2v {
     };
     
     /**
-     * @brief trainSettings structure holds all training parameters
+     * @brief settings structure holds all training parameters
      */
-    struct trainSettings_t final {
+    struct settings_t final {
         uint16_t minWordFreq = 5; ///< discard words that appear less than minWordFreq times
         uint16_t size = 100; ///< word vector size
         uint8_t window = 5; ///< skip length between words
@@ -92,7 +92,7 @@ namespace w2v {
         float alpha = 0.05f; ///< starting learn rate
         int algorithm = 1; ///< 1:CBOW 2:Skip-Gram
         uint32_t random = 1234; /// < random number seed
-        trainSettings_t() = default;
+        settings_t() = default;
     };
 
     /**
@@ -169,7 +169,7 @@ namespace w2v {
 
         /**
          * Trains model
-         * @param _trainSettings trainSettings_t structure with training parameters
+         * @param _settings settings_t structure with training parameters
          * @param _trainFile file name of train corpus data
          * @param _stopWordsFile file name with stop words
          * @param _vocabularyProgressCallback callback function reporting train corpus data parsing progress,
@@ -180,7 +180,7 @@ namespace w2v {
          * nullptr if training progress statistic is not needed
          * @returns true on successful completion or false otherwise
         */
-        bool train(const trainSettings_t &_trainSettings,
+        bool train(const settings_t &_settings,
                    const corpus_t &_corpus,
                    trainProgressCallback_t _trainProgressCallback) noexcept;
 

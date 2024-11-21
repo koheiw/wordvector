@@ -33,12 +33,12 @@ namespace w2v {
     public:
         /**
          * Constructs a trainer object
-         * @param _trainSettings trainSattings object
+         * @param _settings trainSattings object
          * @param _vocabulary vocabulary object
          * @param _fileMapper fileMapper object related to a train data set file
          * @param _progressCallback callback function to be called on each new 0.01% processed train data
         */
-        trainer_t(const std::shared_ptr<trainSettings_t> &_trainSettings,
+        trainer_t(const std::shared_ptr<settings_t> &_settings,
                   const std::shared_ptr<corpus_t> &_corpus,
                   std::function<void(float, float)> _progressCallback);
 

@@ -10,19 +10,19 @@
 #include "trainer.hpp"
 
 namespace w2v {
-    bool w2vModel_t::train(const trainSettings_t &_trainSettings,
+    bool w2vModel_t::train(const settings_t &_settings,
                            const corpus_t &_corpus,
                            trainProgressCallback_t _trainProgressCallback) noexcept {
         try {
             // store tokens
             std::shared_ptr<corpus_t> corpus(new corpus_t(_corpus));
             
-            m_vectorSize = _trainSettings.size;
+            m_vectorSize = _settings.size;
             m_mapSize = corpus->types.size();
             
             // train model
             std::vector<float> _trainMatrix;
-            trainer_t(std::make_shared<trainSettings_t>(_trainSettings),
+            trainer_t(std::make_shared<settings_t>(_settings),
                       corpus,
                       _trainProgressCallback)(_trainMatrix);
 
