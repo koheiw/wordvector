@@ -28,10 +28,9 @@ namespace w2v {
         data.bpWeights.reset(new std::vector<float>(_settings->size * _corpus->types.size(), 0.0f));
         data.expTable.reset(new std::vector<float>(_settings->expTableSize));
         for (uint16_t i = 0; i < _settings->expTableSize; ++i) {
-            // Precompute the exp() table
-            (*data.expTable)[i] = exp((i / static_cast<float>(_settings->expTableSize) * 2.0f - 1.0f) *
-                                            _settings->expValueMax);
-            // Precompute f(x) = x / (x + 1)
+            // Pre-compute the exp() table
+            (*data.expTable)[i] = exp((i / static_cast<float>(_settings->expTableSize) * 2.0f - 1.0f) * _settings->expValueMax);
+            // Pre-compute f(x) = x / (x + 1)
             (*data.expTable)[i] = (*data.expTable)[i] / ((*data.expTable)[i] + 1.0f);
         }
         

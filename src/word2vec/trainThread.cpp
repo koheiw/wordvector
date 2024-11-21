@@ -301,35 +301,35 @@ namespace w2v {
                                                    std::vector<float> &_hiddenLayer,
                                                    std::vector<float> &_trainLayer,
                                                    std::size_t _trainLayerShift) noexcept {
+        
+        std::size_t K = m_data.settings->size;
         auto huffmanData = m_data.huffmanTree->huffmanData(_index);
         for (std::size_t i = 0; i < huffmanData->huffmanCode.size(); ++i) {
-            auto l2 = huffmanData->huffmanPoint[i] * m_data.settings->size;
-            // Propagate hidden -> output
+            auto shift = huffmanData->huffmanPoint[i] * K;
+            
+            // propagate hidden -> output
             float f = 0.0f;
-            for (std::size_t j = 0; j < m_data.settings->size; ++j) {
-                f += _trainLayer[j + _trainLayerShift] * (*m_data.bpWeights)[j + l2];
+            for (std::size_t k = 0; k < K; k++) {
+                f += _trainLayer[k + _trainLayerShift] * (*m_data.bpWeights)[k + shift];
             }
             if (f < -m_data.settings->expValueMax) {
-//            f = 0.0f;
-                continue; // original approach
+                continue;
             } else if (f > m_data.settings->expValueMax) {
-//            f = 1.0f;
-                continue; // original approach
+                continue;
             } else {
-                f = (*m_data.expTable)[static_cast<std::size_t>((f + m_data.settings->expValueMax)
-                                                                      * (m_data.expTable->size()
-                                                                         / m_data.settings->expValueMax /
-                                                                         2))];
+                auto v = (f + m_data.settings->expValueMax) * (m_data.expTable->size() / m_data.settings->expValueMax / 2);
+                f = (*m_data.expTable)[static_cast<std::size_t>(v)];
             }
-
-            auto gradientXalpha = (1.0f - static_cast<float>(huffmanData->huffmanCode[i]) - f) * (*m_data.alpha);
-            // Propagate errors output -> hidden
-            for (std::size_t j = 0; j < m_data.settings->size; ++j) {
-                _hiddenLayer[j] += gradientXalpha * (*m_data.bpWeights)[j + l2];
+            
+            // compute gradient x alpha
+            auto error = (1.0f - static_cast<float>(huffmanData->huffmanCode[i]) - f) * (*m_data.alpha);
+            // propagate errors output -> hidden
+            for (std::size_t k = 0; k < K; k++) {
+                _hiddenLayer[k] += error * (*m_data.bpWeights)[k + shift];
             }
-            // Learn weights hidden -> output
-            for (std::size_t j = 0; j < m_data.settings->size; ++j) {
-                (*m_data.bpWeights)[j + l2] += gradientXalpha * _trainLayer[j + _trainLayerShift];
+            // learn weights hidden -> output
+            for (std::size_t k = 0; k < K; k++) {
+                (*m_data.bpWeights)[k + shift] += error * _trainLayer[k + _trainLayerShift];
             }
         }
     }
@@ -352,9 +352,9 @@ namespace w2v {
                     continue;
                 }
             }
-
             auto shift = target * K;
-            // Propagate hidden -> output
+            
+            // propagate hidden -> output
             float f = 0.0f;
             for (std::size_t k = 0; k < K; k++) {
                 f += _trainLayer[k + _trainLayerShift] * (*m_data.bpWeights)[k + shift];
@@ -364,20 +364,19 @@ namespace w2v {
             } else if (f > m_data.settings->expValueMax) {
                 f = 1.0f;
             } else {
-                f = (*m_data.expTable)[static_cast<std::size_t>((f + m_data.settings->expValueMax)
-                                                                      * (m_data.expTable->size()
-                                                                         / m_data.settings->expValueMax /
-                                                                         2))];
+                auto v = (f + m_data.settings->expValueMax) * (m_data.expTable->size() / m_data.settings->expValueMax / 2);
+                f = (*m_data.expTable)[static_cast<std::size_t>(v)];
             }
-
-            auto gradientXalpha = (static_cast<float>(label) - f) * (*m_data.alpha);
-            // Propagate errors output -> hidden
+            
+            // compute gradient x alpha
+            auto error = (static_cast<float>(label) - f) * (*m_data.alpha);
+            // propagate errors output -> hidden
             for (std::size_t k = 0; k < K; k++) {
-                _hiddenLayer[k] += gradientXalpha * (*m_data.bpWeights)[k + shift];
+                _hiddenLayer[k] += error * (*m_data.bpWeights)[k + shift];
             }
-            // Learn weights hidden -> output
+            // learn weights hidden -> output
             for (std::size_t k = 0; k < m_data.settings->size; k++) {
-                (*m_data.bpWeights)[k + shift] += gradientXalpha * _trainLayer[k + _trainLayerShift];
+                (*m_data.bpWeights)[k + shift] += error * _trainLayer[k + _trainLayerShift];
             }
         }
     }
