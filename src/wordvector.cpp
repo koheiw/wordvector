@@ -19,7 +19,7 @@ Rcpp::CharacterVector encode(std::vector<std::string> types){
     return(types_);
 }
 
-Rcpp::NumericMatrix as_matrix(w2v::w2vModel_t model) {
+Rcpp::NumericMatrix as_matrix(w2v::word2vec_t model) {
     
     std::unordered_map<std::string, std::vector<float>> m_map = model.map();
     std::vector<std::string> words;
@@ -57,7 +57,7 @@ Rcpp::NumericMatrix as_matrix(w2v::w2vModel_t model) {
  uint8_t threads = 12; ///< train threads number
  uint8_t iterations = 5; ///< train iterations
  float alpha = 0.05f; ///< starting learn rate
- int algorithm = 1; ///< 1:CBOW 2:Skip-Gram
+ int model = 1; ///< 1:CBOW 2:Skip-Gram
 */
 
 // [[Rcpp::export]]
@@ -74,14 +74,14 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
                    uint8_t threads = 1,
                    uint8_t iterations = 5,
                    float alpha = 0.05,
-                   int algorithm = 1,
+                   int model = 1,
                    bool verbose = false,
                    bool normalize = true) {
   
     if (verbose) {
-        if (algorithm == 1) {
+        if (model == 1 || model == 10) {
             Rprintf("Training CBOW model with %d dimensions\n", size);
-        } else if (algorithm == 2) {
+        } else if (model == 2 || model == 20) {
             Rprintf("Training Skip-gram model with %d dimensions\n", size);
         }
         Rprintf(" ...using %d threads for distributed computing\n", threads);
@@ -108,10 +108,10 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
     settings.threads = threads > 0 ? threads : std::thread::hardware_concurrency();
     settings.iterations = iterations;
     settings.alpha = alpha;
-    settings.algorithm = algorithm;
+    settings.model = model;
     settings.random = (uint32_t)(Rcpp::runif(1)[0] * std::numeric_limits<uint32_t>::max());
 
-    w2v::w2vModel_t model;
+    w2v::word2vec_t word2vec;
     bool trained;
   
     if (verbose) {
@@ -124,7 +124,7 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
         auto start = std::chrono::high_resolution_clock::now();
         int iter = 0;
         std::mutex mtx;
-        trained = model.train(settings, corpus, [&start, &iter, &mtx] (int _iter, float _alpha) {
+        trained = word2vec.train(settings, corpus, [&start, &iter, &mtx] (int _iter, float _alpha) {
         mtx.lock();
         if (_iter > iter) {
             iter = _iter;
@@ -137,17 +137,17 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
         mtx.unlock();
         });
     } else {
-        trained = model.train(settings, corpus, nullptr);
+        trained = word2vec.train(settings, corpus, nullptr);
     }
     
     if (!trained) {
         Rcpp::List out = Rcpp::List::create(
-            Rcpp::Named("message") = model.errMsg()
+            Rcpp::Named("message") = word2vec.errMsg()
         );
         return out;
     }
     if (normalize) {
-        model.normalize();
+        word2vec.normalize();
         if (verbose)
             Rprintf(" ...normalizing vectors\n");
     }
@@ -155,7 +155,7 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
         Rprintf(" ...complete\n");
     
     Rcpp::List out = Rcpp::List::create(
-    Rcpp::Named("model") = as_matrix(model),
+    Rcpp::Named("model") = as_matrix(word2vec),
     //Rcpp::Named("model") = model,
     //Rcpp::Named("vocabulary") = types.size(),
     //Rcpp::Named("success") = success,

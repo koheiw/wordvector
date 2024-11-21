@@ -77,9 +77,9 @@ word2vec.tokens <- function(x, dim = 50, type = c("cbow", "skip-gram"),
     #threads <- as.integer(threads)
     iter <- as.integer(iter)
     lr <- as.numeric(lr)
-    algorithm <- match(type, c("cbow", "skip-gram"))
+    model <- match(type, c("cbow", "skip-gram"))
     if (old)
-        algorithm <- algorithm * 10
+        model <- model * 10
     
     # NOTE: use tokens_xptr?
     #x <- as.tokenx_xptr(x)
@@ -89,7 +89,7 @@ word2vec.tokens <- function(x, dim = 50, type = c("cbow", "skip-gram"),
                       size = dim, window = window,
                       sample = sample, withHS = hs, negative = negative, 
                       threads = get_threads(), iterations = iter,
-                      alpha = lr, algorithm = algorithm, verbose = verbose, ...)
+                      alpha = lr, model = model, verbose = verbose, ...)
     if (!is.null(result$message))
         stop("Failed to train word2vec (", result$message, ")")
     result$type <- type

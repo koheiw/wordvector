@@ -90,7 +90,7 @@ namespace w2v {
         uint8_t threads = 12; ///< train threads number
         uint8_t iterations = 5; ///< train iterations
         float alpha = 0.05f; ///< starting learn rate
-        int algorithm = 1; ///< 1:CBOW 2:Skip-Gram
+        int model = 1; ///< 1:CBOW 2:Skip-Gram
         uint32_t random = 1234; /// < random number seed
         settings_t() = default;
     };
@@ -154,7 +154,7 @@ namespace w2v {
      *
      * Model is derived from model_t class and implements save/load methods and train model method
     */
-    class w2vModel_t: public model_t<std::string> {
+    class word2vec_t: public model_t<std::string> {
     public:
         /// type of callback function to be called on train data file parsing progress events
         using vocabularyProgressCallback_t = std::function<void(float)>;
@@ -165,7 +165,7 @@ namespace w2v {
 
     public:
         /// Constructs w2vModel object
-        w2vModel_t(): model_t<std::string>() {}
+        word2vec_t(): model_t<std::string>() {}
 
         /**
          * Trains model

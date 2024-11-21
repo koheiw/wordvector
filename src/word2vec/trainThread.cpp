@@ -60,7 +60,7 @@ namespace w2v {
             auto wordsPerAllThreads = m_data.settings->iterations * m_data.corpus->trainWords;
             auto wordsPerAlpha = wordsPerAllThreads / 10000;
             
-            //std::cout << "algorithm = " << m_data.settings->algorithm << "\n";
+            //std::cout << "model = " << m_data.settings->model << "\n";
             //std::cout << "minWordFreq = " << m_data.settings->minWordFreq << "\n";
             float alpha = 0;
             for (std::size_t h = range.first; h <= range.second; ++h) {
@@ -109,13 +109,13 @@ namespace w2v {
                 }
                 
                 //std::cout << "sentence = " <<  sentence.size() << "\n";
-                if (m_data.settings->algorithm == 1) {
+                if (m_data.settings->model == 1) {
                     cbow(sentence, _trainMatrix);
-                } else if (m_data.settings->algorithm == 2) {
+                } else if (m_data.settings->model == 2) {
                     skipGram(sentence, _trainMatrix);
-                } else if (m_data.settings->algorithm == 10) {
+                } else if (m_data.settings->model == 10) {
                     cbowOld(sentence, _trainMatrix);
-                } else if (m_data.settings->algorithm == 20) {
+                } else if (m_data.settings->model == 20) {
                     skipGramOld(sentence, _trainMatrix);
                 }
             }

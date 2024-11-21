@@ -10,7 +10,7 @@
 #include "trainer.hpp"
 
 namespace w2v {
-    bool w2vModel_t::train(const settings_t &_settings,
+    bool word2vec_t::train(const settings_t &_settings,
                            const corpus_t &_corpus,
                            trainProgressCallback_t _trainProgressCallback) noexcept {
         try {
