@@ -146,9 +146,6 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
         );
         return out;
     }
-    // NORMALISE UPFRONT - DIFFERENT THAN ORIGINAL CODE 
-    // - original code dumps data to disk, next imports it and during import normalisation happens after which we can do nearest calculations
-    // - the R wrapper only writes to disk at request so we need to normalise upfront in order to do directly nearest calculations
     if (normalize) {
         model.normalize();
         if (verbose)
@@ -157,7 +154,6 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
     if (verbose)
         Rprintf(" ...complete\n");
     
-    // Return model + model information
     Rcpp::List out = Rcpp::List::create(
     Rcpp::Named("model") = as_matrix(model),
     //Rcpp::Named("model") = model,

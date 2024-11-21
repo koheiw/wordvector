@@ -129,6 +129,3 @@ test_that("doc2vec works with different objects", {
     )
 })
 
-
-print(wov)
-
