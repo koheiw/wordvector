@@ -14,7 +14,6 @@
 #include <vector>
 #include <unordered_map>
 #include <queue>
-//#include <memory>
 #include <functional>
 #include <cmath>
 #include <stdexcept>
@@ -22,8 +21,6 @@
 typedef std::vector<std::string> types_t;
 typedef std::vector<unsigned int> words_t;
 typedef std::vector<unsigned int> text_t;
-// typedef std::vector<int> words_t;
-// typedef std::vector<int> text_t;
 typedef std::vector<text_t> texts_t;
 typedef std::vector<size_t> frequency_t;
 
@@ -95,34 +92,34 @@ namespace w2v {
         settings_t() = default;
     };
 
-    /**
-     * @brief base class of a vectors model
-     *
-     * Model is a storage of pairs key&vector, it implements some basic functionality related to vectors storage -
-     * model size, vector size, get vector by key, calculate distance between two vectors and find nearest vectors
-     * to a specified vector
-    */
-    template <class key_t>
-    class model_t {
-    protected:
-        using map_t = std::unordered_map<key_t, std::vector<float>>;
 
+    class word2vec_t {
+    protected:
+        using map_t = std::unordered_map<std::string, std::vector<float>>;
+        
         map_t m_map;
         uint16_t m_vectorSize = 0;
         std::size_t m_mapSize = 0;
         mutable std::string m_errMsg;
-
-        //const std::string wrongFormatErrMsg = "model: wrong model file format";
+        
+    public:
+        /// type of callback function to be called on train data file parsing progress events
+        using vocabularyProgressCallback_t = std::function<void(float)>;
+        /// type of callback function to be called on train data file parsed event
+        using vocabularyStatsCallback_t = std::function<void(std::size_t, std::size_t, std::size_t)>;
+        /// type of callback function to be called on training progress events
+        using trainProgressCallback_t = std::function<void(float, float)>;
 
     public:
+        
         /// constructs a model
-        model_t(): m_map(), m_errMsg() {}
+        word2vec_t(): m_map(), m_errMsg() {}
         /// virtual destructor
-        virtual ~model_t() = default;
-
+        virtual ~word2vec_t() = default;
+        
         /// Direct access to the word-vector map
         const map_t &map() {return m_map;}
-
+        
         /// @returns vector size of model
         inline uint16_t vectorSize() const noexcept {return m_vectorSize;}
         /// @returns model size (number of stored vectors)
@@ -147,39 +144,7 @@ namespace w2v {
                 }
             } 
         }
-    };
 
-    /**
-     * @brief storage model of pairs key&vector where key type is std::string (word)
-     *
-     * Model is derived from model_t class and implements save/load methods and train model method
-    */
-    class word2vec_t: public model_t<std::string> {
-    public:
-        /// type of callback function to be called on train data file parsing progress events
-        using vocabularyProgressCallback_t = std::function<void(float)>;
-        /// type of callback function to be called on train data file parsed event
-        using vocabularyStatsCallback_t = std::function<void(std::size_t, std::size_t, std::size_t)>;
-        /// type of callback function to be called on training progress events
-        using trainProgressCallback_t = std::function<void(float, float)>;
-
-    public:
-        /// Constructs w2vModel object
-        word2vec_t(): model_t<std::string>() {}
-
-        /**
-         * Trains model
-         * @param _settings settings_t structure with training parameters
-         * @param _trainFile file name of train corpus data
-         * @param _stopWordsFile file name with stop words
-         * @param _vocabularyProgressCallback callback function reporting train corpus data parsing progress,
-         * nullptr if progress statistic is not needed
-         * @param _vocabularyStatsCallback callback function reporting train corpus statistic,
-         * nullptr if train data corpus statistic is not needed
-         * @param _trainProgressCallback callback function reporting training progress,
-         * nullptr if training progress statistic is not needed
-         * @returns true on successful completion or false otherwise
-        */
         bool train(const settings_t &_settings,
                    const corpus_t &_corpus,
                    trainProgressCallback_t _trainProgressCallback) noexcept;
