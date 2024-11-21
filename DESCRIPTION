@@ -1,15 +1,14 @@
 Package: wordvector
 Type: Package
-Title: Distributed Representations of Words
+Title: Models for Creating Word and Document Vectors
 Version: 0.1.0
 Authors@R: c(
-    person('Jan', 'Wijffels', role = c('aut', 'cre', 'cph'), email = 'jwijffels@bnosac.be', comment = "R wrapper"), 
-    person('Kohei', 'Watanabe', role = 'aut', email = 'watanabe.kohei@gmail.com', comment = c(ORCID = '0000-0001-6519-5265')), 
-    person('BNOSAC', role = 'cph', comment = "R wrapper"),
-    person('Max', 'Fomichev', role = c('ctb', 'cph'), comment = "Code in src/word2vec"))
+    person('Kohei', 'Watanabe', role = c('aut', 'cre', 'cph'), email = 'watanabe.kohei@gmail.com', comment = c(ORCID = '0000-0001-6519-5265')), 
+    person('Jan', 'Wijffels', role = 'aut', email = 'jwijffels@bnosac.be', comment = "Original R code"), 
+    person('BNOSAC', role = 'cph', comment = "Original R code"),
+    person('Max', 'Fomichev', role = c('ctb', 'cph'), comment = "Original C++ code"))
 Maintainer: Kohei Watanabe <watanabe.kohei@gmail.com>
-Description: Learn vector representations of words by continuous bag of words and skip-gram implementations of the 'word2vec' algorithm. 
-    The techniques are detailed in the paper "Distributed Representations of Words and Phrases and their Compositionality" by Mikolov et al. (2013), available at <arXiv:1310.4546>.
+Description: Create word and document vectors using Word2vec and LSA.
 URL: https://github.com/bnosac/word2vec
 License: Apache License (>= 2.0)
 Encoding: UTF-8

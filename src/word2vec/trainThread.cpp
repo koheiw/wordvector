@@ -113,11 +113,11 @@ namespace w2v {
                     cbow(sentence, _trainMatrix);
                 } else if (m_sharedData.trainSettings->algorithm == 2) {
                     skipGram(sentence, _trainMatrix);
-                } else if (m_sharedData.trainSettings->algorithm == 3) {
-                    cbow2(sentence, _trainMatrix);
+                } else if (m_sharedData.trainSettings->algorithm == 10) {
+                    cbowOld(sentence, _trainMatrix);
                 }
-                else if (m_sharedData.trainSettings->algorithm == 3) {
-                    skipGram2(sentence, _trainMatrix);
+                else if (m_sharedData.trainSettings->algorithm == 20) {
+                    skipGramOld(sentence, _trainMatrix);
                 }
             }
             // print progress
@@ -127,7 +127,7 @@ namespace w2v {
         }
     }
 
-    inline void trainThread_t::cbow(const std::vector<unsigned int> &_sentence,
+    inline void trainThread_t::cbowOld(const std::vector<unsigned int> &_sentence,
                                     std::vector<float> &_trainMatrix) noexcept {
         
         if (_sentence.size() == 0)
@@ -185,7 +185,7 @@ namespace w2v {
         }
     }
 
-    inline void trainThread_t::cbow2(const std::vector<unsigned int> &_text,
+    inline void trainThread_t::cbow(const std::vector<unsigned int> &_text,
                                     std::vector<float> &_trainMatrix) noexcept {
         
         std::size_t K = m_sharedData.trainSettings->size;
@@ -233,7 +233,7 @@ namespace w2v {
     }
     
 
-    inline void trainThread_t::skipGram(const std::vector<unsigned int> &_text,
+    inline void trainThread_t::skipGramOld(const std::vector<unsigned int> &_text,
                                         std::vector<float> &_trainMatrix) noexcept {
         if (_text.size() == 0)
             return;
@@ -267,7 +267,7 @@ namespace w2v {
         }
     }
 
-    inline void trainThread_t::skipGram2(const std::vector<unsigned int> &_text,
+    inline void trainThread_t::skipGram(const std::vector<unsigned int> &_text,
                                         std::vector<float> &_trainMatrix) noexcept {
         
         std::size_t K = m_sharedData.trainSettings->size;
@@ -339,6 +339,8 @@ namespace w2v {
                                                 std::vector<float> &_hiddenLayer,
                                                 std::vector<float> &_trainLayer,
                                                 std::size_t _trainLayerShift) noexcept {
+        
+        std::size_t K = m_sharedData.trainSettings->size;
         for (std::size_t i = 0; i < static_cast<std::size_t>(m_sharedData.trainSettings->negative) + 1; ++i) {
             std::size_t target = 0;
             bool label = false;
@@ -352,18 +354,16 @@ namespace w2v {
                 }
             }
 
-            auto l2 = target * m_sharedData.trainSettings->size;
+            auto l2 = target * K;
             // Propagate hidden -> output
             float f = 0.0f;
-            for (std::size_t j = 0; j < m_sharedData.trainSettings->size; ++j) {
-                f += _trainLayer[j + _trainLayerShift] * (*m_sharedData.bpWeights)[j + l2];
+            for (std::size_t k = 0; k < K; k++) {
+                f += _trainLayer[k + _trainLayerShift] * (*m_sharedData.bpWeights)[k + l2];
             }
             if (f < -m_sharedData.trainSettings->expValueMax) {
-                f = 0.0f;  // original approach
-//            continue;
+                f = 0.0f;
             } else if (f > m_sharedData.trainSettings->expValueMax) {
-                f = 1.0f;  // original approach
-//            continue;
+                f = 1.0f;
             } else {
                 f = (*m_sharedData.expTable)[static_cast<std::size_t>((f + m_sharedData.trainSettings->expValueMax)
                                                                       * (m_sharedData.expTable->size()
@@ -373,12 +373,12 @@ namespace w2v {
 
             auto gradientXalpha = (static_cast<float>(label) - f) * (*m_sharedData.alpha);
             // Propagate errors output -> hidden
-            for (std::size_t j = 0; j < m_sharedData.trainSettings->size; ++j) {
-                _hiddenLayer[j] += gradientXalpha * (*m_sharedData.bpWeights)[j + l2];
+            for (std::size_t k = 0; k < K; k++) {
+                _hiddenLayer[k] += gradientXalpha * (*m_sharedData.bpWeights)[k + l2];
             }
             // Learn weights hidden -> output
-            for (std::size_t j = 0; j < m_sharedData.trainSettings->size; ++j) {
-                (*m_sharedData.bpWeights)[j + l2] += gradientXalpha * _trainLayer[j + _trainLayerShift];
+            for (std::size_t k = 0; k < m_sharedData.trainSettings->size; k++) {
+                (*m_sharedData.bpWeights)[k + l2] += gradientXalpha * _trainLayer[k + _trainLayerShift];
             }
         }
     }

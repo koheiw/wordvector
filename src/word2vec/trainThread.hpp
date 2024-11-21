@@ -91,11 +91,11 @@ namespace w2v {
 
         inline void cbow(const std::vector<unsigned int> &_sentence,
                          std::vector<float> &_trainMatrix) noexcept;
-        inline void cbow2(const std::vector<unsigned int> &_sentence,
+        inline void cbowOld(const std::vector<unsigned int> &_sentence,
                          std::vector<float> &_trainMatrix) noexcept;
         inline void skipGram(const std::vector<unsigned int> &_sentence,
                              std::vector<float> &_trainMatrix) noexcept;
-        inline void skipGram2(const std::vector<unsigned int> &_sentence,
+        inline void skipGramOld(const std::vector<unsigned int> &_sentence,
                              std::vector<float> &_trainMatrix) noexcept;
         inline void hierarchicalSoftmax(std::size_t _index,
                                         std::vector<float> &_hiddenLayer,

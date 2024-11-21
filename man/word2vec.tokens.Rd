@@ -16,7 +16,8 @@
   negative = 5L,
   sample = 0.001,
   verbose = FALSE,
-  ...
+  ...,
+  old = FALSE
 )
 }
 \arguments{
@@ -67,32 +68,7 @@ Some advice on the optimal set of parameters to use for training as defined by M
 }
 }
 \examples{
-\dontshow{if(require(udpipe))\{}
-library(udpipe)
-data(brussels_reviews, package = "udpipe")
-x     <- subset(brussels_reviews, language == "nl")
-x     <- tolower(x$feedback)
-toks  <- strsplit(x, split = "[[:space:][:punct:]]+")
-model <- word2vec(x = toks, dim = 15, iter = 20)
-emb   <- as.matrix(model)
-head(emb)
-emb   <- predict(model, c("bus", "toilet", "unknownword"), type = "embedding")
-emb
-nn    <- predict(model, c("bus", "toilet"), type = "nearest", top_n = 5)
-nn
 
-## 
-## Example of word2vec with a list of tokens
-## which gives the same embeddings as with a similarly tokenised character vector of texts 
-## 
-txt   <- txt_clean_word2vec(x, ascii = TRUE, alpha = TRUE, tolower = TRUE, trim = TRUE)
-table(unlist(strsplit(txt, "")))
-toks  <- strsplit(txt, split = " ")
-set.seed(1234)
-modela <- word2vec(x = toks, dim = 15, iter = 20)
-set.seed(1234)
-modelb <- word2vec(x = txt, dim = 15, iter = 20, split = c(" \n\r", "\n\r"))
-all.equal(as.matrix(modela), as.matrix(modelb))
 \dontshow{\} # End of main if statement running only if the required packages are installed}
 }
 \references{

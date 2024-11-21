@@ -18,10 +18,10 @@ namespace w2v {
         std::size_t prvFreq = 0;
 
         for (std::size_t i = 1; i < _input.size(); ++i) {
-            float rms = std::sqrt((prvFreq * prvFreq + _input[i] * _input[i]) / 2.0f);
+            float rms = std::sqrt((prvFreq * prvFreq + _input[i] * _input[i]) / 2.0f); // root mean square
             if ((_input[i] < rms / 1.3f) || (_input[i] > rms * 1.3f)) {
                 intervals.push_back(i);
-                weights.push_back(static_cast<std::size_t>(std::pow(_input[i], 0.75)));
+                weights.push_back(static_cast<std::size_t>(std::pow(_input[i], 0.75))); // raise to 3/4
                 prvFreq = _input[i];
             }
         }
