@@ -93,7 +93,7 @@ namespace w2v {
     };
 
 
-    class word2vec_t {
+    class word2vec_t final {
     protected:
         using map_t = std::unordered_map<std::string, std::vector<float>>;
         
@@ -117,17 +117,22 @@ namespace w2v {
         /// virtual destructor
         virtual ~word2vec_t() = default;
         
-        /// Direct access to the word-vector map
-        const map_t &map() {return m_map;}
+        /// direct access to the word-vector map
+        const map_t &map() {return m_map;} // NOTE: consider removing
         
         /// @returns vector size of model
-        inline uint16_t vectorSize() const noexcept {return m_vectorSize;}
+        uint16_t vectorSize() const noexcept {return m_vectorSize;}
         /// @returns model size (number of stored vectors)
-        inline std::size_t modelSize() const noexcept {return m_mapSize;}
+        std::size_t modelSize() const noexcept {return m_mapSize;}
         /// @returns error message
-        inline std::string errMsg() const noexcept {return m_errMsg;}
+        std::string errMsg() const noexcept {return m_errMsg;}
         
-        /// Normalise vectors
+        // train model
+        bool train(const settings_t &_settings,
+                   const corpus_t &_corpus,
+                   trainProgressCallback_t _trainProgressCallback) noexcept;
+        
+        /// normalise vectors
         inline void normalize() {
             for(auto &it : m_map) {
                 // normalize vector
@@ -144,10 +149,6 @@ namespace w2v {
                 }
             } 
         }
-
-        bool train(const settings_t &_settings,
-                   const corpus_t &_corpus,
-                   trainProgressCallback_t _trainProgressCallback) noexcept;
 
     };
 }
