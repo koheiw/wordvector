@@ -156,7 +156,7 @@ namespace w2v {
             if (cw == 0) {
                 continue;
             }
-            for (std::size_t j = 0; j < m_data.settings->size; j++) {
+            for (std::size_t j = 0; j < m_data.settings->size; ++j) {
                 (*m_hiddenLayerVals)[j] /= cw;
             }
             
@@ -190,7 +190,7 @@ namespace w2v {
         std::size_t K = m_data.settings->size;
         if (_text.size() == 0)
             return;
-        for (std::size_t i = 0; i < _text.size(); i++) {
+        for (std::size_t i = 0; i < _text.size(); ++i) {
             // hidden layers initialized with 0 values
             std::memset(m_hiddenLayerVals->data(), 0, m_hiddenLayerVals->size() * sizeof(float));
             std::memset(m_hiddenLayerErrors->data(), 0, m_hiddenLayerErrors->size() * sizeof(float));
@@ -199,10 +199,10 @@ namespace w2v {
             std::size_t from = std::max(0, (int)i - window);
             std::size_t to = std::min((int)_text.size(), (int)i + window);
             std::size_t cw = 0;
-            for (std::size_t j = from; j < to; j++) {
+            for (std::size_t j = from; j < to; ++j) {
                 if (j == i)
                     continue;
-                for (std::size_t k = 0; k < K; k++) {
+                for (std::size_t k = 0; k < K; ++k) {
                     (*m_hiddenLayerVals)[k] += _trainMatrix[k + _text[j] * K];
                 }
                 cw++;
@@ -210,7 +210,7 @@ namespace w2v {
             
             if (cw == 0)
                 continue;
-            for (std::size_t k = 0; k < K; k++) {
+            for (std::size_t k = 0; k < K; ++k) {
                 (*m_hiddenLayerVals)[k] /= cw;
             }
             
@@ -221,10 +221,10 @@ namespace w2v {
             }
             
             // hidden -> in
-            for (std::size_t j = from; j < to; j++) {
+            for (std::size_t j = from; j < to; ++j) {
                 if (j == i)
                     continue;
-                for (std::size_t k = 0; k < K; k++) {
+                for (std::size_t k = 0; k < K; ++k) {
                     _trainMatrix[k + _text[j] * K] += (*m_hiddenLayerErrors)[k];
                 }
             }
@@ -309,26 +309,28 @@ namespace w2v {
             
             // propagate hidden -> output
             float f = 0.0f;
-            for (std::size_t k = 0; k < K; k++) {
+            for (std::size_t k = 0; k < K; ++k) {
                 f += _trainLayer[k + _trainLayerShift] * (*m_data.bpWeights)[k + shift];
             }
             if (f < -m_data.settings->expValueMax) {
-                continue;
+                //continue;
+                f = 0.0f;
             } else if (f > m_data.settings->expValueMax) {
-                continue;
+                //continue;
+                f = 1.0f;
             } else {
-                auto v = (f + m_data.settings->expValueMax) * (m_data.expTable->size() / m_data.settings->expValueMax / 2);
-                f = (*m_data.expTable)[static_cast<std::size_t>(v)];
+                auto p = (f + m_data.settings->expValueMax) * (m_data.expTable->size() / m_data.settings->expValueMax / 2);
+                f = (*m_data.expTable)[static_cast<std::size_t>(p)];
             }
             
             // compute gradient x alpha
             auto error = (1.0f - static_cast<float>(huffmanData->huffmanCode[i]) - f) * (*m_data.alpha);
             // propagate errors output -> hidden
-            for (std::size_t k = 0; k < K; k++) {
+            for (std::size_t k = 0; k < K; ++k) {
                 _hiddenLayer[k] += error * (*m_data.bpWeights)[k + shift];
             }
             // learn weights hidden -> output
-            for (std::size_t k = 0; k < K; k++) {
+            for (std::size_t k = 0; k < K; ++k) {
                 (*m_data.bpWeights)[k + shift] += error * _trainLayer[k + _trainLayerShift];
             }
         }
@@ -356,26 +358,28 @@ namespace w2v {
             
             // propagate hidden -> output
             float f = 0.0f;
-            for (std::size_t k = 0; k < K; k++) {
+            for (std::size_t k = 0; k < K; ++k) {
                 f += _trainLayer[k + _trainLayerShift] * (*m_data.bpWeights)[k + shift];
             }
+            //std::cout << f << "\n";
             if (f < -m_data.settings->expValueMax) {
                 f = 0.0f;
             } else if (f > m_data.settings->expValueMax) {
                 f = 1.0f;
             } else {
-                auto v = (f + m_data.settings->expValueMax) * (m_data.expTable->size() / m_data.settings->expValueMax / 2);
-                f = (*m_data.expTable)[static_cast<std::size_t>(v)];
+                auto p = (f + m_data.settings->expValueMax) * (m_data.expTable->size() / m_data.settings->expValueMax / 2);
+                f = (*m_data.expTable)[static_cast<std::size_t>(p)];
             }
             
             // compute gradient x alpha
             auto error = (static_cast<float>(label) - f) * (*m_data.alpha);
+            std::cout << _index << ", " <<  target << ", " << error << "\n";
             // propagate errors output -> hidden
-            for (std::size_t k = 0; k < K; k++) {
+            for (std::size_t k = 0; k < K; ++k) {
                 _hiddenLayer[k] += error * (*m_data.bpWeights)[k + shift];
             }
             // learn weights hidden -> output
-            for (std::size_t k = 0; k < m_data.settings->size; k++) {
+            for (std::size_t k = 0; k < m_data.settings->size; ++k) {
                 (*m_data.bpWeights)[k + shift] += error * _trainLayer[k + _trainLayerShift];
             }
         }

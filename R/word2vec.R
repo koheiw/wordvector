@@ -89,7 +89,7 @@ word2vec.tokens <- function(x, dim = 50, type = c("cbow", "skip-gram"),
                       size = dim, window = window,
                       sample = sample, withHS = hs, negative = negative, 
                       threads = get_threads(), iterations = iter,
-                      alpha = lr, model = model, verbose = verbose, ...)
+                      alpha = lr, model = model, verbose = verbose)
     if (!is.null(result$message))
         stop("Failed to train word2vec (", result$message, ")")
     result$type <- type

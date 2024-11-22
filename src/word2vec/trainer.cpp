@@ -27,11 +27,12 @@ namespace w2v {
         
         data.bpWeights.reset(new std::vector<float>(_settings->size * _corpus->types.size(), 0.0f));
         data.expTable.reset(new std::vector<float>(_settings->expTableSize));
-        for (uint16_t i = 0; i < _settings->expTableSize; ++i) {
-            // pre-compute the exp() table
-            (*data.expTable)[i] = exp((i / static_cast<float>(_settings->expTableSize) * 2.0f - 1.0f) * _settings->expValueMax);
-            // pre-compute f(x) = x / (x + 1)
-            (*data.expTable)[i] = (*data.expTable)[i] / ((*data.expTable)[i] + 1.0f);
+        for (uint16_t p = 0; p < _settings->expTableSize; ++p) {
+            // scale value between +- expValueMax
+            float s = exp((p / static_cast<float>(_settings->expTableSize) * 2.0f - 1.0f) * _settings->expValueMax);
+            // pre-compute sigmoid: f(x) = exp(x) / (exp(x) + 1)
+            (*data.expTable)[p] = s / (s + 1.0f);
+            //std::cout << p << "," << s << "," << (*data.expTable)[p] << "\n";
         }
         
         if (_settings->withHS) {
