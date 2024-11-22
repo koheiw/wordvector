@@ -324,14 +324,14 @@ namespace w2v {
             }
             
             // compute gradient x alpha
-            auto error = (1.0f - static_cast<float>(huffmanData->huffmanCode[i]) - f) * (*m_data.alpha);
+            auto gxa = (1.0f - static_cast<float>(huffmanData->huffmanCode[i]) - f) * (*m_data.alpha);
             // propagate errors output -> hidden
             for (std::size_t k = 0; k < K; ++k) {
-                _hiddenLayer[k] += error * (*m_data.bpWeights)[k + shift];
+                _hiddenLayer[k] += gxa * (*m_data.bpWeights)[k + shift];
             }
             // learn weights hidden -> output
             for (std::size_t k = 0; k < K; ++k) {
-                (*m_data.bpWeights)[k + shift] += error * _trainLayer[k + _trainLayerShift];
+                (*m_data.bpWeights)[k + shift] += gxa * _trainLayer[k + _trainLayerShift];
             }
         }
     }
@@ -346,9 +346,11 @@ namespace w2v {
             std::size_t target = 0;
             bool label = false;
             if (i == 0) {
+                // positive case
                 target = _index;
                 label = true;
             } else {
+                // negative case
                 target = (*m_nsDistribution)(m_randomGenerator);
                 if (target == _index) {
                     continue;
@@ -372,15 +374,15 @@ namespace w2v {
             }
             
             // compute gradient x alpha
-            auto error = (static_cast<float>(label) - f) * (*m_data.alpha);
-            std::cout << _index << ", " <<  target << ", " << error << "\n";
+            auto gxa = (static_cast<float>(label) - f) * (*m_data.alpha); // gxa > 0 in the positive case
+            //std::cout << i << ": " << _index << ", " <<  target << ", " << gxa << "\n";
             // propagate errors output -> hidden
             for (std::size_t k = 0; k < K; ++k) {
-                _hiddenLayer[k] += error * (*m_data.bpWeights)[k + shift];
+                _hiddenLayer[k] += gxa * (*m_data.bpWeights)[k + shift];
             }
             // learn weights hidden -> output
             for (std::size_t k = 0; k < m_data.settings->size; ++k) {
-                (*m_data.bpWeights)[k + shift] += error * _trainLayer[k + _trainLayerShift];
+                (*m_data.bpWeights)[k + shift] += gxa * _trainLayer[k + _trainLayerShift];
             }
         }
     }
