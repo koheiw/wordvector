@@ -312,19 +312,20 @@ namespace w2v {
             for (std::size_t k = 0; k < K; ++k) {
                 f += _trainLayer[k + _trainLayerShift] * (*m_data.bpWeights)[k + shift];
             }
+            float prob = 0;
             if (f < -m_data.settings->expValueMax) {
                 //continue;
-                f = 0.0f;
+                prob = 0.0f;
             } else if (f > m_data.settings->expValueMax) {
                 //continue;
-                f = 1.0f;
+                prob = 1.0f;
             } else {
-                auto p = (f + m_data.settings->expValueMax) * (m_data.expTable->size() / m_data.settings->expValueMax / 2);
-                f = (*m_data.expTable)[static_cast<std::size_t>(p)];
+                auto r = (f + m_data.settings->expValueMax) * (m_data.expTable->size() / m_data.settings->expValueMax / 2);
+                prob = (*m_data.expTable)[static_cast<std::size_t>(r)];
             }
             
             // compute gradient x alpha
-            auto gxa = (1.0f - static_cast<float>(huffmanData->huffmanCode[i]) - f) * (*m_data.alpha);
+            auto gxa = (1.0f - static_cast<float>(huffmanData->huffmanCode[i]) - prob) * (*m_data.alpha);
             // propagate errors output -> hidden
             for (std::size_t k = 0; k < K; ++k) {
                 _hiddenLayer[k] += gxa * (*m_data.bpWeights)[k + shift];
@@ -360,25 +361,27 @@ namespace w2v {
             
             // propagate hidden -> output
             float f = 0.0f;
+            // predict likelihood of _index using logistic regression
             for (std::size_t k = 0; k < K; ++k) {
                 f += _trainLayer[k + _trainLayerShift] * (*m_data.bpWeights)[k + shift];
             }
             //std::cout << f << "\n";
+            float prob = 0;
             if (f < -m_data.settings->expValueMax) {
-                f = 0.0f;
+                prob = 0.0f;
             } else if (f > m_data.settings->expValueMax) {
-                f = 1.0f;
+                prob = 1.0f;
             } else {
-                auto p = (f + m_data.settings->expValueMax) * (m_data.expTable->size() / m_data.settings->expValueMax / 2);
-                f = (*m_data.expTable)[static_cast<std::size_t>(p)];
+                auto r = (f + m_data.settings->expValueMax) * (m_data.expTable->size() / m_data.settings->expValueMax / 2);
+                prob = (*m_data.expTable)[static_cast<std::size_t>(r)];
             }
             
             // compute gradient x alpha
-            auto gxa = (static_cast<float>(label) - f) * (*m_data.alpha); // gxa > 0 in the positive case
+            auto gxa = (static_cast<float>(label) - prob) * (*m_data.alpha); // gxa > 0 in the positive case
             //std::cout << i << ": " << _index << ", " <<  target << ", " << gxa << "\n";
             // propagate errors output -> hidden
             for (std::size_t k = 0; k < K; ++k) {
-                _hiddenLayer[k] += gxa * (*m_data.bpWeights)[k + shift];
+                _hiddenLayer[k] += gxa * (*m_data.bpWeights)[k + shift]; // added to _trainMatrix
             }
             // learn weights hidden -> output
             for (std::size_t k = 0; k < m_data.settings->size; ++k) {
