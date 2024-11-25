@@ -97,6 +97,7 @@ namespace w2v {
     protected:
         using map_t = std::unordered_map<std::string, std::vector<float>>;
         
+        std::vector<float> trainMatrix;
         map_t m_map;
         uint16_t m_vectorSize = 0;
         std::size_t m_mapSize = 0;
