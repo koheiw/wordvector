@@ -95,11 +95,14 @@ namespace w2v {
 
     class word2vec_t final {
     protected:
-        using map_t = std::unordered_map<std::string, std::vector<float>>;
+        //using map_t = std::unordered_map<std::string, std::vector<float>>;
         
-        map_t m_map;
+        // word vector
+        std::vector<float> m_trainMatrix; // NOTE: rename to m_layer or m_wordvector?
+        //map_t m_map;
         uint16_t m_vectorSize = 0;
-        std::size_t m_mapSize = 0;
+        std::size_t m_vocaburarySize = 0;
+        //std::size_t m_mapSize = 0;
         mutable std::string m_errMsg;
         
     public:
@@ -110,20 +113,22 @@ namespace w2v {
         /// type of callback function to be called on training progress events
         using trainProgressCallback_t = std::function<void(float, float)>;
 
-    public:
-        
         /// constructs a model
-        word2vec_t(): m_map(), m_errMsg() {}
+        //word2vec_t(): m_map(), m_errMsg() {}
         /// virtual destructor
         virtual ~word2vec_t() = default;
         
         /// direct access to the word-vector map
-        const map_t &map() {return m_map;} // NOTE: consider removing
+        //const map_t &map() {return m_map;} // NOTE: consider removing
+        
+        const std::vector<float> &trainMatrix() {return m_trainMatrix;} 
         
         /// @returns vector size of model
         uint16_t vectorSize() const noexcept {return m_vectorSize;}
         /// @returns model size (number of stored vectors)
-        std::size_t modelSize() const noexcept {return m_mapSize;}
+        //std::size_t modelSize() const noexcept {return m_mapSize;}
+        /// @returns m_vocaburarySize size (number of types)
+        std::size_t vocaburarySize() const noexcept {return m_vocaburarySize;}
         /// @returns error message
         std::string errMsg() const noexcept {return m_errMsg;}
         
@@ -133,19 +138,35 @@ namespace w2v {
                    trainProgressCallback_t _trainProgressCallback) noexcept;
         
         /// normalise vectors
+        // inline void normalize() {
+        //     for(auto &it : m_map) {
+        //         // normalize vector
+        //         auto &vec = it.second;
+        //         float ss = 0.0f;
+        //         for (auto const &v : vec) {
+        //             ss += v * v;
+        //         }
+        //         if (ss <= 0.0f) 
+        //             throw std::runtime_error("failed to normalize vectors");
+        //         float d = std::sqrt(ss / vec.size());
+        //         for (auto &v : vec) {
+        //             v = v / d;
+        //         }
+        //     } 
+        // }
+        
+        // normalise vectors
         inline void normalize() {
-            for(auto &it : m_map) {
-                // normalize vector
-                auto &vec = it.second;
+            for(std::size_t i = 0; i < m_vocaburarySize; i += m_vectorSize) {
                 float ss = 0.0f;
-                for (auto const &v : vec) {
-                    ss += v * v;
+                for(std::size_t j = 0; j < m_vectorSize; ++j) {
+                    ss += m_trainMatrix[i + j] * m_trainMatrix[i + j];
                 }
                 if (ss <= 0.0f) 
                     throw std::runtime_error("failed to normalize vectors");
-                float d = std::sqrt(ss / vec.size());
-                for (auto &v : vec) {
-                    v = v / d;
+                float d = std::sqrt(ss / m_vectorSize);
+                for(std::size_t j = 0; j < m_vectorSize; ++j) {
+                    m_trainMatrix[i + j] = m_trainMatrix[i + j] / d;
                 }
             } 
         }

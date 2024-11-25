@@ -3,7 +3,7 @@
 //#include <iomanip>
 #include <chrono>
 #include <thread>
-#include <unordered_map>
+//#include <unordered_map>
 #include <mutex>
 #include "word2vec/word2vec.hpp"
 #include "tokens.h"
@@ -19,29 +19,38 @@ Rcpp::CharacterVector encode(std::vector<std::string> types){
     return(types_);
 }
 
-Rcpp::NumericMatrix as_matrix(w2v::word2vec_t model) {
-    
-    std::unordered_map<std::string, std::vector<float>> m_map = model.map();
-    std::vector<std::string> words;
-    words.reserve(m_map.size());
-    for(auto it : m_map) {
-        words.push_back(it.first);
-    } 
+// Rcpp::NumericMatrix as_matrix(w2v::word2vec_t model) {
+//     
+//     std::unordered_map<std::string, std::vector<float>> m_map = model.map();
+//     std::vector<std::string> words;
+//     words.reserve(m_map.size());
+//     for(auto it : m_map) {
+//         words.push_back(it.first);
+//     } 
+// 
+//     std::vector<float> mat;
+//     mat.reserve(model.vectorSize() * words.size());
+//     for (size_t j = 0; j < words.size(); j++) {
+//         //auto p = model.vector(words[j]);
+//         auto it = m_map.find(words[j]);
+//         if (it != m_map.end()) {
+//             //std::vector<float> vec = *p;
+//             std::vector<float> vec = it->second;
+//             mat.insert(mat.end(), vec.begin(), vec.end());
+//         }
+//     }
+//     //std::vector<float> mat = model.trainMatrix();
+//     
+//     Rcpp::NumericMatrix mat_(model.vectorSize(), words.size(), mat.begin());
+//     colnames(mat_) = encode(words); 
+//     return Rcpp::transpose(mat_);
+// }
 
-    std::vector<float> mat;
-    mat.reserve(model.vectorSize() * words.size());
-    for (size_t j = 0; j < words.size(); j++) {
-        //auto p = model.vector(words[j]);
-        auto it = m_map.find(words[j]);
-        if (it != m_map.end()) {
-            //std::vector<float> vec = *p;
-            std::vector<float> vec = it->second;
-            mat.insert(mat.end(), vec.begin(), vec.end());
-        }
-    }
+Rcpp::NumericMatrix as_matrix(w2v::word2vec_t model, w2v::corpus_t corpus) {
     
-    Rcpp::NumericMatrix mat_(model.vectorSize(), words.size(), mat.begin());
-    colnames(mat_) = encode(words); 
+    std::vector<float> mat = model.trainMatrix();
+    Rcpp::NumericMatrix mat_(model.vectorSize(), corpus.types.size(), mat.begin());
+    colnames(mat_) = encode(corpus.types); 
     return Rcpp::transpose(mat_);
 }
 
@@ -155,7 +164,8 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
         Rprintf(" ...complete\n");
     
     Rcpp::List out = Rcpp::List::create(
-    Rcpp::Named("model") = as_matrix(word2vec),
+    //Rcpp::Named("model") = as_matrix(word2vec),
+    Rcpp::Named("model") = as_matrix(word2vec, corpus),
     //Rcpp::Named("model") = model,
     //Rcpp::Named("vocabulary") = types.size(),
     //Rcpp::Named("success") = success,

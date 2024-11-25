@@ -18,24 +18,24 @@ namespace w2v {
             std::shared_ptr<corpus_t> corpus(new corpus_t(_corpus));
             
             m_vectorSize = _settings.size;
-            m_mapSize = corpus->types.size();
+            m_vocaburarySize = corpus->types.size();
             
             // train model
-            std::vector<float> _trainMatrix;
+            //std::vector<float> _trainMatrix;
             trainer_t(std::make_shared<settings_t>(_settings),
                       corpus,
-                      _trainProgressCallback)(_trainMatrix);
+                      _trainProgressCallback)(m_trainMatrix);
 
-            std::size_t wordIndex = 0;
-            for (auto const &type : corpus->types) {
-                //Rcpp::Rcout << type << "\n";
-                auto &vec = m_map[type];
-                vec.resize(m_vectorSize);
-                std::copy(&_trainMatrix[wordIndex * m_vectorSize],
-                          &_trainMatrix[(wordIndex + 1) * m_vectorSize],
-                          &vec[0]);
-                wordIndex++;
-            }
+            // std::size_t wordIndex = 0;
+            // for (auto const &type : corpus->types) {
+            //     //Rcpp::Rcout << type << "\n";
+            //     auto &vec = m_map[type];
+            //     vec.resize(m_vectorSize);
+            //     std::copy(&m_trainMatrix[wordIndex * m_vectorSize],
+            //               &m_trainMatrix[(wordIndex + 1) * m_vectorSize],
+            //               &vec[0]);
+            //     wordIndex++;
+            // }
 
             return true;
         } catch (const std::exception &_e) {
