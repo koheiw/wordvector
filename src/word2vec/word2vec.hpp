@@ -97,7 +97,8 @@ namespace w2v {
     protected:
         using map_t = std::unordered_map<std::string, std::vector<float>>;
         
-        std::vector<float> trainMatrix;
+        // 
+        std::vector<float> m_trainMatrix; // NOTE: rename to m_layer?
         map_t m_map;
         uint16_t m_vectorSize = 0;
         std::size_t m_mapSize = 0;
@@ -111,8 +112,6 @@ namespace w2v {
         /// type of callback function to be called on training progress events
         using trainProgressCallback_t = std::function<void(float, float)>;
 
-    public:
-        
         /// constructs a model
         word2vec_t(): m_map(), m_errMsg() {}
         /// virtual destructor
@@ -120,6 +119,8 @@ namespace w2v {
         
         /// direct access to the word-vector map
         const map_t &map() {return m_map;} // NOTE: consider removing
+        
+        const std::vector<float> &trainMatrix() {return m_trainMatrix;} // NOTE: consider removing
         
         /// @returns vector size of model
         uint16_t vectorSize() const noexcept {return m_vectorSize;}

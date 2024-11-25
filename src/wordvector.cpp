@@ -39,9 +39,18 @@ Rcpp::NumericMatrix as_matrix(w2v::word2vec_t model) {
             mat.insert(mat.end(), vec.begin(), vec.end());
         }
     }
+    //std::vector<float> mat = model.trainMatrix();
     
     Rcpp::NumericMatrix mat_(model.vectorSize(), words.size(), mat.begin());
     colnames(mat_) = encode(words); 
+    return Rcpp::transpose(mat_);
+}
+
+Rcpp::NumericMatrix as_matrix(w2v::word2vec_t model, w2v::corpus_t corpus) {
+    
+    std::vector<float> mat = model.trainMatrix();
+    Rcpp::NumericMatrix mat_(model.vectorSize(), corpus.types.size(), mat.begin());
+    colnames(mat_) = encode(corpus.types); 
     return Rcpp::transpose(mat_);
 }
 
@@ -155,7 +164,8 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
         Rprintf(" ...complete\n");
     
     Rcpp::List out = Rcpp::List::create(
-    Rcpp::Named("model") = as_matrix(word2vec),
+    //Rcpp::Named("model") = as_matrix(word2vec),
+    Rcpp::Named("model") = as_matrix(word2vec, corpus),
     //Rcpp::Named("model") = model,
     //Rcpp::Named("vocabulary") = types.size(),
     //Rcpp::Named("success") = success,
