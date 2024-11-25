@@ -54,6 +54,13 @@ Rcpp::NumericMatrix as_matrix(w2v::word2vec_t model, w2v::corpus_t corpus) {
     return Rcpp::transpose(mat_);
 }
 
+Rcpp::NumericVector get_frequency(w2v::corpus_t corpus) {
+    
+    Rcpp::NumericVector v = Rcpp::wrap(corpus.frequency);
+    v.names() = encode(corpus.types);
+    return(v);
+}
+
 /*
  uint16_t minWordFreq = 5; ///< discard words that appear less than minWordFreq times
  uint16_t size = 100; ///< word vector size
@@ -164,35 +171,21 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
         Rprintf(" ...complete\n");
     
     Rcpp::List out = Rcpp::List::create(
-    //Rcpp::Named("model") = as_matrix(word2vec),
-    Rcpp::Named("model") = as_matrix(word2vec, corpus),
-    //Rcpp::Named("model") = model,
-    //Rcpp::Named("vocabulary") = types.size(),
-    //Rcpp::Named("success") = success,
-    //Rcpp::Named("error_log") = model.errMsg(),
-    Rcpp::Named("dim") = size,
-    Rcpp::Named("type") = "", // placeholder 
-    Rcpp::Named("min_count") = 0L, // placeholder 
-    Rcpp::Named("window") = window,
-    Rcpp::Named("iter") = iterations,
-    Rcpp::Named("lr") = alpha,
-    Rcpp::Named("hs") = withHS,
-    Rcpp::Named("negative") = negative,
-    Rcpp::Named("sample") = sample
-    
-    // NOTE: move to R
-    // Rcpp::Named("control") = Rcpp::List::create(
-    //     //Rcpp::Named("dim") = size,
-    //     //Rcpp::Named("window") = window,
-    //     //Rcpp::Named("iter") = iterations,
-    //     //Rcpp::Named("lr") = alpha,
-    //     //Rcpp::Named("skipgram") = withSG,
-    //     //Rcpp::Named("hs") = withHS,
-    //     //Rcpp::Named("negative") = negative,
-    //     //Rcpp::Named("sample") = sample,
-    //     //Rcpp::Named("expTableSize") = expTableSize,
-    //     //Rcpp::Named("expValueMax") = expValueMax
-    // )
+        //Rcpp::Named("model") = as_matrix(word2vec),
+        Rcpp::Named("model") = as_matrix(word2vec, corpus),
+        //Rcpp::Named("model") = model,
+        //Rcpp::Named("vocabulary") = types.size(),
+        //Rcpp::Named("success") = success,
+        //Rcpp::Named("error_log") = model.errMsg(),
+        Rcpp::Named("dim") = size,
+        Rcpp::Named("min_count") = minWordFreq,
+        Rcpp::Named("frequency") = get_frequency(corpus),
+        Rcpp::Named("window") = window,
+        Rcpp::Named("iter") = iterations,
+        Rcpp::Named("lr") = alpha,
+        Rcpp::Named("hs") = withHS,
+        Rcpp::Named("negative") = negative,
+        Rcpp::Named("sample") = sample
     );
     out.attr("class") = "textmodel_wordvector";
     return out;

@@ -9,7 +9,7 @@ toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>%
     tokens_tolower()
 toks_grp <- tokens_group(toks)
 
-wov <- lsa(toks, dim = 50, min_count = 0, sample = 0)
+wov <- lsa(toks, dim = 50, min_count = 2, sample = 0)
 dov <- doc2vec(toks_grp, wov)
 #dov_nm <- doc2vec(toks_grp, min_count = 10, sample = 0)
 
@@ -20,23 +20,26 @@ test_that("word2vec words", {
         class(wov), "textmodel_wordvector"
     )
     expect_equal(
-        dim(wov$model), c(9280, 50)
+        dim(wov$model), c(5360, 50)
     )
     expect_equal(
         wov$weight, "count"
     )
     expect_equal(
-        wov$min_count, 0L
+        wov$min_count, 2L
     )
-    
+    expect_equal(
+        featfreq(dfm_trim(dfm(toks), 2)),
+        wov$frequency
+    )
     expect_output(
         print(wov),
         paste(
             "",
             "Call:",
-            "lsa(x = toks, dim = 50, min_count = 0, sample = 0)",
+            "lsa(x = toks, dim = 50, min_count = 2, sample = 0)",
             "",
-            "50 dimensions; 9,280 words.", sep = "\n"), fixed = TRUE
+            "50 dimensions; 5,360 words.", sep = "\n"), fixed = TRUE
     )
     
     # docvector with model
@@ -50,7 +53,7 @@ test_that("word2vec words", {
         dov$weight, "count"
     )
     expect_equal(
-        dov$min_count, 0L
+        dov$min_count, 2L
     )
     
     expect_output(

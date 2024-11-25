@@ -26,6 +26,7 @@ lsa.tokens <- function(x, dim = 50, min_count = 5L, engine = c("RSpectra", "irlb
         model = wov,
         dim = dim,
         min_count = min_count,
+        frequency = featfreq(x),
         engine = engine,
         weight = weight,
         concatenator = meta(x, field = "concatenator", type = "object"),

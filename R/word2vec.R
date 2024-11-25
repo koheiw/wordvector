@@ -82,8 +82,7 @@ word2vec.tokens <- function(x, dim = 50, type = c("cbow", "skip-gram"),
         model <- model * 10
     
     # NOTE: use tokens_xptr?
-    #x <- as.tokenx_xptr(x)
-    #x <- tokens_trim(x, min_termfreq = min_count, termfreq_type = "count")
+    x <- tokens_trim(x, min_termfreq = min_count, termfreq_type = "count")
     result <- cpp_w2v(as.tokens(x), attr(x, "types"), 
                       minWordFreq = min_count,
                       size = dim, window = window,
@@ -92,8 +91,7 @@ word2vec.tokens <- function(x, dim = 50, type = c("cbow", "skip-gram"),
                       alpha = lr, model = model, verbose = verbose)
     if (!is.null(result$message))
         stop("Failed to train word2vec (", result$message, ")")
-    result$type <- type
-    result$min_count <- min_count
+
     result$concatenator <- meta(x, field = "concatenator", type = "object")
     result$call <- try(match.call(sys.function(-1), call = sys.call(-1)), silent = TRUE)
     return(result)
