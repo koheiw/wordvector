@@ -32,10 +32,8 @@ namespace w2v {
      */
     downSampling_t(float _sample, std::size_t _trainWords) :
         m_sample(_sample), m_trainWords(_trainWords),
-        m_unfrequentSince(
-            static_cast<std::size_t>((m_sample / (1.5f - 0.5f * std::sqrt(5.0f))) * m_trainWords)),
-        m_freqWordsDistribution(0.0f, 1.0f) {
-    }
+        m_unfrequentSince(static_cast<std::size_t>((m_sample / (1.5f - 0.5f * std::sqrt(5.0f))) * m_trainWords)),
+        m_freqWordsDistribution(0.0f, 1.0f) {}
 
     /**
      * Generates a random decision to discard a word with _wordFreq frequency from a train sentence
