@@ -4,6 +4,7 @@ lsa <- function(x, dim = 50, min_count = 5L, engine = c("RSpectra", "irlba", "rs
     UseMethod("lsa")   
 }
 
+#' @importFrom quanteda tokens_trim dfm featfreq
 #' @export
 lsa.tokens <- function(x, dim = 50, min_count = 5L, engine = c("RSpectra", "irlba", "rsvd"), 
                        weight = "count", verbose = FALSE, ...) {
@@ -36,14 +37,17 @@ lsa.tokens <- function(x, dim = 50, min_count = 5L, engine = c("RSpectra", "irlb
     return(result)
 }
 
+#' @importFrom quanteda dfm_weight
+#' @importFrom methods as
 get_svd <- function(x, k, engine, weight = "count", reduce = FALSE, ...) {
     if (reduce) {
-        x <- quanteda::dfm_weight(x, weights = 1 / sqrt(featfreq(x)))
+        # NOTE: generalize? featfreq(x) ^ (1 / reduce)
+        x <- dfm_weight(x, weights = 1 / sqrt(featfreq(x)))
     } else {
         if (weight == "sqrt") {
             x@x <- sqrt(x@x)
         } else {
-            x <- quanteda::dfm_weight(x, scheme = weight)
+            x <- dfm_weight(x, scheme = weight)
         }
     }
     if (engine == "RSpectra") {

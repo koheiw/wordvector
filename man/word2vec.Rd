@@ -77,10 +77,6 @@ Some notes on the tokenisation
 \item{If you provide to \code{x} a character vector or the path to the file on disk, the tokenisation into words depends on the first element provided in \code{split} and the tokenisation into sentences depends on the second element provided in \code{split} when passed on to \code{\link{word2vec.character}}}
 }
 }
-\examples{
-
-\dontshow{\} # End of main if statement running only if the required packages are installed}
-}
 \references{
 \url{https://github.com/maxoodf/word2vec}, \url{https://arxiv.org/pdf/1310.4546.pdf}
 }

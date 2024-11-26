@@ -67,10 +67,6 @@ Some advice on the optimal set of parameters to use for training as defined by M
 \item{argument sample: sub-sampling of frequent words: can improve both accuracy and speed for large data sets (useful values are in range 0.001 to 0.00001)}
 }
 }
-\examples{
-
-\dontshow{\} # End of main if statement running only if the required packages are installed}
-}
 \references{
 \url{https://github.com/maxoodf/word2vec}, \url{https://arxiv.org/pdf/1310.4546.pdf}
 }

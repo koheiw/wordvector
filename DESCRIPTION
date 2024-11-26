@@ -13,11 +13,14 @@ URL: https://github.com/bnosac/word2vec
 License: Apache License (>= 2.0)
 Encoding: UTF-8
 RoxygenNote: 7.3.2
-Depends: R (>= 2.10)
+Depends: 
+    methods,
+    R (>= 3.5.0)
 Imports: 
-    Rcpp (>= 0.11.5), 
-    stats, 
     quanteda (>= 4.1.0), 
+    stringi,
+    Matrix,
+    proxyC,
     RSpectra,
     irlba,
     rsvd

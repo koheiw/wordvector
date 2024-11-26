@@ -41,9 +41,6 @@
 #' @seealso \code{\link{predict.word2vec}}, \code{\link{as.matrix.word2vec}}, \code{\link{word2vec}}, \code{\link{word2vec.character}}, \code{\link{word2vec.list}}
 #' @export
 #' @useDynLib wordvector
-#' @examples
-#' 
-#' \dontshow{\} # End of main if statement running only if the required packages are installed}
 word2vec <- function(x, dim = 50, type = c("cbow", "skip-gram"),
                      min_count = 5L, window = ifelse(type == "cbow", 5L, 10L), 
                      iter = 5L, lr = 0.05, hs = FALSE, negative = 5L, 
@@ -53,10 +50,7 @@ word2vec <- function(x, dim = 50, type = c("cbow", "skip-gram"),
 
 #' @inherit word2vec title description params details seealso return references
 #' @export
-#' @importFrom quanteda dfm featfreq tokens_keep
-#' @examples 
-#' 
-#' \dontshow{\} # End of main if statement running only if the required packages are installed}
+#' @importFrom quanteda tokens_trim
 word2vec.tokens <- function(x, dim = 50, type = c("cbow", "skip-gram"), 
                             min_count = 5L, window = ifelse(type == "cbow", 5L, 10L), 
                             iter = 5L, lr = 0.05, hs = FALSE, negative = 5L, 
@@ -173,9 +167,8 @@ doc2vec.tokens <- function(x, model = NULL, ...) {
 }
 
 #' Find similar words via formula interface
-#' @examples
-#' analogy(mod, ~ japan - tokyo)
 #' @export
+#' @importFrom utils head tail
 analogy <- function(model, formula, n = 10, method = c("cosine", "dot")) {
     
     method <- match.arg(method)

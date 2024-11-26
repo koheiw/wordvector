@@ -9,6 +9,3 @@ analogy(model, formula, n = 10, method = c("cosine", "dot"))
 \description{
 Find similar words via formula interface
 }
-\examples{
-analogy(mod, ~ japan - tokyo)
-}
