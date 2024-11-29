@@ -36,22 +36,23 @@ word2vec <- function(x, dim = 50, type = c("cbow", "skip-gram"),
 #' @inherit word2vec title description params details seealso return references
 #' @export
 #' @importFrom quanteda tokens_trim check_integer check_numeric
-word2vec.tokens <- function(x, dim = 50, type = c("cbow", "skip-gram"), 
+word2vec.tokens <- function(x, dim = 50L, type = c("cbow", "skip-gram"), 
                             min_count = 5L, window = ifelse(type == "cbow", 5L, 10L), 
-                            iter = 10L, alpha = 0.05, use_ns = FALSE, ns_size = 5L, 
+                            iter = 10L, use_ns = FALSE, ns_size = 5L,  alpha = 0.05, 
                             sample = 0.001, verbose = FALSE, ..., old = FALSE) {
     
     type <- match.arg(type)
-    min_count <- as.integer(min_count)
-    dim <- as.integer(dim)
-    window <- as.integer(window)
-    iter <- as.integer(iter)
-    sample <- as.numeric(sample)
-    use_ns <- as.logical(!use_ns)
-    ns_size <- as.integer(ns_size)
-    iter <- as.integer(iter)
-    alpha <- as.numeric(alpha)
+    dim <- check_integer(dim, min = 2)
     type <- match(type, c("cbow", "skip-gram"))
+    min_count <- check_integer(min_count, min = 0)
+    window <- check_integer(window, min = 1)
+    iter <- check_integer(iter, min = 1)
+    use_ns <- check_logical(use_ns)
+    ns_size <- check_integer(ns_size, min_len = 1)
+    alpha <- check_double(alpha, min = 0)
+    sample <- check_double(sample, min = 0)
+    verbose <- check_logical(verbose)
+
     if (old)
         type <- type * 10
     
@@ -151,7 +152,9 @@ doc2vec.tokens <- function(x, model = NULL, ...) {
 #' @importFrom utils head tail
 analogy <- function(model, formula, n = 10, method = c("cosine", "dot")) {
     
+    n <- check_integer(n, min_len = 0)
     method <- match.arg(method)
+    
     emb <- t(as.matrix(model))
     if (!identical(class(formula), "formula"))
         stop("The object for 'formula' should be a formula")
@@ -195,6 +198,8 @@ analogy <- function(model, formula, n = 10, method = c("cosine", "dot")) {
 #' Find similar words via a vector
 #' @export
 synonyms <- function(model, terms, n = 10) { # NOTE: consider changing to neighbors()
+    terms <- check_character(terms, max_len = Inf)
+    n <- check_integer(n, min_len = 0)
     emb <- as.matrix(model)
     terms <- intersect(terms, rownames(emb))
     sim <- proxyC::simil(emb[terms,,drop = FALSE], emb)

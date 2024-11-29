@@ -6,10 +6,14 @@ lsa <- function(x, dim = 50, min_count = 5L, engine = c("RSpectra", "irlba", "rs
 
 #' @importFrom quanteda tokens_trim dfm featfreq
 #' @export
-lsa.tokens <- function(x, dim = 50, min_count = 5L, engine = c("RSpectra", "irlba", "rsvd"), 
+lsa.tokens <- function(x, dim = 50L, min_count = 5L, engine = c("RSpectra", "irlba", "rsvd"), 
                        weight = "count", verbose = FALSE, ...) {
     
     engine <- match.arg(engine)
+    dim <- check_integer(dim, min = 2)
+    min_count <- check_integer(min_count, min = 0)
+    verbose <- check_logical(verbose)
+    
     x <- tokens_trim(x, min_termfreq = min_count, termfreq_type = "count")
     x <- dfm(x, remove_padding = TRUE)
     if (engine %in% c("RSpectra", "irlba", "rsvd")) {
