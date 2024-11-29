@@ -1,88 +1,68 @@
-#' @title Train a word2vec model on text
-#' @description Construct a word2vec model on text. The algorithm is explained at \url{https://arxiv.org/pdf/1310.4546.pdf}
-#' @param x a character vector with text or the path to the file on disk containing training data or a list of tokens. See the examples.
-#' @param type the type of algorithm to use, either 'cbow' or 'skip-gram'. Defaults to 'cbow'
-#' @param dim dimension of the word vectors. Defaults to 50.
-#' @param iter number of training iterations. Defaults to 5.
-#' @param lr initial learning rate also known as alpha. Defaults to 0.05
-#' @param window skip length between words. Defaults to 5.
-#' @param hs logical indicating to use hierarchical softmax instead of negative sampling. Defaults to FALSE indicating to do negative sampling.
-#' @param negative integer with the number of negative samples. Only used in case hs is set to FALSE
-#' @param sample threshold for occurrence of words. Defaults to 0.001
-#' @param min_count integer indicating the number of time a word should occur to be considered as part of the training vocabulary. Defaults to 5.
-#' @param stopwords a character vector of stopwords to exclude from training 
-#' @param threads number of CPU threads to use. Defaults to 1.
-#' @param ... further arguments passed on to the methods \code{\link{word2vec.character}}, \code{\link{word2vec.list}} as well as the C++ function \code{w2v_train} - for expert use only
-#' @return an object of class \code{w2v_trained} which is a list with elements 
-#' \itemize{
-#' \item{model: a Rcpp pointer to the model}
-#' \item{data: a list with elements file: the training data used, stopwords: the character vector of stopwords, n}
-#' \item{vocabulary: the number of words in the vocabulary}
-#' \item{success: logical indicating if training succeeded}
-#' \item{error_log: the error log in case training failed}
-#' \item{control: as list of the training arguments used, namely min_count, dim, window, iter, lr, skipgram, hs, negative, sample, split_words, split_sents, expTableSize and expValueMax}
-#' }
+#' Word2vec model
+#' 
+#' Train a Word2vec model (Mikolov et al., 2023) <https://arxiv.org/pdf/1310.4546.pdf> in different architectures on a [quanteda::tokens] object.
+#' @param x a [quanteda::tokens] object.
+#' @param dim size of the word vectors.
+#' @param type the architecture of the model; either "cbow" (continuous back of words) or "skip-gram".
+#' @param min_count the minimum frequency of the words. Words less frequent than this in the `tokens` object are removed before training.
+#' @param window the size of the word window. Words within this window are considered to be the context of a target word.
+#' @param iter the number of iterations in training the model.
+#' @param alpha the initial learning rate.
+#' @param use_ns if `TRUE`, negative sampling is used. Otherwise, hierarchical softmax is used.
+#' @param ns_size the size of negative samples. Only used when `use_ns = TRUE`.
+#' @param sample the rate of sampling of words based on theri frequency. Sampling is disabled when `sample = 1.0`
+#' @param ... additional arguments.
+#' @returns Returns a fitted textmodel_wordvector object with the following
+#'   elements: \item{model}{a matrix that records the association between
+#'   classes and features.}
+#'   \item{data}{the original input of `x`.}
+#'   \item{feature}{the feature set in `x`}
+#'   \item{class}{the class labels in `y`.}
+#'   \item{concatenator}{the concatenator in `x`.}
+#'   \item{entropy}{the scheme to compute entropy weights.}
+#'   \item{boolean}{the use of the Boolean transformation of `x`.}
+#'   \item{call}{the command used to execute the function.}
+#'   \item{version}{the version of the wordmap package.}#' }
 #' @references \url{https://github.com/maxoodf/word2vec}, \url{https://arxiv.org/pdf/1310.4546.pdf}
-#' @details 
-#' Some advice on the optimal set of parameters to use for training as defined by Mikolov et al.
-#' \itemize{
-#' \item{argument type: skip-gram (slower, better for infrequent words) vs cbow (fast)}
-#' \item{argument hs: the training algorithm: hierarchical softmax (better for infrequent words) vs negative sampling (better for frequent words, better with low dimensional vectors)}
-#' \item{argument dim: dimensionality of the word vectors: usually more is better, but not always}
-#' \item{argument window: for skip-gram usually around 10, for cbow around 5}
-#' \item{argument sample: sub-sampling of frequent words: can improve both accuracy and speed for large data sets (useful values are in range 0.001 to 0.00001)}
-#' }
-#' @note
-#' Some notes on the tokenisation
-#' \itemize{
-#' \item{If you provide to \code{x} a list, each list element should correspond to a sentence (or what you consider as a sentence) and should contain a character vector of tokens. The word2vec model is then executed using \code{\link{word2vec.list}}}
-#' \item{If you provide to \code{x} a character vector or the path to the file on disk, the tokenisation into words depends on the first element provided in \code{split} and the tokenisation into sentences depends on the second element provided in \code{split} when passed on to \code{\link{word2vec.character}}}
-#' }
-#' @seealso \code{\link{predict.word2vec}}, \code{\link{as.matrix.word2vec}}, \code{\link{word2vec}}, \code{\link{word2vec.character}}, \code{\link{word2vec.list}}
 #' @export
 #' @useDynLib wordvector
-word2vec <- function(x, dim = 50, type = c("cbow", "skip-gram"),
+word2vec <- function(x, dim = 50, type = c("cbow", "skip-gram"), 
                      min_count = 5L, window = ifelse(type == "cbow", 5L, 10L), 
-                     iter = 5L, lr = 0.05, hs = FALSE, negative = 5L, 
+                     iter = 10L, alpha = 0.05, use_ns = TRUE, ns_size = 5L, 
                      sample = 0.001, verbose = FALSE, ...) {
     UseMethod("word2vec")
 }
 
 #' @inherit word2vec title description params details seealso return references
 #' @export
-#' @importFrom quanteda tokens_trim
+#' @importFrom quanteda tokens_trim check_integer check_numeric
 word2vec.tokens <- function(x, dim = 50, type = c("cbow", "skip-gram"), 
                             min_count = 5L, window = ifelse(type == "cbow", 5L, 10L), 
-                            iter = 5L, lr = 0.05, hs = FALSE, negative = 5L, 
+                            iter = 10L, alpha = 0.05, use_ns = FALSE, ns_size = 5L, 
                             sample = 0.001, verbose = FALSE, ..., old = FALSE) {
     
     type <- match.arg(type)
-    #expTableSize <- 1000L
-    #expValueMax <- 6L
-    #expTableSize <- as.integer(expTableSize)
-    #expValueMax <- as.integer(expValueMax)
     min_count <- as.integer(min_count)
     dim <- as.integer(dim)
     window <- as.integer(window)
     iter <- as.integer(iter)
     sample <- as.numeric(sample)
-    hs <- as.logical(hs)
-    negative <- as.integer(negative)
-    #threads <- as.integer(threads)
+    use_ns <- as.logical(!use_ns)
+    ns_size <- as.integer(ns_size)
     iter <- as.integer(iter)
-    lr <- as.numeric(lr)
-    model <- match(type, c("cbow", "skip-gram"))
+    alpha <- as.numeric(alpha)
+    type <- match(type, c("cbow", "skip-gram"))
     if (old)
-        model <- model * 10
+        type <- type * 10
     
     # NOTE: use tokens_xptr?
     x <- tokens_trim(x, min_termfreq = min_count, termfreq_type = "count")
-    result <- cpp_w2v(as.tokens(x), attr(x, "types"), 
+    result <- cpp_w2v(as.tokens(x), words = attr(x, "types"), 
                       minWordFreq = min_count,
                       size = dim, window = window,
-                      sample = sample, withHS = hs, negative = negative, 
+                      sample = sample, withHS = !use_ns, negative = ns_size, 
                       threads = get_threads(), iterations = iter,
-                      alpha = lr, model = model, verbose = verbose)
+                      alpha = alpha, type = type, verbose = verbose)
     if (!is.null(result$message))
         stop("Failed to train word2vec (", result$message, ")")
 

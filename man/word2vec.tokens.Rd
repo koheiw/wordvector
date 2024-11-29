@@ -2,7 +2,7 @@
 % Please edit documentation in R/word2vec.R
 \name{word2vec.tokens}
 \alias{word2vec.tokens}
-\title{Train a word2vec model on text}
+\title{Word2vec model}
 \usage{
 \method{word2vec}{tokens}(
   x,
@@ -10,10 +10,10 @@
   type = c("cbow", "skip-gram"),
   min_count = 5L,
   window = ifelse(type == "cbow", 5L, 10L),
-  iter = 5L,
-  lr = 0.05,
-  hs = FALSE,
-  negative = 5L,
+  iter = 10L,
+  alpha = 0.05,
+  use_ns = FALSE,
+  ns_size = 5L,
   sample = 0.001,
   verbose = FALSE,
   ...,
@@ -21,55 +21,34 @@
 )
 }
 \arguments{
-\item{x}{a character vector with text or the path to the file on disk containing training data or a list of tokens. See the examples.}
+\item{x}{a [quanteda::tokens] object.}
 
-\item{dim}{dimension of the word vectors. Defaults to 50.}
+\item{dim}{size of the word vectors.}
 
-\item{type}{the type of algorithm to use, either 'cbow' or 'skip-gram'. Defaults to 'cbow'}
+\item{type}{the architecture of the model; either "cbow" (continuous back of words) or "skip-gram".}
 
-\item{min_count}{integer indicating the number of time a word should occur to be considered as part of the training vocabulary. Defaults to 5.}
+\item{min_count}{the minimum frequency of the words. Words less frequent than this in the `tokens` object are removed before training.}
 
-\item{window}{skip length between words. Defaults to 5.}
+\item{window}{the size of the word window. Words within this window are considered to be the context of a target word.}
 
-\item{iter}{number of training iterations. Defaults to 5.}
+\item{iter}{number of iterations in training the model.}
 
-\item{lr}{initial learning rate also known as alpha. Defaults to 0.05}
+\item{alpha}{the initial learning rate.}
 
-\item{hs}{logical indicating to use hierarchical softmax instead of negative sampling. Defaults to FALSE indicating to do negative sampling.}
+\item{use_ns}{if `TRUE`, negative sampling is used. Otherwise, hierarchical softmax is used.}
 
-\item{negative}{integer with the number of negative samples. Only used in case hs is set to FALSE}
+\item{ns_size}{the size of negative samples. Only used when `use_ns = TRUE`.}
 
-\item{sample}{threshold for occurrence of words. Defaults to 0.001}
+\item{sample}{the rate of sampling of words based on theri frequency. Sampling is disabled when `sample = 1.0`}
 
-\item{...}{further arguments passed on to the methods \code{\link{word2vec.character}}, \code{\link{word2vec.list}} as well as the C++ function \code{w2v_train} - for expert use only}
+\item{...}{additional arguments.}
 }
 \value{
-an object of class \code{w2v_trained} which is a list with elements 
-\itemize{
-\item{model: a Rcpp pointer to the model}
-\item{data: a list with elements file: the training data used, stopwords: the character vector of stopwords, n}
-\item{vocabulary: the number of words in the vocabulary}
-\item{success: logical indicating if training succeeded}
-\item{error_log: the error log in case training failed}
-\item{control: as list of the training arguments used, namely min_count, dim, window, iter, lr, skipgram, hs, negative, sample, split_words, split_sents, expTableSize and expValueMax}
-}
+
 }
 \description{
-Construct a word2vec model on text. The algorithm is explained at \url{https://arxiv.org/pdf/1310.4546.pdf}
-}
-\details{
-Some advice on the optimal set of parameters to use for training as defined by Mikolov et al.
-\itemize{
-\item{argument type: skip-gram (slower, better for infrequent words) vs cbow (fast)}
-\item{argument hs: the training algorithm: hierarchical softmax (better for infrequent words) vs negative sampling (better for frequent words, better with low dimensional vectors)}
-\item{argument dim: dimensionality of the word vectors: usually more is better, but not always}
-\item{argument window: for skip-gram usually around 10, for cbow around 5}
-\item{argument sample: sub-sampling of frequent words: can improve both accuracy and speed for large data sets (useful values are in range 0.001 to 0.00001)}
-}
+Train a Word2vec model (Mikolov et al., 2023) <https://arxiv.org/pdf/1310.4546.pdf> on a [quanteda::tokens] object.
 }
 \references{
 \url{https://github.com/maxoodf/word2vec}, \url{https://arxiv.org/pdf/1310.4546.pdf}
-}
-\seealso{
-\code{\link{predict.word2vec}}, \code{\link{as.matrix.word2vec}}, \code{\link{word2vec}}, \code{\link{word2vec.character}}, \code{\link{word2vec.list}}
 }

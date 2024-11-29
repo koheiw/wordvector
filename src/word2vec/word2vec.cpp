@@ -18,7 +18,7 @@ namespace w2v {
             std::shared_ptr<corpus_t> corpus(new corpus_t(_corpus));
             
             m_vectorSize = _settings.size;
-            m_vocaburarySize = corpus->types.size();
+            m_vocaburarySize = corpus->words.size();
             
             // train model
             //std::vector<float> _trainMatrix;

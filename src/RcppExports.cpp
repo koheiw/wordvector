@@ -22,28 +22,28 @@ BEGIN_RCPP
 END_RCPP
 }
 // cpp_w2v
-Rcpp::List cpp_w2v(Rcpp::List texts_, Rcpp::CharacterVector types_, uint16_t minWordFreq, uint16_t size, uint8_t window, uint16_t expTableSize, uint8_t expValueMax, float sample, bool withHS, uint8_t negative, uint8_t threads, uint8_t iterations, float alpha, int model, bool verbose, bool normalize);
-RcppExport SEXP _wordvector_cpp_w2v(SEXP texts_SEXP, SEXP types_SEXP, SEXP minWordFreqSEXP, SEXP sizeSEXP, SEXP windowSEXP, SEXP expTableSizeSEXP, SEXP expValueMaxSEXP, SEXP sampleSEXP, SEXP withHSSEXP, SEXP negativeSEXP, SEXP threadsSEXP, SEXP iterationsSEXP, SEXP alphaSEXP, SEXP modelSEXP, SEXP verboseSEXP, SEXP normalizeSEXP) {
+Rcpp::List cpp_w2v(Rcpp::List texts_, Rcpp::CharacterVector words_, uint16_t minWordFreq, uint16_t size, uint8_t window, float sample, bool withHS, uint8_t negative, uint8_t threads, uint8_t iterations, float alpha, int type, bool verbose, bool normalize, uint16_t expTableSize, uint8_t expValueMax);
+RcppExport SEXP _wordvector_cpp_w2v(SEXP texts_SEXP, SEXP words_SEXP, SEXP minWordFreqSEXP, SEXP sizeSEXP, SEXP windowSEXP, SEXP sampleSEXP, SEXP withHSSEXP, SEXP negativeSEXP, SEXP threadsSEXP, SEXP iterationsSEXP, SEXP alphaSEXP, SEXP typeSEXP, SEXP verboseSEXP, SEXP normalizeSEXP, SEXP expTableSizeSEXP, SEXP expValueMaxSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::List >::type texts_(texts_SEXP);
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type types_(types_SEXP);
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type words_(words_SEXP);
     Rcpp::traits::input_parameter< uint16_t >::type minWordFreq(minWordFreqSEXP);
     Rcpp::traits::input_parameter< uint16_t >::type size(sizeSEXP);
     Rcpp::traits::input_parameter< uint8_t >::type window(windowSEXP);
-    Rcpp::traits::input_parameter< uint16_t >::type expTableSize(expTableSizeSEXP);
-    Rcpp::traits::input_parameter< uint8_t >::type expValueMax(expValueMaxSEXP);
     Rcpp::traits::input_parameter< float >::type sample(sampleSEXP);
     Rcpp::traits::input_parameter< bool >::type withHS(withHSSEXP);
     Rcpp::traits::input_parameter< uint8_t >::type negative(negativeSEXP);
     Rcpp::traits::input_parameter< uint8_t >::type threads(threadsSEXP);
     Rcpp::traits::input_parameter< uint8_t >::type iterations(iterationsSEXP);
     Rcpp::traits::input_parameter< float >::type alpha(alphaSEXP);
-    Rcpp::traits::input_parameter< int >::type model(modelSEXP);
+    Rcpp::traits::input_parameter< int >::type type(typeSEXP);
     Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
     Rcpp::traits::input_parameter< bool >::type normalize(normalizeSEXP);
-    rcpp_result_gen = Rcpp::wrap(cpp_w2v(texts_, types_, minWordFreq, size, window, expTableSize, expValueMax, sample, withHS, negative, threads, iterations, alpha, model, verbose, normalize));
+    Rcpp::traits::input_parameter< uint16_t >::type expTableSize(expTableSizeSEXP);
+    Rcpp::traits::input_parameter< uint8_t >::type expValueMax(expValueMaxSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_w2v(texts_, words_, minWordFreq, size, window, sample, withHS, negative, threads, iterations, alpha, type, verbose, normalize, expTableSize, expValueMax));
     return rcpp_result_gen;
 END_RCPP
 }

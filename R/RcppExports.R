@@ -5,7 +5,7 @@ cpp_get_max_thread <- function() {
     .Call('_wordvector_cpp_get_max_thread', PACKAGE = 'wordvector')
 }
 
-cpp_w2v <- function(texts_, types_, minWordFreq = 5L, size = 100L, window = 5L, expTableSize = 1000L, expValueMax = 6L, sample = 0.001, withHS = FALSE, negative = 5L, threads = 1L, iterations = 5L, alpha = 0.05, model = 1L, verbose = FALSE, normalize = TRUE) {
-    .Call('_wordvector_cpp_w2v', PACKAGE = 'wordvector', texts_, types_, minWordFreq, size, window, expTableSize, expValueMax, sample, withHS, negative, threads, iterations, alpha, model, verbose, normalize)
+cpp_w2v <- function(texts_, words_, minWordFreq = 5L, size = 100L, window = 5L, sample = 0.001, withHS = FALSE, negative = 5L, threads = 1L, iterations = 5L, alpha = 0.05, type = 1L, verbose = FALSE, normalize = TRUE, expTableSize = 1000L, expValueMax = 6L) {
+    .Call('_wordvector_cpp_w2v', PACKAGE = 'wordvector', texts_, words_, minWordFreq, size, window, sample, withHS, negative, threads, iterations, alpha, type, verbose, normalize, expTableSize, expValueMax)
 }
 

@@ -9,9 +9,9 @@ toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>%
     tokens_tolower()
 toks_grp <- tokens_group(toks)
 
-wov <- word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 0)
+wov <- word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1)
 dov <- doc2vec(toks_grp, wov)
-dov_nm <- doc2vec(toks_grp, min_count = 10, sample = 0)
+dov_nm <- doc2vec(toks_grp, min_count = 10, sample = 1)
 
 test_that("word2vec works", {
     
@@ -23,7 +23,7 @@ test_that("word2vec works", {
         dim(wov$model), c(5360, 50)
     )
     expect_equal(
-        wov$sample, 0
+        wov$sample, 1
     )
     expect_equal(
         wov$min_count, 2L
@@ -39,7 +39,7 @@ test_that("word2vec works", {
         paste(
         "",
         "Call:",
-        "word2vec(x = toks, dim = 50, min_count = 2, iter = 10, sample = 0)",
+        "word2vec(x = toks, dim = 50, min_count = 2, iter = 10, sample = 1)",
         "",
         "50 dimensions; 5,360 words.", sep = "\n"), fixed = TRUE
     )
@@ -52,7 +52,7 @@ test_that("word2vec works", {
         class(dov), "textmodel_docvector"
     )
     expect_equal(
-        dov$sample, 0
+        dov$sample, 1
     )
     expect_equal(
         dov$min_count, 2L
@@ -75,7 +75,7 @@ test_that("word2vec works", {
         class(dov_nm), "textmodel_docvector"
     )
     expect_equal(
-        dov_nm$sample, 0
+        dov_nm$sample, 1
     )
     expect_equal(
         dov_nm$min_count, 10L

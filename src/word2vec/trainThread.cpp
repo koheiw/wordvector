@@ -21,7 +21,7 @@ namespace w2v {
             throw std::runtime_error("train settings are not initialized");
         }
 
-        if (m_data.settings->sample > 0.0f) {
+        if (m_data.settings->sample < 1.0f) {
             m_downSampling.reset(new downSampling_t(m_data.settings->sample,
                                                     m_data.corpus->trainWords));
         }
@@ -60,7 +60,7 @@ namespace w2v {
             auto wordsPerAllThreads = m_data.settings->iterations * m_data.corpus->trainWords;
             auto wordsPerAlpha = wordsPerAllThreads / 10000;
             
-            //std::cout << "model = " << m_data.settings->model << "\n";
+            //std::cout << "type = " << m_data.settings->type << "\n";
             //std::cout << "minWordFreq = " << m_data.settings->minWordFreq << "\n";
             float alpha = 0;
             for (std::size_t h = range.first; h <= range.second; ++h) {
@@ -99,7 +99,7 @@ namespace w2v {
                     }
                     
                     threadProcessedWords++;
-                    if (m_data.settings->sample > 0.0f) {
+                    if (m_data.settings->sample < 1.0f) {
                         if ((*m_downSampling)(m_data.corpus->frequency[word - 1], m_randomGenerator)) {
                             //std::cout << "downsample: " << word << "\n";
                             continue; // skip this word
@@ -109,13 +109,13 @@ namespace w2v {
                 }
                 
                 //std::cout << "sentence = " <<  sentence.size() << "\n";
-                if (m_data.settings->model == 1) {
+                if (m_data.settings->type == 1) {
                     cbow(sentence, _trainMatrix);
-                } else if (m_data.settings->model == 2) {
+                } else if (m_data.settings->type == 2) {
                     skipGram(sentence, _trainMatrix);
-                } else if (m_data.settings->model == 10) {
+                } else if (m_data.settings->type == 10) {
                     cbowOld(sentence, _trainMatrix);
-                } else if (m_data.settings->model == 20) {
+                } else if (m_data.settings->type == 20) {
                     skipGramOld(sentence, _trainMatrix);
                 }
             }

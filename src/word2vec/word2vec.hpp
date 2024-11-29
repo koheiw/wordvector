@@ -18,8 +18,7 @@
 #include <cmath>
 #include <stdexcept>
 
-typedef std::vector<std::string> types_t;
-typedef std::vector<unsigned int> words_t;
+typedef std::vector<std::string> words_t;
 typedef std::vector<unsigned int> text_t;
 typedef std::vector<text_t> texts_t;
 typedef std::vector<size_t> frequency_t;
@@ -32,19 +31,19 @@ namespace w2v {
     class corpus_t final {
     public:
         texts_t texts;
-        types_t types;
+        words_t words;
         frequency_t frequency;
         size_t totalWords;
         size_t trainWords;
         
         // constructors
         corpus_t(): texts() {}
-        corpus_t(texts_t _texts, types_t _types): 
-                 texts(_texts), types(_types) {}
+        corpus_t(texts_t _texts, words_t _words): 
+                 texts(_texts), words(_words) {}
 
         void setWordFreq() {
             
-            frequency = frequency_t(types.size(), 0);
+            frequency = frequency_t(words.size(), 0);
             totalWords = 0;
             trainWords = 0;
             for (size_t h = 0; h < texts.size(); h++) {
@@ -53,11 +52,11 @@ namespace w2v {
                     totalWords++;
                     auto &word = text[i];
                     //Rcpp::Rcout << i << ": " << word << "\n"; 
-                    if (word < 0 || types.size() < word)
-                        throw std::range_error("setWordFreq: invalid types");
+                    if (word < 0 || words.size() < word)
+                        throw std::range_error("setWordFreq: invalid words");
                     if (word == 0) // padding
                         continue;
-                    // if (types[word - 1].empty()) {
+                    // if (words[word - 1].empty()) {
                     //     word = 0; // remove and pad
                     //     continue;
                     // }
@@ -68,7 +67,7 @@ namespace w2v {
             // Rcpp::Rcout << "trainWords: " << trainWords << "\n";
             // Rcpp::Rcout << "totalWords: " << totalWords << "\n";
             // Rcpp::Rcout << "frequency.size(): " << frequency.size() << "\n";
-            // Rcpp::Rcout << "types.size(): " << types.size() << "\n";
+            // Rcpp::Rcout << "words.size(): " << words.size() << "\n";
         }
     };
     
@@ -87,7 +86,7 @@ namespace w2v {
         uint8_t threads = 12; ///< train threads number
         uint8_t iterations = 5; ///< train iterations
         float alpha = 0.05f; ///< starting learn rate
-        int model = 1; ///< 1:CBOW 2:Skip-Gram
+        int type = 1; ///< 1:CBOW 2:Skip-Gram
         uint32_t random = 1234; /// < random number seed
         settings_t() = default;
     };
@@ -127,7 +126,7 @@ namespace w2v {
         uint16_t vectorSize() const noexcept {return m_vectorSize;}
         /// @returns model size (number of stored vectors)
         //std::size_t modelSize() const noexcept {return m_mapSize;}
-        /// @returns m_vocaburarySize size (number of types)
+        /// @returns m_vocaburarySize size (number of unique words)
         std::size_t vocaburarySize() const noexcept {return m_vocaburarySize;}
         /// @returns error message
         std::string errMsg() const noexcept {return m_errMsg;}

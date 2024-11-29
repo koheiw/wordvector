@@ -25,7 +25,7 @@ namespace w2v {
         }
         data.corpus = _corpus;
         
-        data.bpWeights.reset(new std::vector<float>(_settings->size * _corpus->types.size(), 0.0f));
+        data.bpWeights.reset(new std::vector<float>(_settings->size * _corpus->words.size(), 0.0f));
         data.expTable.reset(new std::vector<float>(_settings->expTableSize));
         for (uint16_t r = 0; r < _settings->expTableSize; ++r) {
             // scale value between +- expValueMax
@@ -47,7 +47,7 @@ namespace w2v {
         data.alpha.reset(new std::atomic<float>(_settings->alpha));
         
         // NOTE: consider setting size elsewhere
-        m_matrixSize = data.settings->size * data.corpus->types.size();
+        m_matrixSize = data.settings->size * data.corpus->words.size();
         m_random = data.settings->random;
         
         for (uint8_t i = 0; i < _settings->threads; ++i) {

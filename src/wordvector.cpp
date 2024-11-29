@@ -49,15 +49,15 @@ Rcpp::CharacterVector encode(std::vector<std::string> types){
 Rcpp::NumericMatrix as_matrix(w2v::word2vec_t model, w2v::corpus_t corpus) {
     
     std::vector<float> mat = model.trainMatrix();
-    Rcpp::NumericMatrix mat_(model.vectorSize(), corpus.types.size(), mat.begin());
-    colnames(mat_) = encode(corpus.types); 
+    Rcpp::NumericMatrix mat_(model.vectorSize(), corpus.words.size(), mat.begin());
+    colnames(mat_) = encode(corpus.words); 
     return Rcpp::transpose(mat_);
 }
 
 Rcpp::NumericVector get_frequency(w2v::corpus_t corpus) {
     
     Rcpp::NumericVector v = Rcpp::wrap(corpus.frequency);
-    v.names() = encode(corpus.types);
+    v.names() = encode(corpus.words);
     return(v);
 }
 
@@ -73,31 +73,31 @@ Rcpp::NumericVector get_frequency(w2v::corpus_t corpus) {
  uint8_t threads = 12; ///< train threads number
  uint8_t iterations = 5; ///< train iterations
  float alpha = 0.05f; ///< starting learn rate
- int model = 1; ///< 1:CBOW 2:Skip-Gram
+ int type = 1; ///< 1:CBOW 2:Skip-Gram
 */
 
 // [[Rcpp::export]]
 Rcpp::List cpp_w2v(Rcpp::List texts_, 
-                   Rcpp::CharacterVector types_, 
+                   Rcpp::CharacterVector words_, 
                    uint16_t minWordFreq = 5,
                    uint16_t size = 100,
                    uint8_t window = 5,
-                   uint16_t expTableSize = 1000,
-                   uint8_t expValueMax = 6,
                    float sample = 0.001,
                    bool withHS = false,
                    uint8_t negative = 5,
                    uint8_t threads = 1,
                    uint8_t iterations = 5,
                    float alpha = 0.05,
-                   int model = 1,
+                   int type = 1,
                    bool verbose = false,
-                   bool normalize = true) {
+                   bool normalize = true,
+                   uint16_t expTableSize = 1000,
+                   uint8_t expValueMax = 6) {
   
     if (verbose) {
-        if (model == 1 || model == 10) {
+        if (type == 1 || type == 10) {
             Rprintf("Training CBOW model with %d dimensions\n", size);
-        } else if (model == 2 || model == 20) {
+        } else if (type == 2 || type == 20) {
             Rprintf("Training Skip-gram model with %d dimensions\n", size);
         }
         Rprintf(" ...using %d threads for distributed computing\n", threads);
@@ -105,11 +105,11 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
     }
 
     texts_t texts = Rcpp::as<texts_t>(texts_);
-    types_t types = Rcpp::as<types_t>(types_);
+    words_t words = Rcpp::as<words_t>(words_);
     //texts_t texts = xptr->texts;
     //types_t types = xptr->types;
     
-    w2v::corpus_t corpus(texts, types);
+    w2v::corpus_t corpus(texts, words);
     corpus.setWordFreq();
       
     w2v::settings_t settings;
@@ -124,7 +124,7 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
     settings.threads = threads > 0 ? threads : std::thread::hardware_concurrency();
     settings.iterations = iterations;
     settings.alpha = alpha;
-    settings.model = model;
+    settings.type = type;
     settings.random = (uint32_t)(Rcpp::runif(1)[0] * std::numeric_limits<uint32_t>::max());
 
     w2v::word2vec_t word2vec;
@@ -172,19 +172,15 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
     
     Rcpp::List out = Rcpp::List::create(
         //Rcpp::Named("model") = as_matrix(word2vec),
-        Rcpp::Named("model") = as_matrix(word2vec, corpus),
-        //Rcpp::Named("model") = model,
-        //Rcpp::Named("vocabulary") = types.size(),
-        //Rcpp::Named("success") = success,
-        //Rcpp::Named("error_log") = model.errMsg(),
+        Rcpp::Named("model") = as_matrix(word2vec, corpus), // NOTE: change to vectors or values?
         Rcpp::Named("dim") = size,
         Rcpp::Named("min_count") = minWordFreq,
         Rcpp::Named("frequency") = get_frequency(corpus),
         Rcpp::Named("window") = window,
         Rcpp::Named("iter") = iterations,
-        Rcpp::Named("lr") = alpha,
-        Rcpp::Named("hs") = withHS,
-        Rcpp::Named("negative") = negative,
+        Rcpp::Named("alpha") = alpha,
+        Rcpp::Named("use_ns") = !withHS,
+        Rcpp::Named("ns_size") = negative,
         Rcpp::Named("sample") = sample
     );
     out.attr("class") = "textmodel_wordvector";
