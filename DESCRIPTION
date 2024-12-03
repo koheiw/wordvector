@@ -25,8 +25,9 @@ Imports:
     irlba,
     rsvd
 Suggests: 
+    testthat,
     word2vec, 
     spelling
 LinkingTo: Rcpp, quanteda
 Roxygen: list(markdown = TRUE)
-
+Language: en-US
