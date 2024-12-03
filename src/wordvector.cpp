@@ -171,8 +171,8 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
         Rprintf(" ...complete\n");
     
     Rcpp::List out = Rcpp::List::create(
-        //Rcpp::Named("model") = as_matrix(word2vec),
-        Rcpp::Named("model") = as_matrix(word2vec, corpus), // NOTE: change to vectors or values?
+        Rcpp::Named("vectors") = as_matrix(word2vec, corpus), 
+        Rcpp::Named("type") = type,
         Rcpp::Named("dim") = size,
         Rcpp::Named("min_count") = minWordFreq,
         Rcpp::Named("frequency") = get_frequency(corpus),
