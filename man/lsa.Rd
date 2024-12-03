@@ -19,7 +19,8 @@ lsa(
 
 \item{dim}{the size of the word vectors.}
 
-\item{min_count}{the minimum frequency of the words. Words less frequent than this in the \code{tokens} object are removed before training.}
+\item{min_count}{the minimum frequency of the words. Words less frequent than
+this in \code{x} are removed before training.}
 
 \item{engine}{select the engine perform SVD to generate word vectors.}
 

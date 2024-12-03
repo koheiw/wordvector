@@ -3,7 +3,8 @@
 #' Train a Latent Semantic Analysis model (Deerwester et al., 1990) on a [quanteda::tokens] object.
 #' @param x a [quanteda::tokens] object.
 #' @param dim the size of the word vectors.
-#' @param min_count the minimum frequency of the words. Words less frequent than this in the `tokens` object are removed before training.
+#' @param min_count the minimum frequency of the words. Words less frequent than 
+#'    this in `x` are removed before training.
 #' @param engine select the engine perform SVD to generate word vectors.
 #' @param weight weighting scheme passed to [quanteda::dfm_weight()]. 
 #' @param verbose if `TRUE`, print the progress of training.

@@ -26,19 +26,23 @@ word2vec(
 
 \item{type}{the architecture of the model; either "cbow" (continuous back of words) or "skip-gram".}
 
-\item{min_count}{the minimum frequency of the words. Words less frequent than this in the \code{tokens} object are removed before training.}
+\item{min_count}{the minimum frequency of the words. Words less frequent than
+this in \code{x} are removed before training.}
 
-\item{window}{the size of the word window. Words within this window are considered to be the context of a target word.}
+\item{window}{the size of the word window. Words within this window are considered
+to be the context of a target word.}
 
 \item{iter}{the number of iterations in model training.}
 
 \item{alpha}{the initial learning rate.}
 
-\item{use_ns}{if \code{TRUE}, negative sampling is used. Otherwise, hierarchical softmax is used.}
+\item{use_ns}{if \code{TRUE}, negative sampling is used. Otherwise, hierarchical softmax
+is used.}
 
 \item{ns_size}{the size of negative samples. Only used when \code{use_ns = TRUE}.}
 
-\item{sample}{the rate of sampling of words based on their frequency. Sampling is disabled when \code{sample = 1.0}}
+\item{sample}{the rate of sampling of words based on their frequency. Sampling is
+disabled when \code{sample = 1.0}}
 
 \item{verbose}{if \code{TRUE}, print the progress of training.}
 

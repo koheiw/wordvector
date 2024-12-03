@@ -4,13 +4,17 @@
 #' @param x a [quanteda::tokens] object.
 #' @param dim the size of the word vectors.
 #' @param type the architecture of the model; either "cbow" (continuous back of words) or "skip-gram".
-#' @param min_count the minimum frequency of the words. Words less frequent than this in the `tokens` object are removed before training.
-#' @param window the size of the word window. Words within this window are considered to be the context of a target word.
+#' @param min_count the minimum frequency of the words. Words less frequent than 
+#'   this in `x` are removed before training.
+#' @param window the size of the word window. Words within this window are considered 
+#'   to be the context of a target word.
 #' @param iter the number of iterations in model training.
 #' @param alpha the initial learning rate.
-#' @param use_ns if `TRUE`, negative sampling is used. Otherwise, hierarchical softmax is used.
+#' @param use_ns if `TRUE`, negative sampling is used. Otherwise, hierarchical softmax 
+#'   is used.
 #' @param ns_size the size of negative samples. Only used when `use_ns = TRUE`.
-#' @param sample the rate of sampling of words based on their frequency. Sampling is disabled when `sample = 1.0`
+#' @param sample the rate of sampling of words based on their frequency. Sampling is 
+#'   disabled when `sample = 1.0`
 #' @param verbose if `TRUE`, print the progress of training.
 #' @param ... additional arguments.
 #' @returns Returns a fitted textmodel_wordvector with the following elements:
