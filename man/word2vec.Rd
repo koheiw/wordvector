@@ -20,34 +20,50 @@ word2vec(
 )
 }
 \arguments{
-\item{x}{a [quanteda::tokens] object.}
+\item{x}{a \link[quanteda:tokens]{quanteda::tokens} object.}
 
-\item{dim}{size of the word vectors.}
+\item{dim}{the size of the word vectors.}
 
 \item{type}{the architecture of the model; either "cbow" (continuous back of words) or "skip-gram".}
 
-\item{min_count}{the minimum frequency of the words. Words less frequent than this in the `tokens` object are removed before training.}
+\item{min_count}{the minimum frequency of the words. Words less frequent than this in the \code{tokens} object are removed before training.}
 
 \item{window}{the size of the word window. Words within this window are considered to be the context of a target word.}
 
-\item{iter}{number of iterations in training the model.}
+\item{iter}{the number of iterations in model training.}
 
 \item{alpha}{the initial learning rate.}
 
-\item{use_ns}{if `TRUE`, negative sampling is used. Otherwise, hierarchical softmax is used.}
+\item{use_ns}{if \code{TRUE}, negative sampling is used. Otherwise, hierarchical softmax is used.}
 
-\item{ns_size}{the size of negative samples. Only used when `use_ns = TRUE`.}
+\item{ns_size}{the size of negative samples. Only used when \code{use_ns = TRUE}.}
 
-\item{sample}{the rate of sampling of words based on theri frequency. Sampling is disabled when `sample = 1.0`}
+\item{sample}{the rate of sampling of words based on their frequency. Sampling is disabled when \code{sample = 1.0}}
+
+\item{verbose}{if \code{TRUE}, print the progress of training.}
 
 \item{...}{additional arguments.}
 }
 \value{
-
+Returns a fitted textmodel_wordvector with the following elements:
+\item{vectors}{a matrix for word vectors.}
+\item{dim}{the size of the word vectors.}
+\item{type}{the architecture of the model.}
+\item{frequency}{the frequency of words in \code{x}.}
+\item{window}{the size of the word window.}
+\item{iter}{the number of iterations in model training.}
+\item{alpha}{the initial learning rate.}
+\item{use_ns}{the use of negative sampling.}
+\item{ns_size}{the size of negative samples.}
+\item{concatenator}{the concatenator in \code{x}.}
+\item{call}{the command used to execute the function.}
+\item{version}{the version of the wordvector package.}
 }
 \description{
-Train a Word2vec model (Mikolov et al., 2023) <https://arxiv.org/pdf/1310.4546.pdf> on a [quanteda::tokens] object.
+Train a Word2vec model (Mikolov et al., 2023) \url{https://arxiv.org/pdf/1310.4546.pdf} in different architectures on a \link[quanteda:tokens]{quanteda::tokens} object.
 }
 \references{
-\url{https://github.com/maxoodf/word2vec}, \url{https://arxiv.org/pdf/1310.4546.pdf}
+Mikolov, T., Sutskever, I., Chen, K., Corrado, G., & Dean, J. (2013).
+Distributed Representations of Words and Phrases and their Compositionality.
+http://arxiv.org/abs/1310.4546.
 }

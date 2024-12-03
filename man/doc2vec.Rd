@@ -4,7 +4,14 @@
 \alias{doc2vec}
 \title{Create distributed representation of documents}
 \usage{
-doc2vec(...)
+doc2vec(x, model = NULL, ...)
+}
+\arguments{
+\item{x}{a \link[quanteda:tokens]{quanteda::tokens} object.}
+
+\item{model}{a textmodel_wordvector object.}
+
+\item{...}{passed to \verb{[word2vec]} when \code{model = NULL}.}
 }
 \description{
 Create distributed representation of documents

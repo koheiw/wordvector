@@ -2,27 +2,18 @@
 % Please edit documentation in R/word2vec.R
 \name{as.matrix.textmodel_wordvector}
 \alias{as.matrix.textmodel_wordvector}
-\title{Get the word vectors of a word2vec model}
+\title{Extract word vectors}
 \usage{
 \method{as.matrix}{textmodel_wordvector}(x, ...)
 }
 \arguments{
-\item{x}{a word2vec model as returned by \code{\link{word2vec}} or \code{\link{read.word2vec}}}
+\item{x}{a \code{textmodel_wordvector} or \code{textmodel_docvector} object.}
 
 \item{...}{not used}
 }
 \value{
-a matrix with the word vectors where the rownames are the words from the model vocabulary
+a matrix that contain the word vectors in rows
 }
 \description{
-Get the word vectors of a word2vec model as a dense matrix.
-}
-\examples{
-path  <- system.file(package = "word2vec", "models", "example.bin")
-model <- read.word2vec(path)
-
-embedding <- as.matrix(model)
-}
-\seealso{
-\code{\link{word2vec}}, \code{\link{read.word2vec}}
+Extract word vectors from a \code{textmodel_wordvector} or \code{textmodel_docvector} object.
 }
