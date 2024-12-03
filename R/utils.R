@@ -1,4 +1,4 @@
-#' \[experimental\] Find analogical relataionship between words
+#' \[experimental\] Find analogical relationships between words
 #' 
 #' @param x a `textmodel_wordvector` object.
 #' @param formula a [formula] object that defines the relationship between words 

@@ -4,12 +4,13 @@
 #' @param x a [quanteda::tokens] object.
 #' @param dim the size of the word vectors.
 #' @param min_count the minimum frequency of the words. Words less frequent than this in the `tokens` object are removed before training.
-#' @param engine select the engine perfrom SVD to generate word vectors.
+#' @param engine select the engine perform SVD to generate word vectors.
 #' @param weight weighting scheme passed to [quanteda::dfm_weight()]. 
+#' @param verbose if `TRUE`, print the progress of training.
 #' @param ... additional arguments.
-#' @returns Returns a fitted textmodel_wordvector with the follwoing elements:
+#' @returns Returns a fitted textmodel_wordvector with the following elements:
 #'   \item{vectors}{a matrix for word vectors.}
-#'   \item{frequency}{the frquency of words in `x`.}
+#'   \item{frequency}{the frequency of words in `x`.}
 #'   \item{engine}{the SVD engine used.}
 #'   \item{weight}{weighting scheme.}
 #'   \item{concatenator}{the concatenator in `x`.}
@@ -24,7 +25,7 @@ lsa <- function(x, dim = 50, min_count = 5L, engine = c("RSpectra", "irlba", "rs
     UseMethod("lsa")   
 }
 
-#' @importFrom quanteda tokens_trim dfm featfreq
+#' @import quanteda
 #' @export
 lsa.tokens <- function(x, dim = 50L, min_count = 5L, engine = c("RSpectra", "irlba", "rsvd"), 
                        weight = "count", verbose = FALSE, ...) {

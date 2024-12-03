@@ -10,13 +10,14 @@
 #' @param alpha the initial learning rate.
 #' @param use_ns if `TRUE`, negative sampling is used. Otherwise, hierarchical softmax is used.
 #' @param ns_size the size of negative samples. Only used when `use_ns = TRUE`.
-#' @param sample the rate of sampling of words based on theri frequency. Sampling is disabled when `sample = 1.0`
+#' @param sample the rate of sampling of words based on their frequency. Sampling is disabled when `sample = 1.0`
+#' @param verbose if `TRUE`, print the progress of training.
 #' @param ... additional arguments.
-#' @returns Returns a fitted textmodel_wordvector with the follwoing elements:
+#' @returns Returns a fitted textmodel_wordvector with the following elements:
 #'   \item{vectors}{a matrix for word vectors.}
 #'   \item{dim}{the size of the word vectors.}
 #'   \item{type}{the architecture of the model.}
-#'   \item{frequency}{the frquency of words in `x`.}
+#'   \item{frequency}{the frequency of words in `x`.}
 #'   \item{window}{the size of the word window.}
 #'   \item{iter}{the number of iterations in model training.}
 #'   \item{alpha}{the initial learning rate.}
@@ -30,7 +31,6 @@
 #'   Distributed Representations of Words and Phrases and their Compositionality. 
 #'   http://arxiv.org/abs/1310.4546.
 #' @export
-#' @useDynLib wordvector
 word2vec <- function(x, dim = 50, type = c("cbow", "skip-gram"), 
                      min_count = 5L, window = ifelse(type == "cbow", 5L, 10L), 
                      iter = 10L, alpha = 0.05, use_ns = TRUE, ns_size = 5L, 
@@ -38,12 +38,12 @@ word2vec <- function(x, dim = 50, type = c("cbow", "skip-gram"),
     UseMethod("word2vec")
 }
 
-#' @inherit word2vec title description params details seealso return references
+#' @import quanteda
+#' @useDynLib wordvector
 #' @export
-#' @importFrom quanteda tokens_trim check_integer check_double
 word2vec.tokens <- function(x, dim = 50L, type = c("cbow", "skip-gram"), 
                             min_count = 5L, window = ifelse(type == "cbow", 5L, 10L), 
-                            iter = 10L, use_ns = FALSE, ns_size = 5L,  alpha = 0.05, 
+                            iter = 10L, alpha = 0.05, use_ns = FALSE, ns_size = 5L, 
                             sample = 0.001, verbose = FALSE, ..., old = FALSE) {
     
     type <- match.arg(type)
@@ -63,7 +63,7 @@ word2vec.tokens <- function(x, dim = 50L, type = c("cbow", "skip-gram"),
     
     # NOTE: use tokens_xptr?
     x <- tokens_trim(x, min_termfreq = min_count, termfreq_type = "count")
-    result <- cpp_w2v(as.tokens(x), words = attr(x, "types"), 
+    result <- cpp_w2v(as.tokens(x), attr(x, "types"), 
                       minWordFreq = min_count,
                       size = dim, window = window,
                       sample = sample, withHS = !use_ns, negative = ns_size, 
@@ -124,8 +124,12 @@ as.matrix.textmodel_docvector <- function(x, ...){
 }
 
 #' Create distributed representation of documents
+
+#' @param x a [quanteda::tokens] object.
+#' @param model a textmodel_wordvector object.
+#' @param ... passed to `[word2vec]` when `model = NULL`.
 #' @export
-doc2vec <- function(...) {
+doc2vec <- function(x, model = NULL, ...) {
     UseMethod("doc2vec")
 }
 
