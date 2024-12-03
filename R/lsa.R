@@ -1,3 +1,23 @@
+#' Latent Semantic Analysis model
+#' 
+#' Train a Latent Semantic Analysis model (Deerwester et al., 1990) on a [quanteda::tokens] object.
+#' @param x a [quanteda::tokens] object.
+#' @param dim the size of the word vectors.
+#' @param min_count the minimum frequency of the words. Words less frequent than this in the `tokens` object are removed before training.
+#' @param engine select the engine perfrom SVD to generate word vectors.
+#' @param weight weighting scheme passed to [quanteda::dfm_weight()]. 
+#' @param ... additional arguments.
+#' @returns Returns a fitted textmodel_wordvector with the follwoing elements:
+#'   \item{vectors}{a matrix for word vectors.}
+#'   \item{frequency}{the frquency of words in `x`.}
+#'   \item{engine}{the SVD engine used.}
+#'   \item{weight}{weighting scheme.}
+#'   \item{concatenator}{the concatenator in `x`.}
+#'   \item{call}{the command used to execute the function.}
+#'   \item{version}{the version of the wordvector package.}
+#' @references 
+#'   Deerwester, S. C., Dumais, S. T., Landauer, T. K., Furnas, G. W., & Harshman, R. A. (1990). 
+#'   Indexing by latent semantic analysis. JASIS, 41(6), 391–407.
 #' @export
 lsa <- function(x, dim = 50, min_count = 5L, engine = c("RSpectra", "irlba", "rsvd"), 
                 weight = "count", verbose = FALSE, ...) {
@@ -28,14 +48,15 @@ lsa.tokens <- function(x, dim = 50L, min_count = 5L, engine = c("RSpectra", "irl
         rownames(wov) <- featnames(x)
     }
     result <- list(
-        model = wov,
+        vectors = wov,
         dim = dim,
         min_count = min_count,
         frequency = featfreq(x),
         engine = engine,
         weight = weight,
         concatenator = meta(x, field = "concatenator", type = "object"),
-        call = try(match.call(sys.function(-1), call = sys.call(-1)), silent = TRUE)
+        call = try(match.call(sys.function(-1), call = sys.call(-1)), silent = TRUE),
+        version = utils::packageVersion("wordvector")
     )
     class(result) <- "textmodel_wordvector"
     return(result)

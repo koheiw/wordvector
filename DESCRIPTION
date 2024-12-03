@@ -24,6 +24,9 @@ Imports:
     RSpectra,
     irlba,
     rsvd
-Suggests: word2vec
+Suggests: 
+    word2vec, 
+    spelling
 LinkingTo: Rcpp, quanteda
+Roxygen: list(markdown = TRUE)
 
