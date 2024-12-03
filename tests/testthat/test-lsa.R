@@ -20,7 +20,7 @@ test_that("word2vec words", {
         class(wov), "textmodel_wordvector"
     )
     expect_equal(
-        dim(wov$model), c(5360, 50)
+        dim(wov$vectors), c(5360, 50)
     )
     expect_equal(
         wov$weight, "count"
@@ -41,10 +41,15 @@ test_that("word2vec words", {
             "",
             "50 dimensions; 5,360 words.", sep = "\n"), fixed = TRUE
     )
+    expect_equal(
+        names(dov),
+        c("vectors", "dim", "min_count", "frequency", "engine", "weight", 
+          "concatenator", "call", "version")
+    )
     
     # docvector with model
     expect_equal(
-        dim(dov$model), c(59, 50)
+        dim(dov$vectors), c(59, 50)
     )
     expect_equal(
         class(dov), "textmodel_docvector"
@@ -55,20 +60,24 @@ test_that("word2vec words", {
     expect_equal(
         dov$min_count, 2L
     )
-    
     expect_output(
         print(dov),
         paste(
             "",
             "Call:",
-            "doc2vec(toks_grp, wov)",
+            "doc2vec(x = toks_grp, model = wov)",
             "",
             "50 dimensions; 59 documents.", sep = "\n"), fixed = TRUE
+    )
+    expect_equal(
+        names(dov),
+        c("vectors", "dim", "min_count", "frequency", "engine", "weight", 
+          "concatenator", "call", "version")
     )
     
     # docvector without model
     # expect_equal(
-    #     dim(dov_nm$model), c(59, 50)
+    #     dim(dov_nm$vectors), c(59, 50)
     # )
     # expect_equal(
     #     class(dov_nm), "textmodel_docvector"
@@ -79,37 +88,4 @@ test_that("word2vec words", {
     # expect_equal(
     #     dov_nm$min_count, 10L
     # )
-})
-
-test_that("analogy works", {
-    
-    ana1 <- analogy(wov, ~ us)
-    expect_true(ana1$word[1] == "us")
-    expect_true(ana1$similarity[1] == 1.0)
-    expect_identical(attr(ana1, "weight"), 
-                     c("us" = 1))
-    
-    ana2 <- analogy(wov, ~ people - us)
-    expect_true(ana2$word[1] != "us")
-    expect_true(ana2$similarity[1] < 1.0)
-    expect_identical(attr(ana2, "weight"), 
-                     c("people" = 1, "us" = -1))
-    
-})
-
-test_that("synonyms works", {
-    
-    syno1 <- synonyms(wov, c("us"))
-    expect_true(is.matrix(syno1))
-    expect_identical(
-        syno1[1,],
-        c("us" = "us")
-    )
-    
-    syno2 <- synonyms(wov, c("us", "people"))
-    expect_true(is.matrix(syno2))
-    expect_identical(
-        syno2[1,],
-        c("us" = "us", "people" = "people")
-    )
 })

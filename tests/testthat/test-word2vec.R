@@ -37,11 +37,11 @@ test_that("word2vec works", {
     expect_output(
         print(wov),
         paste(
-        "",
-        "Call:",
-        "word2vec(x = toks, dim = 50, min_count = 2, iter = 10, sample = 1)",
-        "",
-        "50 dimensions; 5,360 words.", sep = "\n"), fixed = TRUE
+            "",
+            "Call:",
+            "word2vec(x = toks, dim = 50, min_count = 2, iter = 10, sample = 1)",
+            "",
+            "50 dimensions; 5,360 words.", sep = "\n"), fixed = TRUE
     )
     
     # docvector with model
@@ -62,7 +62,7 @@ test_that("word2vec works", {
         paste(
             "",
             "Call:",
-            "doc2vec(toks_grp, wov)",
+            "doc2vec(x = toks_grp, model = wov)",
             "",
             "50 dimensions; 59 documents.", sep = "\n"), fixed = TRUE
     )
