@@ -19,11 +19,20 @@ test_that("word2vec works", {
     expect_equal(
         class(wov), "textmodel_wordvector"
     )
-    expect_equal(
-        dim(wov$vectors), c(5360, 50)
+    expect_true(
+        wov$use_ns
     )
-    expect_equal(
-        wov$sample, 1
+    expect_identical(
+        wov$ns_size, 5L
+    )
+    expect_identical(
+        wov$window, 5L
+    )
+    expect_identical(
+        dim(wov$vectors), c(5360L, 50L)
+    )
+    expect_identical(
+        wov$sample, 1.0
     )
     expect_equal(
         wov$min_count, 2L
@@ -46,15 +55,15 @@ test_that("word2vec works", {
     
     # docvector with model
     expect_equal(
-        dim(dov$vectors), c(59, 50)
+        dim(dov$vectors), c(59L, 50L)
     )
     expect_equal(
         class(dov), "textmodel_docvector"
     )
-    expect_equal(
-        dov$sample, 1
+    expect_identical(
+        dov$sample, 1.0
     )
-    expect_equal(
+    expect_identical(
         dov$min_count, 2L
     )
     expect_output(
@@ -73,16 +82,16 @@ test_that("word2vec works", {
     )
     
     # docvector without model
-    expect_equal(
-        dim(dov_nm$vectors), c(59, 50)
+    expect_identical(
+        dim(dov_nm$vectors), c(59L, 50L)
     )
     expect_equal(
         class(dov_nm), "textmodel_docvector"
     )
-    expect_equal(
-        dov_nm$sample, 1
+    expect_identical(
+        dov_nm$sample, 1.0
     )
-    expect_equal(
+    expect_identical(
         dov_nm$min_count, 10L
     )
     

@@ -19,16 +19,16 @@ test_that("word2vec words", {
     expect_equal(
         class(wov), "textmodel_wordvector"
     )
-    expect_equal(
-        dim(wov$vectors), c(5360, 50)
+    expect_identical(
+        dim(wov$vectors), c(5360L, 50L)
     )
     expect_equal(
         wov$weight, "count"
     )
-    expect_equal(
+    expect_identical(
         wov$min_count, 2L
     )
-    expect_equal(
+    expect_identical(
         featfreq(dfm_trim(dfm(toks), 2)),
         wov$frequency
     )
@@ -48,8 +48,8 @@ test_that("word2vec words", {
     )
     
     # docvector with model
-    expect_equal(
-        dim(dov$vectors), c(59, 50)
+    expect_identical(
+        dim(dov$vectors), c(59L, 50L)
     )
     expect_equal(
         class(dov), "textmodel_docvector"
