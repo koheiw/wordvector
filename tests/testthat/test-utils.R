@@ -36,6 +36,24 @@ test_that("analogy works", {
     expect_identical(attr(ana4, "weight"), 
                      c("us" = 1))
     
+    expect_warning(
+        analogy(wov, ~ xxxx, exclude = FALSE, type = "simil"),
+        '"xxxx" is not found'
+    )
+    expect_true(
+        suppressWarnings(
+        is.data.frame(analogy(wov, ~ xxxx, exclude = FALSE, type = "simil"))
+        )
+    )
+    expect_warning(
+        analogy(wov, ~ xxxx, exclude = FALSE, type = "word"),
+        '"xxxx" is not found'
+    )
+    expect_true(
+        suppressWarnings(
+        is.data.frame(analogy(wov, ~ xxxx, exclude = FALSE, type = "word"))
+        )
+    )
 })
 
 test_that("similarity works", {
@@ -76,6 +94,23 @@ test_that("similarity works", {
         dim(sim4),
         c(length(wov$frequency), 2L)
     )
-    
+    expect_warning(
+        similarity(wov, c("xx", "yyy", "us"), mode = "simil"),
+        '"xx", "yyy" are not found'
+    )
+    expect_true(
+        suppressWarnings(
+        is.matrix(similarity(wov, c("xx", "yyy"), mode = "simil"))
+        )
+    )
+    expect_warning(
+        similarity(wov, c("xx", "yyy", "us"), mode = "word"),
+        '"xx", "yyy" are not found'
+    )
+    expect_true(
+        suppressWarnings(
+            is.matrix(similarity(wov, c("xx", "yyy"), mode = "word"))
+        )
+    )
 })
 

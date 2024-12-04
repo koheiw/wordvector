@@ -55,7 +55,7 @@ analogy <- function(x, formula, n = 10, exclude = TRUE, type = c("word", "simil"
     v <- emb[j,, drop = FALSE]
     if (exclude)
         emb <- emb[j * -1,, drop = FALSE]
-    if (type == "vector") {
+    if (type == "word") {
         s <- Matrix::rowMeans(proxyC::simil(emb, t(t(v) %*% weight), use_nan = TRUE))
     } else {
         s <- Matrix::rowMeans(proxyC::simil(emb, v, use_nan = TRUE) %*% weight)
@@ -85,21 +85,23 @@ similarity <- function(x, words, mode = c("simil", "word")) {
     words <- check_character(words, max_len = Inf)
     mode <- match.arg(mode)
     emb <- as.matrix(x)
-    sapply(words, function(w) {
-        if (mode == "simil") {
-            get_simil(emb, w)
-        } else {
-            names(sort(get_simil(emb, w), decreasing = TRUE))
-        }
-    })
-}
-
-get_simil <- function(emb, term) {
-    if (!term %in% rownames(emb)) {
-        warning('"', term,  '" is not found')
-        return(NULL)
+    
+    b <- words %in% rownames(emb)
+    if (sum(!b) == 1) {
+        warning(paste0('"', words[!b], '"',  collapse = ", "),  ' is not found')
+    } else if (sum(!b) > 1) {
+        warning(paste0('"', words[!b], '"',  collapse = ", "),  ' are not found')
     }
-    Matrix::rowSums(proxyC::simil(emb, emb[term,, drop = FALSE], use_nan = TRUE))
+    words <- words[b]
+    res <- as.matrix(proxyC::simil(emb, emb[words,, drop = FALSE], use_nan = TRUE))
+    if (ncol(res) == 0)
+        return(matrix(nrow = 0, ncol = 0))
+    if (mode == "word") {
+        res <- apply(res, 2, function(v) {
+            names(sort(v, decreasing = TRUE))
+        })
+    }
+    return(res)
 }
 
 get_threads <- function() {
