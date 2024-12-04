@@ -77,14 +77,14 @@ namespace w2v {
     struct settings_t final {
         uint16_t minWordFreq = 5; ///< discard words that appear less than minWordFreq times
         uint16_t size = 100; ///< word vector size
-        uint8_t window = 5; ///< skip length between words
+        uint16_t window = 5; ///< skip length between words
         uint16_t expTableSize = 1000; ///< exp(x) / (exp(x) + 1) values lookup table size
-        uint8_t expValueMax = 6; ///< max value in the lookup table
+        uint16_t expValueMax = 6; ///< max value in the lookup table
         float sample = 1e-3f; ///< threshold for occurrence of words
         bool withHS = false; ///< use hierarchical softmax instead of negative sampling
-        uint8_t negative = 5; ///< negative examples number
-        uint8_t threads = 12; ///< train threads number
-        uint8_t iterations = 5; ///< train iterations
+        uint16_t negative = 5; ///< negative examples number
+        uint16_t threads = 12; ///< train threads number
+        uint16_t iterations = 5; ///< train iterations
         float alpha = 0.05f; ///< starting learn rate
         int type = 1; ///< 1:CBOW 2:Skip-Gram
         uint32_t random = 1234; /// < random number seed

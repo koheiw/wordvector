@@ -72,7 +72,7 @@ namespace w2v {
          * @param _id thread ID, starting from 0
          * @param _data data object instantiated outside of the thread
         */
-        trainThread_t(uint8_t _id, const data_t &_data);
+        trainThread_t(uint16_t _id, const data_t &_data);
 
         /**
          * Launchs the thread

@@ -50,7 +50,7 @@ namespace w2v {
         m_matrixSize = data.settings->size * data.corpus->words.size();
         m_random = data.settings->random;
         
-        for (uint8_t i = 0; i < _settings->threads; ++i) {
+        for (uint16_t i = 0; i < _settings->threads; ++i) {
             m_threads.emplace_back(new trainThread_t(i, data));
         }
     }

@@ -10,7 +10,7 @@
 
 namespace w2v {
     // NOTE: make m_rndWindow
-    trainThread_t::trainThread_t(uint8_t _id, const data_t &_data) :
+    trainThread_t::trainThread_t(uint16_t _id, const data_t &_data) :
             m_data(_data), m_randomGenerator(m_data.settings->random),
             m_rndWindowShift(0, static_cast<short>((m_data.settings->window - 1))), // NOTE: to delete
             m_rndWindow(1, static_cast<short>((m_data.settings->window))), // NOTE: added
