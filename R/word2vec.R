@@ -30,6 +30,10 @@
 #'   \item{concatenator}{the concatenator in `x`.}
 #'   \item{call}{the command used to execute the function.}
 #'   \item{version}{the version of the wordvector package.}
+#' @details
+#'  User can changed the number of processors used for the parallel computing via
+#'  `options(wordvector_threads)`.
+#' 
 #' @references 
 #'   Mikolov, T., Sutskever, I., Chen, K., Corrado, G., & Dean, J. (2013). 
 #'   Distributed Representations of Words and Phrases and their Compositionality. 
@@ -47,7 +51,7 @@ word2vec <- function(x, dim = 50, type = c("cbow", "skip-gram"),
 #' @export
 word2vec.tokens <- function(x, dim = 50L, type = c("cbow", "skip-gram"), 
                             min_count = 5L, window = ifelse(type == "cbow", 5L, 10L), 
-                            iter = 10L, alpha = 0.05, use_ns = FALSE, ns_size = 5L, 
+                            iter = 10L, alpha = 0.05, use_ns = TRUE, ns_size = 5L, 
                             sample = 0.001, verbose = FALSE, ..., old = FALSE) {
     
     type <- match.arg(type)
