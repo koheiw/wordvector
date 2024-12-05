@@ -98,7 +98,7 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
         if (type == 1 || type == 10) {
             Rprintf("Training CBOW model with %d dimensions\n", size);
         } else if (type == 2 || type == 20) {
-            Rprintf("Training Skip-gram model with %d dimensions\n", size);
+            Rprintf("Training skip-gram model with %d dimensions\n", size);
         }
         Rprintf(" ...using %d threads for distributed computing\n", threads);
         Rprintf(" ...initializing\n");
@@ -132,9 +132,9 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
   
     if (verbose) {
         if (withHS) {
-            Rprintf(" ...Hierarchical Softmax in %d iterations\n", iterations);
+            Rprintf(" ...hierarchical softmax in %d iterations\n", iterations);
         } else {
-            Rprintf(" ...Negative Sampling in %d iterations\n", iterations);
+            Rprintf(" ...negative sampling in %d iterations\n", iterations);
         }
         
         auto start = std::chrono::high_resolution_clock::now();
