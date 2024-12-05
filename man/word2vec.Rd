@@ -66,6 +66,10 @@ Returns a fitted textmodel_wordvector with the following elements:
 \description{
 Train a Word2vec model (Mikolov et al., 2023) \url{https://arxiv.org/pdf/1310.4546.pdf} in different architectures on a \link[quanteda:tokens]{quanteda::tokens} object.
 }
+\details{
+User can changed the number of processors used for the parallel computing via
+\code{options(wordvector_threads)}.
+}
 \references{
 Mikolov, T., Sutskever, I., Chen, K., Corrado, G., & Dean, J. (2013).
 Distributed Representations of Words and Phrases and their Compositionality.
