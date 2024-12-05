@@ -123,7 +123,7 @@ test_that("similarity works", {
     )
     expect_true(
         suppressWarnings(
-            is.matrix(similarity(wov, c("xx", "yyy"), mode = "word"))
+        is.matrix(similarity(wov, c("xx", "yyy"), mode = "word"))
         )
     )
 })
