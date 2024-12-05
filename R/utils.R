@@ -34,7 +34,7 @@ analogy <- function(x, formula, n = 10, exclude = TRUE, type = c("word", "simil"
         stop("The object for 'formula' should be a formula")
     
     f <- tail(as.character(formula), 1)
-    match <- stringi::stri_match_all_regex(f, "([+-] )?([\\w]+)")[[1]]
+    match <- stringi::stri_match_all_regex(f, "([+-])?\\s*(\\w+)")[[1]]
     match[,2] <- stringi::stri_trim(match[,2])
     match[,2][is.na(match[,2])] <- "+"
     weight <- numeric()

@@ -54,6 +54,20 @@ test_that("analogy works", {
         is.data.frame(analogy(wov, ~ xxxx, exclude = FALSE, type = "word"))
         )
     )
+    
+    # different formulas
+    expect_equal(
+        attr(analogy(wov, ~ us, exclude = FALSE), "weight"),
+        c("us" = 1.0)
+    )
+    expect_equal(
+        attr(analogy(wov, ~ -us+people, exclude = FALSE), "weight"),
+        c("us" = -1.0, "people" = 1.0)
+    )
+    expect_equal(
+        attr(analogy(wov, ~ +people - us, exclude = FALSE), "weight"),
+        c("people" = 1.0, "us" = -1.0)
+    )
 })
 
 test_that("similarity works", {
