@@ -76,14 +76,5 @@ test_that("CBOW models are similar", {
     ))
 })
 
-# set.seed(1234)
-# wdv <- wordvector::word2vec(toks, dim = 50, iter = 10, min_count = 5, type = "skip-gram",
-#                             verbose = TRUE, threads = 1, sample = 0, negative = 100)
-# 
-# synonyms(wdv, feat, 10)
-# 
-# correlation(proxyC::simil(as.matrix(wdv)[feat,]),
-#             proxyC::simil(as.matrix(w2v)[feat,]))
-
 
 
