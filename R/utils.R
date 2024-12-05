@@ -52,17 +52,21 @@ analogy <- function(x, formula, n = 10, exclude = TRUE, type = c("word", "simil"
     }
     
     j <- match(names(weight), rownames(emb))
-    v <- emb[j,, drop = FALSE]
-    if (exclude)
-        emb <- emb[j * -1,, drop = FALSE]
-    if (type == "word") {
-        s <- Matrix::rowMeans(proxyC::simil(emb, t(t(v) %*% weight), use_nan = TRUE))
+    if (length(j) == 0) {
+        res <- data.frame(word = character(), similarity = numeric())
     } else {
-        s <- Matrix::rowMeans(proxyC::simil(emb, v, use_nan = TRUE) %*% weight)
+        v <- emb[j,, drop = FALSE]
+        if (exclude)
+            emb <- emb[j * -1,, drop = FALSE]
+        if (type == "word") {
+            s <- Matrix::rowMeans(proxyC::simil(emb, t(t(v) %*% weight), use_nan = TRUE))
+        } else {
+            s <- Matrix::rowMeans(proxyC::simil(emb, v, use_nan = TRUE) %*% weight)
+        }
+        s <- head(sort(s, decreasing = TRUE), n)
+        res <- data.frame(word = names(s), similarity = s)
     }
-    
-    s <- head(sort(s, decreasing = TRUE), n)
-    res <- data.frame(word = names(s), similarity = s, row.names = NULL)
+    rownames(res) <- NULL
     attr(res, "formula") <- formula
     attr(res, "weight") <- weight
     return(res)
@@ -94,12 +98,14 @@ similarity <- function(x, words, mode = c("simil", "word")) {
     }
     words <- words[b]
     res <- as.matrix(proxyC::simil(emb, emb[words,, drop = FALSE], use_nan = TRUE))
-    if (ncol(res) == 0)
-        return(matrix(nrow = 0, ncol = 0))
-    if (mode == "word") {
-        res <- apply(res, 2, function(v) {
-            names(sort(v, decreasing = TRUE))
-        })
+    if (ncol(res) == 0) {
+        res <- matrix(nrow = 0, ncol = 0)
+    } else {
+        if (mode == "word") {
+            res <- apply(res, 2, function(v) {
+                names(sort(v, decreasing = TRUE))
+            })
+        }
     }
     return(res)
 }
