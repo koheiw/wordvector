@@ -43,6 +43,24 @@ Returns a fitted textmodel_wordvector with the following elements:
 \description{
 Train a Latent Semantic Analysis model (Deerwester et al., 1990) on a \link[quanteda:tokens]{quanteda::tokens} object.
 }
+\examples{
+library(quanteda)
+library(wordvector)
+
+# pre-processing
+corp <- data_corpus_news2014
+toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) \%>\% 
+   tokens_remove(stopwords("en", "marimo"), padding = TRUE) \%>\% 
+   tokens_select("^[a-zA-Z-]+$", valuetype = "regex", case_insensitive = FALSE,
+                 padding = TRUE) \%>\% 
+   tokens_tolower()
+
+# train LSA
+lsa <- lsa(toks, dim = 10, min_count = 20, verbose = TRUE)
+analogy(lsa, ~ people)
+analogy(lsa, ~ people + killed)
+head(similarity(lsa, c("people", "killed"), mode = "word"))
+}
 \references{
 Deerwester, S. C., Dumais, S. T., Landauer, T. K., Furnas, G. W., & Harshman, R. A. (1990).
 Indexing by latent semantic analysis. JASIS, 41(6), 391–407.
