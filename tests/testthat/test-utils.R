@@ -128,3 +128,33 @@ test_that("similarity works", {
     )
 })
 
+test_that("get_threads are working", {
+    
+    options("wordvector_threads" = "abc")
+    expect_error(
+        suppressWarnings(wordvector:::get_threads()),
+        "wordvector_threads must be an integer"
+    )
+    options("wordvector_threads" = NA)
+    expect_error(
+        wordvector:::get_threads(),
+        "wordvector_threads must be an integer"
+    )
+    
+    ## respect other settings
+    options("wordvector_threads" = NULL)
+    
+    Sys.setenv("OMP_THREAD_LIMIT" = 2)
+    expect_equal(
+        wordvector:::get_threads(), 2
+    )
+    Sys.unsetenv("OMP_THREAD_LIMIT")
+    
+    Sys.setenv("RCPP_PARALLEL_NUM_THREADS" = 3)
+    expect_equal(
+        wordvector:::get_threads(), 3
+    )
+    Sys.unsetenv("RCPP_PARALLEL_NUM_THREADS")
+    
+    options("wordvector_threads" = NULL)
+})
