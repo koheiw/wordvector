@@ -28,11 +28,15 @@ remotes::install_github("koheiw/wordvector")
 
 We train the word2vec model on a [corpus of news summaries collected from Yahoo News](https://www.dropbox.com/s/e19kslwhuu9yc2z/yahoo-news.RDS?dl=1) via RSS in 2014. 
 
+### Download data
+
 ```{r, eval=FALSE}
 # download data
 download.file('https://www.dropbox.com/s/e19kslwhuu9yc2z/yahoo-news.RDS?dl=1', 
               '~/yahoo-news.RDS', mode = "wb")
 ```
+
+### Train word2vec
 
 ```{r}
 library(wordvector)
@@ -41,10 +45,9 @@ library(quanteda)
 # Load data
 dat <- readRDS('~/yahoo-news.RDS')
 dat$text <- paste0(dat$head, ". ", dat$body)
-dat$body <- NULL
-corp <- corpus(dat, text_field = 'text')
+corp <- corpus(dat, text_field = 'text', docid_field = "tid")
 
-# Tokenize
+# Pre-processing
 toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>% 
     tokens_remove(stopwords("en", "marimo"), padding = TRUE) %>% 
     tokens_select("^[a-zA-Z-]+$", valuetype = "regex", case_insensitive = FALSE,
@@ -52,19 +55,18 @@ toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>%
     tokens_tolower()
 
 # Train word2vec
-wdv <- word2vec(toks, dim = 50, type = "cbow", min_count = 10, verbose = TRUE)
+wdv <- word2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose = TRUE)
 ```
+
+### Similarity between word vectors
 
 `similarity()` computes cosine similarity between word vectors.
 
 ```{r}
-head(similarity(wdv, c("good", "bad"), mode = "word"), n = 10)
-```
-
-
-```{r}
 head(similarity(wdv, c("amazon", "forests", "obama", "america", "afghanistan"), mode = "word"), n = 10)
 ```
+
+### Arithmetic operations of word vectors
 
 `analogy()` offers interface for arithmetic operations of word vectors. 
 
@@ -76,7 +78,7 @@ analogy(wdv, ~ amazon - forests) # What is Amazon without forests?
 analogy(wdv, ~ obama - america + afghanistan) # What is for Afghanistan as Obama for America? 
 ```
 
-These examples replicates analogical tasks in Mikolov et al., (2013).
+These examples replicates analogical tasks in the original word2vec paper.
 
 ```{r}
 analogy(wdv, ~ berlin - germany + france) # What is for France as Berlin for Germany?
