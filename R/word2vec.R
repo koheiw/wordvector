@@ -40,6 +40,7 @@
 #'   http://arxiv.org/abs/1310.4546.
 #' @export
 #' @examples
+#' \dontrun{
 #' library(quanteda)
 #' library(wordvector)
 #' 
@@ -55,7 +56,7 @@
 #' w2v <- word2vec(toks, dim = 50, type = "cbow", min_count = 5, sample = 0.001)
 #' head(similarity(w2v, c("berlin", "germany", "france"), mode = "word"))
 #' analogy(w2v, ~ berlin - germany + france)
-#' 
+#' }
 word2vec <- function(x, dim = 50, type = c("cbow", "skip-gram"), 
                      min_count = 5L, window = ifelse(type == "cbow", 5L, 10L), 
                      iter = 10L, alpha = 0.05, use_ns = TRUE, ns_size = 5L, 

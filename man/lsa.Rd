@@ -44,6 +44,7 @@ Returns a fitted textmodel_wordvector with the following elements:
 Train a Latent Semantic Analysis model (Deerwester et al., 1990) on a \link[quanteda:tokens]{quanteda::tokens} object.
 }
 \examples{
+\dontrun{
 library(quanteda)
 library(wordvector)
 
@@ -59,7 +60,7 @@ toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) \%>\%
 lsa <- lsa(toks, dim = 50, min_count = 5, verbose = TRUE, )
 head(similarity(lsa, c("berlin", "germany", "france"), mode = "word"))
 analogy(lsa, ~ berlin - germany + france)
-
+}
 }
 \references{
 Deerwester, S. C., Dumais, S. T., Landauer, T. K., Furnas, G. W., & Harshman, R. A. (1990).

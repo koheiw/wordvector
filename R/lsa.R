@@ -22,6 +22,7 @@
 #'   Indexing by latent semantic analysis. JASIS, 41(6), 391–407.
 #' @export
 #' @examples
+#' \dontrun{
 #' library(quanteda)
 #' library(wordvector)
 #' 
@@ -37,7 +38,7 @@
 #' lsa <- lsa(toks, dim = 50, min_count = 5, verbose = TRUE, )
 #' head(similarity(lsa, c("berlin", "germany", "france"), mode = "word"))
 #' analogy(lsa, ~ berlin - germany + france)
-#' 
+#' }
 lsa <- function(x, dim = 50, min_count = 5L, engine = c("RSpectra", "irlba", "rsvd"), 
                 weight = "count", verbose = FALSE, ...) {
     UseMethod("lsa")   

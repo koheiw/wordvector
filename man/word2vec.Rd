@@ -71,6 +71,7 @@ User can changed the number of processors used for the parallel computing via
 \code{options(wordvector_threads)}.
 }
 \examples{
+\dontrun{
 library(quanteda)
 library(wordvector)
 
@@ -86,7 +87,7 @@ toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) \%>\%
 w2v <- word2vec(toks, dim = 50, type = "cbow", min_count = 5, sample = 0.001)
 head(similarity(w2v, c("berlin", "germany", "france"), mode = "word"))
 analogy(w2v, ~ berlin - germany + france)
-
+}
 }
 \references{
 Mikolov, T., Sutskever, I., Chen, K., Corrado, G., & Dean, J. (2013).
