@@ -64,7 +64,7 @@ Returns a fitted textmodel_wordvector with the following elements:
 \item{version}{the version of the wordvector package.}
 }
 \description{
-Train a Word2vec model (Mikolov et al., 2023) \url{https://arxiv.org/pdf/1310.4546.pdf} in different architectures on a \link[quanteda:tokens]{quanteda::tokens} object.
+Train a Word2vec model (Mikolov et al., 2023) in different architectures on a \link[quanteda:tokens]{quanteda::tokens} object.
 }
 \details{
 User can changed the number of processors used for the parallel computing via
