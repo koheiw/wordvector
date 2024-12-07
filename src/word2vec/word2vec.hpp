@@ -83,7 +83,7 @@ namespace w2v {
         float sample = 1e-3f; ///< threshold for occurrence of words
         bool withHS = false; ///< use hierarchical softmax instead of negative sampling
         uint16_t negative = 5; ///< negative examples number
-        uint16_t threads = 12; ///< train threads number
+        uint16_t threads = 1; ///< train threads number
         uint16_t iterations = 5; ///< train iterations
         float alpha = 0.05f; ///< starting learn rate
         int type = 1; ///< 1:CBOW 2:Skip-Gram
