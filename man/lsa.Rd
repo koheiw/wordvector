@@ -48,7 +48,7 @@ library(quanteda)
 library(wordvector)
 
 # pre-processing
-corp <- data_corpus_news2014
+corp <- corpus_reshape(data_corpus_news2014)
 toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) \%>\% 
    tokens_remove(stopwords("en", "marimo"), padding = TRUE) \%>\% 
    tokens_select("^[a-zA-Z-]+$", valuetype = "regex", case_insensitive = FALSE,
@@ -56,10 +56,10 @@ toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) \%>\%
    tokens_tolower()
 
 # train LSA
-lsa <- lsa(toks, dim = 10, min_count = 20, verbose = TRUE)
-analogy(lsa, ~ people)
-analogy(lsa, ~ people + killed)
-head(similarity(lsa, c("people", "killed"), mode = "word"))
+lsa <- lsa(toks, dim = 50, min_count = 5, verbose = TRUE, )
+head(similarity(lsa, c("berlin", "germany", "france"), mode = "word"))
+analogy(lsa, ~ berlin - germany + france)
+
 }
 \references{
 Deerwester, S. C., Dumais, S. T., Landauer, T. K., Furnas, G. W., & Harshman, R. A. (1990).

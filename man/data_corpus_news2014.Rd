@@ -15,7 +15,7 @@ data_corpus_news2014
 }
 \description{
 A corpus object containing 2,000 news summaries collected from Yahoo News via
-RSS feeds in 2014.
+RSS feeds in 2014. The title and description of the summaries are concatenated.
 }
 \references{
 Watanabe, K. (2018). Newsmap: A semi-supervised approach to
