@@ -42,7 +42,7 @@ test_that("analogy works", {
     )
     expect_true(
         suppressWarnings(
-        is.data.frame(analogy(wov, ~ xxxx, exclude = FALSE, type = "simil"))
+            is.data.frame(analogy(wov, ~ xxxx, exclude = FALSE, type = "simil"))
         )
     )
     expect_warning(
@@ -51,7 +51,7 @@ test_that("analogy works", {
     )
     expect_true(
         suppressWarnings(
-        is.data.frame(analogy(wov, ~ xxxx, exclude = FALSE, type = "word"))
+            is.data.frame(analogy(wov, ~ xxxx, exclude = FALSE, type = "word"))
         )
     )
     
@@ -123,7 +123,7 @@ test_that("similarity works", {
     )
     expect_true(
         suppressWarnings(
-        is.matrix(similarity(wov, c("xx", "yyy"), mode = "word"))
+            is.matrix(similarity(wov, c("xx", "yyy"), mode = "word"))
         )
     )
 })

@@ -1,5 +1,5 @@
 
-# Wordvector: creating word and cocument vectors
+# Wordvector: creating word and document vectors
 
 The **wordvector** package is developed to create word and document
 vectors using **quanteda**. This package currently supports word2vec
@@ -12,7 +12,7 @@ semantic analysis ([Deerwester et al.,
 **wordvector** is currently available only on Github.
 
 ``` r
-devtools::install_github("koheiw/wordvector")
+remotes::install_github("koheiw/wordvector")
 ```
 
 ## Example
@@ -20,13 +20,17 @@ devtools::install_github("koheiw/wordvector")
 We train the word2vec model on a [corpus of news summaries collected
 from Yahoo
 News](https://www.dropbox.com/s/e19kslwhuu9yc2z/yahoo-news.RDS?dl=1) via
-RSS in 2014.
+RSS between 2012 and 2016.
+
+### Download data
 
 ``` r
 # download data
 download.file('https://www.dropbox.com/s/e19kslwhuu9yc2z/yahoo-news.RDS?dl=1', 
               '~/yahoo-news.RDS', mode = "wb")
 ```
+
+### Train word2vec
 
 ``` r
 library(wordvector)
@@ -40,12 +44,11 @@ library(quanteda)
 # Load data
 dat <- readRDS('~/yahoo-news.RDS')
 dat$text <- paste0(dat$head, ". ", dat$body)
-dat$body <- NULL
-corp <- corpus(dat, text_field = 'text')
+corp <- corpus(dat, text_field = 'text', docid_field = "tid")
 
-# Tokenize
+# Pre-processing
 toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>% 
-    tokens_remove(stopwords(), padding = TRUE) %>% 
+    tokens_remove(stopwords("en", "marimo"), padding = TRUE) %>% 
     tokens_select("^[a-zA-Z-]+$", valuetype = "regex", case_insensitive = FALSE,
                   padding = TRUE) %>% 
     tokens_tolower()
@@ -56,97 +59,113 @@ wdv <- word2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose = TRUE)
 ##  ...using 16 threads for distributed computing
 ##  ...initializing
 ##  ...negative sampling in 10 iterations
-##  ......iteration 1 elapsed time: 5.36 seconds (alpha: 0.0455)
-##  ......iteration 2 elapsed time: 10.85 seconds (alpha: 0.0408)
-##  ......iteration 3 elapsed time: 16.31 seconds (alpha: 0.0364)
-##  ......iteration 4 elapsed time: 21.79 seconds (alpha: 0.0319)
-##  ......iteration 5 elapsed time: 27.30 seconds (alpha: 0.0273)
-##  ......iteration 6 elapsed time: 32.86 seconds (alpha: 0.0229)
-##  ......iteration 7 elapsed time: 38.34 seconds (alpha: 0.0184)
-##  ......iteration 8 elapsed time: 43.96 seconds (alpha: 0.0139)
-##  ......iteration 9 elapsed time: 49.44 seconds (alpha: 0.0094)
-##  ......iteration 10 elapsed time: 54.95 seconds (alpha: 0.0049)
+##  ......iteration 1 elapsed time: 6.26 seconds (alpha: 0.0468)
+##  ......iteration 2 elapsed time: 12.76 seconds (alpha: 0.0435)
+##  ......iteration 3 elapsed time: 18.35 seconds (alpha: 0.0403)
+##  ......iteration 4 elapsed time: 23.56 seconds (alpha: 0.0370)
+##  ......iteration 5 elapsed time: 28.77 seconds (alpha: 0.0338)
+##  ......iteration 6 elapsed time: 33.97 seconds (alpha: 0.0308)
+##  ......iteration 7 elapsed time: 40.31 seconds (alpha: 0.0276)
+##  ......iteration 8 elapsed time: 45.91 seconds (alpha: 0.0245)
+##  ......iteration 9 elapsed time: 51.79 seconds (alpha: 0.0212)
+##  ......iteration 10 elapsed time: 57.45 seconds (alpha: 0.0180)
 ##  ...normalizing vectors
 ##  ...complete
 ```
+
+### Similarity between word vectors
 
 `similarity()` computes cosine similarity between word vectors.
 
 ``` r
 head(similarity(wdv, c("amazon", "forests", "obama", "america", "afghanistan"), mode = "word"), n = 10)
-##       amazon       forests       obama        america           afghanistan  
-##  [1,] "amazon"     "forests"     "obama"      "america"         "afghanistan"
-##  [2,] "acacia"     "herds"       "biden"      "africa"          "afghan"     
-##  [3,] "rainforest" "rainforest"  "kerry"      "american"        "kabul"      
-##  [4,] "soy"        "grasslands"  "hagel"      "dakota"          "pakistan"   
-##  [5,] "fresnillo"  "wetlands"    "unwise"     "america-focused" "taliban"    
-##  [6,] "tinder"     "forest"      "clinton"    "korea"           "afghans"    
-##  [7,] "ranching"   "rainforests" "cluelessly" "carolina"        "iraq"       
-##  [8,] "cerro"      "mangrove"    "rodham"     "palmerston"      "kandahar"   
-##  [9,] "patagonia"  "habitats"    "putin"      "carolina-based"  "nato"       
-## [10,] "clam"       "plantations" "panetta"    "koreans"         "nato-led"
+##       amazon       forests       obama            america          
+##  [1,] "amazon"     "forests"     "obama"          "america"        
+##  [2,] "rainforest" "wetlands"    "barack"         "africa"         
+##  [3,] "emerald"    "rainforest"  "biden"          "american"       
+##  [4,] "yasuni"     "forest"      "kerry"          "dakota"         
+##  [5,] "tinder"     "rainforests" "administration" "carolina"       
+##  [6,] "patagonia"  "herds"       "hagel"          "americas"       
+##  [7,] "hectare"    "habitat"     "boehner"        "america-focused"
+##  [8,] "re-grown"   "farmland"    "rodham"         "korea"          
+##  [9,] "franchisee" "temperate"   "karzai"         "koreans"        
+## [10,] "sequoia"    "mangrove"    "netanyahu"      "carolina-based" 
+##       afghanistan     
+##  [1,] "afghanistan"   
+##  [2,] "afghan"        
+##  [3,] "kabul"         
+##  [4,] "taliban"       
+##  [5,] "pakistan"      
+##  [6,] "afghans"       
+##  [7,] "kandahar"      
+##  [8,] "mazar-i-sharif"
+##  [9,] "somalia"       
+## [10,] "gardez"
 ```
+
+### Arithmetic operations of word vectors
 
 `analogy()` offers interface for arithmetic operations of word vectors.
 
 ``` r
 analogy(wdv, ~ amazon - forests) # What is Amazon without forests?
-##            word similarity
-## 1     smash-hit  0.6288743
-## 2  nbcuniversal  0.5956835
-## 3        gawker  0.5894248
-## 4     telephony  0.5832942
-## 5         yahoo  0.5789149
-## 6  qatari-owned  0.5714233
-## 7       verizon  0.5579714
-## 8   live-stream  0.5575497
-## 9     univision  0.5574111
-## 10     langlois  0.5550320
+##               word similarity
+## 1           gawker  0.5608441
+## 2        smash-hit  0.5505689
+## 3            iliad  0.5399390
+## 4           italia  0.5248575
+## 5             sony  0.5195535
+## 6  biggest-selling  0.5146165
+## 7           telmex  0.5123942
+## 8     nbcuniversal  0.5112653
+## 9          comcast  0.5101601
+## 10       telephony  0.5089706
 ```
 
 ``` r
 analogy(wdv, ~ obama - america + afghanistan) # What is for Afghanistan as Obama for America? 
-##        word similarity
-## 1      nato  0.6207850
-## 2   taliban  0.5987674
-## 3    karzai  0.5980017
-## 4    sharif  0.5946231
-## 5    afghan  0.5942727
-## 6  military  0.5743087
-## 7  pentagon  0.5708901
-## 8     hagel  0.5641687
-## 9     abadi  0.5462650
-## 10    kabul  0.5436152
+##         word similarity
+## 1     karzai  0.7338677
+## 2    taliban  0.7002406
+## 3     afghan  0.6800769
+## 4      hamid  0.6701872
+## 5      kabul  0.6423406
+## 6   haqqanis  0.6193317
+## 7  us-afghan  0.6031197
+## 8       nato  0.5924604
+## 9    afghans  0.5909458
+## 10     nawaz  0.5694955
 ```
 
-These examples replicates analogical tasks in Mikolov et al., (2013).
+These examples replicates analogical tasks in the original word2vec
+paper.
 
 ``` r
 analogy(wdv, ~ berlin - germany + france) # What is for France as Berlin for Germany?
-##                     word similarity
-## 1                  paris  0.9214461
-## 2               brussels  0.7645437
-## 3              amsterdam  0.6983973
-## 4                 london  0.6876289
-## 5                bourget  0.6840104
-## 6              stockholm  0.6751992
-## 7                   rome  0.6750841
-## 8                 munich  0.6742921
-## 9  notre-dame-des-landes  0.6674540
-## 10                madrid  0.6646350
+##          word similarity
+## 1       paris  0.8782719
+## 2   stockholm  0.7868182
+## 3    brussels  0.7664732
+## 4   amsterdam  0.7493143
+## 5      london  0.7363011
+## 6  strasbourg  0.7301854
+## 7  copenhagen  0.7240090
+## 8    helsinki  0.7150432
+## 9      warsaw  0.7083805
+## 10    bourget  0.7011284
 ```
 
 ``` r
 analogy(wdv, ~ quick - quickly + slowly) # What is for slowly as quick for quickly?
 ##           word similarity
-## 1         slow  0.7317324
-## 2          rut  0.6925048
-## 3       steady  0.6911304
-## 4      sharper  0.6810087
-## 5       uneven  0.6661730
-## 6  unstoppable  0.6572307
-## 7     sideways  0.6526448
-## 8       wobbly  0.6473020
-## 9       fading  0.6441875
-## 10  unexpected  0.6435836
+## 1         slow  0.7049219
+## 2       uneven  0.6729745
+## 3      sharper  0.6668627
+## 4       cheeks  0.6437815
+## 5          rut  0.6330770
+## 6   unexpected  0.6287393
+## 7        abyss  0.6256164
+## 8  unstoppable  0.6167072
+## 9       fading  0.6160594
+## 10         dim  0.6128477
 ```

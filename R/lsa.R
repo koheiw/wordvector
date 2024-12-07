@@ -21,6 +21,23 @@
 #'   Deerwester, S. C., Dumais, S. T., Landauer, T. K., Furnas, G. W., & Harshman, R. A. (1990). 
 #'   Indexing by latent semantic analysis. JASIS, 41(6), 391–407.
 #' @export
+#' @examples
+#' library(quanteda)
+#' library(wordvector)
+#' 
+#' # pre-processing
+#' corp <- corpus_reshape(data_corpus_news2014)
+#' toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>% 
+#'    tokens_remove(stopwords("en", "marimo"), padding = TRUE) %>% 
+#'    tokens_select("^[a-zA-Z-]+$", valuetype = "regex", case_insensitive = FALSE,
+#'                  padding = TRUE) %>% 
+#'    tokens_tolower()
+#' 
+#' # train LSA
+#' lsa <- lsa(toks, dim = 50, min_count = 5, verbose = TRUE, )
+#' head(similarity(lsa, c("berlin", "germany", "france"), mode = "word"))
+#' analogy(lsa, ~ berlin - germany + france)
+#' 
 lsa <- function(x, dim = 50, min_count = 5L, engine = c("RSpectra", "irlba", "rsvd"), 
                 weight = "count", verbose = FALSE, ...) {
     UseMethod("lsa")   

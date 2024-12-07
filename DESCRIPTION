@@ -31,3 +31,4 @@ Suggests:
 LinkingTo: Rcpp, quanteda
 Roxygen: list(markdown = TRUE)
 Language: en-US
+LazyData: true

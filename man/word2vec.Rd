@@ -70,6 +70,24 @@ Train a Word2vec model (Mikolov et al., 2023) \url{https://arxiv.org/pdf/1310.45
 User can changed the number of processors used for the parallel computing via
 \code{options(wordvector_threads)}.
 }
+\examples{
+library(quanteda)
+library(wordvector)
+
+# pre-processing
+corp <- data_corpus_news2014 
+toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) \%>\% 
+   tokens_remove(stopwords("en", "marimo"), padding = TRUE) \%>\% 
+   tokens_select("^[a-zA-Z-]+$", valuetype = "regex", case_insensitive = FALSE,
+                 padding = TRUE) \%>\% 
+   tokens_tolower()
+
+# train word2vec
+w2v <- word2vec(toks, dim = 50, type = "cbow", min_count = 5, sample = 0.001)
+head(similarity(w2v, c("berlin", "germany", "france"), mode = "word"))
+analogy(w2v, ~ berlin - germany + france)
+
+}
 \references{
 Mikolov, T., Sutskever, I., Chen, K., Corrado, G., & Dean, J. (2013).
 Distributed Representations of Words and Phrases and their Compositionality.
