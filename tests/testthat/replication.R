@@ -1,8 +1,7 @@
-library(testthat)
 library(quanteda)
 library(wordvector)
 library(word2vec)
-options(wordvector_threads = 1)
+options(wordvector_threads = 2)
 
 jaccard <- function(a, b) {
     mapply(function(x, y) {length(intersect(x, y)) / length(union(x, y))},
@@ -38,7 +37,7 @@ test_that("Skip-gram models are similar", {
     wdv <- wordvector::word2vec(toks, dim = 100, iter = 20, min_count = 0, type = "skip-gram",
                                 verbose = FALSE, sample = 0)
     w2v <- word2vec::word2vec(lis, dim = 100, iter = 20, min_count = 0, type = "skip-gram",
-                              verbose = FALSE, threads = 1, sample = 0)
+                              verbose = FALSE, threads = 2, sample = 0)
     
     expect_true(all(
         correlation(proxyC::simil(as.matrix(wdv)[feat,]),
@@ -61,7 +60,7 @@ test_that("CBOW models are similar", {
     wdv <- wordvector::word2vec(toks, dim = 100, iter = 20, min_count = 0, type = "cbow",
                                 verbose = FALSE, sample = 0)
     w2v <- word2vec::word2vec(lis, dim = 100, iter = 20, min_count = 0, type = "cbow",
-                              verbose = FALSE, threads = 1, sample = 0)
+                              verbose = FALSE, threads = 2, sample = 0)
     expect_true(all(
         correlation(proxyC::simil(as.matrix(wdv)[feat,]),
                     proxyC::simil(as.matrix(w2v)[feat,])) > 0.8
@@ -75,6 +74,3 @@ test_that("CBOW models are similar", {
                     proxyC::simil(d2v[doc,])) > 0.8
     ))
 })
-
-
-
