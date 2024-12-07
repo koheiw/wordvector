@@ -26,7 +26,7 @@ remotes::install_github("koheiw/wordvector")
 
 ## Example
 
-We train the word2vec model on a [corpus of news summaries collected from Yahoo News](https://www.dropbox.com/s/e19kslwhuu9yc2z/yahoo-news.RDS?dl=1) via RSS in 2014. 
+We train the word2vec model on a [corpus of news summaries collected from Yahoo News](https://www.dropbox.com/s/e19kslwhuu9yc2z/yahoo-news.RDS?dl=1) via RSS between 2012 and 2016. 
 
 ### Download data
 
