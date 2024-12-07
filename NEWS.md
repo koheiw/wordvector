@@ -5,3 +5,4 @@
 - Recreate `word2vec()` with new argument names and object structures.
 - Create `lda()` to train word vectors using Latent Semantic Analysis.
 - Add `similarity()` and `analogy()` functions using **proxyC**.
+- Add `data_corpus_news2014` that contain 20,000 news summaries as package data.
