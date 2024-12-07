@@ -44,7 +44,7 @@
 #' library(wordvector)
 #' 
 #' # pre-processing
-#' corp <- data_corpus_news2014
+#' corp <- data_corpus_news2014 
 #' toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>% 
 #'    tokens_remove(stopwords("en", "marimo"), padding = TRUE) %>% 
 #'    tokens_select("^[a-zA-Z-]+$", valuetype = "regex", case_insensitive = FALSE,
@@ -52,10 +52,9 @@
 #'    tokens_tolower()
 #'
 #' # train word2vec
-#' w2v <- word2vec(toks, dim = 10, type = "cbow", min_count = 20, verbose = TRUE)
-#' analogy(w2v, ~ police)
-#' analogy(w2v, ~ police + politics)
-#' head(similarity(w2v, c("police", "politics"), mode = "word"))
+#' w2v <- word2vec(toks, dim = 50, type = "cbow", min_count = 5, sample = 0.001)
+#' head(similarity(w2v, c("berlin", "germany", "france"), mode = "word"))
+#' analogy(w2v, ~ berlin - germany + france)
 #' 
 word2vec <- function(x, dim = 50, type = c("cbow", "skip-gram"), 
                      min_count = 5L, window = ifelse(type == "cbow", 5L, 10L), 
