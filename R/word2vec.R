@@ -37,7 +37,7 @@
 #' @references 
 #'   Mikolov, T., Sutskever, I., Chen, K., Corrado, G., & Dean, J. (2013). 
 #'   Distributed Representations of Words and Phrases and their Compositionality. 
-#'   http://arxiv.org/abs/1310.4546.
+#'   https://arxiv.org/abs/1310.4546.
 #' @export
 #' @examples
 #' \dontrun{
