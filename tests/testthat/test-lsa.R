@@ -42,6 +42,9 @@ test_that("word2vec words", {
             "50 dimensions; 5,360 words.", sep = "\n"), fixed = TRUE
     )
     expect_equal(
+        class(print(wov)), "textmodel_wordvector"
+    )
+    expect_equal(
         names(dov),
         c("vectors", "dim", "min_count", "frequency", "engine", "weight", 
           "concatenator", "call", "version")
@@ -68,6 +71,9 @@ test_that("word2vec words", {
             "doc2vec(x = toks_grp, model = wov)",
             "",
             "50 dimensions; 59 documents.", sep = "\n"), fixed = TRUE
+    )
+    expect_equal(
+        class(print(dov)), "textmodel_docvector"
     )
     expect_equal(
         names(dov),
