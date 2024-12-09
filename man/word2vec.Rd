@@ -49,7 +49,7 @@ disabled when \code{sample = 1.0}}
 \item{...}{additional arguments.}
 }
 \value{
-Returns a fitted textmodel_wordvector with the following elements:
+Returns a textmodel_wordvector object with the following elements:
 \item{vectors}{a matrix for word vectors.}
 \item{dim}{the size of the word vectors.}
 \item{type}{the architecture of the model.}
@@ -71,7 +71,7 @@ User can changed the number of processors used for the parallel computing via
 \code{options(wordvector_threads)}.
 }
 \examples{
-\dontrun{
+\donttest{
 library(quanteda)
 library(wordvector)
 
