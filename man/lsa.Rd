@@ -31,7 +31,7 @@ this in \code{x} are removed before training.}
 \item{...}{additional arguments.}
 }
 \value{
-Returns a fitted textmodel_wordvector with the following elements:
+Returns a textmodel_wordvector object with the following elements:
 \item{vectors}{a matrix for word vectors.}
 \item{frequency}{the frequency of words in \code{x}.}
 \item{engine}{the SVD engine used.}
@@ -44,7 +44,7 @@ Returns a fitted textmodel_wordvector with the following elements:
 Train a Latent Semantic Analysis model (Deerwester et al., 1990) on a \link[quanteda:tokens]{quanteda::tokens} object.
 }
 \examples{
-\dontrun{
+\donttest{
 library(quanteda)
 library(wordvector)
 

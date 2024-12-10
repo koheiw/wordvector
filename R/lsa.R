@@ -9,7 +9,7 @@
 #' @param weight weighting scheme passed to [quanteda::dfm_weight()]. 
 #' @param verbose if `TRUE`, print the progress of training.
 #' @param ... additional arguments.
-#' @returns Returns a fitted textmodel_wordvector with the following elements:
+#' @returns Returns a textmodel_wordvector object with the following elements:
 #'   \item{vectors}{a matrix for word vectors.}
 #'   \item{frequency}{the frequency of words in `x`.}
 #'   \item{engine}{the SVD engine used.}
@@ -22,7 +22,7 @@
 #'   Indexing by latent semantic analysis. JASIS, 41(6), 391–407.
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' library(quanteda)
 #' library(wordvector)
 #' 

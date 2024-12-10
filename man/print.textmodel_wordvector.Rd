@@ -11,6 +11,9 @@
 
 \item{...}{unused}
 }
+\value{
+an invisible copy of \code{x}.
+}
 \description{
 Print method for trained word vectors
 }
