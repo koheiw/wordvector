@@ -27,7 +27,7 @@ in descending order.
 [experimental] Find analogical relationships between words
 }
 \examples{
-\dontrun{
+\donttest{
 # from Mikolov et al. (2023)
 analogy(wdv, ~ berlin - germany + france)
 analogy(wdv, ~ quick - quickly + slowly)
