@@ -1,5 +1,4 @@
 library(quanteda)
-library(word2vec)
 library(wordvector)
 library(quanteda.textstats)
 options(wordvector_threads = 8)
