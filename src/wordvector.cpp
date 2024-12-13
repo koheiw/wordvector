@@ -7,7 +7,6 @@
 #include <mutex>
 #include "word2vec/word2vec.hpp"
 #include "tokens.h"
-//using namespace quanteda;
 
 Rcpp::CharacterVector encode(std::vector<std::string> types){
     Rcpp::CharacterVector types_(types.size());
@@ -128,8 +127,9 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
     settings.random = (uint32_t)(Rcpp::runif(1)[0] * std::numeric_limits<uint32_t>::max());
 
     w2v::word2vec_t word2vec;
+    w2v::progress_t prog;
     bool trained;
-  
+    
     if (verbose) {
         if (withHS) {
             Rprintf(" ...hierarchical softmax in %d iterations\n", iterations);
@@ -140,15 +140,14 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
         auto start = std::chrono::high_resolution_clock::now();
         int iter = 0;
         std::mutex mtx;
-        trained = word2vec.train(settings, corpus, [&start, &iter, &mtx] (int _iter, float _alpha) {
+        trained = word2vec.train(settings, corpus, [&start, &iter, &mtx, &prog] (int _iter, float _alpha) {
         mtx.lock();
         if (_iter > iter) {
             iter = _iter;
             auto end = std::chrono::high_resolution_clock::now();
             auto diff = std::chrono::duration<double, std::milli>(end - start);
             double msec = diff.count();
-            Rprintf(" ......iteration %d ", iter);
-            Rprintf("elapsed time: %.2f seconds (alpha: %.4f)\n", msec / 1000, _alpha);
+            prog.iteration(iter, msec, _alpha);
         };
         mtx.unlock();
         });
