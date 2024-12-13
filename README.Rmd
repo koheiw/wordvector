@@ -18,11 +18,18 @@ The **wordvector** package is developed to create word and document vectors usin
 
 ## How to install
 
-**wordvector** is currently available only on Github.
+**wordvector** is available on CRAN.
+
+```{r, eval=FALSE}
+install.packages("wordvector")
+```
+
+The lasted version is available on Github.
 
 ```{r, eval=FALSE}
 remotes::install_github("koheiw/wordvector")
 ```
+
 
 ## Example
 

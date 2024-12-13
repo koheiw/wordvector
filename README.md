@@ -9,7 +9,13 @@ semantic analysis ([Deerwester et al.,
 
 ## How to install
 
-**wordvector** is currently available only on Github.
+**wordvector** is available on CRAN.
+
+``` r
+install.packages("wordvector")
+```
+
+The lasted version is available on Github.
 
 ``` r
 remotes::install_github("koheiw/wordvector")
@@ -59,16 +65,16 @@ wdv <- word2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose = TRUE)
 ##  ...using 16 threads for distributed computing
 ##  ...initializing
 ##  ...negative sampling in 10 iterations
-##  ......iteration 1 elapsed time: 5.43 seconds (alpha: 0.0466)
-##  ......iteration 2 elapsed time: 10.94 seconds (alpha: 0.0429)
-##  ......iteration 3 elapsed time: 16.31 seconds (alpha: 0.0395)
-##  ......iteration 4 elapsed time: 21.67 seconds (alpha: 0.0359)
-##  ......iteration 5 elapsed time: 27.36 seconds (alpha: 0.0322)
-##  ......iteration 6 elapsed time: 32.62 seconds (alpha: 0.0288)
-##  ......iteration 7 elapsed time: 38.11 seconds (alpha: 0.0253)
-##  ......iteration 8 elapsed time: 43.33 seconds (alpha: 0.0219)
-##  ......iteration 9 elapsed time: 48.51 seconds (alpha: 0.0185)
-##  ......iteration 10 elapsed time: 53.98 seconds (alpha: 0.0149)
+##  ......iteration 1 elapsed time: 4.18 seconds (alpha: 0.0468)
+##  ......iteration 2 elapsed time: 8.28 seconds (alpha: 0.0435)
+##  ......iteration 3 elapsed time: 12.49 seconds (alpha: 0.0403)
+##  ......iteration 4 elapsed time: 16.65 seconds (alpha: 0.0370)
+##  ......iteration 5 elapsed time: 20.95 seconds (alpha: 0.0337)
+##  ......iteration 6 elapsed time: 25.10 seconds (alpha: 0.0304)
+##  ......iteration 7 elapsed time: 29.22 seconds (alpha: 0.0272)
+##  ......iteration 8 elapsed time: 33.49 seconds (alpha: 0.0239)
+##  ......iteration 9 elapsed time: 37.66 seconds (alpha: 0.0206)
+##  ......iteration 10 elapsed time: 41.92 seconds (alpha: 0.0173)
 ##  ...normalizing vectors
 ##  ...complete
 ```
@@ -79,28 +85,28 @@ wdv <- word2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose = TRUE)
 
 ``` r
 head(similarity(wdv, c("amazon", "forests", "obama", "america", "afghanistan"), mode = "word"), n = 10)
-##       amazon        forests       obama            america           
-##  [1,] "amazon"      "forests"     "obama"          "america"         
-##  [2,] "rainforest"  "rainforests" "hagel"          "africa"          
-##  [3,] "yasuni"      "herds"       "biden"          "american"        
-##  [4,] "plantations" "wetlands"    "kerry"          "dakota"          
-##  [5,] "gorges"      "ecosystem"   "barack"         "carolina"        
-##  [6,] "streams"     "plantations" "rodham"         "america-focused" 
-##  [7,] "wetlands"    "rainforest"  "cluelessly"     "rhine-westphalia"
-##  [8,] "re-grown"    "forest"      "clinton"        "african"         
-##  [9,] "tributary"   "mangroves"   "administration" "carolina-based"  
-## [10,] "emerald"     "farming"     "boehner"        "americas"        
+##       amazon        forests         obama            america           
+##  [1,] "amazon"      "forests"       "obama"          "america"         
+##  [2,] "rainforest"  "herds"         "barack"         "dakota"          
+##  [3,] "ranches"     "rainforests"   "biden"          "africa"          
+##  [4,] "grassland"   "wetlands"      "hagel"          "american"        
+##  [5,] "emerald"     "rainforest"    "kerry"          "america-focused" 
+##  [6,] "gorges"      "plantations"   "administration" "carolina"        
+##  [7,] "plantations" "deforestation" "clinton"        "rhine-westphalia"
+##  [8,] "wetlands"    "forest"        "rodham"         "carolina-based"  
+##  [9,] "clams"       "ecosystem"     "cluelessly"     "korea"           
+## [10,] "flocks"      "ecosystems"    "overture"       "koreans"         
 ##       afghanistan  
 ##  [1,] "afghanistan"
 ##  [2,] "afghan"     
 ##  [3,] "kabul"      
-##  [4,] "taliban"    
-##  [5,] "afghans"    
-##  [6,] "pakistan"   
+##  [4,] "pakistan"   
+##  [5,] "taliban"    
+##  [6,] "afghans"    
 ##  [7,] "iraq"       
 ##  [8,] "kandahar"   
-##  [9,] "bagram"     
-## [10,] "somalia"
+##  [9,] "nato-led"   
+## [10,] "gardez"
 ```
 
 ### Arithmetic operations of word vectors
@@ -109,32 +115,32 @@ head(similarity(wdv, c("amazon", "forests", "obama", "america", "afghanistan"), 
 
 ``` r
 analogy(wdv, ~ amazon - forests) # What is Amazon without forests?
-##            word similarity
-## 1     smash-hit  0.5728512
-## 2     univision  0.5455706
-## 3         iliad  0.5318353
-## 4  nbcuniversal  0.5250018
-## 5         edits  0.5223959
-## 6     us-europe  0.5156272
-## 7        cheesy  0.5155246
-## 8     collymore  0.5120331
-## 9        airing  0.5038335
-## 10      skymark  0.5018828
+##               word similarity
+## 1        smash-hit  0.6323895
+## 2       activision  0.5847817
+## 3           gawker  0.5647243
+## 4            edits  0.5542108
+## 5         t-mobile  0.5461421
+## 6             choo  0.5412209
+## 7            iliad  0.5328198
+## 8            yahoo  0.5301637
+## 9         metropcs  0.5285186
+## 10 music-streaming  0.5248313
 ```
 
 ``` r
 analogy(wdv, ~ obama - america + afghanistan) # What is for Afghanistan as Obama for America? 
-##          word similarity
-## 1      karzai  0.7131091
-## 2     taliban  0.6573556
-## 3       hamid  0.6523524
-## 4       hagel  0.6196738
-## 5       kabul  0.5950130
-## 6      afghan  0.5863461
-## 7    pentagon  0.5854797
-## 8  commanders  0.5769696
-## 9     panetta  0.5755119
-## 10      nawaz  0.5634649
+##           word similarity
+## 1       karzai  0.7449225
+## 2        hamid  0.7083441
+## 3      taliban  0.7027562
+## 4       afghan  0.6663520
+## 5        kabul  0.6441681
+## 6     haqqanis  0.6000245
+## 7    fazlullah  0.5989802
+## 8    islamabad  0.5906746
+## 9        hagel  0.5866968
+## 10 unannounced  0.5851281
 ```
 
 These examples replicates analogical tasks in the original word2vec
@@ -143,29 +149,29 @@ paper.
 ``` r
 analogy(wdv, ~ berlin - germany + france) # What is for France as Berlin for Germany?
 ##               word similarity
-## 1            paris  0.8924838
-## 2         brussels  0.7839238
-## 3        amsterdam  0.7785592
-## 4       copenhagen  0.7760023
-## 5       strasbourg  0.7626950
-## 6        stockholm  0.7456473
-## 7  seyne-les-alpes  0.7248383
-## 8         helsinki  0.7115050
-## 9             rome  0.7100141
-## 10          warsaw  0.6985825
+## 1            paris  0.8952651
+## 2        amsterdam  0.7984164
+## 3        stockholm  0.7670519
+## 4         brussels  0.7610676
+## 5       copenhagen  0.7607804
+## 6         helsinki  0.7183915
+## 7  seyne-les-alpes  0.7146337
+## 8       strasbourg  0.7103182
+## 9           warsaw  0.7064566
+## 10          london  0.6942944
 ```
 
 ``` r
 analogy(wdv, ~ quick - quickly + slowly) # What is for slowly as quick for quickly?
-##          word similarity
-## 1        slow  0.7471051
-## 2      upside  0.6909375
-## 3   backwards  0.6893690
-## 4    sideways  0.6853107
-## 5      uneven  0.6823009
-## 6         pre  0.6635077
-## 7         dim  0.6460451
-## 8  unexpected  0.6439453
-## 9    brighter  0.6395399
-## 10     steady  0.6379962
+##        word similarity
+## 1    uneven  0.7272214
+## 2      slow  0.7151594
+## 3      buck  0.6792641
+## 4      doom  0.6347708
+## 5  sideways  0.6327578
+## 6       dim  0.6239180
+## 7   sharper  0.6237087
+## 8    cooler  0.6216082
+## 9  wretched  0.6169135
+## 10  limping  0.6166389
 ```
