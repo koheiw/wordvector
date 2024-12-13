@@ -1,7 +1,7 @@
 Package: wordvector
 Type: Package
 Title: Word and Document Vector Models
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: c(
     person('Kohei', 'Watanabe', role = c('aut', 'cre', 'cph'), email = 'watanabe.kohei@gmail.com', comment = c(ORCID = '0000-0001-6519-5265')), 
     person('Jan', 'Wijffels', role = 'aut', email = 'jwijffels@bnosac.be', comment = "Original R code"), 
