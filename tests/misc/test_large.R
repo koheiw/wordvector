@@ -1,5 +1,4 @@
 library(quanteda)
-library(word2vec)
 library(wordvector)
 library(quanteda.textstats)
 options(wordvector_threads = 8)
@@ -16,7 +15,10 @@ toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>%
                   padding = TRUE) %>% 
     tokens_tolower()
 
-wdv <- word2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose = TRUE)
+for (i in 1:10) {
+    cat(i, "\n")
+    wdv <- word2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose = TRUE)
+}
 
 analogy(wdv, ~ france + terror, exclude = FALSE, n = 10)
 analogy(wdv, ~ britain, exclude = FALSE, n = 20)

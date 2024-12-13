@@ -16,7 +16,7 @@
 #'   Distributed Representations of Words and Phrases and their Compositionality. 
 #'   http://arxiv.org/abs/1310.4546.
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' # from Mikolov et al. (2023)
 #' analogy(wdv, ~ berlin - germany + france)
 #' analogy(wdv, ~ quick - quickly + slowly)

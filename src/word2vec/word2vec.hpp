@@ -171,5 +171,13 @@ namespace w2v {
         }
 
     };
+    
+    class progress_t {
+    public:
+        void iteration(int iter, double msec, float alpha) {
+            Rprintf(" ......iteration %d elapsed time: %.2f seconds (alpha: %.4f)\n", 
+                    iter, msec / 1000, alpha);
+        }
+    };
 }
 #endif // WORD2VEC_WORD2VEC_HPP

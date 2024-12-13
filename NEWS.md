@@ -1,4 +1,8 @@
-## Changes in v0.1
+## Changes in v0.1.1
+
+- Improve the stability of `word2vec()` when `verbose = TRUE`.
+
+## Changes in v0.1.0
 
 - Fork https://github.com/bnosac/word2vec and change the package name to wordvector.
 - Replace a list of character with **quanteda**'s tokens object as an input object.
