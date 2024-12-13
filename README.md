@@ -15,7 +15,7 @@ semantic analysis ([Deerwester et al.,
 install.packages("wordvector")
 ```
 
-The lasted version is available on Github.
+The latest version is available on Github.
 
 ``` r
 remotes::install_github("koheiw/wordvector")
