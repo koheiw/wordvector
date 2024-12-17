@@ -141,19 +141,17 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
         int iter = 0;
         std::mutex mtx;
         trained = word2vec.train(settings, corpus, [&start, &iter, &mtx, &prog] (int _iter, float _alpha) {
-        mtx.lock();
+        //mtx.lock();
         if (_iter > iter) {
             iter = _iter;
             auto end = std::chrono::high_resolution_clock::now();
             auto diff = std::chrono::duration<double, std::milli>(end - start);
             double msec = diff.count();
-            //prog.iteration(iter, msec, _alpha);
-            Rprintf(" ......iteration %d elapsed time: %.2f seconds (alpha: %.4f)\n", 
-                    iter, msec / 1000, _alpha);
-            R_FlushConsole();
-            R_CheckUserInterrupt();
+            prog.iteration(iter, msec, _alpha);
+            // Rprintf(" ......iteration %d elapsed time: %.2f seconds (alpha: %.4f)\n", 
+            //         iter, msec / 1000, _alpha);
         };
-        mtx.unlock();
+        //mtx.unlock();
         });
     } else {
         trained = word2vec.train(settings, corpus, nullptr);

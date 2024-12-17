@@ -12,7 +12,7 @@
 namespace w2v {
     trainer_t::trainer_t(const std::shared_ptr<settings_t> &_settings,
                          const std::shared_ptr<corpus_t> &_corpus,
-                         std::function<void(float, float)> _progressCallback): m_threads() {
+                         std::function<void(int, float)> _progressCallback): m_threads() {
         trainThread_t::data_t data;
 
         if (!_settings) {

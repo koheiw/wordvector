@@ -110,7 +110,7 @@ namespace w2v {
         /// type of callback function to be called on train data file parsed event
         using vocabularyStatsCallback_t = std::function<void(std::size_t, std::size_t, std::size_t)>;
         /// type of callback function to be called on training progress events
-        using trainProgressCallback_t = std::function<void(float, float)>;
+        using trainProgressCallback_t = std::function<void(int, float)>;
 
         /// constructs a model
         //word2vec_t(): m_map(), m_errMsg() {}
@@ -177,6 +177,8 @@ namespace w2v {
         void iteration(int iter, double msec, float alpha) {
             Rprintf(" ......iteration %d elapsed time: %.2f seconds (alpha: %.4f)\n", 
                     iter, msec / 1000, alpha);
+            R_FlushConsole();
+            R_CheckUserInterrupt();
         }
     };
 }

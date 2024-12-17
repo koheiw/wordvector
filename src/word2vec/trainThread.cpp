@@ -11,7 +11,7 @@
 namespace w2v {
     // NOTE: make m_rndWindow
     trainThread_t::trainThread_t(uint16_t _id, const data_t &_data) :
-            m_data(_data), m_randomGenerator(m_data.settings->random),
+            m_id(_id), m_data(_data), m_randomGenerator(m_data.settings->random),
             m_rndWindowShift(0, static_cast<short>((m_data.settings->window - 1))), // NOTE: to delete
             m_rndWindow(1, static_cast<short>((m_data.settings->window))), // NOTE: added
             m_downSampling(), m_nsDistribution(), m_hiddenLayerVals(), m_hiddenLayerErrors(),
@@ -44,8 +44,8 @@ namespace w2v {
         // NOTE: specify range for workers
         auto n = m_data.corpus->texts.size();
         auto threads = m_data.settings->threads;
-        range = std::make_pair(floor((n / threads) * _id),
-                               floor((n / threads) * (_id + 1)) - 1);
+        range = std::make_pair(floor((n / threads) * m_id),
+                               floor((n / threads) * (m_id + 1)) - 1);
         
     }
 
@@ -64,7 +64,7 @@ namespace w2v {
             //std::cout << "minWordFreq = " << m_data.settings->minWordFreq << "\n";
             float alpha = 0;
             for (std::size_t h = range.first; h <= range.second; ++h) {
-
+                
                 // calculate alpha
                 if (threadProcessedWords - prvThreadProcessedWords > wordsPerAlpha) { // next 0.01% processed
                     *m_data.processedWords += threadProcessedWords - prvThreadProcessedWords;
@@ -121,7 +121,8 @@ namespace w2v {
             }
             // print progress
             if (m_data.progressCallback != nullptr) {
-                m_data.progressCallback(g, alpha);
+                if (m_id == 0)
+                    m_data.progressCallback(g, alpha);
             }
         }
     }

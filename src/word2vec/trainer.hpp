@@ -40,7 +40,7 @@ namespace w2v {
         */
         trainer_t(const std::shared_ptr<settings_t> &_settings,
                   const std::shared_ptr<corpus_t> &_corpus,
-                  std::function<void(float, float)> _progressCallback);
+                  std::function<void(int, float)> _progressCallback);
 
         /**
          * Runs training process
