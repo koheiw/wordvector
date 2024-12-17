@@ -174,11 +174,11 @@ namespace w2v {
     
     class progress_t {
     public:
-        void iteration(int iter, double msec, float alpha) {
+        void iteration(const int iter, const double msec, const float alpha) {
             Rprintf(" ......iteration %d elapsed time: %.2f seconds (alpha: %.4f)\n", 
                     iter, msec / 1000, alpha);
-            R_FlushConsole();
-            R_CheckUserInterrupt();
+            //R_FlushConsole();
+            //R_CheckUserInterrupt();
         }
     };
 }
