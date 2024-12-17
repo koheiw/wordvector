@@ -147,7 +147,11 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
             auto end = std::chrono::high_resolution_clock::now();
             auto diff = std::chrono::duration<double, std::milli>(end - start);
             double msec = diff.count();
-            prog.iteration(iter, msec, _alpha);
+            //prog.iteration(iter, msec, _alpha);
+            Rprintf(" ......iteration %d elapsed time: %.2f seconds (alpha: %.4f)\n", 
+                    iter, msec / 1000, _alpha);
+            R_FlushConsole();
+            R_CheckUserInterrupt();
         };
         mtx.unlock();
         });
