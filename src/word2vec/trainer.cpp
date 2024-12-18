@@ -65,21 +65,27 @@ namespace w2v {
             return rndMatrixInitializer(randomGenerator);
         });
         int iter = 0;
+        float alpha = 0.0;
         for (auto &i:m_threads) {
-            i->launch(_trainMatrix, iter);
+            i->launch(_trainMatrix, iter, alpha);
         }
-        Rcpp::Rcout << "here1:" << iter << "\n";
+        
         int iter_prev = 0;
+        auto start = std::chrono::high_resolution_clock::now();
         while (iter < m_iter) {
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
             if (iter_prev < iter) {
-                Rcpp::Rcout << "here2:" << iter << "\n"; // NOTE: use call back here?
+                auto end = std::chrono::high_resolution_clock::now();
+                auto diff = std::chrono::duration<double, std::milli>(end - start);
+                double msec = diff.count();
+                Rprintf(" ......iteration %d elapsed time: %.2f seconds (alpha: %.4f)\n",
+                        iter, msec / 1000, alpha);
                 iter_prev = iter;
             }
         }
+        
         for (auto &i:m_threads) {
             i->join();
         }
-        Rcpp::Rcout << "here3:" << iter << "\n";
     }
 }

@@ -49,7 +49,7 @@ namespace w2v {
         
     }
 
-    void trainThread_t::worker(std::vector<float> &_trainMatrix, int &_iter) noexcept {
+    void trainThread_t::worker(std::vector<float> &_trainMatrix, int &_iter, float &_alpha) noexcept {
         
         for (auto g = 1; g <= m_data.settings->iterations; ++g) {
             
@@ -122,10 +122,11 @@ namespace w2v {
             // print progress
             if (m_data.progressCallback != nullptr) {
                 if (m_number == 0) {
-                    m_data.progressCallback(g, alpha);
                     _iter = g;
+                    _alpha = alpha;
                 }
             }
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
     }
 
