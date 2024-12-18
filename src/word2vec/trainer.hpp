@@ -30,7 +30,8 @@ namespace w2v {
         std::vector<std::unique_ptr<trainThread_t>> m_threads;
         int m_iter = 0;
         uint32_t m_random = 1234; // random seed
-
+        bool m_verbose = false;
+        
     public:
         /**
          * Constructs a trainer object
@@ -41,7 +42,7 @@ namespace w2v {
         */
         trainer_t(const std::shared_ptr<settings_t> &_settings,
                   const std::shared_ptr<corpus_t> &_corpus,
-                  std::function<void(int, float)> _progressCallback);
+                  std::function<void(int, float)> _progressCallback); // TODO: remove
 
         /**
          * Runs training process

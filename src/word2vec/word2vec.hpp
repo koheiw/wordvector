@@ -88,6 +88,7 @@ namespace w2v {
         float alpha = 0.05f; ///< starting learn rate
         int type = 1; ///< 1:CBOW 2:Skip-Gram
         uint32_t random = 1234; /// < random number seed
+        bool verbose = false; /// print progress
         settings_t() = default;
     };
 

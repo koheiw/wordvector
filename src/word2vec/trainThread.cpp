@@ -56,7 +56,6 @@ namespace w2v {
             std::size_t threadProcessedWords = 0;
             std::size_t prvThreadProcessedWords = 0;
             
-            // for progressCallback
             auto wordsPerAllThreads = m_data.settings->iterations * m_data.corpus->trainWords;
             auto wordsPerAlpha = wordsPerAllThreads / 10000;
             
@@ -120,12 +119,12 @@ namespace w2v {
                 }
             }
             // print progress
-            if (m_data.progressCallback != nullptr) {
+            //if (m_data.progressCallback != nullptr) {
                 if (m_number == 0) {
                     _iter = g;
                     _alpha = alpha;
                 }
-            }
+            //}
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
     }
