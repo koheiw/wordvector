@@ -49,6 +49,7 @@ namespace w2v {
         // NOTE: consider setting size elsewhere
         m_matrixSize = data.settings->size * data.corpus->words.size();
         m_random = data.settings->random;
+        m_iter = data.settings->iterations;
         
         for (uint16_t i = 0; i < _settings->threads; ++i) {
             m_threads.emplace_back(new trainThread_t(i, data));
@@ -63,15 +64,13 @@ namespace w2v {
         std::generate(_trainMatrix.begin(), _trainMatrix.end(), [&]() {
             return rndMatrixInitializer(randomGenerator);
         });
-        
         int iter = 0;
         for (auto &i:m_threads) {
             i->launch(_trainMatrix, iter);
         }
         Rcpp::Rcout << "here1:" << iter << "\n";
         int iter_prev = 0;
-        // NOTE: how to access data.settings->iter?
-        while (iter < 30) {
+        while (iter < m_iter) {
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
             if (iter_prev < iter) {
                 Rcpp::Rcout << "here2:" << iter << "\n"; // NOTE: use call back here?

@@ -28,6 +28,7 @@ namespace w2v {
     private:
         std::size_t m_matrixSize = 0;
         std::vector<std::unique_ptr<trainThread_t>> m_threads;
+        int m_iter = 0;
         uint32_t m_random = 1234; // random seed
 
     public:
