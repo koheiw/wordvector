@@ -78,8 +78,9 @@ namespace w2v {
          * Launchs the thread
          * @param[out] _trainMatrix - train model matrix
         */
-        void launch(std::vector<float> &_trainMatrix) noexcept {
-            m_thread.reset(new std::thread(&trainThread_t::worker, this, std::ref(_trainMatrix)));
+        void launch(std::vector<float> &_trainMatrix, int &_iter) noexcept {
+            m_thread.reset(new std::thread(&trainThread_t::worker, this, std::ref(_trainMatrix),
+                                           std::ref(_iter)));
         }
         /// Joins to the thread
         void join() noexcept {
@@ -87,7 +88,7 @@ namespace w2v {
         }
 
     private:
-        void worker(std::vector<float> &_trainMatrix) noexcept;
+        void worker(std::vector<float> &_trainMatrix, int &_iter) noexcept;
 
         inline void cbow(const std::vector<unsigned int> &_sentence,
                          std::vector<float> &_trainMatrix) noexcept;

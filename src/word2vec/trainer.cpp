@@ -64,12 +64,23 @@ namespace w2v {
             return rndMatrixInitializer(randomGenerator);
         });
         
+        int iter = 0;
         for (auto &i:m_threads) {
-            i->launch(_trainMatrix);
+            i->launch(_trainMatrix, iter);
         }
-        
+        Rcpp::Rcout << "here1:" << iter << "\n";
+        int iter_prev = 0;
+        // NOTE: how to access data.settings->iter?
+        while (iter < 30) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            if (iter_prev < iter) {
+                Rcpp::Rcout << "here2:" << iter << "\n"; // NOTE: use call back here?
+                iter_prev = iter;
+            }
+        }
         for (auto &i:m_threads) {
             i->join();
         }
+        Rcpp::Rcout << "here3:" << iter << "\n";
     }
 }
