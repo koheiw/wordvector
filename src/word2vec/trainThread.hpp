@@ -54,7 +54,7 @@ namespace w2v {
         std::pair<std::size_t, std::size_t> range;
         
     private:
-        uint16_t m_id;
+        uint16_t m_number;
         data_t m_data;
         std::random_device m_randomDevice;
         std::mt19937_64 m_randomGenerator;
@@ -72,7 +72,7 @@ namespace w2v {
          * @param _id thread ID, starting from 0
          * @param _data data object instantiated outside of the thread
         */
-        trainThread_t(uint16_t _id, const data_t &_data);
+        trainThread_t(uint16_t _number, const data_t &_data);
 
         /**
          * Launchs the thread

@@ -10,8 +10,8 @@
 
 namespace w2v {
     // NOTE: make m_rndWindow
-    trainThread_t::trainThread_t(uint16_t _id, const data_t &_data) :
-            m_id(_id), m_data(_data), m_randomGenerator(m_data.settings->random),
+    trainThread_t::trainThread_t(uint16_t _number, const data_t &_data) :
+            m_number(_number), m_data(_data), m_randomGenerator(m_data.settings->random),
             m_rndWindowShift(0, static_cast<short>((m_data.settings->window - 1))), // NOTE: to delete
             m_rndWindow(1, static_cast<short>((m_data.settings->window))), // NOTE: added
             m_downSampling(), m_nsDistribution(), m_hiddenLayerVals(), m_hiddenLayerErrors(),
@@ -44,8 +44,8 @@ namespace w2v {
         // NOTE: specify range for workers
         auto n = m_data.corpus->texts.size();
         auto threads = m_data.settings->threads;
-        range = std::make_pair(floor((n / threads) * m_id),
-                               floor((n / threads) * (m_id + 1)) - 1);
+        range = std::make_pair(floor((n / threads) * m_number),
+                               floor((n / threads) * (m_number + 1)) - 1);
         
     }
 
@@ -121,7 +121,7 @@ namespace w2v {
             }
             // print progress
             if (m_data.progressCallback != nullptr) {
-                if (m_id == 0)
+                if (m_number == 0)
                     m_data.progressCallback(g, alpha);
             }
         }
