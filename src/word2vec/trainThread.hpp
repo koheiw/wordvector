@@ -47,7 +47,6 @@ namespace w2v {
             std::shared_ptr<huffmanTree_t> huffmanTree; ///< Huffman tree used by hierarchical softmax
             std::shared_ptr<std::atomic<std::size_t>> processedWords; ///< total words processed by train threads
             std::shared_ptr<std::atomic<float>> alpha; ///< current learning rate
-            std::function<void(int, float)> progressCallback = nullptr; ///< callback with alpha and training percent
         };
         
         // NOTE: used for corpus

@@ -11,8 +11,7 @@
 
 namespace w2v {
     trainer_t::trainer_t(const std::shared_ptr<settings_t> &_settings,
-                         const std::shared_ptr<corpus_t> &_corpus,
-                         std::function<void(int, float)> _progressCallback): m_threads() {
+                         const std::shared_ptr<corpus_t> &_corpus): m_threads() {
         trainThread_t::data_t data;
 
         if (!_settings) {
@@ -37,10 +36,6 @@ namespace w2v {
         
         if (_settings->withHS) {
             data.huffmanTree.reset(new huffmanTree_t(_corpus->frequency));;
-        }
-
-        if (_progressCallback != nullptr) {
-            data.progressCallback = _progressCallback;
         }
 
         data.processedWords.reset(new std::atomic<std::size_t>(0));

@@ -118,13 +118,11 @@ namespace w2v {
                     skipGramOld(sentence, _trainMatrix);
                 }
             }
-            // print progress
-            //if (m_data.progressCallback != nullptr) {
-                if (m_number == 0) {
-                    _iter = g;
-                    _alpha = alpha;
-                }
-            //}
+            // for progress message
+            if (m_number == 0) {
+                _iter = g;
+                _alpha = alpha;
+            }
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
     }

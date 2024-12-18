@@ -106,13 +106,6 @@ namespace w2v {
         mutable std::string m_errMsg;
         
     public:
-        /// type of callback function to be called on train data file parsing progress events
-        using vocabularyProgressCallback_t = std::function<void(float)>;
-        /// type of callback function to be called on train data file parsed event
-        using vocabularyStatsCallback_t = std::function<void(std::size_t, std::size_t, std::size_t)>;
-        /// type of callback function to be called on training progress events
-        using trainProgressCallback_t = std::function<void(int, float)>;
-
         /// constructs a model
         //word2vec_t(): m_map(), m_errMsg() {}
         /// virtual destructor
@@ -134,8 +127,7 @@ namespace w2v {
         
         // train model
         bool train(const settings_t &_settings,
-                   const corpus_t &_corpus,
-                   trainProgressCallback_t _trainProgressCallback) noexcept;
+                   const corpus_t &_corpus) noexcept;
         
         /// normalise vectors
         // inline void normalize() {

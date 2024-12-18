@@ -128,7 +128,6 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
     settings.verbose = verbose;
 
     w2v::word2vec_t word2vec;
-    //static std::thread::id id = std::this_thread::get_id();
     bool trained;
     
     if (verbose) {
@@ -138,7 +137,7 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
             Rprintf(" ...negative sampling in %d iterations\n", iterations);
         }
     }    
-    trained = word2vec.train(settings, corpus, nullptr);
+    trained = word2vec.train(settings, corpus);
     
     if (!trained) {
         Rcpp::List out = Rcpp::List::create(
