@@ -11,8 +11,7 @@
 
 namespace w2v {
     bool word2vec_t::train(const settings_t &_settings,
-                           const corpus_t &_corpus,
-                           trainProgressCallback_t _trainProgressCallback) noexcept {
+                           const corpus_t &_corpus) noexcept {
         try {
             // store tokens
             std::shared_ptr<corpus_t> corpus(new corpus_t(_corpus));
@@ -23,8 +22,7 @@ namespace w2v {
             // train model
             //std::vector<float> _trainMatrix;
             trainer_t(std::make_shared<settings_t>(_settings),
-                      corpus,
-                      _trainProgressCallback)(m_trainMatrix);
+                      corpus)(m_trainMatrix);
 
             // std::size_t wordIndex = 0;
             // for (auto const &type : corpus->types) {

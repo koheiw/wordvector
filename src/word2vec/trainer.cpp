@@ -11,8 +11,7 @@
 
 namespace w2v {
     trainer_t::trainer_t(const std::shared_ptr<settings_t> &_settings,
-                         const std::shared_ptr<corpus_t> &_corpus,
-                         std::function<void(float, float)> _progressCallback): m_threads() {
+                         const std::shared_ptr<corpus_t> &_corpus): m_threads() {
         trainThread_t::data_t data;
 
         if (!_settings) {
@@ -39,16 +38,14 @@ namespace w2v {
             data.huffmanTree.reset(new huffmanTree_t(_corpus->frequency));;
         }
 
-        if (_progressCallback != nullptr) {
-            data.progressCallback = _progressCallback;
-        }
-
         data.processedWords.reset(new std::atomic<std::size_t>(0));
         data.alpha.reset(new std::atomic<float>(_settings->alpha));
         
         // NOTE: consider setting size elsewhere
         m_matrixSize = data.settings->size * data.corpus->words.size();
         m_random = data.settings->random;
+        m_iter = data.settings->iterations;
+        m_verbose = data.settings->verbose;
         
         for (uint16_t i = 0; i < _settings->threads; ++i) {
             m_threads.emplace_back(new trainThread_t(i, data));
@@ -63,9 +60,27 @@ namespace w2v {
         std::generate(_trainMatrix.begin(), _trainMatrix.end(), [&]() {
             return rndMatrixInitializer(randomGenerator);
         });
+        int iter = 0;
+        float alpha = 0.0;
         
         for (auto &i:m_threads) {
-            i->launch(_trainMatrix);
+            i->launch(_trainMatrix, iter, alpha);
+        }
+        
+        if (m_verbose) {
+            int iter_prev = 0;
+            auto start = std::chrono::high_resolution_clock::now();
+            while (iter < m_iter) {
+                std::this_thread::sleep_for(std::chrono::milliseconds(1));
+                if (iter_prev < iter) {
+                    auto end = std::chrono::high_resolution_clock::now();
+                    auto diff = std::chrono::duration<double, std::milli>(end - start);
+                    double msec = diff.count();
+                    Rprintf(" ......iteration %d elapsed time: %.2f seconds (alpha: %.4f)\n",
+                            iter, msec / 1000, alpha);
+                    iter_prev = iter;
+                }
+            }
         }
         
         for (auto &i:m_threads) {

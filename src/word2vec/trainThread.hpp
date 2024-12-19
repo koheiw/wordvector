@@ -47,15 +47,14 @@ namespace w2v {
             std::shared_ptr<huffmanTree_t> huffmanTree; ///< Huffman tree used by hierarchical softmax
             std::shared_ptr<std::atomic<std::size_t>> processedWords; ///< total words processed by train threads
             std::shared_ptr<std::atomic<float>> alpha; ///< current learning rate
-            std::function<void(float, float)> progressCallback = nullptr; ///< callback with alpha and training percent
         };
         
         // NOTE: used for corpus
         std::pair<std::size_t, std::size_t> range;
         
     private:
+        uint16_t m_number;
         data_t m_data;
-        
         std::random_device m_randomDevice;
         std::mt19937_64 m_randomGenerator;
         std::uniform_int_distribution<short> m_rndWindowShift;
@@ -72,14 +71,15 @@ namespace w2v {
          * @param _id thread ID, starting from 0
          * @param _data data object instantiated outside of the thread
         */
-        trainThread_t(uint16_t _id, const data_t &_data);
+        trainThread_t(uint16_t _number, const data_t &_data);
 
         /**
          * Launchs the thread
          * @param[out] _trainMatrix - train model matrix
         */
-        void launch(std::vector<float> &_trainMatrix) noexcept {
-            m_thread.reset(new std::thread(&trainThread_t::worker, this, std::ref(_trainMatrix)));
+        void launch(std::vector<float> &_trainMatrix, int &_iter, float &_alpha) noexcept {
+            m_thread.reset(new std::thread(&trainThread_t::worker, this, std::ref(_trainMatrix),
+                                           std::ref(_iter), std::ref(_alpha)));
         }
         /// Joins to the thread
         void join() noexcept {
@@ -87,7 +87,7 @@ namespace w2v {
         }
 
     private:
-        void worker(std::vector<float> &_trainMatrix) noexcept;
+        void worker(std::vector<float> &_trainMatrix, int &_iter, float &_alpha) noexcept;
 
         inline void cbow(const std::vector<unsigned int> &_sentence,
                          std::vector<float> &_trainMatrix) noexcept;

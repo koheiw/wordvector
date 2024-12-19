@@ -28,19 +28,19 @@ namespace w2v {
     private:
         std::size_t m_matrixSize = 0;
         std::vector<std::unique_ptr<trainThread_t>> m_threads;
+        int m_iter = 0;
         uint32_t m_random = 1234; // random seed
-
+        bool m_verbose = false;
+        
     public:
         /**
          * Constructs a trainer object
          * @param _settings trainSattings object
          * @param _vocabulary vocabulary object
          * @param _fileMapper fileMapper object related to a train data set file
-         * @param _progressCallback callback function to be called on each new 0.01% processed train data
         */
         trainer_t(const std::shared_ptr<settings_t> &_settings,
-                  const std::shared_ptr<corpus_t> &_corpus,
-                  std::function<void(float, float)> _progressCallback);
+                  const std::shared_ptr<corpus_t> &_corpus); 
 
         /**
          * Runs training process

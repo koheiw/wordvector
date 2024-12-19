@@ -10,8 +10,8 @@
 
 namespace w2v {
     // NOTE: make m_rndWindow
-    trainThread_t::trainThread_t(uint16_t _id, const data_t &_data) :
-            m_data(_data), m_randomGenerator(m_data.settings->random),
+    trainThread_t::trainThread_t(uint16_t _number, const data_t &_data) :
+            m_number(_number), m_data(_data), m_randomGenerator(m_data.settings->random),
             m_rndWindowShift(0, static_cast<short>((m_data.settings->window - 1))), // NOTE: to delete
             m_rndWindow(1, static_cast<short>((m_data.settings->window))), // NOTE: added
             m_downSampling(), m_nsDistribution(), m_hiddenLayerVals(), m_hiddenLayerErrors(),
@@ -44,19 +44,18 @@ namespace w2v {
         // NOTE: specify range for workers
         auto n = m_data.corpus->texts.size();
         auto threads = m_data.settings->threads;
-        range = std::make_pair(floor((n / threads) * _id),
-                               floor((n / threads) * (_id + 1)) - 1);
+        range = std::make_pair(floor((n / threads) * m_number),
+                               floor((n / threads) * (m_number + 1)) - 1);
         
     }
 
-    void trainThread_t::worker(std::vector<float> &_trainMatrix) noexcept {
+    void trainThread_t::worker(std::vector<float> &_trainMatrix, int &_iter, float &_alpha) noexcept {
         
         for (auto g = 1; g <= m_data.settings->iterations; ++g) {
             
             std::size_t threadProcessedWords = 0;
             std::size_t prvThreadProcessedWords = 0;
             
-            // for progressCallback
             auto wordsPerAllThreads = m_data.settings->iterations * m_data.corpus->trainWords;
             auto wordsPerAlpha = wordsPerAllThreads / 10000;
             
@@ -64,7 +63,7 @@ namespace w2v {
             //std::cout << "minWordFreq = " << m_data.settings->minWordFreq << "\n";
             float alpha = 0;
             for (std::size_t h = range.first; h <= range.second; ++h) {
-
+                
                 // calculate alpha
                 if (threadProcessedWords - prvThreadProcessedWords > wordsPerAlpha) { // next 0.01% processed
                     *m_data.processedWords += threadProcessedWords - prvThreadProcessedWords;
@@ -119,10 +118,12 @@ namespace w2v {
                     skipGramOld(sentence, _trainMatrix);
                 }
             }
-            // print progress
-            if (m_data.progressCallback != nullptr) {
-                m_data.progressCallback(g, alpha);
+            // for progress message
+            if (m_number == 0) {
+                _iter = g;
+                _alpha = alpha;
             }
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
     }
 

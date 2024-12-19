@@ -88,6 +88,7 @@ namespace w2v {
         float alpha = 0.05f; ///< starting learn rate
         int type = 1; ///< 1:CBOW 2:Skip-Gram
         uint32_t random = 1234; /// < random number seed
+        bool verbose = false; /// print progress
         settings_t() = default;
     };
 
@@ -105,13 +106,6 @@ namespace w2v {
         mutable std::string m_errMsg;
         
     public:
-        /// type of callback function to be called on train data file parsing progress events
-        using vocabularyProgressCallback_t = std::function<void(float)>;
-        /// type of callback function to be called on train data file parsed event
-        using vocabularyStatsCallback_t = std::function<void(std::size_t, std::size_t, std::size_t)>;
-        /// type of callback function to be called on training progress events
-        using trainProgressCallback_t = std::function<void(float, float)>;
-
         /// constructs a model
         //word2vec_t(): m_map(), m_errMsg() {}
         /// virtual destructor
@@ -133,8 +127,7 @@ namespace w2v {
         
         // train model
         bool train(const settings_t &_settings,
-                   const corpus_t &_corpus,
-                   trainProgressCallback_t _trainProgressCallback) noexcept;
+                   const corpus_t &_corpus) noexcept;
         
         /// normalise vectors
         // inline void normalize() {
@@ -170,14 +163,6 @@ namespace w2v {
             } 
         }
 
-    };
-    
-    class progress_t {
-    public:
-        void iteration(int iter, double msec, float alpha) {
-            Rprintf(" ......iteration %d elapsed time: %.2f seconds (alpha: %.4f)\n", 
-                    iter, msec / 1000, alpha);
-        }
     };
 }
 #endif // WORD2VEC_WORD2VEC_HPP

@@ -125,9 +125,9 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
     settings.alpha = alpha;
     settings.type = type;
     settings.random = (uint32_t)(Rcpp::runif(1)[0] * std::numeric_limits<uint32_t>::max());
+    settings.verbose = verbose;
 
     w2v::word2vec_t word2vec;
-    w2v::progress_t prog;
     bool trained;
     
     if (verbose) {
@@ -136,24 +136,8 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
         } else {
             Rprintf(" ...negative sampling in %d iterations\n", iterations);
         }
-        
-        auto start = std::chrono::high_resolution_clock::now();
-        int iter = 0;
-        std::mutex mtx;
-        trained = word2vec.train(settings, corpus, [&start, &iter, &mtx, &prog] (int _iter, float _alpha) {
-        mtx.lock();
-        if (_iter > iter) {
-            iter = _iter;
-            auto end = std::chrono::high_resolution_clock::now();
-            auto diff = std::chrono::duration<double, std::milli>(end - start);
-            double msec = diff.count();
-            prog.iteration(iter, msec, _alpha);
-        };
-        mtx.unlock();
-        });
-    } else {
-        trained = word2vec.train(settings, corpus, nullptr);
-    }
+    }    
+    trained = word2vec.train(settings, corpus);
     
     if (!trained) {
         Rcpp::List out = Rcpp::List::create(
