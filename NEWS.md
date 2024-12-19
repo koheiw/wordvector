@@ -1,5 +1,6 @@
 ## Changes in v0.1.1
 
+- Update `analogy()` to use vectors instead of formulas.
 - Improve the stability of `word2vec()` when `verbose = TRUE`.
 
 ## Changes in v0.1.0
