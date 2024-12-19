@@ -36,6 +36,21 @@ test_that("analogy works", {
     expect_identical(attr(ana4, "weight"), 
                      c("us" = 1))
     
+    expect_equivalent(
+        analogy(wov, ~ people, exclude = FALSE),
+        analogy(wov, "people", exclude = FALSE)
+    )
+    
+    expect_equivalent(
+        analogy(wov, ~ people - us, exclude = FALSE),
+        analogy(wov, c("people" = 1, "us" = -1), exclude = FALSE)
+    )
+    
+    expect_error(
+        analogy(wov, c(1, -1), exclude = FALSE),
+        "formula must be named"
+    )
+    
     expect_warning(
         analogy(wov, ~ xxxx, exclude = FALSE, type = "simil"),
         '"xxxx" is not found'
