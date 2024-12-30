@@ -30,27 +30,34 @@ analogy <- function(x, formula, n = 10, exclude = TRUE, type = c("word", "simil"
     exclude <- check_logical(exclude)
     type <- match.arg(type)
     emb <- as.matrix(x)
-    if (!identical(class(formula), "formula"))
-        stop("The object for 'formula' should be a formula")
-    
-    f <- tail(as.character(formula), 1)
-    match <- stringi::stri_match_all_regex(f, "([+-])?\\s*(\\w+)")[[1]]
-    match[,2] <- stringi::stri_trim(match[,2])
-    match[,2][is.na(match[,2])] <- "+"
-    weight <- numeric()
-    for (i in seq_len(nrow(match))) {
-        m <- match[i,]
-        if (!m[3] %in% rownames(emb)) {
-            warning('"', m[3],  '" is not found')
-            next
+    if (identical(class(formula), "formula")) {
+
+        f <- tail(as.character(formula), 1)
+        match <- stringi::stri_match_all_regex(f, "([+-])?\\s*(\\w+)")[[1]]
+        match[,2] <- stringi::stri_trim(match[,2])
+        match[,2][is.na(match[,2])] <- "+"
+        weight <- numeric()
+        for (i in seq_len(nrow(match))) {
+            m <- match[i,]
+            if (!m[3] %in% rownames(emb)) {
+                warning('"', m[3],  '" is not found')
+                next
+            }
+            if (m[2] == "-") {
+                weight <- c(weight, structure(-1.0, names = m[3]))
+            } else if (m[2] == "+") {
+                weight <- c(weight, structure(1.0, names = m[3]))
+            }
         }
-        if (m[2] == "-") {
-            weight <- c(weight, structure(-1.0, names = m[3]))
-        } else if (m[2] == "+") {
-            weight <- c(weight, structure(1.0, names = m[3]))
+    } else {
+        if (identical(class(formula), "character")) {
+            weight <- structure(rep(1.0, length(formula)), names = formula)
+        } else if (identical(class(formula), "numeric")) {
+            if (is.null(names(formula)))
+                stop("formula must be named")
+            weight <- formula
         }
     }
-    
     j <- match(names(weight), rownames(emb))
     if (length(j) == 0) {
         res <- data.frame(word = character(), similarity = numeric())
