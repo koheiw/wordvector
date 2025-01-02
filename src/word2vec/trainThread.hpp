@@ -43,6 +43,7 @@ namespace w2v {
             std::shared_ptr<corpus_t> corpus; ///< train data 
             //std::shared_ptr<fileMapper_t> fileMapper; /// NOTE: remove
             std::shared_ptr<std::vector<float>> bpWeights; ///< back propagation weights
+            // NOTE: add trainMatrix or bpValues?
             std::shared_ptr<std::vector<float>> expTable; ///< exp(x) / (exp(x) + 1) values lookup table
             std::shared_ptr<huffmanTree_t> huffmanTree; ///< Huffman tree used by hierarchical softmax
             std::shared_ptr<std::atomic<std::size_t>> processedWords; ///< total words processed by train threads
@@ -91,11 +92,7 @@ namespace w2v {
 
         inline void cbow(const std::vector<unsigned int> &_sentence,
                          std::vector<float> &_trainMatrix) noexcept;
-        inline void cbowOld(const std::vector<unsigned int> &_sentence,
-                         std::vector<float> &_trainMatrix) noexcept;
         inline void skipGram(const std::vector<unsigned int> &_sentence,
-                             std::vector<float> &_trainMatrix) noexcept;
-        inline void skipGramOld(const std::vector<unsigned int> &_sentence,
                              std::vector<float> &_trainMatrix) noexcept;
         inline void hierarchicalSoftmax(std::size_t _index,
                                         std::vector<float> &_hiddenLayer,

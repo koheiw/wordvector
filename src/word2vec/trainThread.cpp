@@ -112,10 +112,6 @@ namespace w2v {
                     cbow(sentence, _trainMatrix);
                 } else if (m_data.settings->type == 2) {
                     skipGram(sentence, _trainMatrix);
-                } else if (m_data.settings->type == 10) {
-                    cbowOld(sentence, _trainMatrix);
-                } else if (m_data.settings->type == 20) {
-                    skipGramOld(sentence, _trainMatrix);
                 }
             }
             // for progress message
@@ -124,64 +120,6 @@ namespace w2v {
                 _alpha = alpha;
             }
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
-        }
-    }
-
-    inline void trainThread_t::cbowOld(const std::vector<unsigned int> &_sentence,
-                                    std::vector<float> &_trainMatrix) noexcept {
-        
-        if (_sentence.size() == 0)
-            return;
-        for (std::size_t i = 0; i < _sentence.size(); ++i) {
-            // hidden layers initialized with 0 values
-            std::memset(m_hiddenLayerVals->data(), 0, m_hiddenLayerVals->size() * sizeof(float));
-            std::memset(m_hiddenLayerErrors->data(), 0, m_hiddenLayerErrors->size() * sizeof(float));
-            
-            auto rndShift = m_rndWindowShift(m_randomGenerator);
-            std::size_t cw = 0;
-            for (auto j = rndShift; j < m_data.settings->window * 2 + 1 - rndShift; ++j) {
-                if (j == m_data.settings->window) {
-                    continue;
-                }
-                
-                auto posRndWindow = i - m_data.settings->window + j;
-                if (posRndWindow >= _sentence.size()) {
-                    continue;
-                }
-                for (std::size_t k = 0; k < m_data.settings->size; ++k) {
-                    (*m_hiddenLayerVals)[k] += _trainMatrix[k + _sentence[posRndWindow]
-                    * m_data.settings->size];
-                }
-                cw++;
-            }
-            if (cw == 0) {
-                continue;
-            }
-            for (std::size_t j = 0; j < m_data.settings->size; ++j) {
-                (*m_hiddenLayerVals)[j] /= cw;
-            }
-            
-            if (m_data.settings->withHS) {
-                hierarchicalSoftmax(_sentence[i], *m_hiddenLayerErrors, *m_hiddenLayerVals, 0);
-            } else {
-                negativeSampling(_sentence[i], *m_hiddenLayerErrors, *m_hiddenLayerVals, 0);
-            }
-            
-            // hidden -> in
-            for (auto j = rndShift; j < m_data.settings->window * 2 + 1 - rndShift; ++j) {
-                if (j == m_data.settings->window) {
-                    continue;
-                }
-                
-                auto posRndWindow = i - m_data.settings->window + j;
-                if (posRndWindow >= _sentence.size()) {
-                    continue;
-                }
-                for (std::size_t k = 0; k < m_data.settings->size; ++k) {
-                    _trainMatrix[k + _sentence[posRndWindow] * m_data.settings->size]
-                    += (*m_hiddenLayerErrors)[k];
-                }
-            }
         }
     }
 
@@ -232,41 +170,6 @@ namespace w2v {
         }
     }
     
-
-    inline void trainThread_t::skipGramOld(const std::vector<unsigned int> &_text,
-                                        std::vector<float> &_trainMatrix) noexcept {
-        if (_text.size() == 0)
-            return;
-        for (std::size_t i = 0; i < _text.size(); ++i) {
-            auto rndShift = m_rndWindowShift(m_randomGenerator);
-            for (auto j = rndShift; j < m_data.settings->window * 2 + 1 - rndShift; ++j) {
-                if (j == m_data.settings->window) {
-                    continue;
-                }
-
-                auto posRndWindow = i - m_data.settings->window + j;
-                if (posRndWindow >= _text.size()) {
-                    continue;
-                }
-                // shift to the selected word vector in the matrix
-                auto shift = _text[posRndWindow] * m_data.settings->size;
-
-                // hidden layer initialized with 0 values
-                std::memset(m_hiddenLayerErrors->data(), 0, m_hiddenLayerErrors->size() * sizeof(float));
-
-                if (m_data.settings->withHS) {
-                    hierarchicalSoftmax(_text[i], (*m_hiddenLayerErrors), _trainMatrix, shift);
-                } else {
-                    negativeSampling(_text[i], (*m_hiddenLayerErrors), _trainMatrix, shift);
-                }
-
-                for (std::size_t k = 0; k < m_data.settings->size; ++k) {
-                    _trainMatrix[k + shift] += (*m_hiddenLayerErrors)[k];
-                }
-            }
-        }
-    }
-
     inline void trainThread_t::skipGram(const std::vector<unsigned int> &_text,
                                         std::vector<float> &_trainMatrix) noexcept {
         

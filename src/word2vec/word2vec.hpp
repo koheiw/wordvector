@@ -129,24 +129,6 @@ namespace w2v {
         bool train(const settings_t &_settings,
                    const corpus_t &_corpus) noexcept;
         
-        /// normalise vectors
-        // inline void normalize() {
-        //     for(auto &it : m_map) {
-        //         // normalize vector
-        //         auto &vec = it.second;
-        //         float ss = 0.0f;
-        //         for (auto const &v : vec) {
-        //             ss += v * v;
-        //         }
-        //         if (ss <= 0.0f) 
-        //             throw std::runtime_error("failed to normalize vectors");
-        //         float d = std::sqrt(ss / vec.size());
-        //         for (auto &v : vec) {
-        //             v = v / d;
-        //         }
-        //     } 
-        // }
-        
         // normalise vectors
         inline void normalize() {
             for(std::size_t i = 0; i < m_vocaburarySize; i += m_vectorSize) {
