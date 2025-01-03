@@ -95,7 +95,6 @@ namespace w2v {
 
     class word2vec_t final {
     protected:
-        //using map_t = std::unordered_map<std::string, std::vector<float>>;
         
         // word vector
         std::vector<float> m_bpValues;
@@ -104,12 +103,27 @@ namespace w2v {
         //map_t m_map;
         std::size_t m_vectorSize = 0;
         std::size_t m_vocaburarySize = 0;
-        //std::size_t m_mapSize = 0;
         mutable std::string m_errMsg;
         
+        // normalise vectors
+        std::vector<float> normalize(std::vector<float> vec) {
+            for(std::size_t i = 0; i < m_vocaburarySize; i += m_vectorSize) {
+                float ss = 0.0f;
+                for(std::size_t j = 0; j < m_vectorSize; ++j) {
+                    ss += vec[i + j] * vec[i + j];
+                }
+                if (ss <= 0.0f) 
+                    throw std::runtime_error("failed to normalize vectors");
+                float d = std::sqrt(ss / m_vectorSize);
+                for(std::size_t j = 0; j < m_vectorSize; ++j) {
+                    vec[i + j] = vec[i + j] / d;
+                }
+            }
+            return(vec);
+        }
+        
     public:
-        /// constructs a model
-        //word2vec_t(): m_map(), m_errMsg() {}
+        
         /// virtual destructor
         virtual ~word2vec_t() = default;
         
@@ -118,8 +132,6 @@ namespace w2v {
         
         /// @returns vector size of model
         std::size_t vectorSize() const noexcept {return m_vectorSize;}
-        /// @returns model size (number of stored vectors)
-        //std::size_t modelSize() const noexcept {return m_mapSize;}
         /// @returns m_vocaburarySize size (number of unique words)
         std::size_t vocaburarySize() const noexcept {return m_vocaburarySize;}
         /// @returns error message
@@ -130,19 +142,11 @@ namespace w2v {
                    const corpus_t &_corpus) noexcept;
         
         // normalise vectors
-        inline void normalize() {
-            for(std::size_t i = 0; i < m_vocaburarySize; i += m_vectorSize) {
-                float ss = 0.0f;
-                for(std::size_t j = 0; j < m_vectorSize; ++j) {
-                    ss += m_bpValues[i + j] * m_bpValues[i + j];
-                }
-                if (ss <= 0.0f) 
-                    throw std::runtime_error("failed to normalize vectors");
-                float d = std::sqrt(ss / m_vectorSize);
-                for(std::size_t j = 0; j < m_vectorSize; ++j) {
-                    m_bpValues[i + j] = m_bpValues[i + j] / d;
-                }
-            } 
+        void normalizeValues() {
+            m_bpValues = normalize(m_bpValues);
+        }
+        void normalizeWeights() {
+            m_bpWeights = normalize(m_bpWeights);
         }
 
     };
