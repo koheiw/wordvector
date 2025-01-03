@@ -137,7 +137,7 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
     
     Rcpp::List out = Rcpp::List::create(
         Rcpp::Named("vectors") = get_values(word2vec, corpus), 
-        //Rcpp::Named("weights") = get_weights(word2vec, corpus), 
+        Rcpp::Named("weights") = get_weights(word2vec, corpus), 
         Rcpp::Named("type") = type,
         Rcpp::Named("dim") = size,
         Rcpp::Named("min_count") = minWordFreq,

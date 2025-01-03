@@ -117,6 +117,12 @@ namespace w2v {
             }
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
+        std::cout << "trainThread_t::worker()\n";
+        std::cout << m_data.bpWeights << "\n";
+        for (size_t i = 0; i < 10; i++){
+            std::cout << (*m_data.bpWeights)[i] << ", ";
+        }
+        std::cout << "\n";
     }
 
     inline void trainThread_t::cbow(const std::vector<unsigned int> &_text,

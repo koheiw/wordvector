@@ -102,6 +102,14 @@ namespace w2v {
                 thread->join();
             }
             
+            std::cout << "word2vec_t::train()\n";
+            std::cout << data.bpWeights << "\n";
+            for (size_t i = 0; i < 10; i++){
+                std::cout << (*data.bpWeights)[i] << ", ";
+            }
+            std::cout << "\n";
+            m_bpWeights = *data.bpWeights;
+            
             return true;
         } catch (const std::exception &_e) {
             m_errMsg = _e.what();
