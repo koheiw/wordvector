@@ -33,8 +33,14 @@ namespace w2v {
             data.settings = settings;
             data.corpus = corpus;
             
+            // NOTE: consider setting size elsewhere
+            std::size_t matrixSize = data.settings->size * data.corpus->words.size();
+            uint32_t random = data.settings->random;
+            int iter_max = data.settings->iterations;
+            bool verbose = data.settings->verbose;
             
-            data.bpWeights.reset(new std::vector<float>(settings->size * corpus->words.size(), 0.0f));
+            data.bpWeights.reset(new std::vector<float>(matrixSize, 0.0f));
+            data.bpValues.reset(new std::vector<float>(matrixSize, 0.0f));
             data.expTable.reset(new std::vector<float>(settings->expTableSize));
             for (uint16_t r = 0; r < settings->expTableSize; ++r) {
                 // scale value between +- expValueMax
@@ -50,12 +56,6 @@ namespace w2v {
             
             data.processedWords.reset(new std::atomic<std::size_t>(0));
             data.alpha.reset(new std::atomic<float>(settings->alpha));
-            
-            // NOTE: consider setting size elsewhere
-            std::size_t matrixSize = data.settings->size * data.corpus->words.size();
-            uint32_t random = data.settings->random;
-            int iter_max = data.settings->iterations;
-            bool verbose = data.settings->verbose;
             
             std::vector<std::unique_ptr<trainThread_t>> threads;
             std::pair<std::size_t, std::size_t> range;
