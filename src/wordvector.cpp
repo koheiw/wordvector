@@ -128,9 +128,10 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
         return out;
     }
     if (normalize) {
-        word2vec.normalize();
         if (verbose)
             Rprintf(" ...normalizing vectors\n");
+        word2vec.normalizeValues();
+        word2vec.normalizeWeights();
     }
     if (verbose)
         Rprintf(" ...complete\n");
