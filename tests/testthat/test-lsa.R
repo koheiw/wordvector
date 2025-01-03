@@ -20,7 +20,7 @@ test_that("word2vec words", {
         class(wov), "textmodel_wordvector"
     )
     expect_identical(
-        dim(wov$vectors), c(5360L, 50L)
+        dim(wov$values), c(5360L, 50L)
     )
     expect_equal(
         wov$weight, "count"
@@ -46,13 +46,13 @@ test_that("word2vec words", {
     )
     expect_equal(
         names(dov),
-        c("vectors", "dim", "min_count", "frequency", "engine", "weight", 
+        c("values", "dim", "min_count", "frequency", "engine", "weight", 
           "concatenator", "call", "version")
     )
     
     # docvector with model
     expect_identical(
-        dim(dov$vectors), c(59L, 50L)
+        dim(dov$values), c(59L, 50L)
     )
     expect_equal(
         class(dov), "textmodel_docvector"
@@ -77,7 +77,7 @@ test_that("word2vec words", {
     )
     expect_equal(
         names(dov),
-        c("vectors", "dim", "min_count", "frequency", "engine", "weight", 
+        c("values", "dim", "min_count", "frequency", "engine", "weight", 
           "concatenator", "call", "version")
     )
     
