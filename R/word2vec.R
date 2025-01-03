@@ -115,7 +115,7 @@ print.textmodel_wordvector <- function(x, ...) {
     cat("\nCall:\n")
     print(x$call)
     cat("\n", prettyNum(x$dim, big.mark = ","), " dimensions; ",
-        prettyNum(nrow(x$vectors), big.mark = ","), " words.",
+        prettyNum(nrow(x$values), big.mark = ","), " words.",
         "\n", sep = "")
     invisible(x)
 }
@@ -131,7 +131,7 @@ print.textmodel_docvector <- function(x, ...) {
     cat("\nCall:\n")
     print(x$call)
     cat("\n", prettyNum(x$dim, big.mark = ","), " dimensions; ",
-        prettyNum(nrow(x$vectors), big.mark = ","), " documents.",
+        prettyNum(nrow(x$values), big.mark = ","), " documents.",
         "\n", sep = "")
     invisible(x)
 }
@@ -145,5 +145,5 @@ print.textmodel_docvector <- function(x, ...) {
 #' @return a matrix that contain the word vectors in rows
 #' @export
 as.matrix.textmodel_wordvector <- function(x, ...){
-    return(x$vectors) 
+    return(x$values) 
 }
