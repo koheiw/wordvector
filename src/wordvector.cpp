@@ -18,16 +18,25 @@ Rcpp::CharacterVector encode(std::vector<std::string> types){
     return(types_);
 }
 
-Rcpp::NumericMatrix as_matrix(w2v::word2vec_t model, w2v::corpus_t corpus) {
-    
+Rcpp::NumericMatrix get_values(w2v::word2vec_t model, w2v::corpus_t corpus) {
     std::vector<float> mat = model.values();
+    if (model.vectorSize() * model.vocaburarySize() != mat.size())
+        throw std::runtime_error("Invalid model values");
+    Rcpp::NumericMatrix mat_(model.vectorSize(), model.vocaburarySize(), mat.begin());
+    colnames(mat_) = encode(corpus.words); 
+    return Rcpp::transpose(mat_);
+}
+
+Rcpp::NumericMatrix get_weights(w2v::word2vec_t model, w2v::corpus_t corpus) {
+    std::vector<float> mat = model.weights();
+    if (model.vectorSize() * model.vocaburarySize() != mat.size())
+        throw std::runtime_error("Invalid model weights");
     Rcpp::NumericMatrix mat_(model.vectorSize(), model.vocaburarySize(), mat.begin());
     colnames(mat_) = encode(corpus.words); 
     return Rcpp::transpose(mat_);
 }
 
 Rcpp::NumericVector get_frequency(w2v::corpus_t corpus) {
-    
     Rcpp::NumericVector v = Rcpp::wrap(corpus.frequency);
     v.names() = encode(corpus.words);
     return(v);
@@ -127,7 +136,8 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
         Rprintf(" ...complete\n");
     
     Rcpp::List out = Rcpp::List::create(
-        Rcpp::Named("vectors") = as_matrix(word2vec, corpus), 
+        Rcpp::Named("vectors") = get_values(word2vec, corpus), 
+        //Rcpp::Named("weights") = get_weights(word2vec, corpus), 
         Rcpp::Named("type") = type,
         Rcpp::Named("dim") = size,
         Rcpp::Named("min_count") = minWordFreq,
