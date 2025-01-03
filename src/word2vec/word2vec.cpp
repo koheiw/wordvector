@@ -66,8 +66,12 @@ namespace w2v {
             bool verbose = data.settings->verbose;
             
             std::vector<std::unique_ptr<trainThread_t>> threads;
+            std::pair<std::size_t, std::size_t> range;
+            std::size_t n = data.corpus->texts.size();
             for (uint16_t i = 0; i < settings->threads; ++i) {
-                threads.emplace_back(new trainThread_t(i, data));
+                range = std::make_pair(floor((n / data.settings->threads) * i),
+                                       floor((n / data.settings->threads) * (i + 1)) - 1);
+                threads.emplace_back(new trainThread_t(range, data));
             }
             
             // trainer_t::operator() ---------------------------------------
