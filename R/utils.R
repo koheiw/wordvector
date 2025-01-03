@@ -125,8 +125,8 @@ weight <- function(x, mode = c("value", "word")) {
     if (mode == "value") {
         res <- x$weights
     } else {
-        res <- sapply(seq(ncol(x$weights)), function(j) {
-            names(sort(rowSums(x$weights[,j,drop = FALSE]), decreasing = TRUE))
+        res <- apply(x$weights, 2, function(x) {
+            names(sort(x, decreasing = TRUE))
         })
     }
     return(res)
