@@ -6,7 +6,7 @@
 #' @param n the number of words in the resulting object.
 #' @param exclude if `TRUE`, words in `formula` are excluded from the result.
 #' @param type specify the type of vectors to be used. "word" is word vectors  
-#'   while "simil" is similarity vectors.
+#'   while "value" is similarity vectors.
 #' @return a `data.frame` with the words sorted and their cosine similarity sorted 
 #'   in descending order.
 #' @importFrom utils head tail
@@ -21,7 +21,7 @@
 #' analogy(wdv, ~ berlin - germany + france)
 #' analogy(wdv, ~ quick - quickly + slowly)
 #' }
-analogy <- function(x, formula, n = 10, exclude = TRUE, type = c("word", "simil")) {
+analogy <- function(x, formula, n = 10, exclude = TRUE, type = c("word", "value")) {
     
     if (!identical(class(x), "textmodel_wordvector"))
         stop("x must be a textmodel_wordvector object")
@@ -85,10 +85,10 @@ analogy <- function(x, formula, n = 10, exclude = TRUE, type = c("word", "simil"
 #' @param x a `textmodel_wordvector` object.
 #' @param words words for which similarity is computed.
 #' @param mode specify the type of resulting object.
-#' @return a `matrix` of cosine similarity scores when `mode = "simil"` or of 
+#' @return a `matrix` of cosine similarity scores when `mode = "value"` or of 
 #'   words sorted by the similarity scores when `mode = "word`.
 #' @export
-similarity <- function(x, words, mode = c("simil", "word")) {
+similarity <- function(x, words, mode = c("value", "word")) {
     
     if (!identical(class(x), "textmodel_wordvector"))
         stop("x must be a textmodel_wordvector object")
@@ -113,6 +113,21 @@ similarity <- function(x, words, mode = c("simil", "word")) {
                 names(sort(v, decreasing = TRUE))
             })
         }
+    }
+    return(res)
+}
+
+#' @export
+#' @keywords internal
+weight <- function(x, mode = c("value", "word")) {
+    
+    mode <- match.arg(mode)
+    if (mode == "value") {
+        res <- x$weights
+    } else {
+        res <- sapply(seq(ncol(x$weights)), function(j) {
+            names(sort(rowSums(x$weights[,j,drop = FALSE]), decreasing = TRUE))
+        })
     }
     return(res)
 }
