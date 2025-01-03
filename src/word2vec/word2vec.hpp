@@ -98,9 +98,11 @@ namespace w2v {
         //using map_t = std::unordered_map<std::string, std::vector<float>>;
         
         // word vector
-        std::vector<float> m_trainMatrix; // NOTE: rename to m_layer or m_wordvector?
+        std::vector<float> m_trainMatrix; // NOTE: rename to m_bpValues
+        std::vector<float> m_bpWeights;
+        
         //map_t m_map;
-        uint16_t m_vectorSize = 0;
+        std::size_t m_vectorSize = 0;
         std::size_t m_vocaburarySize = 0;
         //std::size_t m_mapSize = 0;
         mutable std::string m_errMsg;
@@ -114,10 +116,12 @@ namespace w2v {
         /// direct access to the word-vector map
         //const map_t &map() {return m_map;} // NOTE: consider removing
         
-        const std::vector<float> &trainMatrix() {return m_trainMatrix;} 
+        //const std::vector<float> &trainMatrix() {return m_trainMatrix;} 
+        const std::vector<float> &values() {return m_trainMatrix;} 
+        const std::vector<float> &weights() {return m_bpWeights;} 
         
         /// @returns vector size of model
-        uint16_t vectorSize() const noexcept {return m_vectorSize;}
+        std::size_t vectorSize() const noexcept {return m_vectorSize;}
         /// @returns model size (number of stored vectors)
         //std::size_t modelSize() const noexcept {return m_mapSize;}
         /// @returns m_vocaburarySize size (number of unique words)

@@ -20,8 +20,8 @@ Rcpp::CharacterVector encode(std::vector<std::string> types){
 
 Rcpp::NumericMatrix as_matrix(w2v::word2vec_t model, w2v::corpus_t corpus) {
     
-    std::vector<float> mat = model.trainMatrix();
-    Rcpp::NumericMatrix mat_(model.vectorSize(), corpus.words.size(), mat.begin());
+    std::vector<float> mat = model.values();
+    Rcpp::NumericMatrix mat_(model.vectorSize(), model.vocaburarySize(), mat.begin());
     colnames(mat_) = encode(corpus.words); 
     return Rcpp::transpose(mat_);
 }
