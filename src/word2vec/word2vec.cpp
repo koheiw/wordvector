@@ -21,12 +21,6 @@ namespace w2v {
             m_vectorSize = settings->size;
             m_vocaburarySize = corpus->words.size();
             
-            // NOTE: to be replaced ---------------------------------------
-            // train model
-            //std::vector<float> _trainMatrix;
-            // trainer_t(std::make_shared<settings_t>(_settings),
-            //           corpus)(m_trainMatrix);
-            
             // trainer_t::trainer_t() ---------------------------------------
             
             trainThread_t::data_t data;
@@ -70,16 +64,20 @@ namespace w2v {
             
             std::mt19937_64 randomGenerator(random);
             std::uniform_real_distribution<float> rndMatrixInitializer(-0.005f, 0.005f);
-            m_trainMatrix.resize(matrixSize);
+            //m_trainMatrix.resize(matrixSize);
             // TODO: add m_bpWeights
-            std::generate(m_trainMatrix.begin(), m_trainMatrix.end(), [&]() {
+            // std::generate(m_trainMatrix.begin(), m_trainMatrix.end(), [&]() {
+            //     return rndMatrixInitializer(randomGenerator);
+            // });
+            std::generate((*data.bpValues).begin(), (*data.bpValues).end(), [&]() {
                 return rndMatrixInitializer(randomGenerator);
             });
+            
             int iter = 0;
             float alpha = 0.0;
             
             for (auto &thread:threads) {
-                thread->launch(m_trainMatrix, iter, alpha);
+                thread->launch(iter, alpha);
             }
             
             if (verbose) {
@@ -108,6 +106,8 @@ namespace w2v {
                 std::cout << (*data.bpWeights)[i] << ", ";
             }
             std::cout << "\n";
+            
+            m_bpValues = *data.bpValues;
             m_bpWeights = *data.bpWeights;
             
             return true;

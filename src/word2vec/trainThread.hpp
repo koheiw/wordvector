@@ -42,9 +42,8 @@ namespace w2v {
             //std::shared_ptr<vocabulary_t> vocabulary; ///< words data
             std::shared_ptr<corpus_t> corpus; ///< train data 
             //std::shared_ptr<fileMapper_t> fileMapper; /// NOTE: remove
-            std::shared_ptr<std::vector<float>> bpValues; // NOTE: replace trainMatrix
+            std::shared_ptr<std::vector<float>> bpValues; ///< back propagation values
             std::shared_ptr<std::vector<float>> bpWeights; ///< back propagation weights
-            // NOTE: add trainMatrix or bpValues?
             std::shared_ptr<std::vector<float>> expTable; ///< exp(x) / (exp(x) + 1) values lookup table
             std::shared_ptr<huffmanTree_t> huffmanTree; ///< Huffman tree used by hierarchical softmax
             std::shared_ptr<std::atomic<std::size_t>> processedWords; ///< total words processed by train threads
@@ -74,12 +73,9 @@ namespace w2v {
         trainThread_t(const std::pair<std::size_t, std::size_t> &_range, 
                       const data_t &_data);
 
-        /**
-         * Launchs the thread
-         * @param[out] _trainMatrix - train model matrix
-        */
-        void launch(std::vector<float> &_trainMatrix, int &_iter, float &_alpha) noexcept {
-            m_thread.reset(new std::thread(&trainThread_t::worker, this, std::ref(_trainMatrix),
+        /// Launchs the thread
+        void launch(int &_iter, float &_alpha) noexcept {
+            m_thread.reset(new std::thread(&trainThread_t::worker, this,
                                            std::ref(_iter), std::ref(_alpha)));
         }
         /// Joins to the thread
@@ -88,12 +84,10 @@ namespace w2v {
         }
 
     private:
-        void worker(std::vector<float> &_trainMatrix, int &_iter, float &_alpha) noexcept;
+        void worker(int &_iter, float &_alpha) noexcept;
 
-        inline void cbow(const std::vector<unsigned int> &_sentence,
-                         std::vector<float> &_trainMatrix) noexcept;
-        inline void skipGram(const std::vector<unsigned int> &_sentence,
-                             std::vector<float> &_trainMatrix) noexcept;
+        inline void cbow(const std::vector<unsigned int> &_sentence) noexcept;
+        inline void skipGram(const std::vector<unsigned int> &_sentence) noexcept;
         inline void hierarchicalSoftmax(std::size_t _index,
                                         std::vector<float> &_hiddenLayer,
                                         std::vector<float> &_trainLayer, std::size_t _trainLayerShift) noexcept;

@@ -98,7 +98,7 @@ namespace w2v {
         //using map_t = std::unordered_map<std::string, std::vector<float>>;
         
         // word vector
-        std::vector<float> m_trainMatrix; // NOTE: rename to m_bpValues
+        std::vector<float> m_bpValues;
         std::vector<float> m_bpWeights;
         
         //map_t m_map;
@@ -113,11 +113,7 @@ namespace w2v {
         /// virtual destructor
         virtual ~word2vec_t() = default;
         
-        /// direct access to the word-vector map
-        //const map_t &map() {return m_map;} // NOTE: consider removing
-        
-        //const std::vector<float> &trainMatrix() {return m_trainMatrix;} 
-        const std::vector<float> &values() {return m_trainMatrix;} 
+        const std::vector<float> &values() {return m_bpValues;} 
         const std::vector<float> &weights() {return m_bpWeights;} 
         
         /// @returns vector size of model
@@ -138,13 +134,13 @@ namespace w2v {
             for(std::size_t i = 0; i < m_vocaburarySize; i += m_vectorSize) {
                 float ss = 0.0f;
                 for(std::size_t j = 0; j < m_vectorSize; ++j) {
-                    ss += m_trainMatrix[i + j] * m_trainMatrix[i + j];
+                    ss += m_bpValues[i + j] * m_bpValues[i + j];
                 }
                 if (ss <= 0.0f) 
                     throw std::runtime_error("failed to normalize vectors");
                 float d = std::sqrt(ss / m_vectorSize);
                 for(std::size_t j = 0; j < m_vectorSize; ++j) {
-                    m_trainMatrix[i + j] = m_trainMatrix[i + j] / d;
+                    m_bpValues[i + j] = m_bpValues[i + j] / d;
                 }
             } 
         }

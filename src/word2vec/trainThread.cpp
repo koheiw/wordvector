@@ -45,7 +45,7 @@ namespace w2v {
         
     }
 
-    void trainThread_t::worker(std::vector<float> &_trainMatrix, int &_iter, float &_alpha) noexcept {
+    void trainThread_t::worker(int &_iter, float &_alpha) noexcept {
         
         for (auto g = 1; g <= m_data.settings->iterations; ++g) {
             
@@ -105,9 +105,9 @@ namespace w2v {
                 
                 //std::cout << "sentence = " <<  sentence.size() << "\n";
                 if (m_data.settings->type == 1) {
-                    cbow(sentence, _trainMatrix);
+                    cbow(sentence);
                 } else if (m_data.settings->type == 2) {
-                    skipGram(sentence, _trainMatrix);
+                    skipGram(sentence);
                 }
             }
             // for progress message
@@ -117,16 +117,15 @@ namespace w2v {
             }
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
-        std::cout << "trainThread_t::worker()\n";
-        std::cout << m_data.bpWeights << "\n";
-        for (size_t i = 0; i < 10; i++){
-            std::cout << (*m_data.bpWeights)[i] << ", ";
-        }
-        std::cout << "\n";
+        // std::cout << "trainThread_t::worker()\n";
+        // std::cout << m_data.bpWeights << "\n";
+        // for (size_t i = 0; i < 10; i++){
+        //     std::cout << (*m_data.bpWeights)[i] << ", ";
+        // }
+        // std::cout << "\n";
     }
 
-    inline void trainThread_t::cbow(const std::vector<unsigned int> &_text,
-                                    std::vector<float> &_trainMatrix) noexcept {
+    inline void trainThread_t::cbow(const std::vector<unsigned int> &_text) noexcept {
         
         std::size_t K = m_data.settings->size;
         if (_text.size() == 0)
@@ -144,7 +143,7 @@ namespace w2v {
                 if (j == i)
                     continue;
                 for (std::size_t k = 0; k < K; ++k) {
-                    (*m_hiddenLayerVals)[k] += _trainMatrix[k + _text[j] * K];
+                    (*m_hiddenLayerVals)[k] += (*m_data.bpValues)[k + _text[j] * K];
                 }
                 cw++;
             }
@@ -166,14 +165,13 @@ namespace w2v {
                 if (j == i)
                     continue;
                 for (std::size_t k = 0; k < K; ++k) {
-                    _trainMatrix[k + _text[j] * K] += (*m_hiddenLayerErrors)[k];
+                    (*m_data.bpValues)[k + _text[j] * K] += (*m_hiddenLayerErrors)[k];
                 }
             }
         }
     }
     
-    inline void trainThread_t::skipGram(const std::vector<unsigned int> &_text,
-                                        std::vector<float> &_trainMatrix) noexcept {
+    inline void trainThread_t::skipGram(const std::vector<unsigned int> &_text) noexcept {
         
         std::size_t K = m_data.settings->size;
         if (_text.size() == 0)
@@ -192,12 +190,12 @@ namespace w2v {
                 // shift to the selected word vector in the matrix
                 auto shift = _text[j] * K;
                 if (m_data.settings->withHS) {
-                    hierarchicalSoftmax(_text[i], (*m_hiddenLayerErrors), _trainMatrix, shift);
+                    hierarchicalSoftmax(_text[i], (*m_hiddenLayerErrors), (*m_data.bpValues), shift);
                 } else {
-                    negativeSampling(_text[i], (*m_hiddenLayerErrors), _trainMatrix, shift);
+                    negativeSampling(_text[i], (*m_hiddenLayerErrors), (*m_data.bpValues), shift);
                 }
                 for (std::size_t k = 0; k < m_data.settings->size; ++k) {
-                    _trainMatrix[k + shift] += (*m_hiddenLayerErrors)[k];
+                    (*m_data.bpValues)[k + shift] += (*m_hiddenLayerErrors)[k];
                 }
             }
         }
@@ -287,7 +285,7 @@ namespace w2v {
             //std::cout << i << ": " << _index << ", " <<  target << ", " << gxa << "\n";
             // propagate errors output -> hidden
             for (std::size_t k = 0; k < K; ++k) {
-                _hiddenLayer[k] += gxa * (*m_data.bpWeights)[k + shift]; // added to _trainMatrix
+                _hiddenLayer[k] += gxa * (*m_data.bpWeights)[k + shift]; // added to bpValues
             }
             // learn weights hidden -> output
             for (std::size_t k = 0; k < m_data.settings->size; ++k) {
