@@ -1,5 +1,6 @@
-## Changes in v0.1.1
+## Changes in v0.2.0
 
+- Add back-propagation weights to the trained word2vec object.
 - Update `analogy()` to use vectors instead of formulas.
 - Improve the stability of `word2vec()` when `verbose = TRUE`.
 
