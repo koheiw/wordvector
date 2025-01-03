@@ -20,6 +20,10 @@ namespace w2v {
             
             m_vectorSize = settings->size;
             m_vocaburarySize = corpus->words.size();
+            std::size_t matrixSize = m_vectorSize * m_vocaburarySize;
+            std::mt19937_64 randomGenerator(settings->random);
+            int iter_max = settings->iterations;
+            bool verbose = settings->verbose;
             
             if (m_vectorSize == 0)
                 throw std::runtime_error("vectorSize is zero");
@@ -27,20 +31,15 @@ namespace w2v {
             if (m_vocaburarySize == 0)
                 throw std::runtime_error("vocaburarySize is zero");
             
-            // trainer_t::trainer_t() ---------------------------------------
+            if (_corpus.trainWords == 0)
+                throw std::runtime_error("trainWords is zero");
             
+            // set data
             trainThread_t::data_t data;
             data.settings = settings;
             data.corpus = corpus;
             
-            // NOTE: consider setting size elsewhere
-            std::size_t matrixSize = data.settings->size * data.corpus->words.size();
-            uint32_t random = data.settings->random;
-            int iter_max = data.settings->iterations;
-            bool verbose = data.settings->verbose;
-            
             // initialize variables
-            std::mt19937_64 randomGenerator(random);
             data.bpWeights.reset(new std::vector<float>(matrixSize, 0.0f));
             data.bpValues.reset(new std::vector<float>(matrixSize, 0.0f));
             std::uniform_real_distribution<float> rndMatrixInitializer(-0.005f, 0.005f);

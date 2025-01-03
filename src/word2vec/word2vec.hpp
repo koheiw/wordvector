@@ -51,15 +51,10 @@ namespace w2v {
                 for (size_t i = 0; i < text.size(); i++) {
                     totalWords++;
                     auto &word = text[i];
-                    //Rcpp::Rcout << i << ": " << word << "\n"; 
                     if (word < 0 || words.size() < word)
-                        throw std::range_error("setWordFreq: invalid words");
+                        throw std::range_error("invalid token object");
                     if (word == 0) // padding
                         continue;
-                    // if (words[word - 1].empty()) {
-                    //     word = 0; // remove and pad
-                    //     continue;
-                    // }
                     frequency[word - 1]++;
                     trainWords++;
                 }
