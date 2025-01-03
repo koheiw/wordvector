@@ -21,6 +21,12 @@ namespace w2v {
             m_vectorSize = settings->size;
             m_vocaburarySize = corpus->words.size();
             
+            if (m_vectorSize == 0)
+                throw std::runtime_error("vectorSize is zero");
+                
+            if (m_vocaburarySize == 0)
+                throw std::runtime_error("vocaburarySize is zero");
+            
             // trainer_t::trainer_t() ---------------------------------------
             
             trainThread_t::data_t data;
@@ -33,8 +39,14 @@ namespace w2v {
             int iter_max = data.settings->iterations;
             bool verbose = data.settings->verbose;
             
+            // initialize variables
+            std::mt19937_64 randomGenerator(random);
             data.bpWeights.reset(new std::vector<float>(matrixSize, 0.0f));
             data.bpValues.reset(new std::vector<float>(matrixSize, 0.0f));
+            std::uniform_real_distribution<float> rndMatrixInitializer(-0.005f, 0.005f);
+            std::generate((*data.bpValues).begin(), (*data.bpValues).end(), [&]() {
+                return rndMatrixInitializer(randomGenerator);
+            });
             data.expTable.reset(new std::vector<float>(settings->expTableSize));
             for (uint16_t r = 0; r < settings->expTableSize; ++r) {
                 // scale value between +- expValueMax
@@ -51,6 +63,7 @@ namespace w2v {
             data.processedWords.reset(new std::atomic<std::size_t>(0));
             data.alpha.reset(new std::atomic<float>(settings->alpha));
             
+            // create threads
             std::vector<std::unique_ptr<trainThread_t>> threads;
             std::pair<std::size_t, std::size_t> range;
             std::size_t n = data.corpus->texts.size();
@@ -60,22 +73,8 @@ namespace w2v {
                 threads.emplace_back(new trainThread_t(range, data));
             }
             
-            // trainer_t::operator() ---------------------------------------
-            
-            std::mt19937_64 randomGenerator(random);
-            std::uniform_real_distribution<float> rndMatrixInitializer(-0.005f, 0.005f);
-            //m_trainMatrix.resize(matrixSize);
-            // TODO: add m_bpWeights
-            // std::generate(m_trainMatrix.begin(), m_trainMatrix.end(), [&]() {
-            //     return rndMatrixInitializer(randomGenerator);
-            // });
-            std::generate((*data.bpValues).begin(), (*data.bpValues).end(), [&]() {
-                return rndMatrixInitializer(randomGenerator);
-            });
-            
             int iter = 0;
             float alpha = 0.0;
-            
             for (auto &thread:threads) {
                 thread->launch(iter, alpha);
             }
