@@ -30,15 +30,7 @@ namespace w2v {
             // trainer_t::trainer_t() ---------------------------------------
             
             trainThread_t::data_t data;
-            
-            // if (!_settings) {
-            //     throw std::runtime_error("train settings are not initialized");
-            // }
             data.settings = settings;
-            
-            // if (!_corpus) {
-            //     throw std::runtime_error("corpus is object is not initialized");
-            // }
             data.corpus = corpus;
             
             
