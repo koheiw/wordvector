@@ -4,7 +4,7 @@
 \alias{similarity}
 \title{Compute similarity between word vectors}
 \usage{
-similarity(x, words, mode = c("simil", "word"))
+similarity(x, words, mode = c("value", "word"))
 }
 \arguments{
 \item{x}{a \code{textmodel_wordvector} object.}
@@ -14,8 +14,8 @@ similarity(x, words, mode = c("simil", "word"))
 \item{mode}{specify the type of resulting object.}
 }
 \value{
-a \code{matrix} of cosine similarity scores when \code{mode = "simil"} or of
-words sorted by the similarity scores when \verb{mode = "word}.
+a \code{matrix} of cosine similarity scores when \code{mode = "value"} or of
+words sorted in descending order by the similarity scores when \verb{mode = "word}.
 }
 \description{
 Compute similarity between word vectors

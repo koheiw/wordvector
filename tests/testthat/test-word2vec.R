@@ -30,7 +30,10 @@ test_that("word2vec works", {
         wov$window, 5L
     )
     expect_identical(
-        dim(wov$vectors), c(5360L, 50L)
+        dim(wov$values), c(5360L, 50L)
+    )
+    expect_identical(
+        dim(wov$weights), c(5360L, 50L)
     )
     expect_identical(
         wov$sample, 1.0
@@ -59,7 +62,10 @@ test_that("word2vec works", {
     
     # docvector with model
     expect_equal(
-        dim(dov$vectors), c(59L, 50L)
+        dim(dov$values), c(59L, 50L)
+    )
+    expect_equal(
+        dim(dov$weights), c(5360L, 50L)
     )
     expect_equal(
         class(dov), "textmodel_docvector"
@@ -84,13 +90,16 @@ test_that("word2vec works", {
     )
     expect_equal(
         names(dov),
-        c("vectors", "type", "dim", "min_count", "frequency", "window", "iter", 
-          "alpha", "use_ns", "ns_size", "sample", "concatenator", "call", "version")
+        c("values", "weights", "type", "dim", "min_count", "frequency", "window", "iter", 
+          "alpha", "use_ns", "ns_size", "sample", "normalize", "concatenator", "call", "version")
     )
     
     # docvector without model
     expect_identical(
-        dim(dov_nm$vectors), c(59L, 50L)
+        dim(dov_nm$values), c(59L, 50L)
+    )
+    expect_identical(
+        dim(dov_nm$weights), c(1405L, 50L)
     )
     expect_equal(
         class(dov_nm), "textmodel_docvector"
@@ -104,8 +113,8 @@ test_that("word2vec works", {
     
     expect_equal(
         names(dov_nm),
-        c("vectors", "type", "dim", "min_count", "frequency", "window", "iter", 
-          "alpha", "use_ns", "ns_size", "sample", "concatenator", "call", "version")
+        c("values", "weights", "type", "dim", "min_count", "frequency", "window", "iter", 
+          "alpha", "use_ns", "ns_size", "sample", "normalize", "concatenator", "call", "version")
     )
     
 })
@@ -126,5 +135,19 @@ test_that("doc2vec works with different objects", {
         doc2vec(toks, list),
         "The object for 'model' must be a trained textmodel_wordvector"
     )
+})
+
+test_that("normalize is working", {
+    
+    skip_on_cran()
+    
+    wov0 <- word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1,
+                     normalize = FALSE)
+    expect_false(wov0$normalize)
+    
+    wov1 <- word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1,
+                     normalize = TRUE)
+    expect_true(wov1$normalize)
+    
 })
 

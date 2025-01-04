@@ -16,7 +16,7 @@ doc2vec(x, model = NULL, ...)
 \value{
 Returns a textmodel_docvector object with elements inherited from \code{model}
 or passed via \code{...} plus:
-\item{vectors}{a matrix for document vectors.}
+\item{values}{a matrix for document vectors.}
 \item{call}{the command used to execute the function.}
 }
 \description{
