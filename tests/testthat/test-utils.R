@@ -30,12 +30,6 @@ test_that("analogy works", {
     expect_identical(attr(ana3, "weight"), 
                      c("us" = 1))
     
-    ana4 <- analogy(wov, ~ us, exclude = FALSE, type = "value")
-    expect_true(ana4$word[1] == "us")
-    expect_true(ana4$similarity[1] == 1.0)
-    expect_identical(attr(ana4, "weight"), 
-                     c("us" = 1))
-    
     expect_equivalent(
         analogy(wov, ~ people, exclude = FALSE),
         analogy(wov, "people", exclude = FALSE)
@@ -52,21 +46,21 @@ test_that("analogy works", {
     )
     
     expect_warning(
-        analogy(wov, ~ xxxx, exclude = FALSE, type = "value"),
+        analogy(wov, ~ xxxx, exclude = FALSE),
         '"xxxx" is not found'
     )
     expect_true(
         suppressWarnings(
-            is.data.frame(analogy(wov, ~ xxxx, exclude = FALSE, type = "value"))
+            is.data.frame(analogy(wov, ~ xxxx, exclude = FALSE))
         )
     )
     expect_warning(
-        analogy(wov, ~ xxxx, exclude = FALSE, type = "word"),
+        analogy(wov, ~ xxxx, exclude = FALSE),
         '"xxxx" is not found'
     )
     expect_true(
         suppressWarnings(
-            is.data.frame(analogy(wov, ~ xxxx, exclude = FALSE, type = "word"))
+            is.data.frame(analogy(wov, ~ xxxx, exclude = FALSE))
         )
     )
     
