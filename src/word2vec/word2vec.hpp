@@ -100,23 +100,6 @@ namespace w2v {
         std::size_t m_vocaburarySize = 0;
         mutable std::string m_errMsg;
         
-        // normalise vectors
-        std::vector<float> normalize(std::vector<float> vec) {
-            for(std::size_t i = 0; i < m_vocaburarySize; i += m_vectorSize) {
-                float ss = 0.0f;
-                for(std::size_t j = 0; j < m_vectorSize; ++j) {
-                    ss += vec[i + j] * vec[i + j];
-                }
-                if (ss <= 0.0f) 
-                    throw std::runtime_error("failed to normalize vectors");
-                float d = std::sqrt(ss / m_vectorSize);
-                for(std::size_t j = 0; j < m_vectorSize; ++j) {
-                    vec[i + j] = vec[i + j] / d;
-                }
-            }
-            return(vec);
-        }
-        
     public:
         
         /// virtual destructor
@@ -132,16 +115,40 @@ namespace w2v {
         /// @returns error message
         std::string errMsg() const noexcept {return m_errMsg;}
         
-        // train model
+        /// train model
         bool train(const settings_t &_settings,
                    const corpus_t &_corpus) noexcept;
         
-        // normalise vectors
+        /// normalize by factors
         void normalizeValues() {
-            m_bpValues = normalize(m_bpValues);
+            for(std::size_t i = 0; i < m_vocaburarySize; i += m_vectorSize) {
+                float ss = 0.0f;
+                for(std::size_t j = 0; j < m_vectorSize; ++j) {
+                    ss += m_bpValues[i + j] * m_bpValues[i + j];
+                }
+                if (ss <= 0.0f) 
+                    throw std::runtime_error("failed to normalize bpValues");
+                float d = std::sqrt(ss / m_vectorSize);
+                for(std::size_t j = 0; j < m_vectorSize; ++j) {
+                    m_bpValues[i + j] = m_bpValues[i + j] / d;
+                }
+            }
         }
+        
+        // normalize by words
         void normalizeWeights() {
-            m_bpWeights = normalize(m_bpWeights);
+            for(std::size_t j = 0; j < m_vectorSize; j += m_vocaburarySize) {
+                float ss = 0.0f;
+                for(std::size_t i = 0; i < m_vocaburarySize; ++i) {
+                    ss += m_bpWeights[i + j] * m_bpWeights[i + j];
+                }
+                if (ss <= 0.0f) 
+                    throw std::runtime_error("failed to normalize bpWeights");
+                float d = std::sqrt(ss / m_vocaburarySize);
+                for(std::size_t i = 0; i < m_vocaburarySize; ++i) {
+                    m_bpWeights[i + j] = m_bpWeights[i + j] / d;
+                }
+            }
         }
 
     };
