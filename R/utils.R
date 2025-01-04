@@ -5,8 +5,6 @@
 #'   using `+` or `-` operators.
 #' @param n the number of words in the resulting object.
 #' @param exclude if `TRUE`, words in `formula` are excluded from the result.
-#' @param type specify the type of vectors to be used. "word" is word vectors  
-#'   while "value" is similarity vectors.
 #' @return a `data.frame` with the words sorted and their cosine similarity sorted 
 #'   in descending order.
 #' @importFrom utils head tail
@@ -21,14 +19,13 @@
 #' analogy(wdv, ~ berlin - germany + france)
 #' analogy(wdv, ~ quick - quickly + slowly)
 #' }
-analogy <- function(x, formula, n = 10, exclude = TRUE, type = c("word", "value")) {
+analogy <- function(x, formula, n = 10, exclude = TRUE) {
     
     if (!identical(class(x), "textmodel_wordvector"))
         stop("x must be a textmodel_wordvector object")
         
     n <- check_integer(n)
     exclude <- check_logical(exclude)
-    type <- match.arg(type)
     emb <- as.matrix(x)
     if (identical(class(formula), "formula")) {
 
@@ -65,11 +62,7 @@ analogy <- function(x, formula, n = 10, exclude = TRUE, type = c("word", "value"
         v <- emb[j,, drop = FALSE]
         if (exclude)
             emb <- emb[j * -1,, drop = FALSE]
-        if (type == "word") {
-            s <- Matrix::rowMeans(proxyC::simil(emb, t(t(v) %*% weight), use_nan = TRUE))
-        } else {
-            s <- Matrix::rowMeans(proxyC::simil(emb, v, use_nan = TRUE) %*% weight)
-        }
+        s <- Matrix::rowMeans(proxyC::simil(emb, t(t(v) %*% weight), use_nan = TRUE))
         s <- head(sort(s, decreasing = TRUE), n)
         res <- data.frame(word = names(s), similarity = s)
     }
@@ -86,7 +79,7 @@ analogy <- function(x, formula, n = 10, exclude = TRUE, type = c("word", "value"
 #' @param words words for which similarity is computed.
 #' @param mode specify the type of resulting object.
 #' @return a `matrix` of cosine similarity scores when `mode = "value"` or of 
-#'   words sorted by the similarity scores when `mode = "word`.
+#'   words sorted in descending order by the similarity scores when `mode = "word`.
 #' @export
 similarity <- function(x, words, mode = c("value", "word")) {
     
@@ -117,9 +110,17 @@ similarity <- function(x, words, mode = c("value", "word")) {
     return(res)
 }
 
+#' \[experimental\] Extract word vector weights
+#' 
+#' @param x a `textmodel_wordvector` object.
+#' @param mode specify the type of resulting object.
+#' @return a `matrix` of word vector weights when `mode = "value"` or of 
+#'   words sorted in descending order by the weights when `mode = "word`.
 #' @export
-#' @keywords internal
 weight <- function(x, mode = c("value", "word")) {
+    
+    if (!identical(class(x), "textmodel_wordvector"))
+        stop("x must be a textmodel_wordvector object")
     
     mode <- match.arg(mode)
     if (mode == "value") {

@@ -15,7 +15,7 @@ similarity(x, words, mode = c("value", "word"))
 }
 \value{
 a \code{matrix} of cosine similarity scores when \code{mode = "value"} or of
-words sorted by the similarity scores when \verb{mode = "word}.
+words sorted in descending order by the similarity scores when \verb{mode = "word}.
 }
 \description{
 Compute similarity between word vectors
