@@ -148,7 +148,8 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
         Rcpp::Named("alpha") = alpha,
         Rcpp::Named("use_ns") = !withHS,
         Rcpp::Named("ns_size") = negative,
-        Rcpp::Named("sample") = sample
+        Rcpp::Named("sample") = sample,
+        Rcpp::Named("normalize") = normalize
     );
     out.attr("class") = "textmodel_wordvector";
     return out;

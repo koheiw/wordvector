@@ -137,3 +137,17 @@ test_that("doc2vec works with different objects", {
     )
 })
 
+test_that("normalize is working", {
+    
+    skip_on_cran()
+    
+    wov0 <- word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1,
+                     normalize = FALSE)
+    expect_false(wov0$normalize)
+    
+    wov1 <- word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1,
+                     normalize = TRUE)
+    expect_true(wov1$normalize)
+    
+})
+

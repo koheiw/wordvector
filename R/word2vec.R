@@ -15,10 +15,12 @@
 #' @param ns_size the size of negative samples. Only used when `use_ns = TRUE`.
 #' @param sample the rate of sampling of words based on their frequency. Sampling is 
 #'   disabled when `sample = 1.0`
+#' @param normalize if `TRUE`, normalize the vectors in `values` and `weights`.
 #' @param verbose if `TRUE`, print the progress of training.
 #' @param ... additional arguments.
 #' @returns Returns a textmodel_wordvector object with the following elements:
-#'   \item{vectors}{a matrix for word vectors.}
+#'   \item{values}{a matrix for word vector values.}
+#'   \item{weights}{a matrix for word vector weights.}
 #'   \item{dim}{the size of the word vectors.}
 #'   \item{type}{the architecture of the model.}
 #'   \item{frequency}{the frequency of words in `x`.}
@@ -60,7 +62,8 @@
 word2vec <- function(x, dim = 50, type = c("cbow", "skip-gram"), 
                      min_count = 5L, window = ifelse(type == "cbow", 5L, 10L), 
                      iter = 10L, alpha = 0.05, use_ns = TRUE, ns_size = 5L, 
-                     sample = 0.001, verbose = FALSE, ...) {
+                     sample = 0.001, normalize = TRUE,
+                     verbose = FALSE, ...) {
     UseMethod("word2vec")
 }
 
@@ -70,7 +73,8 @@ word2vec <- function(x, dim = 50, type = c("cbow", "skip-gram"),
 word2vec.tokens <- function(x, dim = 50L, type = c("cbow", "skip-gram"), 
                             min_count = 5L, window = ifelse(type == "cbow", 5L, 10L), 
                             iter = 10L, alpha = 0.05, use_ns = TRUE, ns_size = 5L, 
-                            sample = 0.001, verbose = FALSE, ..., old = FALSE) {
+                            sample = 0.001, normalize = TRUE,
+                            verbose = FALSE, ..., old = FALSE) {
     
     type <- match.arg(type)
     dim <- check_integer(dim, min = 2)
@@ -81,6 +85,7 @@ word2vec.tokens <- function(x, dim = 50L, type = c("cbow", "skip-gram"),
     ns_size <- check_integer(ns_size, min_len = 1)
     alpha <- check_double(alpha, min = 0)
     sample <- check_double(sample, min = 0)
+    normalize <- check_logical(normalize)
     verbose <- check_logical(verbose)
 
     type <- match(type, c("cbow", "skip-gram"))
@@ -94,7 +99,7 @@ word2vec.tokens <- function(x, dim = 50L, type = c("cbow", "skip-gram"),
                       size = dim, window = window,
                       sample = sample, withHS = !use_ns, negative = ns_size, 
                       threads = get_threads(), iterations = iter,
-                      alpha = alpha, type = type, verbose = verbose)
+                      alpha = alpha, type = type, normalize = normalize, verbose = verbose)
     if (!is.null(result$message))
         stop("Failed to train word2vec (", result$message, ")")
 
