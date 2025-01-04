@@ -15,6 +15,7 @@ word2vec(
   use_ns = TRUE,
   ns_size = 5L,
   sample = 0.001,
+  normalize = TRUE,
   verbose = FALSE,
   ...
 )
@@ -44,13 +45,16 @@ is used.}
 \item{sample}{the rate of sampling of words based on their frequency. Sampling is
 disabled when \code{sample = 1.0}}
 
+\item{normalize}{if \code{TRUE}, normalize the vectors in \code{values} and \code{weights}.}
+
 \item{verbose}{if \code{TRUE}, print the progress of training.}
 
 \item{...}{additional arguments.}
 }
 \value{
 Returns a textmodel_wordvector object with the following elements:
-\item{vectors}{a matrix for word vectors.}
+\item{values}{a matrix for word vector values.}
+\item{weights}{a matrix for word vector weights.}
 \item{dim}{the size of the word vectors.}
 \item{type}{the architecture of the model.}
 \item{frequency}{the frequency of words in \code{x}.}

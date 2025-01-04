@@ -10,7 +10,8 @@
 #' @param verbose if `TRUE`, print the progress of training.
 #' @param ... additional arguments.
 #' @returns Returns a textmodel_wordvector object with the following elements:
-#'   \item{vectors}{a matrix for word vectors.}
+#'   \item{values}{a matrix for word vectors values.}
+#'   \item{weights}{a matrix for word vectors weights.}
 #'   \item{frequency}{the frequency of words in `x`.}
 #'   \item{engine}{the SVD engine used.}
 #'   \item{weight}{weighting scheme.}
@@ -68,7 +69,7 @@ lsa.tokens <- function(x, dim = 50L, min_count = 5L, engine = c("RSpectra", "irl
         rownames(wov) <- featnames(x)
     }
     result <- list(
-        vectors = wov,
+        values = wov,
         dim = dim,
         min_count = min_count,
         frequency = featfreq(x),

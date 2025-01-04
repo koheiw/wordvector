@@ -4,7 +4,7 @@
 \alias{analogy}
 \title{[experimental] Find analogical relationships between words}
 \usage{
-analogy(x, formula, n = 10, exclude = TRUE, type = c("word", "simil"))
+analogy(x, formula, n = 10, exclude = TRUE)
 }
 \arguments{
 \item{x}{a \code{textmodel_wordvector} object.}
@@ -15,9 +15,6 @@ using \code{+} or \code{-} operators.}
 \item{n}{the number of words in the resulting object.}
 
 \item{exclude}{if \code{TRUE}, words in \code{formula} are excluded from the result.}
-
-\item{type}{specify the type of vectors to be used. "word" is word vectors
-while "simil" is similarity vectors.}
 }
 \value{
 a \code{data.frame} with the words sorted and their cosine similarity sorted

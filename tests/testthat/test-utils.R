@@ -30,12 +30,6 @@ test_that("analogy works", {
     expect_identical(attr(ana3, "weight"), 
                      c("us" = 1))
     
-    ana4 <- analogy(wov, ~ us, exclude = FALSE, type = "simil")
-    expect_true(ana4$word[1] == "us")
-    expect_true(ana4$similarity[1] == 1.0)
-    expect_identical(attr(ana4, "weight"), 
-                     c("us" = 1))
-    
     expect_equivalent(
         analogy(wov, ~ people, exclude = FALSE),
         analogy(wov, "people", exclude = FALSE)
@@ -52,21 +46,21 @@ test_that("analogy works", {
     )
     
     expect_warning(
-        analogy(wov, ~ xxxx, exclude = FALSE, type = "simil"),
+        analogy(wov, ~ xxxx, exclude = FALSE),
         '"xxxx" is not found'
     )
     expect_true(
         suppressWarnings(
-            is.data.frame(analogy(wov, ~ xxxx, exclude = FALSE, type = "simil"))
+            is.data.frame(analogy(wov, ~ xxxx, exclude = FALSE))
         )
     )
     expect_warning(
-        analogy(wov, ~ xxxx, exclude = FALSE, type = "word"),
+        analogy(wov, ~ xxxx, exclude = FALSE),
         '"xxxx" is not found'
     )
     expect_true(
         suppressWarnings(
-            is.data.frame(analogy(wov, ~ xxxx, exclude = FALSE, type = "word"))
+            is.data.frame(analogy(wov, ~ xxxx, exclude = FALSE))
         )
     )
     
@@ -88,14 +82,14 @@ test_that("analogy works", {
 test_that("similarity works", {
     
     
-    sim1 <- similarity(wov, "us", mode = "simil")
+    sim1 <- similarity(wov, "us", mode = "value")
     expect_true(is.matrix(sim1))
     expect_identical(
         dimnames(sim1),
         list(names(wov$frequency), "us")
     )
     
-    sim2 <- similarity(wov, c("us", "people"), mode = "simil")
+    sim2 <- similarity(wov, c("us", "people"), mode = "value")
     expect_true(is.matrix(sim2))
     expect_identical(
         dimnames(sim2),
@@ -124,12 +118,12 @@ test_that("similarity works", {
         c(length(wov$frequency), 2L)
     )
     expect_warning(
-        similarity(wov, c("xx", "yyy", "us"), mode = "simil"),
+        similarity(wov, c("xx", "yyy", "us"), mode = "value"),
         '"xx", "yyy" are not found'
     )
     expect_true(
         suppressWarnings(
-        is.matrix(similarity(wov, c("xx", "yyy"), mode = "simil"))
+        is.matrix(similarity(wov, c("xx", "yyy"), mode = "value"))
         )
     )
     expect_warning(

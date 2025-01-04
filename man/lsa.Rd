@@ -32,7 +32,8 @@ this in \code{x} are removed before training.}
 }
 \value{
 Returns a textmodel_wordvector object with the following elements:
-\item{vectors}{a matrix for word vectors.}
+\item{values}{a matrix for word vectors values.}
+\item{weights}{a matrix for word vectors weights.}
 \item{frequency}{the frequency of words in \code{x}.}
 \item{engine}{the SVD engine used.}
 \item{weight}{weighting scheme.}

@@ -3,7 +3,6 @@ PKG_CPPFLAGS = -pthread -DSTRICT_R_HEADERS
 
 SOURCES = word2vec/huffmanTree.cpp \
 			word2vec/nsDistribution.cpp \
-			word2vec/trainer.cpp \
 			word2vec/trainThread.cpp \
 			word2vec/word2vec.cpp \
 			wordvector.cpp \

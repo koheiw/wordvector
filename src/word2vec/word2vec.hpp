@@ -51,15 +51,10 @@ namespace w2v {
                 for (size_t i = 0; i < text.size(); i++) {
                     totalWords++;
                     auto &word = text[i];
-                    //Rcpp::Rcout << i << ": " << word << "\n"; 
                     if (word < 0 || words.size() < word)
-                        throw std::range_error("setWordFreq: invalid words");
+                        throw std::range_error("invalid token object");
                     if (word == 0) // padding
                         continue;
-                    // if (words[word - 1].empty()) {
-                    //     word = 0; // remove and pad
-                    //     continue;
-                    // }
                     frequency[word - 1]++;
                     trainWords++;
                 }
@@ -95,72 +90,65 @@ namespace w2v {
 
     class word2vec_t final {
     protected:
-        //using map_t = std::unordered_map<std::string, std::vector<float>>;
         
         // word vector
-        std::vector<float> m_trainMatrix; // NOTE: rename to m_layer or m_wordvector?
+        std::vector<float> m_bpValues;
+        std::vector<float> m_bpWeights;
+        
         //map_t m_map;
-        uint16_t m_vectorSize = 0;
+        std::size_t m_vectorSize = 0;
         std::size_t m_vocaburarySize = 0;
-        //std::size_t m_mapSize = 0;
         mutable std::string m_errMsg;
         
     public:
-        /// constructs a model
-        //word2vec_t(): m_map(), m_errMsg() {}
+        
         /// virtual destructor
         virtual ~word2vec_t() = default;
         
-        /// direct access to the word-vector map
-        //const map_t &map() {return m_map;} // NOTE: consider removing
-        
-        const std::vector<float> &trainMatrix() {return m_trainMatrix;} 
+        const std::vector<float> &values() {return m_bpValues;} 
+        const std::vector<float> &weights() {return m_bpWeights;} 
         
         /// @returns vector size of model
-        uint16_t vectorSize() const noexcept {return m_vectorSize;}
-        /// @returns model size (number of stored vectors)
-        //std::size_t modelSize() const noexcept {return m_mapSize;}
+        std::size_t vectorSize() const noexcept {return m_vectorSize;}
         /// @returns m_vocaburarySize size (number of unique words)
         std::size_t vocaburarySize() const noexcept {return m_vocaburarySize;}
         /// @returns error message
         std::string errMsg() const noexcept {return m_errMsg;}
         
-        // train model
+        /// train model
         bool train(const settings_t &_settings,
                    const corpus_t &_corpus) noexcept;
         
-        /// normalise vectors
-        // inline void normalize() {
-        //     for(auto &it : m_map) {
-        //         // normalize vector
-        //         auto &vec = it.second;
-        //         float ss = 0.0f;
-        //         for (auto const &v : vec) {
-        //             ss += v * v;
-        //         }
-        //         if (ss <= 0.0f) 
-        //             throw std::runtime_error("failed to normalize vectors");
-        //         float d = std::sqrt(ss / vec.size());
-        //         for (auto &v : vec) {
-        //             v = v / d;
-        //         }
-        //     } 
-        // }
-        
-        // normalise vectors
-        inline void normalize() {
+        /// normalize by factors
+        void normalizeValues() {
             for(std::size_t i = 0; i < m_vocaburarySize; i += m_vectorSize) {
                 float ss = 0.0f;
                 for(std::size_t j = 0; j < m_vectorSize; ++j) {
-                    ss += m_trainMatrix[i + j] * m_trainMatrix[i + j];
+                    ss += m_bpValues[i + j] * m_bpValues[i + j];
                 }
                 if (ss <= 0.0f) 
-                    throw std::runtime_error("failed to normalize vectors");
+                    throw std::runtime_error("failed to normalize bpValues");
                 float d = std::sqrt(ss / m_vectorSize);
                 for(std::size_t j = 0; j < m_vectorSize; ++j) {
-                    m_trainMatrix[i + j] = m_trainMatrix[i + j] / d;
+                    m_bpValues[i + j] = m_bpValues[i + j] / d;
                 }
-            } 
+            }
+        }
+        
+        // normalize by words
+        void normalizeWeights() {
+            for(std::size_t j = 0; j < m_vectorSize; j += m_vocaburarySize) {
+                float ss = 0.0f;
+                for(std::size_t i = 0; i < m_vocaburarySize; ++i) {
+                    ss += m_bpWeights[i + j] * m_bpWeights[i + j];
+                }
+                if (ss <= 0.0f) 
+                    throw std::runtime_error("failed to normalize bpWeights");
+                float d = std::sqrt(ss / m_vocaburarySize);
+                for(std::size_t i = 0; i < m_vocaburarySize; ++i) {
+                    m_bpWeights[i + j] = m_bpWeights[i + j] / d;
+                }
+            }
         }
 
     };

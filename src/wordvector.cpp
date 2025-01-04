@@ -18,43 +18,25 @@ Rcpp::CharacterVector encode(std::vector<std::string> types){
     return(types_);
 }
 
-// Rcpp::NumericMatrix as_matrix(w2v::word2vec_t model) {
-//     
-//     std::unordered_map<std::string, std::vector<float>> m_map = model.map();
-//     std::vector<std::string> words;
-//     words.reserve(m_map.size());
-//     for(auto it : m_map) {
-//         words.push_back(it.first);
-//     } 
-// 
-//     std::vector<float> mat;
-//     mat.reserve(model.vectorSize() * words.size());
-//     for (size_t j = 0; j < words.size(); j++) {
-//         //auto p = model.vector(words[j]);
-//         auto it = m_map.find(words[j]);
-//         if (it != m_map.end()) {
-//             //std::vector<float> vec = *p;
-//             std::vector<float> vec = it->second;
-//             mat.insert(mat.end(), vec.begin(), vec.end());
-//         }
-//     }
-//     //std::vector<float> mat = model.trainMatrix();
-//     
-//     Rcpp::NumericMatrix mat_(model.vectorSize(), words.size(), mat.begin());
-//     colnames(mat_) = encode(words); 
-//     return Rcpp::transpose(mat_);
-// }
+Rcpp::NumericMatrix get_values(w2v::word2vec_t model, w2v::corpus_t corpus) {
+    std::vector<float> mat = model.values();
+    if (model.vectorSize() * model.vocaburarySize() != mat.size())
+        throw std::runtime_error("Invalid model values");
+    Rcpp::NumericMatrix mat_(model.vectorSize(), model.vocaburarySize(), mat.begin());
+    colnames(mat_) = encode(corpus.words); 
+    return Rcpp::transpose(mat_);
+}
 
-Rcpp::NumericMatrix as_matrix(w2v::word2vec_t model, w2v::corpus_t corpus) {
-    
-    std::vector<float> mat = model.trainMatrix();
-    Rcpp::NumericMatrix mat_(model.vectorSize(), corpus.words.size(), mat.begin());
+Rcpp::NumericMatrix get_weights(w2v::word2vec_t model, w2v::corpus_t corpus) {
+    std::vector<float> mat = model.weights();
+    if (model.vectorSize() * model.vocaburarySize() != mat.size())
+        throw std::runtime_error("Invalid model weights");
+    Rcpp::NumericMatrix mat_(model.vectorSize(), model.vocaburarySize(), mat.begin());
     colnames(mat_) = encode(corpus.words); 
     return Rcpp::transpose(mat_);
 }
 
 Rcpp::NumericVector get_frequency(w2v::corpus_t corpus) {
-    
     Rcpp::NumericVector v = Rcpp::wrap(corpus.frequency);
     v.names() = encode(corpus.words);
     return(v);
@@ -146,15 +128,17 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
         return out;
     }
     if (normalize) {
-        word2vec.normalize();
         if (verbose)
             Rprintf(" ...normalizing vectors\n");
+        word2vec.normalizeValues();
+        word2vec.normalizeWeights();
     }
     if (verbose)
         Rprintf(" ...complete\n");
     
     Rcpp::List out = Rcpp::List::create(
-        Rcpp::Named("vectors") = as_matrix(word2vec, corpus), 
+        Rcpp::Named("values") = get_values(word2vec, corpus), 
+        Rcpp::Named("weights") = get_weights(word2vec, corpus), 
         Rcpp::Named("type") = type,
         Rcpp::Named("dim") = size,
         Rcpp::Named("min_count") = minWordFreq,
@@ -164,7 +148,8 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
         Rcpp::Named("alpha") = alpha,
         Rcpp::Named("use_ns") = !withHS,
         Rcpp::Named("ns_size") = negative,
-        Rcpp::Named("sample") = sample
+        Rcpp::Named("sample") = sample,
+        Rcpp::Named("normalize") = normalize
     );
     out.attr("class") = "textmodel_wordvector";
     return out;

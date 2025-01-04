@@ -10,8 +10,10 @@
 
 namespace w2v {
     // NOTE: make m_rndWindow
-    trainThread_t::trainThread_t(uint16_t _number, const data_t &_data) :
-            m_number(_number), m_data(_data), m_randomGenerator(m_data.settings->random),
+    trainThread_t::trainThread_t(const std::pair<std::size_t, std::size_t> &_range, 
+                                 const data_t &_data) :
+            m_range(_range),
+            m_data(_data), m_randomGenerator(m_data.settings->random),
             m_rndWindowShift(0, static_cast<short>((m_data.settings->window - 1))), // NOTE: to delete
             m_rndWindow(1, static_cast<short>((m_data.settings->window))), // NOTE: added
             m_downSampling(), m_nsDistribution(), m_hiddenLayerVals(), m_hiddenLayerErrors(),
@@ -41,15 +43,9 @@ namespace w2v {
             throw std::runtime_error("corpus object is not initialized");
         }
         
-        // NOTE: specify range for workers
-        auto n = m_data.corpus->texts.size();
-        auto threads = m_data.settings->threads;
-        range = std::make_pair(floor((n / threads) * m_number),
-                               floor((n / threads) * (m_number + 1)) - 1);
-        
     }
 
-    void trainThread_t::worker(std::vector<float> &_trainMatrix, int &_iter, float &_alpha) noexcept {
+    void trainThread_t::worker(int &_iter, float &_alpha) noexcept {
         
         for (auto g = 1; g <= m_data.settings->iterations; ++g) {
             
@@ -62,7 +58,7 @@ namespace w2v {
             //std::cout << "type = " << m_data.settings->type << "\n";
             //std::cout << "minWordFreq = " << m_data.settings->minWordFreq << "\n";
             float alpha = 0;
-            for (std::size_t h = range.first; h <= range.second; ++h) {
+            for (std::size_t h = m_range.first; h <= m_range.second; ++h) {
                 
                 // calculate alpha
                 if (threadProcessedWords - prvThreadProcessedWords > wordsPerAlpha) { // next 0.01% processed
@@ -109,84 +105,27 @@ namespace w2v {
                 
                 //std::cout << "sentence = " <<  sentence.size() << "\n";
                 if (m_data.settings->type == 1) {
-                    cbow(sentence, _trainMatrix);
+                    cbow(sentence);
                 } else if (m_data.settings->type == 2) {
-                    skipGram(sentence, _trainMatrix);
-                } else if (m_data.settings->type == 10) {
-                    cbowOld(sentence, _trainMatrix);
-                } else if (m_data.settings->type == 20) {
-                    skipGramOld(sentence, _trainMatrix);
+                    skipGram(sentence);
                 }
             }
             // for progress message
-            if (m_number == 0) {
+            if (m_range.first == 0) {
                 _iter = g;
                 _alpha = alpha;
             }
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
+        // std::cout << "trainThread_t::worker()\n";
+        // std::cout << m_data.bpWeights << "\n";
+        // for (size_t i = 0; i < 10; i++){
+        //     std::cout << (*m_data.bpWeights)[i] << ", ";
+        // }
+        // std::cout << "\n";
     }
 
-    inline void trainThread_t::cbowOld(const std::vector<unsigned int> &_sentence,
-                                    std::vector<float> &_trainMatrix) noexcept {
-        
-        if (_sentence.size() == 0)
-            return;
-        for (std::size_t i = 0; i < _sentence.size(); ++i) {
-            // hidden layers initialized with 0 values
-            std::memset(m_hiddenLayerVals->data(), 0, m_hiddenLayerVals->size() * sizeof(float));
-            std::memset(m_hiddenLayerErrors->data(), 0, m_hiddenLayerErrors->size() * sizeof(float));
-            
-            auto rndShift = m_rndWindowShift(m_randomGenerator);
-            std::size_t cw = 0;
-            for (auto j = rndShift; j < m_data.settings->window * 2 + 1 - rndShift; ++j) {
-                if (j == m_data.settings->window) {
-                    continue;
-                }
-                
-                auto posRndWindow = i - m_data.settings->window + j;
-                if (posRndWindow >= _sentence.size()) {
-                    continue;
-                }
-                for (std::size_t k = 0; k < m_data.settings->size; ++k) {
-                    (*m_hiddenLayerVals)[k] += _trainMatrix[k + _sentence[posRndWindow]
-                    * m_data.settings->size];
-                }
-                cw++;
-            }
-            if (cw == 0) {
-                continue;
-            }
-            for (std::size_t j = 0; j < m_data.settings->size; ++j) {
-                (*m_hiddenLayerVals)[j] /= cw;
-            }
-            
-            if (m_data.settings->withHS) {
-                hierarchicalSoftmax(_sentence[i], *m_hiddenLayerErrors, *m_hiddenLayerVals, 0);
-            } else {
-                negativeSampling(_sentence[i], *m_hiddenLayerErrors, *m_hiddenLayerVals, 0);
-            }
-            
-            // hidden -> in
-            for (auto j = rndShift; j < m_data.settings->window * 2 + 1 - rndShift; ++j) {
-                if (j == m_data.settings->window) {
-                    continue;
-                }
-                
-                auto posRndWindow = i - m_data.settings->window + j;
-                if (posRndWindow >= _sentence.size()) {
-                    continue;
-                }
-                for (std::size_t k = 0; k < m_data.settings->size; ++k) {
-                    _trainMatrix[k + _sentence[posRndWindow] * m_data.settings->size]
-                    += (*m_hiddenLayerErrors)[k];
-                }
-            }
-        }
-    }
-
-    inline void trainThread_t::cbow(const std::vector<unsigned int> &_text,
-                                    std::vector<float> &_trainMatrix) noexcept {
+    inline void trainThread_t::cbow(const std::vector<unsigned int> &_text) noexcept {
         
         std::size_t K = m_data.settings->size;
         if (_text.size() == 0)
@@ -204,7 +143,7 @@ namespace w2v {
                 if (j == i)
                     continue;
                 for (std::size_t k = 0; k < K; ++k) {
-                    (*m_hiddenLayerVals)[k] += _trainMatrix[k + _text[j] * K];
+                    (*m_hiddenLayerVals)[k] += (*m_data.bpValues)[k + _text[j] * K];
                 }
                 cw++;
             }
@@ -226,49 +165,13 @@ namespace w2v {
                 if (j == i)
                     continue;
                 for (std::size_t k = 0; k < K; ++k) {
-                    _trainMatrix[k + _text[j] * K] += (*m_hiddenLayerErrors)[k];
+                    (*m_data.bpValues)[k + _text[j] * K] += (*m_hiddenLayerErrors)[k];
                 }
             }
         }
     }
     
-
-    inline void trainThread_t::skipGramOld(const std::vector<unsigned int> &_text,
-                                        std::vector<float> &_trainMatrix) noexcept {
-        if (_text.size() == 0)
-            return;
-        for (std::size_t i = 0; i < _text.size(); ++i) {
-            auto rndShift = m_rndWindowShift(m_randomGenerator);
-            for (auto j = rndShift; j < m_data.settings->window * 2 + 1 - rndShift; ++j) {
-                if (j == m_data.settings->window) {
-                    continue;
-                }
-
-                auto posRndWindow = i - m_data.settings->window + j;
-                if (posRndWindow >= _text.size()) {
-                    continue;
-                }
-                // shift to the selected word vector in the matrix
-                auto shift = _text[posRndWindow] * m_data.settings->size;
-
-                // hidden layer initialized with 0 values
-                std::memset(m_hiddenLayerErrors->data(), 0, m_hiddenLayerErrors->size() * sizeof(float));
-
-                if (m_data.settings->withHS) {
-                    hierarchicalSoftmax(_text[i], (*m_hiddenLayerErrors), _trainMatrix, shift);
-                } else {
-                    negativeSampling(_text[i], (*m_hiddenLayerErrors), _trainMatrix, shift);
-                }
-
-                for (std::size_t k = 0; k < m_data.settings->size; ++k) {
-                    _trainMatrix[k + shift] += (*m_hiddenLayerErrors)[k];
-                }
-            }
-        }
-    }
-
-    inline void trainThread_t::skipGram(const std::vector<unsigned int> &_text,
-                                        std::vector<float> &_trainMatrix) noexcept {
+    inline void trainThread_t::skipGram(const std::vector<unsigned int> &_text) noexcept {
         
         std::size_t K = m_data.settings->size;
         if (_text.size() == 0)
@@ -287,12 +190,12 @@ namespace w2v {
                 // shift to the selected word vector in the matrix
                 auto shift = _text[j] * K;
                 if (m_data.settings->withHS) {
-                    hierarchicalSoftmax(_text[i], (*m_hiddenLayerErrors), _trainMatrix, shift);
+                    hierarchicalSoftmax(_text[i], (*m_hiddenLayerErrors), (*m_data.bpValues), shift);
                 } else {
-                    negativeSampling(_text[i], (*m_hiddenLayerErrors), _trainMatrix, shift);
+                    negativeSampling(_text[i], (*m_hiddenLayerErrors), (*m_data.bpValues), shift);
                 }
                 for (std::size_t k = 0; k < m_data.settings->size; ++k) {
-                    _trainMatrix[k + shift] += (*m_hiddenLayerErrors)[k];
+                    (*m_data.bpValues)[k + shift] += (*m_hiddenLayerErrors)[k];
                 }
             }
         }
@@ -382,7 +285,7 @@ namespace w2v {
             //std::cout << i << ": " << _index << ", " <<  target << ", " << gxa << "\n";
             // propagate errors output -> hidden
             for (std::size_t k = 0; k < K; ++k) {
-                _hiddenLayer[k] += gxa * (*m_data.bpWeights)[k + shift]; // added to _trainMatrix
+                _hiddenLayer[k] += gxa * (*m_data.bpWeights)[k + shift]; // added to bpValues
             }
             // learn weights hidden -> output
             for (std::size_t k = 0; k < m_data.settings->size; ++k) {
