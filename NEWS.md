@@ -1,6 +1,8 @@
 ## Changes in v0.2.0
 
-- Add back-propagation weights to the trained word2vec object.
+- Simplify the C++ code to make maintenance easier.
+- Add `normalize` to `word2vec` to disable or enable word vector normalization.
+- Add `weight()` to access back-propagation weights.
 - Update `analogy()` to use vectors instead of formulas.
 - Improve the stability of `word2vec()` when `verbose = TRUE`.
 
