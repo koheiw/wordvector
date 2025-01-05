@@ -151,3 +151,33 @@ test_that("normalize is working", {
     
 })
 
+test_that("word2vec is robust", {
+    
+    expect_s3_class(
+        word2vec(head(toks, 1), dim = 50, iter = 10, min_count = 1),
+        "textmodel_wordvector"
+    )
+    
+    expect_error(
+        suppressWarnings(
+            word2vec(head(toks, 0), dim = 50, iter = 10, min_count = 1)
+        ),
+        "Failed to train word2vec"
+    )
+    
+    expect_error(
+        suppressWarnings(
+            word2vec(toks, dim = 0, iter = 10, min_count = 1)
+        ),
+        "The value of dim must be between 2 and Inf"
+    )
+    
+    expect_error(
+        suppressWarnings(
+            word2vec(toks, dim = 50, iter = 0, min_count = 1)
+        ),
+        "The value of iter must be between 1 and Inf"
+    )
+  
+})  
+
