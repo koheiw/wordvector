@@ -9,8 +9,8 @@ toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>%
     tokens_tolower()
 toks_grp <- tokens_group(toks)
 
-wov <- lsa(toks, dim = 50, min_count = 2, sample = 0)
-dov <- doc2vec(toks_grp, wov)
+wov <- textmodel_lsa(toks, dim = 50, min_count = 2, sample = 0)
+dov <- textmodel_doc2vec(toks_grp, wov)
 #dov_nm <- doc2vec(toks_grp, min_count = 10, sample = 0)
 
 test_that("word2vec words", {
@@ -37,7 +37,7 @@ test_that("word2vec words", {
         paste(
             "",
             "Call:",
-            "lsa(x = toks, dim = 50, min_count = 2, sample = 0)",
+            "textmodel_lsa(x = toks, dim = 50, min_count = 2, sample = 0)",
             "",
             "50 dimensions; 5,360 words.", sep = "\n"), fixed = TRUE
     )
@@ -68,7 +68,7 @@ test_that("word2vec words", {
         paste(
             "",
             "Call:",
-            "doc2vec(x = toks_grp, model = wov)",
+            "textmodel_doc2vec(x = toks_grp, model = wov)",
             "",
             "50 dimensions; 59 documents.", sep = "\n"), fixed = TRUE
     )

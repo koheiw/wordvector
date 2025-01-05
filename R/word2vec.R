@@ -55,26 +55,27 @@
 #'    tokens_tolower()
 #'
 #' # train word2vec
-#' w2v <- word2vec(toks, dim = 50, type = "cbow", min_count = 5, sample = 0.001)
+#' w2v <- textmodel_word2vec(toks, dim = 50, type = "cbow", min_count = 5, sample = 0.001)
 #' head(similarity(w2v, c("berlin", "germany", "france"), mode = "word"))
 #' analogy(w2v, ~ berlin - germany + france)
 #' }
-word2vec <- function(x, dim = 50, type = c("cbow", "skip-gram"), 
-                     min_count = 5L, window = ifelse(type == "cbow", 5L, 10L), 
-                     iter = 10L, alpha = 0.05, use_ns = TRUE, ns_size = 5L, 
-                     sample = 0.001, normalize = TRUE,
-                     verbose = FALSE, ...) {
-    UseMethod("word2vec")
+textmodel_word2vec <- function(x, dim = 50, type = c("cbow", "skip-gram"), 
+                               min_count = 5L, window = ifelse(type == "cbow", 5L, 10L), 
+                               iter = 10L, alpha = 0.05, use_ns = TRUE, ns_size = 5L, 
+                               sample = 0.001, normalize = TRUE,
+                               verbose = FALSE, ...) {
+    UseMethod("textmodel_word2vec")
 }
 
 #' @import quanteda
 #' @useDynLib wordvector
 #' @export
-word2vec.tokens <- function(x, dim = 50L, type = c("cbow", "skip-gram"), 
-                            min_count = 5L, window = ifelse(type == "cbow", 5L, 10L), 
-                            iter = 10L, alpha = 0.05, use_ns = TRUE, ns_size = 5L, 
-                            sample = 0.001, normalize = TRUE,
-                            verbose = FALSE, ..., old = FALSE) {
+#' @method textmodel_word2vec tokens
+textmodel_word2vec.tokens <- function(x, dim = 50L, type = c("cbow", "skip-gram"), 
+                                      min_count = 5L, window = ifelse(type == "cbow", 5L, 10L), 
+                                      iter = 10L, alpha = 0.05, use_ns = TRUE, ns_size = 5L, 
+                                      sample = 0.001, normalize = TRUE,
+                                      verbose = FALSE, ..., old = FALSE) {
     
     type <- match.arg(type)
     dim <- check_integer(dim, min = 2)
@@ -107,6 +108,13 @@ word2vec.tokens <- function(x, dim = 50L, type = c("cbow", "skip-gram"),
     result$call <- try(match.call(sys.function(-1), call = sys.call(-1)), silent = TRUE)
     result$version <- utils::packageVersion("wordvector")
     return(result)
+}
+
+#' @rdname textmodel_word2vec
+#' @export
+word2vec <- function(...) {
+    .Deprecated("textmodel_word2vec")
+    textmodel_word2vec(...)
 }
 
 #' Print method for trained word vectors
