@@ -22,6 +22,7 @@ typedef std::vector<std::string> words_t;
 typedef std::vector<unsigned int> text_t;
 typedef std::vector<text_t> texts_t;
 typedef std::vector<size_t> frequency_t;
+typedef std::vector<float> seeds_t;
 
 namespace w2v {
     
@@ -32,14 +33,15 @@ namespace w2v {
     public:
         texts_t texts;
         words_t words;
+        seeds_t seeds;
         frequency_t frequency;
         size_t totalWords;
         size_t trainWords;
         
         // constructors
         corpus_t(): texts() {}
-        corpus_t(texts_t _texts, words_t _words): 
-                 texts(_texts), words(_words) {}
+        corpus_t(texts_t _texts, words_t _words, seeds_t _seeds): 
+                 texts(_texts), words(_words), seeds(_seeds) {}
 
         void setWordFreq() {
             

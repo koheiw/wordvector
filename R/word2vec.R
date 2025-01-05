@@ -63,7 +63,7 @@ word2vec <- function(x, dim = 50, type = c("cbow", "skip-gram"),
                      min_count = 5L, window = ifelse(type == "cbow", 5L, 10L), 
                      iter = 10L, alpha = 0.05, use_ns = TRUE, ns_size = 5L, 
                      sample = 0.001, normalize = TRUE,
-                     verbose = FALSE, ...) {
+                     verbose = FALSE, seeds = NULL, ...) {
     UseMethod("word2vec")
 }
 
@@ -74,7 +74,7 @@ word2vec.tokens <- function(x, dim = 50L, type = c("cbow", "skip-gram"),
                             min_count = 5L, window = ifelse(type == "cbow", 5L, 10L), 
                             iter = 10L, alpha = 0.05, use_ns = TRUE, ns_size = 5L, 
                             sample = 0.001, normalize = TRUE,
-                            verbose = FALSE, ..., old = FALSE) {
+                            verbose = FALSE, seeds = NULL, ..., old = FALSE) {
     
     type <- match.arg(type)
     dim <- check_integer(dim, min = 2)
@@ -87,14 +87,24 @@ word2vec.tokens <- function(x, dim = 50L, type = c("cbow", "skip-gram"),
     sample <- check_double(sample, min = 0)
     normalize <- check_logical(normalize)
     verbose <- check_logical(verbose)
-
     type <- match(type, c("cbow", "skip-gram"))
     if (old)
         type <- type * 10
     
     # NOTE: use tokens_xptr?
     x <- tokens_trim(x, min_termfreq = min_count, termfreq_type = "count")
+    
+    if (is.null(seeds)) {
+        seed <- numeric(dim * length(attr(x, "types")))
+    } else {
+        mat <- seededlda:::tfm(dfm(x), as.dictionary(seeds), valuetype = "glob",
+                               residual = dim - length(seeds))
+        mat@x <- rep(100, length(mat@x))
+        seed <- as.vector(as.matrix(mat))
+    }
+    
     result <- cpp_w2v(as.tokens(x), attr(x, "types"), 
+                      seeds = seed,
                       minWordFreq = min_count,
                       size = dim, window = window,
                       sample = sample, withHS = !use_ns, negative = ns_size, 

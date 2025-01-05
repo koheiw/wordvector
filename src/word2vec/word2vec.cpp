@@ -59,6 +59,23 @@ namespace w2v {
                 data.huffmanTree.reset(new huffmanTree_t(corpus->frequency));;
             }
             
+            if (matrixSize != data.corpus->seeds.size())
+                throw std::runtime_error("invalid seeds");
+            (*data.bpWeights) = data.corpus->seeds;
+        
+            
+            // for (auto seed:data.corpus->seeds) {
+            //     std::size_t i = 0;
+            //     //Rcpp::Rcout << seed << "\n";
+            //     for (auto word:data.corpus->words) {
+            //         if (seed == word) {
+            //             Rcpp::Rcout << word << "\n";
+            //             (*data.bpWeights)[i * m_vectorSize] = 100;
+            //         }
+            //         i++;
+            //     }
+            // }
+            
             data.processedWords.reset(new std::atomic<std::size_t>(0));
             data.alpha.reset(new std::atomic<float>(settings->alpha));
             

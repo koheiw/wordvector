@@ -60,6 +60,7 @@ Rcpp::NumericVector get_frequency(w2v::corpus_t corpus) {
 // [[Rcpp::export]]
 Rcpp::List cpp_w2v(Rcpp::List texts_, 
                    Rcpp::CharacterVector words_, 
+                   Rcpp::NumericVector seeds_, 
                    uint16_t minWordFreq = 5,
                    uint16_t size = 100,
                    uint16_t window = 5,
@@ -87,10 +88,11 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
 
     texts_t texts = Rcpp::as<texts_t>(texts_);
     words_t words = Rcpp::as<words_t>(words_);
+    seeds_t seeds = Rcpp::as<seeds_t>(seeds_);
     //texts_t texts = xptr->texts;
     //types_t types = xptr->types;
     
-    w2v::corpus_t corpus(texts, words);
+    w2v::corpus_t corpus(texts, words, seeds);
     corpus.setWordFreq();
       
     w2v::settings_t settings;
