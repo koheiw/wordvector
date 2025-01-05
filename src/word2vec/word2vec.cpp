@@ -64,12 +64,15 @@ namespace w2v {
             
             // create threads
             std::vector<std::unique_ptr<trainThread_t>> threads;
-            std::pair<std::size_t, std::size_t> range;
             std::size_t n = data.corpus->texts.size();
-            for (uint16_t i = 0; i < settings->threads; ++i) {
-                range = std::make_pair(floor((n / data.settings->threads) * i),
-                                       floor((n / data.settings->threads) * (i + 1)) - 1);
-                threads.emplace_back(new trainThread_t(range, data));
+            std::size_t per = ceil((float)n / (float)data.settings->threads);
+            for (std::size_t i = 0; i < settings->threads; ++i) {
+                std::size_t from = per * i;
+                std::size_t to = std::min(per * (i + 1) - 1, n - 1);
+                //Rcpp::Rcout << settings->threads << " " << per << " " << from << " " << to << "\n";
+                threads.emplace_back(new trainThread_t(std::make_pair(from, to), data));
+                if (n - 1 == to) 
+                    break;
             }
             
             int iter = 0;
