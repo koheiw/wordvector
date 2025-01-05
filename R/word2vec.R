@@ -63,7 +63,7 @@ word2vec <- function(x, dim = 50, type = c("cbow", "skip-gram"),
                      min_count = 5L, window = ifelse(type == "cbow", 5L, 10L), 
                      iter = 10L, alpha = 0.05, use_ns = TRUE, ns_size = 5L, 
                      sample = 0.001, normalize = TRUE,
-                     verbose = FALSE, seeds = NULL, ...) {
+                     verbose = FALSE, seeds = NULL, weight = 3, ...) {
     UseMethod("word2vec")
 }
 
@@ -74,7 +74,7 @@ word2vec.tokens <- function(x, dim = 50L, type = c("cbow", "skip-gram"),
                             min_count = 5L, window = ifelse(type == "cbow", 5L, 10L), 
                             iter = 10L, alpha = 0.05, use_ns = TRUE, ns_size = 5L, 
                             sample = 0.001, normalize = TRUE,
-                            verbose = FALSE, seeds = NULL, ..., old = FALSE) {
+                            verbose = FALSE, seeds = NULL, weight = 3, ..., old = FALSE) {
     
     type <- match.arg(type)
     dim <- check_integer(dim, min = 2)
@@ -99,7 +99,7 @@ word2vec.tokens <- function(x, dim = 50L, type = c("cbow", "skip-gram"),
     } else {
         mat <- seededlda:::tfm(dfm(x), as.dictionary(seeds), valuetype = "glob",
                                residual = dim - length(seeds))
-        mat@x <- rep(100, length(mat@x))
+        mat@x <- rep(weight, length(mat@x))
         seed <- as.vector(as.matrix(mat))
     }
     
