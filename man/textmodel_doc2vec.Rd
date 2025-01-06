@@ -20,5 +20,5 @@ or passed via \code{...} plus:
 \item{call}{the command used to execute the function.}
 }
 \description{
-Create distributed representation of documents
+Create distributed representation of documents as weighted word vectors.
 }

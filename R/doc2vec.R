@@ -5,7 +5,8 @@ as.matrix.textmodel_docvector <- function(x, ...){
 }
 
 #' Create distributed representation of documents
-
+#' 
+#' Create distributed representation of documents as weighted word vectors.
 #' @param x a [quanteda::tokens] object.
 #' @param model a textmodel_wordvector object.
 #' @param ... passed to `[word2vec]` when `model = NULL`.

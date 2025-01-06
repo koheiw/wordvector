@@ -65,16 +65,16 @@ wdv <- textmodel_word2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose 
 ##  ...using 16 threads for distributed computing
 ##  ...initializing
 ##  ...negative sampling in 10 iterations
-##  ......iteration 1 elapsed time: 3.65 seconds (alpha: 0.0468)
-##  ......iteration 2 elapsed time: 7.64 seconds (alpha: 0.0435)
-##  ......iteration 3 elapsed time: 11.45 seconds (alpha: 0.0402)
-##  ......iteration 4 elapsed time: 15.51 seconds (alpha: 0.0370)
-##  ......iteration 5 elapsed time: 19.46 seconds (alpha: 0.0337)
-##  ......iteration 6 elapsed time: 23.36 seconds (alpha: 0.0303)
-##  ......iteration 7 elapsed time: 27.29 seconds (alpha: 0.0271)
-##  ......iteration 8 elapsed time: 31.08 seconds (alpha: 0.0237)
-##  ......iteration 9 elapsed time: 35.06 seconds (alpha: 0.0204)
-##  ......iteration 10 elapsed time: 39.00 seconds (alpha: 0.0172)
+##  ......iteration 1 elapsed time: 3.69 seconds (alpha: 0.0470)
+##  ......iteration 2 elapsed time: 7.58 seconds (alpha: 0.0440)
+##  ......iteration 3 elapsed time: 11.33 seconds (alpha: 0.0409)
+##  ......iteration 4 elapsed time: 15.14 seconds (alpha: 0.0379)
+##  ......iteration 5 elapsed time: 18.98 seconds (alpha: 0.0349)
+##  ......iteration 6 elapsed time: 22.79 seconds (alpha: 0.0319)
+##  ......iteration 7 elapsed time: 26.62 seconds (alpha: 0.0288)
+##  ......iteration 8 elapsed time: 30.41 seconds (alpha: 0.0258)
+##  ......iteration 9 elapsed time: 34.29 seconds (alpha: 0.0226)
+##  ......iteration 10 elapsed time: 38.19 seconds (alpha: 0.0195)
 ##  ...normalizing vectors
 ##  ...complete
 ```
@@ -84,29 +84,14 @@ wdv <- textmodel_word2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose 
 `similarity()` computes cosine similarity between word vectors.
 
 ``` r
-head(similarity(wdv, c("amazon", "forests", "obama", "america", "afghanistan"), mode = "word"), n = 10)
-##       amazon        forests         obama            america          
-##  [1,] "amazon"      "forests"       "obama"          "america"        
-##  [2,] "rainforest"  "herds"         "barack"         "africa"         
-##  [3,] "peatlands"   "rainforests"   "biden"          "american"       
-##  [4,] "rainforests" "wetlands"      "kerry"          "dakota"         
-##  [5,] "rangeland"   "rainforest"    "hagel"          "americas"       
-##  [6,] "ranches"     "forest"        "administration" "america-focused"
-##  [7,] "wetlands"    "farms"         "boehner"        "carolina"       
-##  [8,] "tributary"   "valleys"       "rodham"         "african"        
-##  [9,] "ranching"    "farming"       "karzai"         "korea"          
-## [10,] "groveland"   "deforestation" "rouhani"        "africans"       
-##       afghanistan  
-##  [1,] "afghanistan"
-##  [2,] "afghan"     
-##  [3,] "kabul"      
-##  [4,] "taliban"    
-##  [5,] "afghans"    
-##  [6,] "pakistan"   
-##  [7,] "kandahar"   
-##  [8,] "nato-led"   
-##  [9,] "iraq"       
-## [10,] "islamabad"
+head(similarity(wdv, c("amazon", "forests", "obama", "america", "afghanistan"), mode = "word"))
+##      amazon       forests         obama    america    afghanistan  
+## [1,] "amazon"     "forests"       "obama"  "america"  "afghanistan"
+## [2,] "rainforest" "rainforest"    "barack" "africa"   "afghan"     
+## [3,] "gorges"     "herds"         "hagel"  "american" "kabul"      
+## [4,] "ranches"    "wetlands"      "rodham" "dakota"   "taliban"    
+## [5,] "ranching"   "farmland"      "kerry"  "americas" "pakistan"   
+## [6,] "re-grown"   "deforestation" "biden"  "carolina" "afghans"
 ```
 
 ### Arithmetic operations of word vectors
@@ -114,64 +99,52 @@ head(similarity(wdv, c("amazon", "forests", "obama", "america", "afghanistan"), 
 `analogy()` offers interface for arithmetic operations of word vectors.
 
 ``` r
-analogy(wdv, ~ amazon - forests) # What is Amazon without forests?
-##           word similarity
-## 1    smash-hit  0.6140768
-## 2    univision  0.5964522
-## 3        iliad  0.5699427
-## 4         choo  0.5629618
-## 5      comcast  0.5625957
-## 6       gawker  0.5599283
-## 7    luxottica  0.5573746
-## 8  tripadvisor  0.5504397
-## 9      directv  0.5482493
-## 10        imax  0.5481854
+# What is Amazon without forests?
+head(similarity(wdv, analogy(~ amazon - forests))) 
+##      [,1]          
+## [1,] "smash-hit"   
+## [2,] "pbs"         
+## [3,] "telephony"   
+## [4,] "nbcuniversal"
+## [5,] "univision"   
+## [6,] "iliad"
 ```
 
 ``` r
-analogy(wdv, ~ obama - america + afghanistan) # What is for Afghanistan as Obama for America? 
-##        word similarity
-## 1    karzai  0.6180065
-## 2   taliban  0.6113779
-## 3  al-abadi  0.6027466
-## 4    haider  0.6005121
-## 5     nawaz  0.5955588
-## 6     hamid  0.5885077
-## 7   massoum  0.5866054
-## 8     abadi  0.5829245
-## 9     hagel  0.5762865
-## 10 pentagon  0.5701790
+# What is for Afghanistan as Obama for America? 
+head(similarity(wdv, analogy(~ obama - america + afghanistan))) 
+##      [,1]         
+## [1,] "karzai"     
+## [2,] "taliban"    
+## [3,] "hamid"      
+## [4,] "afghanistan"
+## [5,] "obama"      
+## [6,] "afghan"
 ```
 
 These examples replicates analogical tasks in the original word2vec
 paper.
 
 ``` r
-analogy(wdv, ~ berlin - germany + france) # What is for France as Berlin for Germany?
-##          word similarity
-## 1       paris  0.8931474
-## 2    brussels  0.7817763
-## 3   amsterdam  0.7794727
-## 4   stockholm  0.7647855
-## 5  copenhagen  0.7624817
-## 6    helsinki  0.7350899
-## 7      london  0.7260263
-## 8      madrid  0.7089564
-## 9  strasbourg  0.7065544
-## 10     warsaw  0.6907185
+# What is for France as Berlin for Germany?
+head(similarity(wdv, analogy(~ berlin - germany + france))) 
+##      [,1]        
+## [1,] "paris"     
+## [2,] "berlin"    
+## [3,] "amsterdam" 
+## [4,] "brussels"  
+## [5,] "copenhagen"
+## [6,] "stockholm"
 ```
 
 ``` r
-analogy(wdv, ~ quick - quickly + slowly) # What is for slowly as quick for quickly?
-##            word similarity
-## 1          slow  0.7620580
-## 2        uneven  0.7413045
-## 3      sideways  0.6759325
-## 4       sharper  0.6669842
-## 5  supercharged  0.6547219
-## 6           dim  0.6526230
-## 7        steady  0.6509530
-## 8         spurt  0.6476913
-## 9        upside  0.6471824
-## 10      buoyant  0.6438219
+# What is for slowly as quick for quickly?
+head(similarity(wdv, analogy(~ quick - quickly + slowly)))
+##      [,1]         
+## [1,] "slow"       
+## [2,] "sideways"   
+## [3,] "slowly"     
+## [4,] "uneven"     
+## [5,] "unstoppable"
+## [6,] "quick"
 ```

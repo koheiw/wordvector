@@ -56,8 +56,11 @@
 #'
 #' # train word2vec
 #' w2v <- textmodel_word2vec(toks, dim = 50, type = "cbow", min_count = 5, sample = 0.001)
-#' head(similarity(w2v, c("berlin", "germany", "france"), mode = "word"))
-#' analogy(w2v, ~ berlin - germany + france)
+#'
+#' # find similar words
+#' head(similarity(w2v, c("berlin", "germany", "france"), mode = "words"))
+#' head(similarity(w2v, c("berlin" = 1, "germany" = -1, "france" = 1), mode = "values"))
+#' head(similarity(w2v, analogy(~ berlin - germany + france), mode = "words"))
 #' }
 textmodel_word2vec <- function(x, dim = 50, type = c("cbow", "skip-gram"), 
                                min_count = 5L, window = ifelse(type == "cbow", 5L, 10L), 
