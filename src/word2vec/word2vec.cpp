@@ -7,7 +7,6 @@
 */
 #include <Rcpp.h>
 #include "word2vec.hpp"
-//#include "trainer.hpp"
 #include "trainThread.hpp"
 
 namespace w2v {

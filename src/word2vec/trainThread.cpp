@@ -9,7 +9,7 @@
 #include "trainThread.hpp"
 
 namespace w2v {
-    // NOTE: make m_rndWindow
+    
     trainThread_t::trainThread_t(const std::pair<std::size_t, std::size_t> &_range, 
                                  const data_t &_data) :
             m_range(_range),
