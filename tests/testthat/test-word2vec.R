@@ -10,11 +10,11 @@ toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>%
     tokens_tolower()
 toks_grp <- tokens_group(toks)
 
-wov <- word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1)
-dov <- doc2vec(toks_grp, wov)
-dov_nm <- doc2vec(toks_grp, min_count = 10, sample = 1)
+wov <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1)
+dov <- textmodel_doc2vec(toks_grp, wov)
+dov_nm <- textmodel_doc2vec(toks_grp, min_count = 10, sample = 1)
 
-test_that("word2vec works", {
+test_that("textmodel_word2vec works", {
     
     # wordvector
     expect_equal(
@@ -52,7 +52,8 @@ test_that("word2vec works", {
         paste(
             "",
             "Call:",
-            "word2vec(x = toks, dim = 50, min_count = 2, iter = 10, sample = 1)",
+            "textmodel_word2vec(x = toks, dim = 50, min_count = 2, iter = 10, ",
+            "    sample = 1)",
             "",
             "50 dimensions; 5,360 words.", sep = "\n"), fixed = TRUE
     )
@@ -81,7 +82,7 @@ test_that("word2vec works", {
         paste(
             "",
             "Call:",
-            "doc2vec(x = toks_grp, model = wov)",
+            "textmodel_doc2vec(x = toks_grp, model = wov)",
             "",
             "50 dimensions; 59 documents.", sep = "\n"), fixed = TRUE
     )
@@ -119,20 +120,20 @@ test_that("word2vec works", {
     
 })
 
-test_that("doc2vec works with different objects", {
+test_that("textmodel_doc2vec works with different objects", {
     
     expect_equal(
-        class(doc2vec(toks, wov)),
+        class(textmodel_doc2vec(toks, wov)),
         "textmodel_docvector"
     )
     
     expect_equal(
-        class(doc2vec(as.tokens_xptr(toks), wov)),
+        class(textmodel_doc2vec(as.tokens_xptr(toks), wov)),
         "textmodel_docvector"
     )
     
     expect_error(
-        doc2vec(toks, list),
+        textmodel_doc2vec(toks, list),
         "The object for 'model' must be a trained textmodel_wordvector"
     )
 })
@@ -141,40 +142,40 @@ test_that("normalize is working", {
     
     skip_on_cran()
     
-    wov0 <- word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1,
-                     normalize = FALSE)
+    wov0 <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1,
+                               normalize = FALSE)
     expect_false(wov0$normalize)
     
-    wov1 <- word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1,
-                     normalize = TRUE)
+    wov1 <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1,
+                               normalize = TRUE)
     expect_true(wov1$normalize)
     
 })
 
-test_that("word2vec is robust", {
+test_that("textmodel_word2vec is robust", {
     
     expect_s3_class(
-        word2vec(head(toks, 1), dim = 50, iter = 10, min_count = 1),
+        textmodel_word2vec(head(toks, 1), dim = 50, iter = 10, min_count = 1),
         "textmodel_wordvector"
     )
     
     expect_error(
         suppressWarnings(
-            word2vec(head(toks, 0), dim = 50, iter = 10, min_count = 1)
+            textmodel_word2vec(head(toks, 0), dim = 50, iter = 10, min_count = 1)
         ),
         "Failed to train word2vec"
     )
     
     expect_error(
         suppressWarnings(
-            word2vec(toks, dim = 0, iter = 10, min_count = 1)
+            textmodel_word2vec(toks, dim = 0, iter = 10, min_count = 1)
         ),
         "The value of dim must be between 2 and Inf"
     )
     
     expect_error(
         suppressWarnings(
-            word2vec(toks, dim = 50, iter = 0, min_count = 1)
+            textmodel_word2vec(toks, dim = 50, iter = 0, min_count = 1)
         ),
         "The value of iter must be between 1 and Inf"
     )

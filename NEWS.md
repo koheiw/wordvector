@@ -1,5 +1,6 @@
 ## Changes in v0.2.0
 
+- Rename `word2vec()`, `doc2vec()` and `lsa()` to `textmodel_word2vec()`, `textmodel_doc2vec()` and `textmodel_lsa()` respectively. 
 - Simplify the C++ code to make maintenance easier.
 - Add `normalize` to `word2vec` to disable or enable word vector normalization.
 - Add `weight()` to access back-propagation weights.

@@ -8,7 +8,7 @@ toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>%
     tokens_remove(stopwords(), padding = FALSE) %>% 
     tokens_tolower()
 
-wov <- word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1)
+wov <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1)
 
 test_that("analogy works", {
     

@@ -14,15 +14,15 @@ as.matrix.textmodel_docvector <- function(x, ...){
 #'   \item{values}{a matrix for document vectors.}
 #'   \item{call}{the command used to execute the function.}
 #' @export
-doc2vec <- function(x, model = NULL, ...) {
-    UseMethod("doc2vec")
+textmodel_doc2vec <- function(x, model = NULL, ...) {
+    UseMethod("textmodel_doc2vec")
 }
 
 #' @export
-#' @method doc2vec tokens
-doc2vec.tokens <- function(x, model = NULL, ...) {
+#' @method textmodel_doc2vec tokens
+textmodel_doc2vec.tokens <- function(x, model = NULL, ...) {
     if (is.null(model)) {
-        model <- word2vec(x, ...)
+        model <- textmodel_word2vec(x, ...)
     } else {
         if (!identical(class(model), "textmodel_wordvector"))
             stop("The object for 'model' must be a trained textmodel_wordvector")
@@ -36,3 +36,9 @@ doc2vec.tokens <- function(x, model = NULL, ...) {
     result$call <- try(match.call(sys.function(-1), call = sys.call(-1)), silent = TRUE)
     return(result)
 }
+
+doc2vec <- function(...) {
+    .Deprecated("textmodel_doc2vec")
+    textmodel_doc2vec(...)
+}
+

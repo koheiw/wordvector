@@ -34,18 +34,18 @@ test_that("Skip-gram models are similar", {
     skip_on_cran()
     set.seed(1234)
     
-    wdv <- wordvector::word2vec(toks, dim = 100, iter = 20, min_count = 0, type = "skip-gram",
-                                verbose = FALSE, sample = 0)
-    w2v <- word2vec::word2vec(lis, dim = 100, iter = 20, min_count = 0, type = "skip-gram",
-                              verbose = FALSE, threads = 2, sample = 0)
+    wdv <- textmodel_word2vec(toks, dim = 100, iter = 20, min_count = 0, type = "skip-gram",
+                              verbose = FALSE, sample = 0)
+    w2v <- word2vec(lis, dim = 100, iter = 20, min_count = 0, type = "skip-gram",
+                    verbose = FALSE, threads = 2, sample = 0)
     
     expect_true(all(
         correlation(proxyC::simil(as.matrix(wdv)[feat,]),
                     proxyC::simil(as.matrix(w2v)[feat,])) > 0.8
     ))
     
-    dov <- as.matrix(wordvector::doc2vec(toks_grp, wdv))
-    d2v <- word2vec::doc2vec(w2v, newdata = sapply(lis_grp, paste, collapse = " "))
+    dov <- as.matrix(textmodel_doc2vec(toks_grp, wdv))
+    d2v <- doc2vec(w2v, newdata = sapply(lis_grp, paste, collapse = " "))
     
     expect_true(all(
         correlation(proxyC::simil(dov[doc,]), 
@@ -57,17 +57,17 @@ test_that("CBOW models are similar", {
     skip_on_cran()
     set.seed(1234)
     
-    wdv <- wordvector::word2vec(toks, dim = 100, iter = 20, min_count = 0, type = "cbow",
-                                verbose = FALSE, sample = 0)
-    w2v <- word2vec::word2vec(lis, dim = 100, iter = 20, min_count = 0, type = "cbow",
+    wdv <- textmodel_word2vec(toks, dim = 100, iter = 20, min_count = 0, type = "cbow",
+                              verbose = FALSE, sample = 0)
+    w2v <- word2vec(lis, dim = 100, iter = 20, min_count = 0, type = "cbow",
                               verbose = FALSE, threads = 2, sample = 0)
     expect_true(all(
         correlation(proxyC::simil(as.matrix(wdv)[feat,]),
                     proxyC::simil(as.matrix(w2v)[feat,])) > 0.8
     ))
     
-    dov <- as.matrix(wordvector::doc2vec(toks_grp, wdv))
-    d2v <- word2vec::doc2vec(w2v, newdata = sapply(lis_grp, paste, collapse = " "))
+    dov <- as.matrix(textmodel_doc2vec(toks_grp, wdv))
+    d2v <- doc2vec(w2v, newdata = sapply(lis_grp, paste, collapse = " "))
     
     expect_true(all(
         correlation(proxyC::simil(dov[doc,]), 

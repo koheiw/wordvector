@@ -36,19 +36,22 @@
 #'    tokens_tolower()
 #' 
 #' # train LSA
-#' lsa <- lsa(toks, dim = 50, min_count = 5, verbose = TRUE, )
+#' lsa <- textmodel_lsa(toks, dim = 50, min_count = 5, verbose = TRUE)
 #' head(similarity(lsa, c("berlin", "germany", "france"), mode = "word"))
 #' analogy(lsa, ~ berlin - germany + france)
 #' }
-lsa <- function(x, dim = 50, min_count = 5L, engine = c("RSpectra", "irlba", "rsvd"), 
-                weight = "count", verbose = FALSE, ...) {
-    UseMethod("lsa")   
+textmodel_lsa <- function(x, dim = 50, min_count = 5L, 
+                          engine = c("RSpectra", "irlba", "rsvd"), 
+                          weight = "count", verbose = FALSE, ...) {
+    UseMethod("textmodel_lsa")   
 }
 
 #' @import quanteda
 #' @export
-lsa.tokens <- function(x, dim = 50L, min_count = 5L, engine = c("RSpectra", "irlba", "rsvd"), 
-                       weight = "count", verbose = FALSE, ...) {
+#' @method textmodel_lsa tokens
+textmodel_lsa.tokens <- function(x, dim = 50L, min_count = 5L, 
+                                 engine = c("RSpectra", "irlba", "rsvd"), 
+                                 weight = "count", verbose = FALSE, ...) {
     
     engine <- match.arg(engine)
     dim <- check_integer(dim, min = 2)
@@ -105,3 +108,9 @@ get_svd <- function(x, k, engine, weight = "count", reduce = FALSE, ...) {
     }
     return(result)
 }
+
+lsa <- function(...) {
+    .Deprecated("textmodel_lsa")
+    textmodel_lsa(...)
+}
+
