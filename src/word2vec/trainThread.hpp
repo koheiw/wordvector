@@ -60,7 +60,7 @@ namespace w2v {
         std::uniform_int_distribution<short> m_rndWindow;
         std::unique_ptr<downSampling_t> m_downSampling;
         std::unique_ptr<nsDistribution_t> m_nsDistribution;
-        std::unique_ptr<std::vector<float>> m_hiddenLayerVals;
+        std::unique_ptr<std::vector<float>> m_hiddenLayerValues;
         std::unique_ptr<std::vector<float>> m_hiddenLayerErrors;
         std::unique_ptr<std::thread> m_thread;
 
