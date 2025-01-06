@@ -62,7 +62,7 @@ toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>%
     tokens_tolower()
 
 # Train word2vec
-wdv <- word2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose = TRUE)
+wdv <- textmodel_word2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose = TRUE)
 ```
 
 ### Similarity between word vectors
