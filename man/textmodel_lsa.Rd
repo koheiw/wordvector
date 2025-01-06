@@ -2,7 +2,6 @@
 % Please edit documentation in R/lsa.R
 \name{textmodel_lsa}
 \alias{textmodel_lsa}
-\alias{lsa}
 \title{Latent Semantic Analysis model}
 \usage{
 textmodel_lsa(
@@ -14,8 +13,6 @@ textmodel_lsa(
   verbose = FALSE,
   ...
 )
-
-lsa(...)
 }
 \arguments{
 \item{x}{a \link[quanteda:tokens]{quanteda::tokens} object.}

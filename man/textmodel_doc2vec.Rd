@@ -2,12 +2,9 @@
 % Please edit documentation in R/doc2vec.R
 \name{textmodel_doc2vec}
 \alias{textmodel_doc2vec}
-\alias{doc2vec}
 \title{Create distributed representation of documents}
 \usage{
 textmodel_doc2vec(x, model = NULL, ...)
-
-doc2vec(...)
 }
 \arguments{
 \item{x}{a \link[quanteda:tokens]{quanteda::tokens} object.}

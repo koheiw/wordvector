@@ -2,7 +2,6 @@
 % Please edit documentation in R/word2vec.R
 \name{textmodel_word2vec}
 \alias{textmodel_word2vec}
-\alias{word2vec}
 \title{Word2vec model}
 \usage{
 textmodel_word2vec(
@@ -20,8 +19,6 @@ textmodel_word2vec(
   verbose = FALSE,
   ...
 )
-
-word2vec(...)
 }
 \arguments{
 \item{x}{a \link[quanteda:tokens]{quanteda::tokens} object.}
