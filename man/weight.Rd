@@ -4,7 +4,7 @@
 \alias{weight}
 \title{[experimental] Extract word vector weights}
 \usage{
-weight(x, mode = c("value", "word"))
+weight(x, mode = c("words", "values"))
 }
 \arguments{
 \item{x}{a \code{textmodel_wordvector} object.}
@@ -13,7 +13,7 @@ weight(x, mode = c("value", "word"))
 }
 \value{
 a \code{matrix} of word vector weights when \code{mode = "value"} or of
-words sorted in descending order by the weights when \verb{mode = "word}.
+words sorted in descending order by the weights when \code{mode = "word"}.
 }
 \description{
 [experimental] Extract word vector weights
