@@ -12,91 +12,44 @@ wov <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1)
 
 test_that("analogy works", {
     
-    ana1 <- analogy(wov, ~ us, exclude = FALSE)
-    expect_true(ana1$word[1] == "us")
-    expect_true(ana1$similarity[1] == 1.0)
-    expect_identical(attr(ana1, "weight"), 
-                     c("us" = 1))
-    
-    ana2 <- analogy(wov, ~ people - us, exclude = FALSE)
-    expect_true(ana2$word[1] != "us")
-    expect_true(ana2$similarity[1] < 1.0)
-    expect_identical(attr(ana2, "weight"), 
-                     c("people" = 1, "us" = -1))
-    
-    ana3 <- analogy(wov, ~ us, exclude = TRUE)
-    expect_true(ana3$word[1] != "us")
-    expect_true(ana3$similarity[1] < 1.0)
-    expect_identical(attr(ana3, "weight"), 
-                     c("us" = 1))
-    
-    expect_equivalent(
-        analogy(wov, ~ people, exclude = FALSE),
-        analogy(wov, "people", exclude = FALSE)
+    expect_equal(
+        analogy(~ us),
+        c("us" = 1)
     )
     
-    expect_equivalent(
-        analogy(wov, ~ people - us, exclude = FALSE),
-        analogy(wov, c("people" = 1, "us" = -1), exclude = FALSE)
+    expect_equal(
+        analogy(~ us),
+        c("us" = 1)
+    )
+    
+    expect_equal(
+        analogy(~ people - us),
+        c("people" = 1, "us" = -1)
     )
     
     expect_error(
-        analogy(wov, c(1, -1), exclude = FALSE),
-        "formula must be named"
-    )
-    
-    expect_warning(
-        analogy(wov, ~ xxxx, exclude = FALSE),
-        '"xxxx" is not found'
-    )
-    expect_true(
-        suppressWarnings(
-            is.data.frame(analogy(wov, ~ xxxx, exclude = FALSE))
-        )
-    )
-    expect_warning(
-        analogy(wov, ~ xxxx, exclude = FALSE),
-        '"xxxx" is not found'
-    )
-    expect_true(
-        suppressWarnings(
-            is.data.frame(analogy(wov, ~ xxxx, exclude = FALSE))
-        )
-    )
-    
-    # different formulas
-    expect_equal(
-        attr(analogy(wov, ~ us, exclude = FALSE), "weight"),
-        c("us" = 1.0)
-    )
-    expect_equal(
-        attr(analogy(wov, ~ -us+people, exclude = FALSE), "weight"),
-        c("us" = -1.0, "people" = 1.0)
-    )
-    expect_equal(
-        attr(analogy(wov, ~ +people - us, exclude = FALSE), "weight"),
-        c("people" = 1.0, "us" = -1.0)
+        analogy("people"),
+        "formula must be a formula object"
     )
 })
 
 test_that("similarity works", {
     
-    
-    sim1 <- similarity(wov, "us", mode = "value")
+    sim1 <- similarity(wov, "us", mode = "values")
     expect_true(is.matrix(sim1))
     expect_identical(
         dimnames(sim1),
         list(names(wov$frequency), "us")
     )
     
-    sim2 <- similarity(wov, c("us", "people"), mode = "value")
+    sim2 <- similarity(wov, c("us", "people"), mode = "values")
     expect_true(is.matrix(sim2))
     expect_identical(
         dimnames(sim2),
         list(names(wov$frequency), c("us", "people"))
     )
     
-    sim3 <- similarity(wov, "us", mode = "word")
+    sim3 <- similarity(wov, "us", mode = "words")
     expect_true(is.matrix(sim3))
     expect_identical(
         sim3[1,],
@@ -107,7 +60,7 @@ test_that("similarity works", {
         c(length(wov$frequency), 1L)
     )
     
-    sim4 <- similarity(wov, c("us", "people"), mode = "word")
+    sim4 <- similarity(wov, c("us", "people"), mode = "words")
     expect_true(is.matrix(sim4))
     expect_identical(
         sim4[1,],
@@ -118,22 +71,43 @@ test_that("similarity works", {
         c(length(wov$frequency), 2L)
     )
     expect_warning(
-        similarity(wov, c("xx", "yyy", "us"), mode = "value"),
+        similarity(wov, c("xx", "yyy", "us"), mode = "values"),
         '"xx", "yyy" are not found'
     )
     expect_true(
         suppressWarnings(
-        is.matrix(similarity(wov, c("xx", "yyy"), mode = "value"))
+        is.matrix(similarity(wov, c("xx", "yyy"), mode = "values"))
         )
     )
     expect_warning(
-        similarity(wov, c("xx", "yyy", "us"), mode = "word"),
+        similarity(wov, c("xx", "yyy", "us"), mode = "words"),
         '"xx", "yyy" are not found'
     )
     expect_true(
         suppressWarnings(
-            is.matrix(similarity(wov, c("xx", "yyy"), mode = "word"))
+            is.matrix(similarity(wov, c("xx", "yyy"), mode = "words"))
         )
+    )
+    
+    sim5 <- similarity(wov, c("us" = 1, "people" = -1), mode = "values")
+    expect_equal(ncol(sim5), 1)
+    expect_true(is.matrix(sim5))
+    expect_identical(
+        dimnames(sim5),
+        list(names(wov$frequency), NULL)
+    )
+    
+    sim6 <- similarity(wov, c("us" = 1, "people" = -1), mode = "words")
+    expect_equal(ncol(sim6), 1)
+    expect_true(is.matrix(sim6))
+    expect_identical(
+        dimnames(sim6),
+        NULL
+    )
+    
+    expect_error(
+        similarity(wov, c(1, -1), mode = "words"),
+        "words must be named"
     )
 })
 
