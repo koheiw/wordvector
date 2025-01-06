@@ -37,8 +37,9 @@
 #' 
 #' # train LSA
 #' lsa <- textmodel_lsa(toks, dim = 50, min_count = 5, verbose = TRUE)
-#' head(similarity(lsa, c("berlin", "germany", "france"), mode = "word"))
-#' analogy(lsa, ~ berlin - germany + france)
+#' head(similarity(lsa, c("berlin", "germany", "france"), mode = "words"))
+#' head(similarity(lsa, analogy(~ berlin - germany + france)))
+#' head(similarity(lsa, c("berlin" = 1, "germany" = -1, "france" = 1), mode = "values"))
 #' }
 textmodel_lsa <- function(x, dim = 50, min_count = 5L, 
                           engine = c("RSpectra", "irlba", "rsvd"), 

@@ -89,8 +89,9 @@ toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) \%>\%
 
 # train word2vec
 w2v <- textmodel_word2vec(toks, dim = 50, type = "cbow", min_count = 5, sample = 0.001)
-head(similarity(w2v, c("berlin", "germany", "france"), mode = "word"))
-head(similarity(w2v, c("berlin" = 1, "germany" = -1, "france" = 1), mode = "word"))
+head(similarity(w2v, c("berlin", "germany", "france"), mode = "words"))
+head(similarity(w2v, analogy(~ berlin - germany + france), mode = "words"))
+head(similarity(w2v, c("berlin" = 1, "germany" = -1, "france" = 1), mode = "values"))
 }
 }
 \references{

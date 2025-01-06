@@ -70,7 +70,7 @@ wdv <- textmodel_word2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose 
 `similarity()` computes cosine similarity between word vectors.
 
 ```{r}
-head(similarity(wdv, c("amazon", "forests", "obama", "america", "afghanistan"), mode = "word"), n = 10)
+head(similarity(wdv, c("amazon", "forests", "obama", "america", "afghanistan"), mode = "word"))
 ```
 
 ### Arithmetic operations of word vectors
@@ -78,21 +78,25 @@ head(similarity(wdv, c("amazon", "forests", "obama", "america", "afghanistan"), 
 `analogy()` offers interface for arithmetic operations of word vectors. 
 
 ```{r}
-analogy(wdv, ~ amazon - forests) # What is Amazon without forests?
+# What is Amazon without forests?
+head(similarity(wdv, analogy(~ amazon - forests))) 
 ```
 
 ```{r}
-analogy(wdv, ~ obama - america + afghanistan) # What is for Afghanistan as Obama for America? 
+# What is for Afghanistan as Obama for America? 
+head(similarity(wdv, analogy(~ obama - america + afghanistan))) 
 ```
 
 These examples replicates analogical tasks in the original word2vec paper.
 
 ```{r}
-analogy(wdv, ~ berlin - germany + france) # What is for France as Berlin for Germany?
+# What is for France as Berlin for Germany?
+head(similarity(wdv, analogy(~ berlin - germany + france))) 
 ```
 
 ```{r}
-analogy(wdv, ~ quick - quickly + slowly) # What is for slowly as quick for quickly?
+# What is for slowly as quick for quickly?
+head(similarity(wdv, analogy(~ quick - quickly + slow)))
 ```
 
 

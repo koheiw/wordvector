@@ -21,5 +21,5 @@ words sorted in descending order by the similarity scores when \code{mode = "wor
 Compute similarity between word vectors
 }
 \seealso{
-similarity
+\code{\link[=analogy]{analogy()}}
 }

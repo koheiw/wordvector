@@ -3,7 +3,9 @@
 #' @param formula a [formula] object that defines the relationship between words 
 #'   using `+` or `-` operators.
 #' @export
-#' @seealso [similarity]
+#' @seealso [similarity()]
+#' @importFrom utils head tail
+#' @return a named character vector to be passed to [similarity()].
 #' @examples
 #' analogy(~ berlin - germany + france)
 #' analogy(~ quick - quickly + slowly)
@@ -36,12 +38,12 @@ analogy <- function(formula) {
 #' @return a `matrix` of cosine similarity scores when `mode = "values"` or of 
 #'   words sorted in descending order by the similarity scores when `mode = "words"`.
 #' @export
+#' @seealso [analogy()]
 similarity <- function(x, words, mode = c("words", "values")) {
     
     if (!identical(class(x), "textmodel_wordvector"))
         stop("x must be a textmodel_wordvector object")
-    
-    #words <- check_character(words, max_len = Inf)
+
     mode <- match.arg(mode)
     emb1 <- as.matrix(x)
     
