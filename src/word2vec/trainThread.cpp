@@ -9,14 +9,14 @@
 #include "trainThread.hpp"
 
 namespace w2v {
-    // NOTE: make m_rndWindow
+    
     trainThread_t::trainThread_t(const std::pair<std::size_t, std::size_t> &_range, 
                                  const data_t &_data) :
             m_range(_range),
             m_data(_data), m_randomGenerator(m_data.settings->random),
-            m_rndWindowShift(0, static_cast<short>((m_data.settings->window - 1))), // NOTE: to delete
+            //m_rndWindowShift(0, static_cast<short>((m_data.settings->window - 1))), // NOTE: to delete
             m_rndWindow(1, static_cast<short>((m_data.settings->window))), // NOTE: added
-            m_downSampling(), m_nsDistribution(), m_hiddenLayerVals(), m_hiddenLayerErrors(),
+            m_downSampling(), m_nsDistribution(), m_hiddenLayerValues(), m_hiddenLayerErrors(),
             m_thread() {
 
         if (!m_data.settings) {
@@ -37,7 +37,7 @@ namespace w2v {
         }
 
         m_hiddenLayerErrors.reset(new std::vector<float>(m_data.settings->size));
-        m_hiddenLayerVals.reset(new std::vector<float>(m_data.settings->size)); // not used in SG
+        m_hiddenLayerValues.reset(new std::vector<float>(m_data.settings->size)); // not used in SG
         
         if (!m_data.corpus) {
             throw std::runtime_error("corpus object is not initialized");
@@ -132,7 +132,7 @@ namespace w2v {
             return;
         for (std::size_t i = 0; i < _text.size(); ++i) {
             // hidden layers initialized with 0 values
-            std::memset(m_hiddenLayerVals->data(), 0, m_hiddenLayerVals->size() * sizeof(float));
+            std::memset(m_hiddenLayerValues->data(), 0, m_hiddenLayerValues->size() * sizeof(float));
             std::memset(m_hiddenLayerErrors->data(), 0, m_hiddenLayerErrors->size() * sizeof(float));
 
             int window = m_rndWindow(m_randomGenerator);
@@ -143,7 +143,7 @@ namespace w2v {
                 if (j == i)
                     continue;
                 for (std::size_t k = 0; k < K; ++k) {
-                    (*m_hiddenLayerVals)[k] += (*m_data.bpValues)[k + _text[j] * K];
+                    (*m_hiddenLayerValues)[k] += (*m_data.bpValues)[k + _text[j] * K];
                 }
                 cw++;
             }
@@ -151,13 +151,13 @@ namespace w2v {
             if (cw == 0)
                 continue;
             for (std::size_t k = 0; k < K; ++k) {
-                (*m_hiddenLayerVals)[k] /= cw;
+                (*m_hiddenLayerValues)[k] /= cw;
             }
             
             if (m_data.settings->withHS) {
-                hierarchicalSoftmax(_text[i], *m_hiddenLayerErrors, *m_hiddenLayerVals, 0);
+                hierarchicalSoftmax(_text[i], *m_hiddenLayerErrors, *m_hiddenLayerValues, 0);
             } else {
-                negativeSampling(_text[i], *m_hiddenLayerErrors, *m_hiddenLayerVals, 0);
+                negativeSampling(_text[i], *m_hiddenLayerErrors, *m_hiddenLayerValues, 0);
             }
             
             // hidden -> in
@@ -201,20 +201,20 @@ namespace w2v {
         }
     }
 
-    inline void trainThread_t::hierarchicalSoftmax(std::size_t _index,
-                                                   std::vector<float> &_hiddenLayer,
-                                                   std::vector<float> &_trainLayer,
-                                                   std::size_t _trainLayerShift) noexcept {
+    inline void trainThread_t::hierarchicalSoftmax(std::size_t _word,
+                                                   std::vector<float> &_hiddenLayerErrors,
+                                                   std::vector<float> &_hiddenLayerValues,
+                                                   std::size_t _hiddenLayerShift) noexcept {
         
         std::size_t K = m_data.settings->size;
-        auto huffmanData = m_data.huffmanTree->huffmanData(_index);
+        auto huffmanData = m_data.huffmanTree->huffmanData(_word);
         for (std::size_t i = 0; i < huffmanData->huffmanCode.size(); ++i) {
             auto shift = huffmanData->huffmanPoint[i] * K;
             
             // propagate hidden -> output
             float f = 0.0f;
             for (std::size_t k = 0; k < K; ++k) {
-                f += _trainLayer[k + _trainLayerShift] * (*m_data.bpWeights)[k + shift];
+                f += _hiddenLayerValues[k + _hiddenLayerShift] * (*m_data.bpWeights)[k + shift];
             }
             float prob = 0;
             if (f < -m_data.settings->expValueMax) {
@@ -232,19 +232,19 @@ namespace w2v {
             auto gxa = (1.0f - static_cast<float>(huffmanData->huffmanCode[i]) - prob) * (*m_data.alpha);
             // propagate errors output -> hidden
             for (std::size_t k = 0; k < K; ++k) {
-                _hiddenLayer[k] += gxa * (*m_data.bpWeights)[k + shift];
+                _hiddenLayerErrors[k] += gxa * (*m_data.bpWeights)[k + shift];
             }
             // learn weights hidden -> output
             for (std::size_t k = 0; k < K; ++k) {
-                (*m_data.bpWeights)[k + shift] += gxa * _trainLayer[k + _trainLayerShift];
+                (*m_data.bpWeights)[k + shift] += gxa * _hiddenLayerValues[k + _hiddenLayerShift];
             }
         }
     }
 
-    inline void trainThread_t::negativeSampling(std::size_t _index,
-                                                std::vector<float> &_hiddenLayer,
-                                                std::vector<float> &_trainLayer,
-                                                std::size_t _trainLayerShift) noexcept {
+    inline void trainThread_t::negativeSampling(std::size_t _word,
+                                                std::vector<float> &_hiddenLayerErrors,
+                                                std::vector<float> &_hiddenLayerValues,
+                                                std::size_t _hiddenLayerShift) noexcept {
         
         std::size_t K = m_data.settings->size;
         for (std::size_t i = 0; i < static_cast<std::size_t>(m_data.settings->negative) + 1; ++i) {
@@ -252,12 +252,12 @@ namespace w2v {
             bool label = false;
             if (i == 0) {
                 // positive case
-                target = _index;
+                target = _word;
                 label = true;
             } else {
                 // negative case
                 target = (*m_nsDistribution)(m_randomGenerator);
-                if (target == _index) {
+                if (target == _word) {
                     continue;
                 }
             }
@@ -265,9 +265,9 @@ namespace w2v {
             
             // propagate hidden -> output
             float f = 0.0f;
-            // predict likelihood of _index using logistic regression
+            // predict likelihood of _word using logistic regression
             for (std::size_t k = 0; k < K; ++k) {
-                f += _trainLayer[k + _trainLayerShift] * (*m_data.bpWeights)[k + shift];
+                f += _hiddenLayerValues[k + _hiddenLayerShift] * (*m_data.bpWeights)[k + shift];
             }
             //std::cout << f << "\n";
             float prob = 0;
@@ -282,14 +282,14 @@ namespace w2v {
             
             // compute gradient x alpha
             auto gxa = (static_cast<float>(label) - prob) * (*m_data.alpha); // gxa > 0 in the positive case
-            //std::cout << i << ": " << _index << ", " <<  target << ", " << gxa << "\n";
+            //std::cout << i << ": " << _word << ", " <<  target << ", " << gxa << "\n";
             // propagate errors output -> hidden
             for (std::size_t k = 0; k < K; ++k) {
-                _hiddenLayer[k] += gxa * (*m_data.bpWeights)[k + shift]; // added to bpValues
+                _hiddenLayerErrors[k] += gxa * (*m_data.bpWeights)[k + shift]; // added to bpValues
             }
             // learn weights hidden -> output
-            for (std::size_t k = 0; k < m_data.settings->size; ++k) {
-                (*m_data.bpWeights)[k + shift] += gxa * _trainLayer[k + _trainLayerShift];
+            for (std::size_t k = 0; k < K; ++k) {
+                (*m_data.bpWeights)[k + shift] += gxa * _hiddenLayerValues[k + _hiddenLayerShift];
             }
         }
     }
