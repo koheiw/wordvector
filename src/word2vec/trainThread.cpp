@@ -14,7 +14,7 @@ namespace w2v {
                                  const data_t &_data) :
             m_range(_range),
             m_data(_data), m_randomGenerator(m_data.settings->random),
-            m_rndWindowShift(0, static_cast<short>((m_data.settings->window - 1))), // NOTE: to delete
+            //m_rndWindowShift(0, static_cast<short>((m_data.settings->window - 1))), // NOTE: to delete
             m_rndWindow(1, static_cast<short>((m_data.settings->window))), // NOTE: added
             m_downSampling(), m_nsDistribution(), m_hiddenLayerValues(), m_hiddenLayerErrors(),
             m_thread() {
