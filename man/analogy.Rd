@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{analogy}
 \alias{analogy}
-\title{Convert a formula to a named character vector}
+\title{Convert formula to named character vector}
 \usage{
 analogy(formula)
 }
@@ -14,7 +14,7 @@ using \code{+} or \code{-} operators.}
 a named character vector to be passed to \code{\link[=similarity]{similarity()}}.
 }
 \description{
-Convert a formula to a named character vector
+Convert a formula to a named character vector in analogy tasks.
 }
 \examples{
 analogy(~ berlin - germany + france)

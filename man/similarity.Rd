@@ -18,7 +18,7 @@ a \code{matrix} of cosine similarity scores when \code{mode = "values"} or of
 words sorted in descending order by the similarity scores when \code{mode = "words"}.
 }
 \description{
-Compute similarity between word vectors
+Compute cosine similarity between word vectors for selected words.
 }
 \seealso{
 \code{\link[=analogy]{analogy()}}

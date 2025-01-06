@@ -1,5 +1,6 @@
-#' Convert a formula to a named character vector
+#' Convert formula to named character vector
 #' 
+#' Convert a formula to a named character vector in analogy tasks.
 #' @param formula a [formula] object that defines the relationship between words 
 #'   using `+` or `-` operators.
 #' @export
@@ -32,6 +33,7 @@ analogy <- function(formula) {
 
 #' Compute similarity between word vectors
 #' 
+#' Compute cosine similarity between word vectors for selected words.
 #' @param x a `textmodel_wordvector` object.
 #' @param words words for which similarity is computed.
 #' @param mode specify the type of resulting object.
