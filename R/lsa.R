@@ -109,8 +109,6 @@ get_svd <- function(x, k, engine, weight = "count", reduce = FALSE, ...) {
     return(result)
 }
 
-#' @rdname textmodel_lsa
-#' @export
 lsa <- function(...) {
     .Deprecated("textmodel_lsa")
     textmodel_lsa(...)

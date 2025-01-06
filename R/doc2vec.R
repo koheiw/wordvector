@@ -37,8 +37,6 @@ textmodel_doc2vec.tokens <- function(x, model = NULL, ...) {
     return(result)
 }
 
-#' @rdname textmodel_doc2vec
-#' @export
 doc2vec <- function(...) {
     .Deprecated("textmodel_doc2vec")
     textmodel_doc2vec(...)

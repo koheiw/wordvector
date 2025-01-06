@@ -110,8 +110,6 @@ textmodel_word2vec.tokens <- function(x, dim = 50L, type = c("cbow", "skip-gram"
     return(result)
 }
 
-#' @rdname textmodel_word2vec
-#' @export
 word2vec <- function(...) {
     .Deprecated("textmodel_word2vec")
     textmodel_word2vec(...)
