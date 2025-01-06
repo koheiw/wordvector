@@ -96,7 +96,7 @@ head(similarity(wdv, analogy(~ berlin - germany + france)))
 
 ```{r}
 # What is for slowly as quick for quickly?
-head(similarity(wdv, analogy(~ quick - quickly + slow)))
+head(similarity(wdv, analogy(~ quick - quickly + slowly)))
 ```
 
 

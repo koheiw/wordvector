@@ -65,16 +65,16 @@ wdv <- textmodel_word2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose 
 ##  ...using 16 threads for distributed computing
 ##  ...initializing
 ##  ...negative sampling in 10 iterations
-##  ......iteration 1 elapsed time: 4.02 seconds (alpha: 0.0467)
-##  ......iteration 2 elapsed time: 7.82 seconds (alpha: 0.0435)
-##  ......iteration 3 elapsed time: 11.81 seconds (alpha: 0.0402)
-##  ......iteration 4 elapsed time: 16.00 seconds (alpha: 0.0369)
-##  ......iteration 5 elapsed time: 20.04 seconds (alpha: 0.0337)
-##  ......iteration 6 elapsed time: 24.02 seconds (alpha: 0.0305)
-##  ......iteration 7 elapsed time: 28.04 seconds (alpha: 0.0273)
-##  ......iteration 8 elapsed time: 32.09 seconds (alpha: 0.0242)
-##  ......iteration 9 elapsed time: 36.21 seconds (alpha: 0.0210)
-##  ......iteration 10 elapsed time: 40.38 seconds (alpha: 0.0178)
+##  ......iteration 1 elapsed time: 3.69 seconds (alpha: 0.0470)
+##  ......iteration 2 elapsed time: 7.58 seconds (alpha: 0.0440)
+##  ......iteration 3 elapsed time: 11.33 seconds (alpha: 0.0409)
+##  ......iteration 4 elapsed time: 15.14 seconds (alpha: 0.0379)
+##  ......iteration 5 elapsed time: 18.98 seconds (alpha: 0.0349)
+##  ......iteration 6 elapsed time: 22.79 seconds (alpha: 0.0319)
+##  ......iteration 7 elapsed time: 26.62 seconds (alpha: 0.0288)
+##  ......iteration 8 elapsed time: 30.41 seconds (alpha: 0.0258)
+##  ......iteration 9 elapsed time: 34.29 seconds (alpha: 0.0226)
+##  ......iteration 10 elapsed time: 38.19 seconds (alpha: 0.0195)
 ##  ...normalizing vectors
 ##  ...complete
 ```
@@ -85,20 +85,13 @@ wdv <- textmodel_word2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose 
 
 ``` r
 head(similarity(wdv, c("amazon", "forests", "obama", "america", "afghanistan"), mode = "word"))
-##      amazon        forests       obama            america          
-## [1,] "amazon"      "forests"     "obama"          "america"        
-## [2,] "rainforest"  "herds"       "barack"         "africa"         
-## [3,] "yasuni"      "grasslands"  "biden"          "dakota"         
-## [4,] "parque"      "wetlands"    "hagel"          "america-focused"
-## [5,] "plantations" "freshwater"  "kerry"          "american"       
-## [6,] "clams"       "rainforests" "administration" "palmerston"     
-##      afghanistan  
-## [1,] "afghanistan"
-## [2,] "afghan"     
-## [3,] "taliban"    
-## [4,] "kabul"      
-## [5,] "pakistan"   
-## [6,] "afghans"
+##      amazon       forests         obama    america    afghanistan  
+## [1,] "amazon"     "forests"       "obama"  "america"  "afghanistan"
+## [2,] "rainforest" "rainforest"    "barack" "africa"   "afghan"     
+## [3,] "gorges"     "herds"         "hagel"  "american" "kabul"      
+## [4,] "ranches"    "wetlands"      "rodham" "dakota"   "taliban"    
+## [5,] "ranching"   "farmland"      "kerry"  "americas" "pakistan"   
+## [6,] "re-grown"   "deforestation" "biden"  "carolina" "afghans"
 ```
 
 ### Arithmetic operations of word vectors
@@ -110,23 +103,23 @@ head(similarity(wdv, c("amazon", "forests", "obama", "america", "afghanistan"), 
 head(similarity(wdv, analogy(~ amazon - forests))) 
 ##      [,1]          
 ## [1,] "smash-hit"   
-## [2,] "boehmermann" 
-## [3,] "nbcuniversal"
-## [4,] "univision"   
-## [5,] "gawker"      
-## [6,] "mvs"
+## [2,] "pbs"         
+## [3,] "telephony"   
+## [4,] "nbcuniversal"
+## [5,] "univision"   
+## [6,] "iliad"
 ```
 
 ``` r
 # What is for Afghanistan as Obama for America? 
 head(similarity(wdv, analogy(~ obama - america + afghanistan))) 
 ##      [,1]         
-## [1,] "afghanistan"
+## [1,] "karzai"     
 ## [2,] "taliban"    
-## [3,] "obama"      
-## [4,] "karzai"     
-## [5,] "afghan"     
-## [6,] "pentagon"
+## [3,] "hamid"      
+## [4,] "afghanistan"
+## [5,] "obama"      
+## [6,] "afghan"
 ```
 
 These examples replicates analogical tasks in the original word2vec
@@ -138,20 +131,20 @@ head(similarity(wdv, analogy(~ berlin - germany + france)))
 ##      [,1]        
 ## [1,] "paris"     
 ## [2,] "berlin"    
-## [3,] "brussels"  
-## [4,] "amsterdam" 
+## [3,] "amsterdam" 
+## [4,] "brussels"  
 ## [5,] "copenhagen"
 ## [6,] "stockholm"
 ```
 
 ``` r
 # What is for slowly as quick for quickly?
-head(similarity(wdv, analogy(~ quick - quickly + slow)))
-##      [,1]      
-## [1,] "quick"   
-## [2,] "slow"    
-## [3,] "speedier"
-## [4,] "swift"   
-## [5,] "speedy"  
-## [6,] "spur"
+head(similarity(wdv, analogy(~ quick - quickly + slowly)))
+##      [,1]         
+## [1,] "slow"       
+## [2,] "sideways"   
+## [3,] "slowly"     
+## [4,] "uneven"     
+## [5,] "unstoppable"
+## [6,] "quick"
 ```

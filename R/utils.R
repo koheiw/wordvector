@@ -39,6 +39,8 @@ analogy <- function(formula) {
 #' @param mode specify the type of resulting object.
 #' @return a `matrix` of cosine similarity scores when `mode = "values"` or of 
 #'   words sorted in descending order by the similarity scores when `mode = "words"`.
+#'   When `words` is a named numeric vector, word vectors are weighted and summed 
+#'   before computing similarity scores.
 #' @export
 #' @seealso [analogy()]
 similarity <- function(x, words, mode = c("words", "values")) {

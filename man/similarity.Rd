@@ -16,6 +16,8 @@ similarity(x, words, mode = c("words", "values"))
 \value{
 a \code{matrix} of cosine similarity scores when \code{mode = "values"} or of
 words sorted in descending order by the similarity scores when \code{mode = "words"}.
+When \code{words} is a named numeric vector, word vectors are weighted and summed
+before computing similarity scores.
 }
 \description{
 Compute cosine similarity between word vectors for selected words.

@@ -59,9 +59,11 @@ toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) \%>\%
 
 # train LSA
 lsa <- textmodel_lsa(toks, dim = 50, min_count = 5, verbose = TRUE)
+
+# find similar words
 head(similarity(lsa, c("berlin", "germany", "france"), mode = "words"))
-head(similarity(lsa, analogy(~ berlin - germany + france)))
 head(similarity(lsa, c("berlin" = 1, "germany" = -1, "france" = 1), mode = "values"))
+head(similarity(lsa, analogy(~ berlin - germany + france)))
 }
 }
 \references{
