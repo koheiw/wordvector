@@ -93,7 +93,7 @@ similarity <- function(x, words, mode = c("words", "values")) {
 #' @return a `matrix` of word vector weights when `mode = "value"` or of 
 #'   words sorted in descending order by the weights when `mode = "word"`.
 #' @export
-weight <- function(x, mode = c("words", "values")) {
+weights <- function(x, mode = c("words", "values")) {
     
     if (!identical(class(x), "textmodel_wordvector"))
         stop("x must be a textmodel_wordvector object")
