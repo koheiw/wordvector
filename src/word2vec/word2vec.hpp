@@ -92,7 +92,7 @@ namespace w2v {
     protected:
         
         // word vector
-        std::vector<float> m_bpValues;
+        std::vector<float> m_pjLayerValues;
         std::vector<float> m_bpWeights;
         
         //map_t m_map;
@@ -105,7 +105,7 @@ namespace w2v {
         /// virtual destructor
         virtual ~word2vec_t() = default;
         
-        const std::vector<float> &values() {return m_bpValues;} 
+        const std::vector<float> &values() {return m_pjLayerValues;} 
         const std::vector<float> &weights() {return m_bpWeights;} 
         
         /// @returns vector size of model
@@ -124,13 +124,13 @@ namespace w2v {
             for(std::size_t i = 0; i < m_vocaburarySize; i += m_vectorSize) {
                 float ss = 0.0f;
                 for(std::size_t j = 0; j < m_vectorSize; ++j) {
-                    ss += m_bpValues[i + j] * m_bpValues[i + j];
+                    ss += m_pjLayerValues[i + j] * m_pjLayerValues[i + j];
                 }
                 if (ss <= 0.0f) 
-                    throw std::runtime_error("failed to normalize bpValues");
+                    throw std::runtime_error("failed to normalize pjLayerValues");
                 float d = std::sqrt(ss / m_vectorSize);
                 for(std::size_t j = 0; j < m_vectorSize; ++j) {
-                    m_bpValues[i + j] = m_bpValues[i + j] / d;
+                    m_pjLayerValues[i + j] = m_pjLayerValues[i + j] / d;
                 }
             }
         }

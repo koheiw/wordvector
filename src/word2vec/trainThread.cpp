@@ -144,7 +144,7 @@ namespace w2v {
                     continue;
                 auto shift = _text[j] * K;
                 for (std::size_t k = 0; k < K; ++k) {
-                    (*m_hiddenLayerValues)[k] += (*m_data.bpValues)[k + shift];
+                    (*m_hiddenLayerValues)[k] += (*m_data.pjLayerValues)[k + shift];
                 }
                 cw++;
             }
@@ -167,7 +167,7 @@ namespace w2v {
                     continue;
                 auto shift = _text[j] * K;
                 for (std::size_t k = 0; k < K; ++k) {
-                    (*m_data.bpValues)[k + shift] += (*m_hiddenLayerErrors)[k];
+                    (*m_data.pjLayerValues)[k + shift] += (*m_hiddenLayerErrors)[k];
                 }
             }
         }
@@ -192,12 +192,12 @@ namespace w2v {
                 // shift to the selected word vector in the matrix
                 auto shift = _text[j] * K;
                 if (m_data.settings->withHS) {
-                    hierarchicalSoftmax(_text[i], *m_hiddenLayerErrors, *m_data.bpValues, shift);
+                    hierarchicalSoftmax(_text[i], *m_hiddenLayerErrors, *m_data.pjLayerValues, shift);
                 } else {
-                    negativeSampling(_text[i], *m_hiddenLayerErrors, *m_data.bpValues, shift);
+                    negativeSampling(_text[i], *m_hiddenLayerErrors, *m_data.pjLayerValues, shift);
                 }
                 for (std::size_t k = 0; k < m_data.settings->size; ++k) {
-                    (*m_data.bpValues)[k + shift] += (*m_hiddenLayerErrors)[k];
+                    (*m_data.pjLayerValues)[k + shift] += (*m_hiddenLayerErrors)[k];
                 }
             }
         }
@@ -287,7 +287,7 @@ namespace w2v {
             //std::cout << i << ": " << _word << ", " <<  target << ", " << gxa << "\n";
             // propagate errors output -> hidden
             for (std::size_t k = 0; k < K; ++k) {
-                _hiddenLayerErrors[k] += gxa * (*m_data.bpWeights)[k + shift]; // added to bpValues
+                _hiddenLayerErrors[k] += gxa * (*m_data.bpWeights)[k + shift]; // added to pjLayerValues
             }
             // learn weights hidden -> output
             for (std::size_t k = 0; k < K; ++k) {
