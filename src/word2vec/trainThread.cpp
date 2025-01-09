@@ -131,7 +131,7 @@ namespace w2v {
         if (_text.size() == 0)
             return;
         for (std::size_t i = 0; i < _text.size(); ++i) {
-            // hidden layers initialized with 0 values
+            // hidden layers initialized with 0 values for each target word
             std::memset(m_hiddenLayerValues->data(), 0, m_hiddenLayerValues->size() * sizeof(float));
             std::memset(m_hiddenLayerErrors->data(), 0, m_hiddenLayerErrors->size() * sizeof(float));
 
@@ -142,8 +142,9 @@ namespace w2v {
             for (std::size_t j = from; j < to; ++j) {
                 if (j == i)
                     continue;
+                auto shift = _text[j] * K;
                 for (std::size_t k = 0; k < K; ++k) {
-                    (*m_hiddenLayerValues)[k] += (*m_data.bpValues)[k + _text[j] * K];
+                    (*m_hiddenLayerValues)[k] += (*m_data.bpValues)[k + shift];
                 }
                 cw++;
             }
@@ -164,8 +165,9 @@ namespace w2v {
             for (std::size_t j = from; j < to; ++j) {
                 if (j == i)
                     continue;
+                auto shift = _text[j] * K;
                 for (std::size_t k = 0; k < K; ++k) {
-                    (*m_data.bpValues)[k + _text[j] * K] += (*m_hiddenLayerErrors)[k];
+                    (*m_data.bpValues)[k + shift] += (*m_hiddenLayerErrors)[k];
                 }
             }
         }
@@ -184,15 +186,15 @@ namespace w2v {
                 if (j == i)
                     continue;
                 
-                // hidden layer initialized with 0 values
+                // hidden layer initialized with 0 values for each context word
                 std::memset(m_hiddenLayerErrors->data(), 0, m_hiddenLayerErrors->size() * sizeof(float));
                 
                 // shift to the selected word vector in the matrix
                 auto shift = _text[j] * K;
                 if (m_data.settings->withHS) {
-                    hierarchicalSoftmax(_text[i], (*m_hiddenLayerErrors), (*m_data.bpValues), shift);
+                    hierarchicalSoftmax(_text[i], *m_hiddenLayerErrors, *m_data.bpValues, shift);
                 } else {
-                    negativeSampling(_text[i], (*m_hiddenLayerErrors), (*m_data.bpValues), shift);
+                    negativeSampling(_text[i], *m_hiddenLayerErrors, *m_data.bpValues, shift);
                 }
                 for (std::size_t k = 0; k < m_data.settings->size; ++k) {
                     (*m_data.bpValues)[k + shift] += (*m_hiddenLayerErrors)[k];
