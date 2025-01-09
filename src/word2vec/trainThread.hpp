@@ -42,7 +42,7 @@ namespace w2v {
             //std::shared_ptr<vocabulary_t> vocabulary; ///< words data
             std::shared_ptr<corpus_t> corpus; ///< train data 
             //std::shared_ptr<fileMapper_t> fileMapper; /// NOTE: remove
-            std::shared_ptr<std::vector<float>> bpValues; ///< back propagation values
+            std::shared_ptr<std::vector<float>> pjLayerValues; ///< projection layer values
             std::shared_ptr<std::vector<float>> bpWeights; ///< back propagation weights
             std::shared_ptr<std::vector<float>> expTable; ///< exp(x) / (exp(x) + 1) values lookup table
             std::shared_ptr<huffmanTree_t> huffmanTree; ///< Huffman tree used by hierarchical softmax

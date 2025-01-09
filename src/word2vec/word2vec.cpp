@@ -40,9 +40,9 @@ namespace w2v {
             
             // initialize variables
             data.bpWeights.reset(new std::vector<float>(matrixSize, 0.0f));
-            data.bpValues.reset(new std::vector<float>(matrixSize, 0.0f));
+            data.pjLayerValues.reset(new std::vector<float>(matrixSize, 0.0f));
             std::uniform_real_distribution<float> rndMatrixInitializer(-0.005f, 0.005f);
-            std::generate((*data.bpValues).begin(), (*data.bpValues).end(), [&]() {
+            std::generate((*data.pjLayerValues).begin(), (*data.pjLayerValues).end(), [&]() {
                 return rndMatrixInitializer(randomGenerator);
             });
             data.expTable.reset(new std::vector<float>(settings->expTableSize));
@@ -107,7 +107,7 @@ namespace w2v {
             // }
             // std::cout << "\n";
             
-            m_bpValues = *data.bpValues;
+            m_pjLayerValues = *data.pjLayerValues;
             m_bpWeights = *data.bpWeights;
             
             return true;
