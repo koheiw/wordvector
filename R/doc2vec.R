@@ -31,8 +31,10 @@ textmodel_doc2vec.tokens <- function(x, model = NULL, ...) {
     result <- model
     wov <- as.matrix(model)
     dfmt <- dfm_match(dfm(x, remove_padding = TRUE), rownames(wov))
+    empty <- rowSums(dfmt) == 0
     dov <- Matrix::tcrossprod(dfmt, t(wov)) # NOTE: consider using proxyC::prod
     result$values <- dov / sqrt(Matrix::rowSums(dov ^ 2) / ncol(dov))
+    result$values[empty,] <- 0
     class(result) <- "textmodel_docvector"
     result$call <- try(match.call(sys.function(-1), call = sys.call(-1)), silent = TRUE)
     return(result)

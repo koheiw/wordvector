@@ -182,3 +182,10 @@ test_that("textmodel_word2vec is robust", {
   
 })  
 
+test_that("textmodel_word2doc returns zero for emptry documents (#17)", {
+    toks <- tokens(c("Citizens of the United States", ""))
+    dov <- textmodel_doc2vec(toks, wov)
+    expect_true(all(dov$values[1,] != 0))
+    expect_true(all(dov$values[2,] == 0))
+})
+
