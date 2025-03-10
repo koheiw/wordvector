@@ -1,3 +1,8 @@
+## Changes in v0.3.0
+
+- Save docvars in the `textmodel_doc2vec` objects.
+- Set zero for empty documents in the `textmodel_doc2vec` objects. 
+
 ## Changes in v0.2.0
 
 - Rename `word2vec()`, `doc2vec()` and `lsa()` to `textmodel_word2vec()`, `textmodel_doc2vec()` and `textmodel_lsa()` respectively. 

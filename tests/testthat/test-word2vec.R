@@ -92,7 +92,8 @@ test_that("textmodel_word2vec works", {
     expect_equal(
         names(dov),
         c("values", "weights", "type", "dim", "min_count", "frequency", "window", "iter", 
-          "alpha", "use_ns", "ns_size", "sample", "normalize", "concatenator", "call", "version")
+          "alpha", "use_ns", "ns_size", "sample", "normalize", "concatenator", "docvars", 
+          "call", "version")
     )
     
     # docvector without model
@@ -115,7 +116,8 @@ test_that("textmodel_word2vec works", {
     expect_equal(
         names(dov_nm),
         c("values", "weights", "type", "dim", "min_count", "frequency", "window", "iter", 
-          "alpha", "use_ns", "ns_size", "sample", "normalize", "concatenator", "call", "version")
+          "alpha", "use_ns", "ns_size", "sample", "normalize", "concatenator", "docvars", 
+          "call", "version")
     )
     
 })
@@ -181,4 +183,16 @@ test_that("textmodel_word2vec is robust", {
     )
   
 })  
+
+test_that("textmodel_word2doc returns zero for emptry documents (#17)", {
+    toks <- tokens(c("Citizens of the United States", ""))
+    dov <- textmodel_doc2vec(toks, wov)
+    expect_true(all(dov$values[1,] != 0))
+    expect_true(all(dov$values[2,] == 0))
+})
+
+test_that("textmodel_word2doc has docvars (#18)", {
+    dov <- textmodel_doc2vec(toks, wov)
+    expect_identical(docvars(toks), dov$docvars)
+})
 

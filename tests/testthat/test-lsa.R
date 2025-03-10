@@ -47,7 +47,7 @@ test_that("word2vec words", {
     expect_equal(
         names(dov),
         c("values", "dim", "min_count", "frequency", "engine", "weight", 
-          "concatenator", "call", "version")
+          "concatenator", "docvars", "call", "version")
     )
     
     # docvector with model
@@ -78,7 +78,7 @@ test_that("word2vec words", {
     expect_equal(
         names(dov),
         c("values", "dim", "min_count", "frequency", "engine", "weight", 
-          "concatenator", "call", "version")
+          "concatenator", "docvars", "call", "version")
     )
     
     # docvector without model
