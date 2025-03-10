@@ -28,9 +28,10 @@ textmodel_doc2vec.tokens <- function(x, model = NULL, ...) {
         if (!identical(class(model), "textmodel_wordvector"))
             stop("The object for 'model' must be a trained textmodel_wordvector")
     }
-    result <- c(model[1:2], 
+    b <- names(model) %in% c("call", "version")
+    result <- c(model[!b], 
                 list(docvars = docvars(x)),
-                model[3:16])
+                model[b])
     wov <- as.matrix(model)
     dfmt <- dfm_match(dfm(x, remove_padding = TRUE), rownames(wov))
     empty <- rowSums(dfmt) == 0

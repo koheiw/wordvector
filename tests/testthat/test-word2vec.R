@@ -91,8 +91,9 @@ test_that("textmodel_word2vec works", {
     )
     expect_equal(
         names(dov),
-        c("values", "weights", "docvars", "type", "dim", "min_count", "frequency", "window", "iter", 
-          "alpha", "use_ns", "ns_size", "sample", "normalize", "concatenator", "call", "version")
+        c("values", "weights", "type", "dim", "min_count", "frequency", "window", "iter", 
+          "alpha", "use_ns", "ns_size", "sample", "normalize", "concatenator", "docvars", 
+          "call", "version")
     )
     
     # docvector without model
@@ -114,8 +115,9 @@ test_that("textmodel_word2vec works", {
     
     expect_equal(
         names(dov_nm),
-        c("values", "weights", "docvars", "type", "dim", "min_count", "frequency", "window", "iter", 
-          "alpha", "use_ns", "ns_size", "sample", "normalize", "concatenator", "call", "version")
+        c("values", "weights", "type", "dim", "min_count", "frequency", "window", "iter", 
+          "alpha", "use_ns", "ns_size", "sample", "normalize", "concatenator", "docvars", 
+          "call", "version")
     )
     
 })
