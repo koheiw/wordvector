@@ -33,7 +33,7 @@ analogy <- function(formula) {
 
 #' Compute similarity between word vectors
 #' 
-#' Compute cosine similarity between word vectors for selected words.
+#' Compute the cosine similarity between word vectors for selected words.
 #' @param x a `textmodel_wordvector` object.
 #' @param words words for which similarity is computed.
 #' @param mode specify the type of resulting object.
@@ -42,7 +42,7 @@ analogy <- function(formula) {
 #'   When `words` is a named numeric vector, word vectors are weighted and summed 
 #'   before computing similarity scores.
 #' @export
-#' @seealso [analogy()]
+#' @seealso [probability()]
 similarity <- function(x, words, mode = c("words", "values")) {
     
     if (!identical(class(x), "textmodel_wordvector"))
@@ -74,6 +74,65 @@ similarity <- function(x, words, mode = c("words", "values")) {
         emb2 <- emb1[names(words),, drop = FALSE]
     }
     res <- as.matrix(proxyC::simil(emb1, emb2, use_nan = TRUE))
+    if (ncol(res) == 0) {
+        res <- matrix(nrow = 0, ncol = 0)
+    } else {
+        if (mode == "words") {
+            res <- apply(res, 2, function(v) {
+                names(sort(v, decreasing = TRUE))
+            })
+        }
+    }
+    return(res)
+}
+
+#' Compute probability of words
+#'
+#' Compute the probability of words given other words.
+#' @param x a `textmodel_wordvector` object fitted with `normalize = FALSE`.
+#' @param words words for which probability is computed.
+#' @param mode specify the type of resulting object.
+#' @return a `matrix` of probability scores when `mode = "values"` or of words
+#'   sorted in descending order by the probability scores when `mode = "words"`.
+#'   When `words` is a named numeric vector, probability scores are weighted by
+#'   the  values.
+#' @export
+#' @seealso [similarity()]
+probability <- function(x, words, mode = c("words", "values")) {
+    
+    mode <- match.arg(mode)
+    
+    if (!identical(class(x), "textmodel_wordvector"))
+        stop("x must be a textmodel_wordvector object")
+    
+    if (x$normalize)
+        stop("textmodel_wordvector must be trained with normalize = FALSE")
+    
+    if (is.character(words)) {
+        words <- structure(rep(1.0, length(words)), names = words)
+        weighted <- FALSE
+    } else if (is.numeric(words)) {
+        if (is.null(names(words)))
+            stop("words must be named")
+        weighted <- TRUE 
+    } else {
+        stop("words must be a character or named numeric vector")
+    }
+    b <- names(words) %in% rownames(x$values)
+    if (sum(!b) == 1) {
+        warning(paste0('"', names(words[!b]), '"',  collapse = ", "),  ' is not found')
+    } else if (sum(!b) > 1) {
+        warning(paste0('"', names(words[!b]), '"',  collapse = ", "),  ' are not found')
+    }
+    words <- words[b]
+    
+    e <- exp(x$values %*% t(x$weights[names(words),, drop = FALSE]))
+    prob <- e / (e + 1) # sigmoid function
+    
+    res <- prob %*% diag(words)
+    colnames(res) <- names(words)
+    if (weighted)
+        res <- cbind(rowSums(res))
     if (ncol(res) == 0) {
         res <- matrix(nrow = 0, ncol = 0)
     } else {

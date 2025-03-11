@@ -20,8 +20,8 @@ When \code{words} is a named numeric vector, word vectors are weighted and summe
 before computing similarity scores.
 }
 \description{
-Compute cosine similarity between word vectors for selected words.
+Compute the cosine similarity between word vectors for selected words.
 }
 \seealso{
-\code{\link[=analogy]{analogy()}}
+\code{\link[=probability]{probability()}}
 }
