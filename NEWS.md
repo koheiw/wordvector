@@ -2,6 +2,7 @@
 
 - Save docvars in the `textmodel_doc2vec` objects.
 - Set zero for empty documents in the `textmodel_doc2vec` objects. 
+- Add `probability()` to compute probability of words.
 
 ## Changes in v0.2.0
 

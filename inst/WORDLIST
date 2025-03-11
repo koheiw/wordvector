@@ -27,3 +27,4 @@ quanteda
 softmax
 textmodel
 vec
+docvars
