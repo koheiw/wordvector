@@ -116,6 +116,8 @@ test_that("similarity works", {
 test_that("probability works", {
     
     prob1 <- probability(wov_nn, "us", mode = "values")
+    expect_true(all(prob1 <= 1.0))
+    expect_true(all(prob1 >= 0.0))
     expect_true(is.matrix(prob1))
     expect_identical(
         dimnames(prob1),
@@ -123,6 +125,8 @@ test_that("probability works", {
     )
     
     prob2 <- probability(wov_nn, c("us", "people"), mode = "values")
+    expect_true(all(prob2 <= 1.0))
+    expect_true(all(prob2 >= 0.0))
     expect_true(is.matrix(prob2))
     expect_identical(
         dimnames(prob2),

@@ -126,7 +126,10 @@ probability <- function(x, words, mode = c("words", "values")) {
     }
     words <- words[b]
     
-    res <- exp(x$values %*% t(x$weights[names(words),, drop = FALSE])) %*% diag(words)
+    e <- exp(x$values %*% t(x$weights[names(words),, drop = FALSE]))
+    prob <- e / (e + 1) # sigmoid function
+    
+    res <- prob %*% diag(words)
     colnames(res) <- names(words)
     if (weighted)
         res <- cbind(rowSums(res))
