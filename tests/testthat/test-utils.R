@@ -152,7 +152,7 @@ test_that("probability works", {
     expect_true(is.matrix(prob4))
     expect_identical(
         prob4[1,],
-        c("us" = "let", "people" = "america")
+        c("us" = "let", "people" = "american")
     )
     expect_identical(
         dim(prob4),
