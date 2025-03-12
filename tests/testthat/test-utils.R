@@ -116,6 +116,7 @@ test_that("similarity works", {
 
 test_that("probability works", {
     
+    skip_on_cran()
     skip_on("mac")
     
     prob1 <- probability(wov_nn, "us", mode = "values")
