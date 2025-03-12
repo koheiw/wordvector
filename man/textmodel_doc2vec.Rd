@@ -4,14 +4,16 @@
 \alias{textmodel_doc2vec}
 \title{Create distributed representation of documents}
 \usage{
-textmodel_doc2vec(x, model = NULL, ...)
+textmodel_doc2vec(x, model = NULL, group_data = FALSE, ...)
 }
 \arguments{
 \item{x}{a \link[quanteda:tokens]{quanteda::tokens} object.}
 
 \item{model}{a textmodel_wordvector object.}
 
-\item{...}{passed to \verb{[word2vec]} when \code{model = NULL}.}
+\item{group_data}{if \code{TRUE}, apply \code{dfm_group(x)} before creating document vectors.}
+
+\item{...}{passed to \verb{[textmodel_word2vec]} when \code{model = NULL}.}
 }
 \value{
 Returns a textmodel_docvector object with elements inherited from \code{model}

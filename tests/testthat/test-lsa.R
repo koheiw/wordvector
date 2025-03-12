@@ -7,11 +7,9 @@ corp <- data_corpus_inaugural %>%
 toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>% 
     tokens_remove(stopwords(), padding = FALSE) %>% 
     tokens_tolower()
-toks_grp <- tokens_group(toks)
 
 wov <- textmodel_lsa(toks, dim = 50, min_count = 2, sample = 0)
-dov <- textmodel_doc2vec(toks_grp, wov)
-#dov_nm <- doc2vec(toks_grp, min_count = 10, sample = 0)
+dov <- textmodel_doc2vec(toks, wov, group_data = TRUE)
 
 test_that("word2vec words", {
     
@@ -46,8 +44,7 @@ test_that("word2vec words", {
     )
     expect_equal(
         names(dov),
-        c("values", "dim", "min_count", "frequency", "engine", "weight", 
-          "concatenator", "docvars", "call", "version")
+        c("values", "dim", "concatenator", "docvars", "call", "version")
     )
     
     # docvector with model
@@ -57,18 +54,12 @@ test_that("word2vec words", {
     expect_equal(
         class(dov), "textmodel_docvector"
     )
-    expect_equal(
-        dov$weight, "count"
-    )
-    expect_equal(
-        dov$min_count, 2L
-    )
     expect_output(
         print(dov),
         paste(
             "",
             "Call:",
-            "textmodel_doc2vec(x = toks_grp, model = wov)",
+            "textmodel_doc2vec(x = toks, model = wov, group_data = TRUE)",
             "",
             "50 dimensions; 59 documents.", sep = "\n"), fixed = TRUE
     )
@@ -77,21 +68,6 @@ test_that("word2vec words", {
     )
     expect_equal(
         names(dov),
-        c("values", "dim", "min_count", "frequency", "engine", "weight", 
-          "concatenator", "docvars", "call", "version")
+        c("values", "dim", "concatenator", "docvars", "call", "version")
     )
-    
-    # docvector without model
-    # expect_equal(
-    #     dim(dov_nm$vectors), c(59, 50)
-    # )
-    # expect_equal(
-    #     class(dov_nm), "textmodel_docvector"
-    # )
-    # expect_equal(
-    #     dov_nm$sample, 0
-    # )
-    # expect_equal(
-    #     dov_nm$min_count, 10L
-    # )
 })
