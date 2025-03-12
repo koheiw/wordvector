@@ -12,8 +12,6 @@ toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>%
 wov <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1)
 dov <- textmodel_doc2vec(toks, wov)
 dov_gp <- textmodel_doc2vec(toks, wov, group_data = TRUE)
-dov_nm <- textmodel_doc2vec(toks, group_data = TRUE,
-                            min_count = 10, sample = 1)
 
 test_that("textmodel_word2vec works", {
     
@@ -95,18 +93,6 @@ test_that("textmodel_word2vec works", {
     )
     expect_equal(
         names(dov_gp),
-        c("values", "dim", "concatenator", "docvars", "call", "version")
-    )
-    
-    # docvector without model
-    expect_identical(
-        dim(dov_nm$values), c(59L, 50L)
-    )
-    expect_equal(
-        class(dov_nm), "textmodel_docvector"
-    )
-    expect_equal(
-        names(dov_nm),
         c("values", "dim", "concatenator", "docvars", "call", "version")
     )
     

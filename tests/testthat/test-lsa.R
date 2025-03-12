@@ -9,7 +9,8 @@ toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>%
     tokens_tolower()
 
 wov <- textmodel_lsa(toks, dim = 50, min_count = 2, sample = 0)
-dov <- textmodel_doc2vec(toks, wov, group_data = TRUE)
+dov <- textmodel_doc2vec(toks, wov)
+dov_gp <- textmodel_doc2vec(toks, wov, group_data = TRUE)
 
 test_that("word2vec words", {
     
@@ -48,8 +49,8 @@ test_that("word2vec words", {
     )
     
     # docvector with model
-    expect_identical(
-        dim(dov$values), c(59L, 50L)
+    expect_equal(
+        dim(dov$values), c(5234L, 50L)
     )
     expect_equal(
         class(dov), "textmodel_docvector"
@@ -59,15 +60,27 @@ test_that("word2vec words", {
         paste(
             "",
             "Call:",
-            "textmodel_doc2vec(x = toks, model = wov, group_data = TRUE)",
+            "textmodel_doc2vec(x = toks, model = wov)",
             "",
-            "50 dimensions; 59 documents.", sep = "\n"), fixed = TRUE
+            "50 dimensions; 5,234 documents.", sep = "\n"), fixed = TRUE
     )
     expect_equal(
         class(print(dov)), "textmodel_docvector"
     )
     expect_equal(
         names(dov),
+        c("values", "dim", "concatenator", "docvars", "call", "version")
+    )
+    
+    # docvector with grouped data
+    expect_identical(
+        dim(dov_gp$values), c(59L, 50L)
+    )
+    expect_equal(
+        class(dov_gp), "textmodel_docvector"
+    )
+    expect_equal(
+        names(dov_gp),
         c("values", "dim", "concatenator", "docvars", "call", "version")
     )
 })
