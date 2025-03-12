@@ -10,38 +10,35 @@ as.matrix.textmodel_docvector <- function(x, ...){
 #' @param x a [quanteda::tokens] object.
 #' @param model a textmodel_wordvector object.
 #' @param group_data if `TRUE`, apply `dfm_group(x)` before creating document vectors.
-#' @param ... passed to `[textmodel_word2vec]` when `model = NULL`.
-#' @returns Returns a textmodel_docvector object with elements inherited from `model` 
-#'   or passed via `...` plus:
+#' @returns Returns a textmodel_docvector object with the following elements:
 #'   \item{values}{a matrix for document vectors.}
+#'   \item{dim}{the size of the document vectors.}
+#'   \item{concatenator}{the concatenator in `x`.}
+#'   \item{docvars}{document variables compied from `x`.}
 #'   \item{call}{the command used to execute the function.}
+#'   \item{version}{the version of the wordvector package.}
 #' @export
-textmodel_doc2vec <- function(x, model = NULL, group_data = FALSE,
-                              ...) {
+textmodel_doc2vec <- function(x, model, group_data = FALSE) {
     UseMethod("textmodel_doc2vec")
 }
 
 #' @export
 #' @method textmodel_doc2vec tokens
-textmodel_doc2vec.tokens <- function(x, model = NULL, group_data = FALSE, 
-                                     ...) {
+textmodel_doc2vec.tokens <- function(x, model, group_data = FALSE) {
+    
+    if (!identical(class(model), "textmodel_wordvector"))
+        stop("The object for 'model' must be a trained textmodel_wordvector")
 
-    result <- textmodel_doc2vec(dfm(x, remove_padding = TRUE), model = model,
-                                group_data = group_data, ...)
+    x <- dfm(x, remove_padding = TRUE, tolower = FALSE)
+    result <- textmodel_doc2vec(x, model = model, group_data = group_data)
     result$call <- try(match.call(sys.function(-1), call = sys.call(-1)), silent = TRUE)
     return(result)
 }
 
 #' @export
 #' @method textmodel_doc2vec dfm
-textmodel_doc2vec.dfm <- function(x, model = NULL, group_data = FALSE, 
-                                     ...) {
-    if (is.null(model)) {
-        model <- textmodel_word2vec(x, ...)
-    } else {
-        if (!identical(class(model), "textmodel_wordvector"))
-            stop("The object for 'model' must be a trained textmodel_wordvector")
-    }
+textmodel_doc2vec.dfm <- function(x, model = NULL, group_data = FALSE) {
+    
     if (group_data)
         x <- dfm_group(x)
     
@@ -55,9 +52,9 @@ textmodel_doc2vec.dfm <- function(x, model = NULL, group_data = FALSE,
     
     result <- list(
         "values" = dov,
-        "dim" = ncol(dov),
+        "dim" = model$dim,
         "concatenator" = meta(x, field = "concatenator", type = "object"), 
-        "docvars" = docvars(x),
+        "docvars" = x@docvars,
         "call" = try(match.call(sys.function(-1), call = sys.call(-1)), silent = TRUE), 
         "version" = utils::packageVersion("wordvector")
     )
