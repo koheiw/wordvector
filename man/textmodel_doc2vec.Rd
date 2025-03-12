@@ -4,7 +4,7 @@
 \alias{textmodel_doc2vec}
 \title{Create distributed representation of documents}
 \usage{
-textmodel_doc2vec(x, model = NULL, group_data = FALSE, ...)
+textmodel_doc2vec(x, model, group_data = FALSE)
 }
 \arguments{
 \item{x}{a \link[quanteda:tokens]{quanteda::tokens} object.}
@@ -12,14 +12,15 @@ textmodel_doc2vec(x, model = NULL, group_data = FALSE, ...)
 \item{model}{a textmodel_wordvector object.}
 
 \item{group_data}{if \code{TRUE}, apply \code{dfm_group(x)} before creating document vectors.}
-
-\item{...}{passed to \verb{[textmodel_word2vec]} when \code{model = NULL}.}
 }
 \value{
-Returns a textmodel_docvector object with elements inherited from \code{model}
-or passed via \code{...} plus:
+Returns a textmodel_docvector object with the following elements:
 \item{values}{a matrix for document vectors.}
+\item{dim}{the size of the document vectors.}
+\item{concatenator}{the concatenator in \code{x}.}
+\item{docvars}{document variables compied from \code{x}.}
 \item{call}{the command used to execute the function.}
+\item{version}{the version of the wordvector package.}
 }
 \description{
 Create distributed representation of documents as weighted word vectors.
