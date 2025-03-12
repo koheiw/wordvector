@@ -8,6 +8,7 @@ toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>%
     tokens_remove(stopwords(), padding = FALSE) %>% 
     tokens_tolower()
 
+set.seed(1234)
 wov <- textmodel_lsa(toks, dim = 50, min_count = 2, sample = 0)
 dov <- textmodel_doc2vec(toks, wov)
 dov_gp <- textmodel_doc2vec(toks, wov, group_data = TRUE)

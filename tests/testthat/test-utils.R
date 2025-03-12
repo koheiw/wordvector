@@ -8,6 +8,7 @@ toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>%
     tokens_remove(stopwords(), padding = FALSE) %>% 
     tokens_tolower()
 
+set.seed(1234)
 wov <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1)
 wov_nn <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1,
                              normalize = FALSE)
@@ -148,7 +149,7 @@ test_that("probability works", {
     expect_true(is.matrix(prob4))
     expect_identical(
         prob4[1,],
-        c("us" = "let", "people" = "american")
+        c("us" = "let", "people" = "united")
     )
     expect_identical(
         dim(prob4),
