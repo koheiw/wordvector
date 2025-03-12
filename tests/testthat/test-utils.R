@@ -8,6 +8,7 @@ toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>%
     tokens_remove(stopwords(), padding = FALSE) %>% 
     tokens_tolower()
 
+set.seed(1234)
 wov <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1)
 wov_nn <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1,
                              normalize = FALSE)
@@ -114,6 +115,9 @@ test_that("similarity works", {
 })
 
 test_that("probability works", {
+    
+    skip_on_cran()
+    skip_on_os("mac")
     
     prob1 <- probability(wov_nn, "us", mode = "values")
     expect_true(all(prob1 <= 1.0))

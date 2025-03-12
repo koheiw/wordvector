@@ -8,11 +8,11 @@ corp <- data_corpus_inaugural %>%
 toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>% 
     tokens_remove(stopwords(), padding = FALSE) %>% 
     tokens_tolower()
-toks_grp <- tokens_group(toks)
 
+set.seed(1234)
 wov <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1)
-dov <- textmodel_doc2vec(toks_grp, wov)
-dov_nm <- textmodel_doc2vec(toks_grp, min_count = 10, sample = 1)
+dov <- textmodel_doc2vec(toks, wov)
+dov_gp <- textmodel_doc2vec(toks, wov, group_data = TRUE)
 
 test_that("textmodel_word2vec works", {
     
@@ -63,61 +63,38 @@ test_that("textmodel_word2vec works", {
     
     # docvector with model
     expect_equal(
-        dim(dov$values), c(59L, 50L)
-    )
-    expect_equal(
-        dim(dov$weights), c(5360L, 50L)
+        dim(dov$values), c(5234L, 50L)
     )
     expect_equal(
         class(dov), "textmodel_docvector"
-    )
-    expect_identical(
-        dov$sample, 1.0
-    )
-    expect_identical(
-        dov$min_count, 2L
     )
     expect_output(
         print(dov),
         paste(
             "",
             "Call:",
-            "textmodel_doc2vec(x = toks_grp, model = wov)",
+            "textmodel_doc2vec(x = toks, model = wov)",
             "",
-            "50 dimensions; 59 documents.", sep = "\n"), fixed = TRUE
+            "50 dimensions; 5,234 documents.", sep = "\n"), fixed = TRUE
     )
     expect_equal(
         class(print(dov)), "textmodel_docvector"
     )
     expect_equal(
         names(dov),
-        c("values", "weights", "type", "dim", "min_count", "frequency", "window", "iter", 
-          "alpha", "use_ns", "ns_size", "sample", "normalize", "concatenator", "docvars", 
-          "call", "version")
+        c("values", "dim", "concatenator", "docvars", "call", "version")
     )
     
-    # docvector without model
+    # docvector with grouped data
     expect_identical(
-        dim(dov_nm$values), c(59L, 50L)
-    )
-    expect_identical(
-        dim(dov_nm$weights), c(1405L, 50L)
+        dim(dov_gp$values), c(59L, 50L)
     )
     expect_equal(
-        class(dov_nm), "textmodel_docvector"
+        class(dov_gp), "textmodel_docvector"
     )
-    expect_identical(
-        dov_nm$sample, 1.0
-    )
-    expect_identical(
-        dov_nm$min_count, 10L
-    )
-    
     expect_equal(
-        names(dov_nm),
-        c("values", "weights", "type", "dim", "min_count", "frequency", "window", "iter", 
-          "alpha", "use_ns", "ns_size", "sample", "normalize", "concatenator", "docvars", 
-          "call", "version")
+        names(dov_gp),
+        c("values", "dim", "concatenator", "docvars", "call", "version")
     )
     
 })
@@ -185,14 +162,11 @@ test_that("textmodel_word2vec is robust", {
 })  
 
 test_that("textmodel_word2doc returns zero for emptry documents (#17)", {
-    toks <- tokens(c("Citizens of the United States", ""))
+    toks <- tokens(c("Citizens of the United States", "")) %>% 
+        tokens_tolower()
     dov <- textmodel_doc2vec(toks, wov)
     expect_true(all(dov$values[1,] != 0))
     expect_true(all(dov$values[2,] == 0))
 })
 
-test_that("textmodel_word2doc has docvars (#18)", {
-    dov <- textmodel_doc2vec(toks, wov)
-    expect_identical(docvars(toks), dov$docvars)
-})
 

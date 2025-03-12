@@ -7,11 +7,11 @@ corp <- data_corpus_inaugural %>%
 toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>% 
     tokens_remove(stopwords(), padding = FALSE) %>% 
     tokens_tolower()
-toks_grp <- tokens_group(toks)
 
+set.seed(1234)
 wov <- textmodel_lsa(toks, dim = 50, min_count = 2, sample = 0)
-dov <- textmodel_doc2vec(toks_grp, wov)
-#dov_nm <- doc2vec(toks_grp, min_count = 10, sample = 0)
+dov <- textmodel_doc2vec(toks, wov)
+dov_gp <- textmodel_doc2vec(toks, wov, group_data = TRUE)
 
 test_that("word2vec words", {
     
@@ -46,52 +46,42 @@ test_that("word2vec words", {
     )
     expect_equal(
         names(dov),
-        c("values", "dim", "min_count", "frequency", "engine", "weight", 
-          "concatenator", "docvars", "call", "version")
+        c("values", "dim", "concatenator", "docvars", "call", "version")
     )
     
     # docvector with model
-    expect_identical(
-        dim(dov$values), c(59L, 50L)
+    expect_equal(
+        dim(dov$values), c(5234L, 50L)
     )
     expect_equal(
         class(dov), "textmodel_docvector"
-    )
-    expect_equal(
-        dov$weight, "count"
-    )
-    expect_equal(
-        dov$min_count, 2L
     )
     expect_output(
         print(dov),
         paste(
             "",
             "Call:",
-            "textmodel_doc2vec(x = toks_grp, model = wov)",
+            "textmodel_doc2vec(x = toks, model = wov)",
             "",
-            "50 dimensions; 59 documents.", sep = "\n"), fixed = TRUE
+            "50 dimensions; 5,234 documents.", sep = "\n"), fixed = TRUE
     )
     expect_equal(
         class(print(dov)), "textmodel_docvector"
     )
     expect_equal(
         names(dov),
-        c("values", "dim", "min_count", "frequency", "engine", "weight", 
-          "concatenator", "docvars", "call", "version")
+        c("values", "dim", "concatenator", "docvars", "call", "version")
     )
     
-    # docvector without model
-    # expect_equal(
-    #     dim(dov_nm$vectors), c(59, 50)
-    # )
-    # expect_equal(
-    #     class(dov_nm), "textmodel_docvector"
-    # )
-    # expect_equal(
-    #     dov_nm$sample, 0
-    # )
-    # expect_equal(
-    #     dov_nm$min_count, 10L
-    # )
+    # docvector with grouped data
+    expect_identical(
+        dim(dov_gp$values), c(59L, 50L)
+    )
+    expect_equal(
+        class(dov_gp), "textmodel_docvector"
+    )
+    expect_equal(
+        names(dov_gp),
+        c("values", "dim", "concatenator", "docvars", "call", "version")
+    )
 })
