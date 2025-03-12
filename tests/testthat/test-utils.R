@@ -117,7 +117,7 @@ test_that("similarity works", {
 test_that("probability works", {
     
     skip_on_cran()
-    skip_on("mac")
+    skip_on_os("mac")
     
     prob1 <- probability(wov_nn, "us", mode = "values")
     expect_true(all(prob1 <= 1.0))
