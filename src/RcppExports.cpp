@@ -22,14 +22,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // cpp_w2v
-Rcpp::List cpp_w2v(Rcpp::List texts_, Rcpp::CharacterVector words_, uint16_t minWordFreq, uint16_t size, uint16_t window, float sample, bool withHS, uint16_t negative, uint16_t threads, uint16_t iterations, float alpha, int type, bool verbose, bool normalize, uint16_t expTableSize, uint16_t expValueMax);
-RcppExport SEXP _wordvector_cpp_w2v(SEXP texts_SEXP, SEXP words_SEXP, SEXP minWordFreqSEXP, SEXP sizeSEXP, SEXP windowSEXP, SEXP sampleSEXP, SEXP withHSSEXP, SEXP negativeSEXP, SEXP threadsSEXP, SEXP iterationsSEXP, SEXP alphaSEXP, SEXP typeSEXP, SEXP verboseSEXP, SEXP normalizeSEXP, SEXP expTableSizeSEXP, SEXP expValueMaxSEXP) {
+Rcpp::List cpp_w2v(TokensPtr xptr, uint16_t size, uint16_t window, float sample, bool withHS, uint16_t negative, uint16_t threads, uint16_t iterations, float alpha, int type, bool verbose, bool normalize, uint16_t expTableSize, uint16_t expValueMax);
+RcppExport SEXP _wordvector_cpp_w2v(SEXP xptrSEXP, SEXP sizeSEXP, SEXP windowSEXP, SEXP sampleSEXP, SEXP withHSSEXP, SEXP negativeSEXP, SEXP threadsSEXP, SEXP iterationsSEXP, SEXP alphaSEXP, SEXP typeSEXP, SEXP verboseSEXP, SEXP normalizeSEXP, SEXP expTableSizeSEXP, SEXP expValueMaxSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::List >::type texts_(texts_SEXP);
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type words_(words_SEXP);
-    Rcpp::traits::input_parameter< uint16_t >::type minWordFreq(minWordFreqSEXP);
+    Rcpp::traits::input_parameter< TokensPtr >::type xptr(xptrSEXP);
     Rcpp::traits::input_parameter< uint16_t >::type size(sizeSEXP);
     Rcpp::traits::input_parameter< uint16_t >::type window(windowSEXP);
     Rcpp::traits::input_parameter< float >::type sample(sampleSEXP);
@@ -43,14 +41,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type normalize(normalizeSEXP);
     Rcpp::traits::input_parameter< uint16_t >::type expTableSize(expTableSizeSEXP);
     Rcpp::traits::input_parameter< uint16_t >::type expValueMax(expValueMaxSEXP);
-    rcpp_result_gen = Rcpp::wrap(cpp_w2v(texts_, words_, minWordFreq, size, window, sample, withHS, negative, threads, iterations, alpha, type, verbose, normalize, expTableSize, expValueMax));
+    rcpp_result_gen = Rcpp::wrap(cpp_w2v(xptr, size, window, sample, withHS, negative, threads, iterations, alpha, type, verbose, normalize, expTableSize, expValueMax));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
     {"_wordvector_cpp_get_max_thread", (DL_FUNC) &_wordvector_cpp_get_max_thread, 0},
-    {"_wordvector_cpp_w2v", (DL_FUNC) &_wordvector_cpp_w2v, 16},
+    {"_wordvector_cpp_w2v", (DL_FUNC) &_wordvector_cpp_w2v, 14},
     {NULL, NULL, 0}
 };
 
