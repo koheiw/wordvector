@@ -98,14 +98,13 @@ textmodel_word2vec.tokens <- function(x, dim = 50L, type = c("cbow", "skip-gram"
     
     x <- as.tokens_xptr(x)
     x <- tokens_trim(x, min_termfreq = min_count, termfreq_type = "count")
-    result <- cpp_w2v(x, minWordFreq = min_count,
-                      size = dim, window = window,
+    result <- cpp_w2v(x, size = dim, window = window,
                       sample = sample, withHS = !use_ns, negative = ns_size, 
                       threads = get_threads(), iterations = iter,
                       alpha = alpha, type = type, normalize = normalize, verbose = verbose)
     if (!is.null(result$message))
         stop("Failed to train word2vec (", result$message, ")")
-
+    result$min_count <- min_count
     result$concatenator <- meta(x, field = "concatenator", type = "object")
     result$call <- try(match.call(sys.function(-1), call = sys.call(-1)), silent = TRUE)
     result$version <- utils::packageVersion("wordvector")

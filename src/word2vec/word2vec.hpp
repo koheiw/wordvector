@@ -70,7 +70,6 @@ namespace w2v {
      * @brief settings structure holds all training parameters
      */
     struct settings_t final {
-        uint16_t minWordFreq = 5; ///< discard words that appear less than minWordFreq times
         uint16_t size = 100; ///< word vector size
         uint16_t window = 5; ///< skip length between words
         uint16_t expTableSize = 1000; ///< exp(x) / (exp(x) + 1) values lookup table size
