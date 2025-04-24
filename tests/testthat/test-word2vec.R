@@ -147,6 +147,28 @@ test_that("tolower is working", {
     
 })
 
+test_that("tokens and tokens_xptr produce the same result", {
+    
+    skip_on_cran()
+    
+    set.seed(1234)
+    wov0 <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1)
+
+    set.seed(1234)
+    xtoks <- as.tokens_xptr(toks)
+    wov1 <- textmodel_word2vec(xtoks, dim = 50, iter = 10, min_count = 2, sample = 1)
+    
+    expect_equal(
+        names(wov0),
+        names(wov1)
+    )
+    
+    expect_equal(
+        dimnames(wov0$values), dimnames(wov1$values) 
+    )
+
+})
+
 test_that("textmodel_word2vec is robust", {
     
     expect_s3_class(
