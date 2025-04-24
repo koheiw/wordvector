@@ -7,6 +7,7 @@
 #'    this in `x` are removed before training.
 #' @param engine select the engine perform SVD to generate word vectors.
 #' @param weight weighting scheme passed to [quanteda::dfm_weight()]. 
+#' @param tolower if `TRUE` lower-case all the tokens before fitting the model.
 #' @param verbose if `TRUE`, print the progress of training.
 #' @param ... additional arguments.
 #' @returns Returns a textmodel_wordvector object with the following elements:
@@ -45,7 +46,7 @@
 #' }
 textmodel_lsa <- function(x, dim = 50, min_count = 5L, 
                           engine = c("RSpectra", "irlba", "rsvd"), 
-                          weight = "count", verbose = FALSE, ...) {
+                          weight = "count", tolower = TRUE, verbose = FALSE, ...) {
     UseMethod("textmodel_lsa")   
 }
 
@@ -54,9 +55,9 @@ textmodel_lsa <- function(x, dim = 50, min_count = 5L,
 #' @method textmodel_lsa tokens
 textmodel_lsa.tokens <- function(x, dim = 50L, min_count = 5L, 
                                  engine = c("RSpectra", "irlba", "rsvd"), 
-                                 weight = "count", verbose = FALSE, ...) {
+                                 weight = "count", tolower = TRUE, verbose = FALSE, ...) {
     
-    result <- textmodel_lsa(dfm(x, remove_padding = TRUE), 
+    result <- textmodel_lsa(dfm(x, remove_padding = TRUE, tolower = tolower), 
                             dim = dim, min_count = min_count, engine = engine, weight = weight,
                             verbose = verbose, ...)
     result$call = try(match.call(sys.function(-1), call = sys.call(-1)), silent = TRUE)
@@ -68,7 +69,7 @@ textmodel_lsa.tokens <- function(x, dim = 50L, min_count = 5L,
 #' @method textmodel_lsa dfm
 textmodel_lsa.dfm <- function(x, dim = 50L, min_count = 5L, 
                                  engine = c("RSpectra", "irlba", "rsvd"), 
-                                 weight = "count", verbose = FALSE, ...) {
+                                 weight = "count", tolower = TRUE, verbose = FALSE, ...) {
     
     engine <- match.arg(engine)
     dim <- check_integer(dim, min = 2)
