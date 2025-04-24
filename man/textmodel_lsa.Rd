@@ -10,12 +10,13 @@ textmodel_lsa(
   min_count = 5L,
   engine = c("RSpectra", "irlba", "rsvd"),
   weight = "count",
+  tolower = TRUE,
   verbose = FALSE,
   ...
 )
 }
 \arguments{
-\item{x}{a \link[quanteda:tokens]{quanteda::tokens} object.}
+\item{x}{a \link[quanteda:tokens]{quanteda::tokens} or \link[quanteda:tokens_xptr]{quanteda::tokens_xptr} object.}
 
 \item{dim}{the size of the word vectors.}
 
@@ -25,6 +26,8 @@ this in \code{x} are removed before training.}
 \item{engine}{select the engine perform SVD to generate word vectors.}
 
 \item{weight}{weighting scheme passed to \code{\link[quanteda:dfm_weight]{quanteda::dfm_weight()}}.}
+
+\item{tolower}{if \code{TRUE} lower-case all the tokens before fitting the model.}
 
 \item{verbose}{if \code{TRUE}, print the progress of training.}
 
@@ -37,6 +40,7 @@ Returns a textmodel_wordvector object with the following elements:
 \item{frequency}{the frequency of words in \code{x}.}
 \item{engine}{the SVD engine used.}
 \item{weight}{weighting scheme.}
+\item{min_count}{the value of min_count.}
 \item{concatenator}{the concatenator in \code{x}.}
 \item{call}{the command used to execute the function.}
 \item{version}{the version of the wordvector package.}

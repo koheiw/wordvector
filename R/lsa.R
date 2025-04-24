@@ -1,7 +1,7 @@
 #' Latent Semantic Analysis model
 #' 
 #' Train a Latent Semantic Analysis model (Deerwester et al., 1990) on a [quanteda::tokens] object.
-#' @param x a [quanteda::tokens] object.
+#' @param x a [quanteda::tokens] or [quanteda::tokens_xptr] object.
 #' @param dim the size of the word vectors.
 #' @param min_count the minimum frequency of the words. Words less frequent than 
 #'    this in `x` are removed before training.
@@ -16,6 +16,7 @@
 #'   \item{frequency}{the frequency of words in `x`.}
 #'   \item{engine}{the SVD engine used.}
 #'   \item{weight}{weighting scheme.}
+#'   \item{min_count}{the value of min_count.}
 #'   \item{concatenator}{the concatenator in `x`.}
 #'   \item{call}{the command used to execute the function.}
 #'   \item{version}{the version of the wordvector package.}
@@ -91,10 +92,10 @@ textmodel_lsa.dfm <- function(x, dim = 50L, min_count = 5L,
     result <- list(
         values = wov,
         dim = dim,
-        min_count = min_count,
         frequency = featfreq(x),
         engine = engine,
         weight = weight,
+        min_count = min_count,
         concatenator = meta(x, field = "concatenator", type = "object"),
         call = try(match.call(sys.function(-1), call = sys.call(-1)), silent = TRUE),
         version = utils::packageVersion("wordvector")

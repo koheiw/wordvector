@@ -1,7 +1,7 @@
 #' Word2vec model
 #' 
 #' Train a Word2vec model (Mikolov et al., 2023) in different architectures on a [quanteda::tokens] object.
-#' @param x a [quanteda::tokens] object.
+#' @param x a [quanteda::tokens] or [quanteda::tokens_xptr] object.
 #' @param dim the size of the word vectors.
 #' @param type the architecture of the model; either "cbow" (continuous back of words) or "skip-gram".
 #' @param min_count the minimum frequency of the words. Words less frequent than 
@@ -30,6 +30,7 @@
 #'   \item{alpha}{the initial learning rate.}
 #'   \item{use_ns}{the use of negative sampling.}
 #'   \item{ns_size}{the size of negative samples.}
+#'   \item{min_count}{the value of min_count.}
 #'   \item{concatenator}{the concatenator in `x`.}
 #'   \item{call}{the command used to execute the function.}
 #'   \item{version}{the version of the wordvector package.}
