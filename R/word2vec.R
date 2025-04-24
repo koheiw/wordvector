@@ -96,10 +96,9 @@ textmodel_word2vec.tokens <- function(x, dim = 50L, type = c("cbow", "skip-gram"
     if (old)
         type <- type * 10
     
-    # NOTE: use tokens_xptr?
+    x <- as.tokens_xptr(x)
     x <- tokens_trim(x, min_termfreq = min_count, termfreq_type = "count")
-    result <- cpp_w2v(as.tokens(x), attr(x, "types"), 
-                      minWordFreq = min_count,
+    result <- cpp_w2v(x, minWordFreq = min_count,
                       size = dim, window = window,
                       sample = sample, withHS = !use_ns, negative = ns_size, 
                       threads = get_threads(), iterations = iter,

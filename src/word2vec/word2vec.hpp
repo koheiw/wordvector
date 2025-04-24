@@ -18,7 +18,7 @@
 #include <cmath>
 #include <stdexcept>
 
-typedef std::vector<std::string> words_t;
+typedef std::vector<std::string> words_t; // TODO: change to types_t?
 typedef std::vector<unsigned int> text_t;
 typedef std::vector<text_t> texts_t;
 typedef std::vector<size_t> frequency_t;

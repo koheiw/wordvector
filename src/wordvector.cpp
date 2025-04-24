@@ -8,6 +8,8 @@
 #include "word2vec/word2vec.hpp"
 #include "tokens.h"
 
+typedef XPtr<TokensObj> TokensPtr;
+
 Rcpp::CharacterVector encode(std::vector<std::string> types){
     Rcpp::CharacterVector types_(types.size());
     for (std::size_t i = 0; i < types.size(); i++) {
@@ -58,8 +60,7 @@ Rcpp::NumericVector get_frequency(w2v::corpus_t corpus) {
 */
 
 // [[Rcpp::export]]
-Rcpp::List cpp_w2v(Rcpp::List texts_, 
-                   Rcpp::CharacterVector words_, 
+Rcpp::List cpp_w2v(TokensPtr xptr, 
                    uint16_t minWordFreq = 5,
                    uint16_t size = 100,
                    uint16_t window = 5,
@@ -84,13 +85,11 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
         Rprintf(" ...using %d threads for distributed computing\n", threads);
         Rprintf(" ...initializing\n");
     }
-
-    texts_t texts = Rcpp::as<texts_t>(texts_);
-    words_t words = Rcpp::as<words_t>(words_);
-    //texts_t texts = xptr->texts;
-    //types_t types = xptr->types;
     
-    w2v::corpus_t corpus(texts, words);
+    texts_t texts = xptr->texts;
+    words_t types = xptr->types;
+    
+    w2v::corpus_t corpus(texts, types);
     corpus.setWordFreq();
       
     w2v::settings_t settings;
