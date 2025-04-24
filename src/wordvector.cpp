@@ -1,9 +1,6 @@
 #include <Rcpp.h>
-//#include <iostream>
-//#include <iomanip>
 #include <chrono>
 #include <thread>
-//#include <unordered_map>
 #include <mutex>
 #include "word2vec/word2vec.hpp"
 #include "tokens.h"
