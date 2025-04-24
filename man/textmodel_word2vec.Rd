@@ -16,12 +16,13 @@ textmodel_word2vec(
   ns_size = 5L,
   sample = 0.001,
   normalize = TRUE,
+  tolower = TRUE,
   verbose = FALSE,
   ...
 )
 }
 \arguments{
-\item{x}{a \link[quanteda:tokens]{quanteda::tokens} object.}
+\item{x}{a \link[quanteda:tokens]{quanteda::tokens} or \link[quanteda:tokens_xptr]{quanteda::tokens_xptr} object.}
 
 \item{dim}{the size of the word vectors.}
 
@@ -47,6 +48,8 @@ disabled when \code{sample = 1.0}}
 
 \item{normalize}{if \code{TRUE}, normalize the vectors in \code{values} and \code{weights}.}
 
+\item{tolower}{lower-case all the tokens before fitting the model.}
+
 \item{verbose}{if \code{TRUE}, print the progress of training.}
 
 \item{...}{additional arguments.}
@@ -63,6 +66,7 @@ Returns a textmodel_wordvector object with the following elements:
 \item{alpha}{the initial learning rate.}
 \item{use_ns}{the use of negative sampling.}
 \item{ns_size}{the size of negative samples.}
+\item{min_count}{the value of min_count.}
 \item{concatenator}{the concatenator in \code{x}.}
 \item{call}{the command used to execute the function.}
 \item{version}{the version of the wordvector package.}

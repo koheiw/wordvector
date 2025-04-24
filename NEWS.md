@@ -1,3 +1,8 @@
+## Changes in v0.4.0
+
+- Add the `tolower` argument and set to `TRUE` to lower-case tokens.
+- Allow `x` to be quanteda's tokens_xptr object to enhance efficiency.
+
 ## Changes in v0.3.0
 
 - Save docvars in the `textmodel_doc2vec` objects.

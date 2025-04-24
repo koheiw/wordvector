@@ -1,12 +1,11 @@
 #include <Rcpp.h>
-//#include <iostream>
-//#include <iomanip>
 #include <chrono>
 #include <thread>
-//#include <unordered_map>
 #include <mutex>
 #include "word2vec/word2vec.hpp"
 #include "tokens.h"
+
+typedef XPtr<TokensObj> TokensPtr;
 
 Rcpp::CharacterVector encode(std::vector<std::string> types){
     Rcpp::CharacterVector types_(types.size());
@@ -43,7 +42,6 @@ Rcpp::NumericVector get_frequency(w2v::corpus_t corpus) {
 }
 
 /*
- uint16_t minWordFreq = 5; ///< discard words that appear less than minWordFreq times
  uint16_t size = 100; ///< word vector size
  uint16_t window = 5; ///< skip length between words
  uint16_t expTableSize = 1000; ///< exp(x) / (exp(x) + 1) values lookup table size
@@ -58,9 +56,7 @@ Rcpp::NumericVector get_frequency(w2v::corpus_t corpus) {
 */
 
 // [[Rcpp::export]]
-Rcpp::List cpp_w2v(Rcpp::List texts_, 
-                   Rcpp::CharacterVector words_, 
-                   uint16_t minWordFreq = 5,
+Rcpp::List cpp_w2v(TokensPtr xptr, 
                    uint16_t size = 100,
                    uint16_t window = 5,
                    float sample = 0.001,
@@ -84,17 +80,15 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
         Rprintf(" ...using %d threads for distributed computing\n", threads);
         Rprintf(" ...initializing\n");
     }
-
-    texts_t texts = Rcpp::as<texts_t>(texts_);
-    words_t words = Rcpp::as<words_t>(words_);
-    //texts_t texts = xptr->texts;
-    //types_t types = xptr->types;
     
-    w2v::corpus_t corpus(texts, words);
+    xptr->recompile();
+    texts_t texts = xptr->texts;
+    words_t types = xptr->types;
+    
+    w2v::corpus_t corpus(texts, types);
     corpus.setWordFreq();
       
-    w2v::settings_t settings;
-    settings.minWordFreq = minWordFreq;
+    w2v::settings_t settings;;
     settings.size = size;
     settings.window = window;
     settings.expTableSize = expTableSize;
@@ -141,7 +135,7 @@ Rcpp::List cpp_w2v(Rcpp::List texts_,
         Rcpp::Named("weights") = get_weights(word2vec, corpus), 
         Rcpp::Named("type") = type,
         Rcpp::Named("dim") = size,
-        Rcpp::Named("min_count") = minWordFreq,
+        //Rcpp::Named("min_count") = minWordFreq,
         Rcpp::Named("frequency") = get_frequency(corpus),
         Rcpp::Named("window") = window,
         Rcpp::Named("iter") = iterations,

@@ -55,8 +55,6 @@ namespace w2v {
             auto wordsPerAllThreads = m_data.settings->iterations * m_data.corpus->trainWords;
             auto wordsPerAlpha = wordsPerAllThreads / 10000;
             
-            //std::cout << "type = " << m_data.settings->type << "\n";
-            //std::cout << "minWordFreq = " << m_data.settings->minWordFreq << "\n";
             float alpha = 0;
             for (std::size_t h = m_range.first; h <= m_range.second; ++h) {
                 
@@ -88,10 +86,10 @@ namespace w2v {
                         continue; 
                     }
                     // ignore infrequent words
-                    if (m_data.corpus->frequency[word - 1] < m_data.settings->minWordFreq) {
-                        //std::cout << "infrequent: " << word << "\n";
-                        continue;
-                    }
+                    // if (m_data.corpus->frequency[word - 1] < m_data.settings->minWordFreq) {
+                    //     //std::cout << "infrequent: " << word << "\n";
+                    //     continue;
+                    // }
                     
                     threadProcessedWords++;
                     if (m_data.settings->sample < 1.0f) {

@@ -5,8 +5,7 @@ corp <- data_corpus_inaugural %>%
     corpus_reshape()
 
 toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>% 
-    tokens_remove(stopwords(), padding = FALSE) %>% 
-    tokens_tolower()
+    tokens_remove(stopwords(), padding = FALSE)
 
 set.seed(1234)
 wov <- textmodel_lsa(toks, dim = 50, min_count = 2, sample = 0)
@@ -85,3 +84,21 @@ test_that("word2vec words", {
         c("values", "dim", "concatenator", "docvars", "call", "version")
     )
 })
+
+test_that("tolower is working", {
+    
+    skip_on_cran()
+    
+    wov0 <- textmodel_lsa(toks, dim = 50, iter = 10, min_count = 2, 
+                          tolower = FALSE)
+    expect_equal(dim(wov0$values),
+                 c(5556L, 50L))
+    
+    
+    wov1 <- textmodel_lsa(toks, dim = 50, iter = 10, min_count = 2, 
+                          tolower = TRUE)
+    expect_equal(dim(wov1$values),
+                 c(5360L, 50L))
+    
+})
+

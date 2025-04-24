@@ -6,8 +6,7 @@ corp <- data_corpus_inaugural %>%
     corpus_reshape()
 
 toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>% 
-    tokens_remove(stopwords(), padding = FALSE) %>% 
-    tokens_tolower()
+    tokens_remove(stopwords(), padding = FALSE) 
 
 set.seed(1234)
 wov <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1)
@@ -129,6 +128,45 @@ test_that("normalize is working", {
                                normalize = TRUE)
     expect_true(wov1$normalize)
     
+})
+
+test_that("tolower is working", {
+    
+    skip_on_cran()
+    
+    wov0 <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1,
+                               tolower = FALSE)
+    expect_equal(dim(wov0$values),
+                 c(5556L, 50L))
+                 
+    
+    wov1 <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1,
+                               tolower = TRUE)
+    expect_equal(dim(wov1$values),
+                 c(5360L, 50L))
+    
+})
+
+test_that("tokens and tokens_xptr produce the same result", {
+    
+    skip_on_cran()
+    
+    set.seed(1234)
+    wov0 <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1)
+
+    set.seed(1234)
+    xtoks <- as.tokens_xptr(toks)
+    wov1 <- textmodel_word2vec(xtoks, dim = 50, iter = 10, min_count = 2, sample = 1)
+    
+    expect_equal(
+        names(wov0),
+        names(wov1)
+    )
+    
+    expect_equal(
+        dimnames(wov0$values), dimnames(wov1$values) 
+    )
+
 })
 
 test_that("textmodel_word2vec is robust", {

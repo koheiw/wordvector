@@ -12,13 +12,12 @@
 #include <cassert>
 #include <string>
 #include <vector>
-//#include <unordered_map>
 #include <queue>
 #include <functional>
 #include <cmath>
 #include <stdexcept>
 
-typedef std::vector<std::string> words_t;
+typedef std::vector<std::string> words_t; // TODO: change to types_t?
 typedef std::vector<unsigned int> text_t;
 typedef std::vector<text_t> texts_t;
 typedef std::vector<size_t> frequency_t;
@@ -70,7 +69,6 @@ namespace w2v {
      * @brief settings structure holds all training parameters
      */
     struct settings_t final {
-        uint16_t minWordFreq = 5; ///< discard words that appear less than minWordFreq times
         uint16_t size = 100; ///< word vector size
         uint16_t window = 5; ///< skip length between words
         uint16_t expTableSize = 1000; ///< exp(x) / (exp(x) + 1) values lookup table size
