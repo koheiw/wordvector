@@ -69,19 +69,19 @@ namespace w2v {
      * @brief settings structure holds all training parameters
      */
     struct settings_t final {
-        uint16_t size = 100; ///< word vector size
-        uint16_t window = 5; ///< skip length between words
-        uint16_t expTableSize = 1000; ///< exp(x) / (exp(x) + 1) values lookup table size
-        uint16_t expValueMax = 6; ///< max value in the lookup table
-        float sample = 1e-3f; ///< threshold for occurrence of words
-        bool withHS = false; ///< use hierarchical softmax instead of negative sampling
-        uint16_t negative = 5; ///< negative examples number
-        uint16_t threads = 1; ///< train threads number
-        uint16_t iterations = 5; ///< train iterations
-        float alpha = 0.05f; ///< starting learn rate
-        int type = 1; ///< 1:CBOW 2:Skip-Gram
-        uint32_t random = 1234; /// < random number seed
-        bool verbose = false; /// print progress
+        uint16_t size = 100; //< word vector size
+        uint16_t window = 5; //< skip length between words
+        uint16_t expTableSize = 1000; //< exp(x) / (exp(x) + 1) values lookup table size
+        uint16_t expValueMax = 6; //< max value in the lookup table
+        float sample = 1e-3f; //< threshold for occurrence of words
+        bool withHS = false; //< use hierarchical softmax instead of negative sampling
+        uint16_t negative = 5; //< negative examples number
+        uint16_t threads = 1; //< train threads number
+        uint16_t iterations = 5; //< train iterations
+        float alpha = 0.05f; //< starting learn rate
+        int type = 1; //< 1:CBOW 2:Skip-Gram
+        uint32_t random = 1234; // < random number seed
+        bool verbose = false; // print progress
         settings_t() = default;
     };
 
@@ -90,37 +90,45 @@ namespace w2v {
     protected:
         
         // word vector
+        std::vector<std::string> m_vocaburary;
         std::vector<float> m_pjLayerValues;
         std::vector<float> m_bpWeights;
-        std::vector<std::string> m_vocaburary;
         
-        //map_t m_map;
         std::size_t m_vectorSize = 0;
         std::size_t m_vocaburarySize = 0;
         mutable std::string m_errMsg;
         
     public:
         
-        /// virtual destructor
+        // constructor
+        word2vec_t() {};
+        word2vec_t(std::vector<std::string> m_vocaburary_,
+                   std::vector<float> m_pjLayerValues_,
+                   std::vector<float> m_bpWeights_): 
+                   m_vocaburary(m_vocaburary_),
+                   m_pjLayerValues(m_pjLayerValues_),
+                   m_bpWeights(m_bpWeights_) {}
+    
+        // virtual destructor
         virtual ~word2vec_t() = default;
         
         const std::vector<float> &values() {return m_pjLayerValues;} 
         const std::vector<float> &weights() {return m_bpWeights;} 
         
-        /// @returns vector size of model
+        // @returns vector size of model
         std::size_t vectorSize() const noexcept {return m_vectorSize;}
-        /// @returns m_vocaburarySize size (number of unique words)
+        // @returns m_vocaburarySize size (number of unique words)
         std::size_t vocaburarySize() const noexcept {return m_vocaburarySize;}
-        /// @returns vector size of model
+        // @returns vector size of model
         std::vector<std::string> vocaburary() const noexcept {return m_vocaburary;}
-        /// @returns error message
+        // @returns error message
         std::string errMsg() const noexcept {return m_errMsg;}
         
-        /// train model
+        // train model
         bool train(const settings_t &_settings,
                    const corpus_t &_corpus) noexcept;
         
-        /// normalize by factors
+        // normalize by factors
         void normalizeValues() {
             for(std::size_t i = 0; i < m_vocaburarySize; i += m_vectorSize) {
                 float ss = 0.0f;
