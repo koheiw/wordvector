@@ -18,7 +18,11 @@ namespace w2v {
             std::shared_ptr<settings_t> settings(new settings_t(_settings));
             
             m_vectorSize = settings->size;
-            m_vocaburarySize = corpus->words.size();
+            m_vocaburarySize = corpus->types.size();
+            m_vocaburary = corpus->types;
+            // TODO: pass corpus values to the model
+            // m_frequency = corpus->frequency;
+            // m_trainWords = corpus->trainWords;
             std::size_t matrixSize = m_vectorSize * m_vocaburarySize;
             std::mt19937_64 randomGenerator(settings->random);
             int iter_max = settings->iterations;
@@ -36,7 +40,7 @@ namespace w2v {
             // set data
             trainThread_t::data_t data;
             data.settings = settings;
-            data.corpus = corpus;
+            data.corpus = corpus; // TODO: consider removing
             
             // initialize variables
             data.bpWeights.reset(new std::vector<float>(matrixSize, 0.0f));
@@ -109,6 +113,7 @@ namespace w2v {
             
             m_pjLayerValues = *data.pjLayerValues;
             m_bpWeights = *data.bpWeights;
+            
             
             return true;
         } catch (const std::exception &_e) {

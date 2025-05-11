@@ -17,7 +17,7 @@
 #include <cmath>
 #include <stdexcept>
 
-typedef std::vector<std::string> words_t; // TODO: change to types_t?
+typedef std::vector<std::string> types_t;
 typedef std::vector<unsigned int> text_t;
 typedef std::vector<text_t> texts_t;
 typedef std::vector<size_t> frequency_t;
@@ -30,19 +30,19 @@ namespace w2v {
     class corpus_t final {
     public:
         texts_t texts;
-        words_t words;
+        types_t types;
         frequency_t frequency;
         size_t totalWords;
         size_t trainWords;
         
         // constructors
         corpus_t(): texts() {}
-        corpus_t(texts_t _texts, words_t _words): 
-                 texts(_texts), words(_words) {}
+        corpus_t(texts_t _texts, types_t _types): 
+                 texts(_texts), types(_types) {}
 
         void setWordFreq() {
             
-            frequency = frequency_t(words.size(), 0);
+            frequency = frequency_t(types.size(), 0);
             totalWords = 0;
             trainWords = 0;
             for (size_t h = 0; h < texts.size(); h++) {
@@ -50,7 +50,7 @@ namespace w2v {
                 for (size_t i = 0; i < text.size(); i++) {
                     totalWords++;
                     auto &word = text[i];
-                    if (word < 0 || words.size() < word)
+                    if (word < 0 || types.size() < word)
                         throw std::range_error("invalid token object");
                     if (word == 0) // padding
                         continue;
@@ -92,6 +92,7 @@ namespace w2v {
         // word vector
         std::vector<float> m_pjLayerValues;
         std::vector<float> m_bpWeights;
+        std::vector<std::string> m_vocaburary;
         
         //map_t m_map;
         std::size_t m_vectorSize = 0;
@@ -110,6 +111,8 @@ namespace w2v {
         std::size_t vectorSize() const noexcept {return m_vectorSize;}
         /// @returns m_vocaburarySize size (number of unique words)
         std::size_t vocaburarySize() const noexcept {return m_vocaburarySize;}
+        /// @returns vector size of model
+        std::vector<std::string> vocaburary() const noexcept {return m_vocaburary;}
         /// @returns error message
         std::string errMsg() const noexcept {return m_errMsg;}
         

@@ -17,27 +17,27 @@ Rcpp::CharacterVector encode(std::vector<std::string> types){
     return(types_);
 }
 
-Rcpp::NumericMatrix get_values(w2v::word2vec_t model, w2v::corpus_t corpus) {
+Rcpp::NumericMatrix get_values(w2v::word2vec_t model) {
     std::vector<float> mat = model.values();
     if (model.vectorSize() * model.vocaburarySize() != mat.size())
         throw std::runtime_error("Invalid model values");
     Rcpp::NumericMatrix mat_(model.vectorSize(), model.vocaburarySize(), mat.begin());
-    colnames(mat_) = encode(corpus.words); 
+    colnames(mat_) = encode(model.vocaburary()); 
     return Rcpp::transpose(mat_);
 }
 
-Rcpp::NumericMatrix get_weights(w2v::word2vec_t model, w2v::corpus_t corpus) {
+Rcpp::NumericMatrix get_weights(w2v::word2vec_t model) {
     std::vector<float> mat = model.weights();
     if (model.vectorSize() * model.vocaburarySize() != mat.size())
         throw std::runtime_error("Invalid model weights");
     Rcpp::NumericMatrix mat_(model.vectorSize(), model.vocaburarySize(), mat.begin());
-    colnames(mat_) = encode(corpus.words); 
+    colnames(mat_) = encode(model.vocaburary()); 
     return Rcpp::transpose(mat_);
 }
 
 Rcpp::NumericVector get_frequency(w2v::corpus_t corpus) {
     Rcpp::NumericVector v = Rcpp::wrap(corpus.frequency);
-    v.names() = encode(corpus.words);
+    v.names() = encode(corpus.types);
     return(v);
 }
 
@@ -83,7 +83,7 @@ Rcpp::List cpp_w2v(TokensPtr xptr,
     
     xptr->recompile();
     texts_t texts = xptr->texts;
-    words_t types = xptr->types;
+    types_t types = xptr->types;
     
     w2v::corpus_t corpus(texts, types);
     corpus.setWordFreq();
@@ -131,8 +131,8 @@ Rcpp::List cpp_w2v(TokensPtr xptr,
         Rprintf(" ...complete\n");
     
     Rcpp::List out = Rcpp::List::create(
-        Rcpp::Named("values") = get_values(word2vec, corpus), 
-        Rcpp::Named("weights") = get_weights(word2vec, corpus), 
+        Rcpp::Named("values") = get_values(word2vec), 
+        Rcpp::Named("weights") = get_weights(word2vec), 
         Rcpp::Named("type") = type,
         Rcpp::Named("dim") = size,
         //Rcpp::Named("min_count") = minWordFreq,
