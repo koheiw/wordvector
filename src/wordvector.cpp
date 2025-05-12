@@ -41,6 +41,26 @@ Rcpp::NumericVector get_frequency(w2v::corpus_t corpus) {
     return(v);
 }
 
+w2v::word2vec_t as_word2vec(List model_) {
+    
+    w2v::word2vec_t model;
+    if (model_.length() == 0)
+        return(model);
+        
+    Rcpp::NumericMatrix values_ = model_["values"];
+    Rcpp::NumericMatrix weights_ = model_["weights"];
+    
+    CharacterVector vocaburary_ = rownames(values_);
+    std::vector<std::string> vocaburary = Rcpp::as< std::vector< std::string> >(vocaburary_);
+    
+    std::vector<float> values = Rcpp::as< std::vector<float> >(NumericVector(values_));
+    std::vector<float> weights = Rcpp::as< std::vector<float> >(NumericVector(weights_));
+    std::size_t vectorSize = values_.nrow();
+    
+    model = w2v::word2vec_t(vocaburary, vectorSize, values, weights);
+    return(model);
+}
+
 /*
  uint16_t size = 100; ///< word vector size
  uint16_t window = 5; ///< skip length between words
@@ -68,8 +88,7 @@ Rcpp::List cpp_w2v(TokensPtr xptr,
                    int type = 1,
                    bool verbose = false,
                    bool normalize = true,
-                   uint16_t expTableSize = 1000,
-                   uint16_t expValueMax = 6) {
+                   List model_ = R_NilValue) {
   
     if (verbose) {
         if (type == 1 || type == 10) {
@@ -91,8 +110,8 @@ Rcpp::List cpp_w2v(TokensPtr xptr,
     w2v::settings_t settings;;
     settings.size = size;
     settings.window = window;
-    settings.expTableSize = expTableSize;
-    settings.expValueMax = expValueMax;
+    settings.expTableSize = 1000;
+    settings.expValueMax = 6;
     settings.sample = sample;
     settings.withHS = withHS;
     settings.negative = negative;
@@ -102,7 +121,8 @@ Rcpp::List cpp_w2v(TokensPtr xptr,
     settings.type = type;
     settings.random = (uint32_t)(Rcpp::runif(1)[0] * std::numeric_limits<uint32_t>::max());
     settings.verbose = verbose;
-
+    
+    w2v::word2vec_t word2vec_pre = as_word2vec(model_);
     w2v::word2vec_t word2vec;
     bool trained;
     
@@ -148,4 +168,3 @@ Rcpp::List cpp_w2v(TokensPtr xptr,
     out.attr("class") = "textmodel_wordvector";
     return out;
 }
-
