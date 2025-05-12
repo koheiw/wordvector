@@ -68,36 +68,43 @@ namespace w2v {
             
             // inherit parameters
             if (_model.m_vocaburary.size() > 0) {
+                
                 if (verbose)
                     Rprintf(" ......copy pre-trained word vectos\n");
+                
                 std::unordered_map<std::string, std::size_t> map;
-                for (std::size_t i = 0; i < data.corpus->types.size(); ++i) {
-                    map.insert(std::make_pair(data.corpus->types[i], i)); 
+                // for (std::size_t i = 0; i < data.corpus->types.size(); ++i) {
+                //     map.insert(std::make_pair(data.corpus->types[i], i));
+                // }
+                for (std::size_t i = 0; i < m_vocaburarySize; ++i) {
+                    map.insert(std::make_pair(m_vocaburary[i], i));
                 }
-                for (std::size_t j = 0; j < _model.m_vocaburary.size(); ++j) {
+                for (std::size_t j = 0; j < _model.m_vocaburarySize; ++j) {
                     if (auto it = map.find(_model.m_vocaburary[j]); it != map.end()) {
                         //Rcpp::Rcout << _model.m_vocaburary[j] << ": " << it->second << "\n";
                         for (std::size_t k = 0; k < m_vectorSize; k++) {
-                            std::size_t shift = _model.m_vocaburary.size() * k;
-                            (*data.pjLayerValues)[it->second + (k * m_vocaburarySize)] = _model.m_pjLayerValues[j + shift];
-                            (*data.bpWeights)[it->second + (k * m_vocaburarySize)] = _model.m_bpWeights[j + shift];
+                            (*data.pjLayerValues)[it->second + (k * m_vocaburarySize)] = _model.m_pjLayerValues[j + k * _model.m_vocaburarySize];
+                            (*data.bpWeights)[it->second + (k * m_vocaburarySize)] = _model.m_bpWeights[j + k * _model.m_vocaburarySize];
                         }
                     }
                 }
-                // Rcpp::Rcout << "\n";
-                // for (std::size_t j = 0; j < m_vocaburarySize; j++) {
-                //     for (std::size_t k = 0; k < m_vectorSize; k++) {
-                //         Rcpp::Rcout << (*data.pjLayerValues)[j + (m_vocaburarySize * k)] << " ";
-                //     }
-                //     Rcpp::Rcout << "\n";
-                // }
-                // Rcpp::Rcout << "\n";
-            } else {
-                // std::uniform_real_distribution<float> rndMatrixInitializer(-0.005f, 0.005f);
-                // std::generate((*data.pjLayerValues).begin(), (*data.pjLayerValues).end(), [&]() {
-                //     return rndMatrixInitializer(randomGenerator);
-                // });
+                
+                Rcpp::Rcout << "\n";
+                for (std::size_t j = 0; j < m_vocaburarySize; j++) {
+                    Rcpp::Rcout << m_vocaburary[j] << " :";
+                    for (std::size_t k = 0; k < m_vectorSize; k++) {
+                        Rcpp::Rcout << (*data.pjLayerValues)[j + (k * m_vocaburarySize)] << " ";
+                    }
+                    Rcpp::Rcout << "\n";
+                }
+                Rcpp::Rcout << "\n";
             }
+            // } else {
+            //     std::uniform_real_distribution<float> rndMatrixInitializer(-0.005f, 0.005f);
+            //     std::generate((*data.pjLayerValues).begin(), (*data.pjLayerValues).end(), [&]() {
+            //         return rndMatrixInitializer(randomGenerator);
+            //     });
+            // }
             
             // create threads
             std::vector<std::unique_ptr<trainThread_t>> threads;

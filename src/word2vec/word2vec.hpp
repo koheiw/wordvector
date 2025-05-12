@@ -110,6 +110,7 @@ namespace w2v {
                    std::vector<float> pjLayerValues_,
                    std::vector<float> bpWeights_): 
                    m_vocaburary(vocaburary_),
+                   m_vocaburarySize(vocaburary_.size()),
                    m_vectorSize(vectorSize_),
                    m_pjLayerValues(pjLayerValues_),
                    m_bpWeights(bpWeights_) {}
