@@ -88,16 +88,15 @@ namespace w2v {
                         }
                     }
                 }
-                
-                Rcpp::Rcout << "\n";
-                for (std::size_t j = 0; j < m_vocaburarySize; j++) {
-                    Rcpp::Rcout << m_vocaburary[j] << " :";
-                    for (std::size_t k = 0; k < m_vectorSize; k++) {
-                        Rcpp::Rcout << (*data.pjLayerValues)[j + (k * m_vocaburarySize)] << " ";
-                    }
-                    Rcpp::Rcout << "\n";
-                }
-                Rcpp::Rcout << "\n";
+                // Rcpp::Rcout << "\n";
+                // for (std::size_t j = 0; j < m_vocaburarySize; j++) {
+                //     Rcpp::Rcout << m_vocaburary[j] << " :";
+                //     for (std::size_t k = 0; k < m_vectorSize; k++) {
+                //         Rcpp::Rcout << (*data.pjLayerValues)[j + (k * m_vocaburarySize)] << " ";
+                //     }
+                //     Rcpp::Rcout << "\n";
+                // }
+                // Rcpp::Rcout << "\n";
             }
             // } else {
             //     std::uniform_real_distribution<float> rndMatrixInitializer(-0.005f, 0.005f);
