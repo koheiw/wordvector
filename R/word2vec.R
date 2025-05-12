@@ -15,7 +15,6 @@
 #' @param ns_size the size of negative samples. Only used when `use_ns = TRUE`.
 #' @param sample the rate of sampling of words based on their frequency. Sampling is 
 #'   disabled when `sample = 1.0`
-#' @param normalize if `TRUE`, normalize the vectors in `values` and `weights`.
 #' @param tolower lower-case all the tokens before fitting the model.
 #' @param verbose if `TRUE`, print the progress of training.
 #' @param ... additional arguments.
@@ -67,7 +66,7 @@
 textmodel_word2vec <- function(x, dim = 50, type = c("cbow", "skip-gram"), 
                                min_count = 5L, window = ifelse(type == "cbow", 5L, 10L), 
                                iter = 10L, alpha = 0.05, use_ns = TRUE, ns_size = 5L, 
-                               sample = 0.001, normalize = TRUE, tolower = TRUE,
+                               sample = 0.001, tolower = TRUE,
                                model = NULL, verbose = FALSE, ...) {
     UseMethod("textmodel_word2vec")
 }
@@ -79,7 +78,7 @@ textmodel_word2vec <- function(x, dim = 50, type = c("cbow", "skip-gram"),
 textmodel_word2vec.tokens <- function(x, dim = 50L, type = c("cbow", "skip-gram"), 
                                       min_count = 5L, window = ifelse(type == "cbow", 5L, 10L), 
                                       iter = 10L, alpha = 0.05, use_ns = TRUE, ns_size = 5L, 
-                                      sample = 0.001, normalize = TRUE, tolower = TRUE,
+                                      sample = 0.001, normalize = FALSE, tolower = TRUE,
                                       model = NULL, verbose = FALSE, ..., old = FALSE) {
     
     type <- match.arg(type)
@@ -94,7 +93,10 @@ textmodel_word2vec.tokens <- function(x, dim = 50L, type = c("cbow", "skip-gram"
     normalize <- check_logical(normalize)
     tolower <- check_logical(tolower)
     verbose <- check_logical(verbose)
-
+    
+    if (normalize)
+        .Deprecated(msg = "normalize is deprecated and defaults to FALSE.")
+    
     type <- match(type, c("cbow", "skip-gram"))
     if (old)
         type <- type * 10
