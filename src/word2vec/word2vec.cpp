@@ -18,14 +18,14 @@ namespace w2v {
             std::shared_ptr<corpus_t> corpus(new corpus_t(_corpus));
             std::shared_ptr<settings_t> settings(new settings_t(_settings));
             
-            m_vocaburary = corpus->types;
-            m_vocaburarySize = corpus->types.size();
+            m_vocabulary = corpus->types;
+            m_vocabularySize = corpus->types.size();
             m_vectorSize = settings->size;
             
             // TODO: pass corpus values to the model
             // m_frequency = corpus->frequency;
             // m_trainWords = corpus->trainWords;
-            std::size_t matrixSize = m_vectorSize * m_vocaburarySize;
+            std::size_t matrixSize = m_vectorSize * m_vocabularySize;
             std::mt19937_64 randomGenerator(settings->random);
             int iter_max = settings->iterations;
             bool verbose = settings->verbose;
@@ -33,8 +33,8 @@ namespace w2v {
             if (m_vectorSize == 0)
                 throw std::runtime_error("vectorSize is zero");
                 
-            if (m_vocaburarySize == 0)
-                throw std::runtime_error("vocaburarySize is zero");
+            if (m_vocabularySize == 0)
+                throw std::runtime_error("vocabularySize is zero");
             
             if (_corpus.trainWords == 0)
                 throw std::runtime_error("trainWords is zero");
@@ -67,17 +67,17 @@ namespace w2v {
             data.alpha.reset(new std::atomic<float>(settings->alpha));
             
             // inherit parameters
-            if (_model.m_vocaburary.size() > 0) {
+            if (_model.m_vocabulary.size() > 0) {
                 
                 if (verbose)
                     Rprintf(" ......copy pre-trained word vectos\n");
                 
                 std::unordered_map<std::string, std::size_t> map;
-                for (std::size_t i = 0; i < m_vocaburarySize; ++i) {
-                    map.insert(std::make_pair(m_vocaburary[i], i));
+                for (std::size_t i = 0; i < m_vocabularySize; ++i) {
+                    map.insert(std::make_pair(m_vocabulary[i], i));
                 }
-                for (std::size_t j = 0; j < _model.m_vocaburarySize; ++j) {
-                    if (auto it = map.find(_model.m_vocaburary[j]); it != map.end()) {
+                for (std::size_t j = 0; j < _model.m_vocabularySize; ++j) {
+                    if (auto it = map.find(_model.m_vocabulary[j]); it != map.end()) {
                         for (std::size_t k = 0; k < m_vectorSize; k++) {
                             (*data.pjLayerValues)[k + (it->second * m_vectorSize)] = _model.m_pjLayerValues[k + (j * _model.m_vectorSize)];
                             //(*data.bpWeights)[k + (it->second * m_vectorSize)] = _model.m_bpWeights[k + (j * _model.m_vectorSize)];

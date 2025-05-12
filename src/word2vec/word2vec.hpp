@@ -90,9 +90,8 @@ namespace w2v {
     protected:
         
         // vocabulary
-        // TODO: change vocaburary to vocabulary
-        std::vector<std::string> m_vocaburary;
-        std::size_t m_vocaburarySize = 0;
+        std::vector<std::string> m_vocabulary;
+        std::size_t m_vocabularySize = 0;
         
         // word vector
         std::size_t m_vectorSize = 0;
@@ -105,12 +104,12 @@ namespace w2v {
         
         // constructor
         word2vec_t() {};
-        word2vec_t(std::vector<std::string> vocaburary_,
+        word2vec_t(std::vector<std::string> vocabulary_,
                    std::size_t vectorSize_,
                    std::vector<float> pjLayerValues_,
                    std::vector<float> bpWeights_): 
-                   m_vocaburary(vocaburary_),
-                   m_vocaburarySize(vocaburary_.size()),
+                   m_vocabulary(vocabulary_),
+                   m_vocabularySize(vocabulary_.size()),
                    m_vectorSize(vectorSize_),
                    m_pjLayerValues(pjLayerValues_),
                    m_bpWeights(bpWeights_) {}
@@ -123,10 +122,10 @@ namespace w2v {
         
         // @returns vector size of model
         std::size_t vectorSize() const noexcept {return m_vectorSize;}
-        // @returns m_vocaburarySize size (number of unique words)
-        std::size_t vocaburarySize() const noexcept {return m_vocaburarySize;}
+        // @returns m_vocabularySize size (number of unique words)
+        std::size_t vocabularySize() const noexcept {return m_vocabularySize;}
         // @returns vector size of model
-        std::vector<std::string> vocaburary() const noexcept {return m_vocaburary;}
+        std::vector<std::string> vocabulary() const noexcept {return m_vocabulary;}
         // @returns error message
         std::string errMsg() const noexcept {return m_errMsg;}
         
@@ -137,7 +136,7 @@ namespace w2v {
         
         // normalize by factors
         void normalizeValues() {
-            for(std::size_t i = 0; i < m_vocaburarySize; i += m_vectorSize) {
+            for(std::size_t i = 0; i < m_vocabularySize; i += m_vectorSize) {
                 float ss = 0.0f;
                 for(std::size_t j = 0; j < m_vectorSize; ++j) {
                     ss += m_pjLayerValues[i + j] * m_pjLayerValues[i + j];
@@ -153,15 +152,15 @@ namespace w2v {
         
         // normalize by words
         void normalizeWeights() {
-            for(std::size_t j = 0; j < m_vectorSize; j += m_vocaburarySize) {
+            for(std::size_t j = 0; j < m_vectorSize; j += m_vocabularySize) {
                 float ss = 0.0f;
-                for(std::size_t i = 0; i < m_vocaburarySize; ++i) {
+                for(std::size_t i = 0; i < m_vocabularySize; ++i) {
                     ss += m_bpWeights[i + j] * m_bpWeights[i + j];
                 }
                 if (ss <= 0.0f) 
                     throw std::runtime_error("failed to normalize bpWeights");
-                float d = std::sqrt(ss / m_vocaburarySize);
-                for(std::size_t i = 0; i < m_vocaburarySize; ++i) {
+                float d = std::sqrt(ss / m_vocabularySize);
+                for(std::size_t i = 0; i < m_vocabularySize; ++i) {
                     m_bpWeights[i + j] = m_bpWeights[i + j] / d;
                 }
             }

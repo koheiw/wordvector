@@ -22,19 +22,19 @@ Rcpp::CharacterVector encode(std::vector<std::string> types){
 
 Rcpp::NumericMatrix get_values(w2v::word2vec_t model) {
     std::vector<float> mat = model.values();
-    if (model.vectorSize() * model.vocaburarySize() != mat.size())
+    if (model.vectorSize() * model.vocabularySize() != mat.size())
         throw std::runtime_error("Invalid model values");
-    Rcpp::NumericMatrix mat_(model.vectorSize(), model.vocaburarySize(), mat.begin());
-    colnames(mat_) = encode(model.vocaburary()); 
+    Rcpp::NumericMatrix mat_(model.vectorSize(), model.vocabularySize(), mat.begin());
+    colnames(mat_) = encode(model.vocabulary()); 
     return Rcpp::transpose(mat_);
 }
 
 Rcpp::NumericMatrix get_weights(w2v::word2vec_t model) {
     std::vector<float> mat = model.weights();
-    if (model.vectorSize() * model.vocaburarySize() != mat.size())
+    if (model.vectorSize() * model.vocabularySize() != mat.size())
         throw std::runtime_error("Invalid model weights");
-    Rcpp::NumericMatrix mat_(model.vectorSize(), model.vocaburarySize(), mat.begin());
-    colnames(mat_) = encode(model.vocaburary()); 
+    Rcpp::NumericMatrix mat_(model.vectorSize(), model.vocabularySize(), mat.begin());
+    colnames(mat_) = encode(model.vocabulary()); 
     return Rcpp::transpose(mat_);
 }
 
@@ -57,8 +57,8 @@ w2v::word2vec_t as_word2vec(List model_) {
     values_ = Rcpp::transpose(values_);
     weights_ = Rcpp::transpose(weights_);
     
-    CharacterVector vocaburary_ = colnames(values_);
-    vocabulary_t vocabulary = Rcpp::as<vocabulary_t>(vocaburary_);
+    CharacterVector vocabulary_ = colnames(values_);
+    vocabulary_t vocabulary = Rcpp::as<vocabulary_t>(vocabulary_);
     
     wordvector_t values = Rcpp::as<wordvector_t>(NumericVector(values_));
     wordvector_t weights = Rcpp::as<wordvector_t>(NumericVector(weights_));
@@ -129,8 +129,7 @@ Rcpp::List cpp_w2v(TokensPtr xptr,
     settings.random = (uint32_t)(Rcpp::runif(1)[0] * std::numeric_limits<uint32_t>::max());
     settings.verbose = verbose;
     
-    // NOTE: consider initializing models with data (bud do not train)
-    //       set m_vocaburary, m_vocaburarySize etc.
+    // NOTE: consider initializing models with corpus
     w2v::word2vec_t word2vec_pre = as_word2vec(model_);
     w2v::word2vec_t word2vec;
     bool trained;
