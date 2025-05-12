@@ -128,13 +128,6 @@ Rcpp::List cpp_w2v(TokensPtr xptr,
     w2v::word2vec_t word2vec;
     bool trained;
     
-    if (verbose) {
-        if (withHS) {
-            Rprintf(" ...hierarchical softmax in %d iterations\n", iterations);
-        } else {
-            Rprintf(" ...negative sampling in %d iterations\n", iterations);
-        }
-    }    
     trained = word2vec.train(settings, corpus, word2vec_pre);
     
     if (!trained) {

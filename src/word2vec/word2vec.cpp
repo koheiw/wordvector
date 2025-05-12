@@ -112,6 +112,16 @@ namespace w2v {
                     break;
             }
             
+            if (verbose) {
+                if (settings->withHS) {
+                    Rprintf(" ...hierarchical softmax in %d iterations\n", 
+                            settings->iterations);
+                } else {
+                    Rprintf(" ...negative sampling in %d iterations\n", 
+                            settings->iterations);
+                }
+            } 
+            
             int iter = 0;
             float alpha = 0.0;
             for (auto &thread:threads) {
