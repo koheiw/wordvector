@@ -122,6 +122,8 @@ Rcpp::List cpp_w2v(TokensPtr xptr,
     settings.random = (uint32_t)(Rcpp::runif(1)[0] * std::numeric_limits<uint32_t>::max());
     settings.verbose = verbose;
     
+    // NOTE: consider initializing models with data (bud do not train)
+    //       set m_vocaburary, m_vocaburarySize etc.
     w2v::word2vec_t word2vec_pre = as_word2vec(model_);
     w2v::word2vec_t word2vec;
     bool trained;
@@ -133,7 +135,7 @@ Rcpp::List cpp_w2v(TokensPtr xptr,
             Rprintf(" ...negative sampling in %d iterations\n", iterations);
         }
     }    
-    trained = word2vec.train(settings, corpus);
+    trained = word2vec.train(settings, corpus, word2vec_pre);
     
     if (!trained) {
         Rcpp::List out = Rcpp::List::create(
