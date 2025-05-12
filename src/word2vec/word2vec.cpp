@@ -17,9 +17,10 @@ namespace w2v {
             std::shared_ptr<corpus_t> corpus(new corpus_t(_corpus));
             std::shared_ptr<settings_t> settings(new settings_t(_settings));
             
-            m_vectorSize = settings->size;
-            m_vocaburarySize = corpus->types.size();
             m_vocaburary = corpus->types;
+            m_vocaburarySize = corpus->types.size();
+            m_vectorSize = settings->size;
+            
             // TODO: pass corpus values to the model
             // m_frequency = corpus->frequency;
             // m_trainWords = corpus->trainWords;

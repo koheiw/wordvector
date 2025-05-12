@@ -89,25 +89,30 @@ namespace w2v {
     class word2vec_t final {
     protected:
         
-        // word vector
+        // vocabulary
+        // TODO: change vocaburary to vocabulary
         std::vector<std::string> m_vocaburary;
+        std::size_t m_vocaburarySize = 0;
+        
+        // word vector
+        std::size_t m_vectorSize = 0;
         std::vector<float> m_pjLayerValues;
         std::vector<float> m_bpWeights;
         
-        std::size_t m_vectorSize = 0;
-        std::size_t m_vocaburarySize = 0;
         mutable std::string m_errMsg;
         
     public:
         
         // constructor
         word2vec_t() {};
-        word2vec_t(std::vector<std::string> m_vocaburary_,
-                   std::vector<float> m_pjLayerValues_,
-                   std::vector<float> m_bpWeights_): 
-                   m_vocaburary(m_vocaburary_),
-                   m_pjLayerValues(m_pjLayerValues_),
-                   m_bpWeights(m_bpWeights_) {}
+        word2vec_t(std::vector<std::string> vocaburary_,
+                   std::size_t vectorSize_,
+                   std::vector<float> pjLayerValues_,
+                   std::vector<float> bpWeights_): 
+                   m_vocaburary(vocaburary_),
+                   m_vectorSize(vectorSize_),
+                   m_pjLayerValues(pjLayerValues_),
+                   m_bpWeights(bpWeights_) {}
     
         // virtual destructor
         virtual ~word2vec_t() = default;
