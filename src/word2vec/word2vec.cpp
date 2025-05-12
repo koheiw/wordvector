@@ -81,7 +81,7 @@ namespace w2v {
                         //Rcpp::Rcout << _model.m_vocaburary[j] << ": " << it->second << "\n";
                         for (std::size_t k = 0; k < m_vectorSize; k++) {
                             (*data.pjLayerValues)[it->second + (k * m_vocaburarySize)] = _model.m_pjLayerValues[j + k * _model.m_vocaburarySize];
-                            (*data.bpWeights)[it->second + (k * m_vocaburarySize)] = _model.m_bpWeights[j + k * _model.m_vocaburarySize];
+                            //(*data.bpWeights)[it->second + (k * m_vocaburarySize)] = _model.m_bpWeights[j + k * _model.m_vocaburarySize];
                         }
                     }
                 }
