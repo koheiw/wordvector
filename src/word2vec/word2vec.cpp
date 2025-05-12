@@ -73,9 +73,6 @@ namespace w2v {
                     Rprintf(" ......copy pre-trained word vectos\n");
                 
                 std::unordered_map<std::string, std::size_t> map;
-                // for (std::size_t i = 0; i < data.corpus->types.size(); ++i) {
-                //     map.insert(std::make_pair(data.corpus->types[i], i));
-                // }
                 for (std::size_t i = 0; i < m_vocaburarySize; ++i) {
                     map.insert(std::make_pair(m_vocaburary[i], i));
                 }
@@ -98,12 +95,6 @@ namespace w2v {
                 // }
                 // Rcpp::Rcout << "\n";
             }
-            // } else {
-            //     std::uniform_real_distribution<float> rndMatrixInitializer(-0.005f, 0.005f);
-            //     std::generate((*data.pjLayerValues).begin(), (*data.pjLayerValues).end(), [&]() {
-            //         return rndMatrixInitializer(randomGenerator);
-            //     });
-            // }
             
             // create threads
             std::vector<std::unique_ptr<trainThread_t>> threads;
