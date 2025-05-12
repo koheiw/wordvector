@@ -17,6 +17,7 @@ textmodel_word2vec(
   sample = 0.001,
   normalize = TRUE,
   tolower = TRUE,
+  model = NULL,
   verbose = FALSE,
   ...
 )

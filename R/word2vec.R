@@ -68,7 +68,7 @@ textmodel_word2vec <- function(x, dim = 50, type = c("cbow", "skip-gram"),
                                min_count = 5L, window = ifelse(type == "cbow", 5L, 10L), 
                                iter = 10L, alpha = 0.05, use_ns = TRUE, ns_size = 5L, 
                                sample = 0.001, normalize = TRUE, tolower = TRUE,
-                               verbose = FALSE, ...) {
+                               model = NULL, verbose = FALSE, ...) {
     UseMethod("textmodel_word2vec")
 }
 
@@ -80,7 +80,7 @@ textmodel_word2vec.tokens <- function(x, dim = 50L, type = c("cbow", "skip-gram"
                                       min_count = 5L, window = ifelse(type == "cbow", 5L, 10L), 
                                       iter = 10L, alpha = 0.05, use_ns = TRUE, ns_size = 5L, 
                                       sample = 0.001, normalize = TRUE, tolower = TRUE,
-                                      verbose = FALSE, ..., old = FALSE) {
+                                      model = NULL, verbose = FALSE, ..., old = FALSE) {
     
     type <- match.arg(type)
     dim <- check_integer(dim, min = 2)
@@ -107,7 +107,8 @@ textmodel_word2vec.tokens <- function(x, dim = 50L, type = c("cbow", "skip-gram"
     result <- cpp_w2v(x, size = dim, window = window,
                       sample = sample, withHS = !use_ns, negative = ns_size, 
                       threads = get_threads(), iterations = iter,
-                      alpha = alpha, type = type, normalize = normalize, verbose = verbose)
+                      alpha = alpha, type = type, normalize = normalize, model = model,
+                      verbose = verbose)
     if (!is.null(result$message))
         stop("Failed to train word2vec (", result$message, ")")
     
