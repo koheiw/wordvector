@@ -78,22 +78,12 @@ namespace w2v {
                 }
                 for (std::size_t j = 0; j < _model.m_vocaburarySize; ++j) {
                     if (auto it = map.find(_model.m_vocaburary[j]); it != map.end()) {
-                        //Rcpp::Rcout << _model.m_vocaburary[j] << ": " << it->second << "\n";
                         for (std::size_t k = 0; k < m_vectorSize; k++) {
-                            (*data.pjLayerValues)[it->second + (k * m_vocaburarySize)] = _model.m_pjLayerValues[j + k * _model.m_vocaburarySize];
-                            //(*data.bpWeights)[it->second + (k * m_vocaburarySize)] = _model.m_bpWeights[j + k * _model.m_vocaburarySize];
+                            (*data.pjLayerValues)[k + (it->second * m_vectorSize)] = _model.m_pjLayerValues[k + (j * _model.m_vectorSize)];
+                            //(*data.bpWeights)[k + (it->second * m_vectorSize)] = _model.m_bpWeights[k + (j * _model.m_vectorSize)];
                         }
                     }
                 }
-                // Rcpp::Rcout << "\n";
-                // for (std::size_t j = 0; j < m_vocaburarySize; j++) {
-                //     Rcpp::Rcout << m_vocaburary[j] << " :";
-                //     for (std::size_t k = 0; k < m_vectorSize; k++) {
-                //         Rcpp::Rcout << (*data.pjLayerValues)[j + (k * m_vocaburarySize)] << " ";
-                //     }
-                //     Rcpp::Rcout << "\n";
-                // }
-                // Rcpp::Rcout << "\n";
             }
             
             // create threads

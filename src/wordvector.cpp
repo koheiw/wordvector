@@ -6,6 +6,9 @@
 #include "tokens.h"
 
 typedef XPtr<TokensObj> TokensPtr;
+typedef std::vector<std::string> vocabulary_t;
+typedef std::vector<float> wordvector_t;
+
 
 Rcpp::CharacterVector encode(std::vector<std::string> types){
     Rcpp::CharacterVector types_(types.size());
@@ -50,14 +53,18 @@ w2v::word2vec_t as_word2vec(List model_) {
     Rcpp::NumericMatrix values_ = model_["values"];
     Rcpp::NumericMatrix weights_ = model_["weights"];
     
-    CharacterVector vocaburary_ = rownames(values_);
-    std::vector<std::string> vocaburary = Rcpp::as< std::vector< std::string> >(vocaburary_);
+    // columns are words internally
+    values_ = Rcpp::transpose(values_);
+    weights_ = Rcpp::transpose(weights_);
     
-    std::vector<float> values = Rcpp::as< std::vector<float> >(NumericVector(values_));
-    std::vector<float> weights = Rcpp::as< std::vector<float> >(NumericVector(weights_));
-    std::size_t vectorSize = values_.ncol();
+    CharacterVector vocaburary_ = colnames(values_);
+    vocabulary_t vocabulary = Rcpp::as<vocabulary_t>(vocaburary_);
     
-    model = w2v::word2vec_t(vocaburary, vectorSize, values, weights);
+    wordvector_t values = Rcpp::as<wordvector_t>(NumericVector(values_));
+    wordvector_t weights = Rcpp::as<wordvector_t>(NumericVector(weights_));
+    std::size_t vectorSize = values_.nrow();
+    
+    model = w2v::word2vec_t(vocabulary, vectorSize, values, weights);
     return(model);
 }
 
