@@ -47,10 +47,10 @@ namespace w2v {
             // initialize variables
             data.bpWeights.reset(new std::vector<float>(matrixSize, 0.0f));
             data.pjLayerValues.reset(new std::vector<float>(matrixSize, 0.0f));
-            // std::uniform_real_distribution<float> rndMatrixInitializer(-0.005f, 0.005f);
-            // std::generate((*data.pjLayerValues).begin(), (*data.pjLayerValues).end(), [&]() {
-            //     return rndMatrixInitializer(randomGenerator);
-            // });
+            std::uniform_real_distribution<float> rndMatrixInitializer(-0.005f, 0.005f);
+            std::generate((*data.pjLayerValues).begin(), (*data.pjLayerValues).end(), [&]() {
+                return rndMatrixInitializer(randomGenerator);
+            });
             data.expTable.reset(new std::vector<float>(settings->expTableSize));
             for (uint16_t r = 0; r < settings->expTableSize; ++r) {
                 // scale value between +- expValueMax
@@ -68,6 +68,8 @@ namespace w2v {
             
             // inherit parameters
             if (_model.m_vocaburary.size() > 0) {
+                if (verbose)
+                    Rprintf(" ......copy pre-trained word vectos\n");
                 std::unordered_map<std::string, std::size_t> map;
                 for (std::size_t i = 0; i < data.corpus->types.size(); ++i) {
                     map.insert(std::make_pair(data.corpus->types[i], i)); 
@@ -91,10 +93,10 @@ namespace w2v {
                 // }
                 // Rcpp::Rcout << "\n";
             } else {
-                std::uniform_real_distribution<float> rndMatrixInitializer(-0.005f, 0.005f);
-                std::generate((*data.pjLayerValues).begin(), (*data.pjLayerValues).end(), [&]() {
-                    return rndMatrixInitializer(randomGenerator);
-                });
+                // std::uniform_real_distribution<float> rndMatrixInitializer(-0.005f, 0.005f);
+                // std::generate((*data.pjLayerValues).begin(), (*data.pjLayerValues).end(), [&]() {
+                //     return rndMatrixInitializer(randomGenerator);
+                // });
             }
             
             // create threads
