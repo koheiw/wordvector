@@ -11,7 +11,8 @@
 
 namespace w2v {
     bool word2vec_t::train(const settings_t &_settings,
-                           const corpus_t &_corpus) noexcept {
+                           const corpus_t &_corpus,
+                           const word2vec_t &_model) noexcept {
         try {
             
             std::shared_ptr<corpus_t> corpus(new corpus_t(_corpus));
@@ -62,9 +63,24 @@ namespace w2v {
             if (settings->withHS) {
                 data.huffmanTree.reset(new huffmanTree_t(corpus->frequency));;
             }
-            
             data.processedWords.reset(new std::atomic<std::size_t>(0));
             data.alpha.reset(new std::atomic<float>(settings->alpha));
+            
+            // inherit params
+            std::unordered_map<std::string, std::size_t> map;
+            for (std::size_t i = 0; i < data.corpus->types.size(); ++i) {
+                map.insert(std::make_pair(data.corpus->types[i], i)); 
+            }
+            for (std::size_t j = 0; j < _model.m_vocaburary.size(); ++j) {
+                if (auto it = map.find(_model.m_vocaburary[j]); it != map.end()) {
+                    //Rcpp::Rcout << _model.m_vocaburary[j] << ": " << it->second << "\n";
+                    for (std::size_t k = 0; k < m_vectorSize; k++) {
+                        std::size_t shift = _model.m_vocaburary.size() * k;
+                        (*data.pjLayerValues)[it->second + (k * m_vocaburarySize)] = _model.m_pjLayerValues[j + shift];
+                        (*data.bpWeights)[it->second + (k * m_vocaburarySize)] = _model.m_bpWeights[j + shift];
+                    }
+                }
+            }
             
             // create threads
             std::vector<std::unique_ptr<trainThread_t>> threads;

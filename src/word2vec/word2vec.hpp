@@ -131,7 +131,8 @@ namespace w2v {
         
         // train model
         bool train(const settings_t &_settings,
-                   const corpus_t &_corpus) noexcept;
+                   const corpus_t &_corpus,
+                   const word2vec_t &_model) noexcept;
         
         // normalize by factors
         void normalizeValues() {
