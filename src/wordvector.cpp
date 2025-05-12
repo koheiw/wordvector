@@ -55,7 +55,7 @@ w2v::word2vec_t as_word2vec(List model_) {
     
     std::vector<float> values = Rcpp::as< std::vector<float> >(NumericVector(values_));
     std::vector<float> weights = Rcpp::as< std::vector<float> >(NumericVector(weights_));
-    std::size_t vectorSize = values_.nrow();
+    std::size_t vectorSize = values_.ncol();
     
     model = w2v::word2vec_t(vocaburary, vectorSize, values, weights);
     return(model);
