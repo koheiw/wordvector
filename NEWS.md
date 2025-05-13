@@ -1,7 +1,7 @@
 ## Changes in v0.5.0
 
-- Add the `model` argument to `textmodel_word2vec()` update existing models.
-- Deprecate the `normalize` argument and set to `FALSE` by default. 
+- Add the `model` argument to `textmodel_word2vec()` to update existing models.
+- The `normalize` argument is moved from `textmodel_word2vec()` to `as.matrix()`. The original argument is deprecated and set to `FALSE` by default. 
 - Improve the structure of C++ code.
 
 ## Changes in v0.4.0
