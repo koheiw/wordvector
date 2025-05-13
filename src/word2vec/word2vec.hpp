@@ -150,22 +150,6 @@ namespace w2v {
             }
         }
         
-        // normalize by words
-        void normalizeWeights() {
-            for(std::size_t j = 0; j < m_vectorSize; j += m_vocabularySize) {
-                float ss = 0.0f;
-                for(std::size_t i = 0; i < m_vocabularySize; ++i) {
-                    ss += m_bpWeights[i + j] * m_bpWeights[i + j];
-                }
-                if (ss <= 0.0f) 
-                    throw std::runtime_error("failed to normalize bpWeights");
-                float d = std::sqrt(ss / m_vocabularySize);
-                for(std::size_t i = 0; i < m_vocabularySize; ++i) {
-                    m_bpWeights[i + j] = m_bpWeights[i + j] / d;
-                }
-            }
-        }
-
     };
 }
 #endif // WORD2VEC_WORD2VEC_HPP

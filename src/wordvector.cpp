@@ -146,7 +146,6 @@ Rcpp::List cpp_w2v(TokensPtr xptr,
         if (verbose)
             Rprintf(" ...normalizing vectors\n");
         word2vec.normalizeValues();
-        word2vec.normalizeWeights();
     }
     if (verbose)
         Rprintf(" ...complete\n");
