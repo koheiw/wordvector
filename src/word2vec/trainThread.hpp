@@ -39,9 +39,7 @@ namespace w2v {
         */
         struct data_t final {
             std::shared_ptr<settings_t> settings; ///< settings structure
-            //std::shared_ptr<vocabulary_t> vocabulary; ///< words data
             std::shared_ptr<corpus_t> corpus; ///< train data 
-            //std::shared_ptr<fileMapper_t> fileMapper; /// NOTE: remove
             std::shared_ptr<std::vector<float>> pjLayerValues; ///< projection layer values
             std::shared_ptr<std::vector<float>> bpWeights; ///< back propagation weights
             std::shared_ptr<std::vector<float>> expTable; ///< exp(x) / (exp(x) + 1) values lookup table
@@ -51,7 +49,6 @@ namespace w2v {
         };
         
     private:
-        //uint16_t m_number;
         std::pair<std::size_t, std::size_t> m_range;
         data_t m_data;
         std::random_device m_randomDevice;

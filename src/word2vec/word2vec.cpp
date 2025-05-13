@@ -42,7 +42,7 @@ namespace w2v {
             // set data
             trainThread_t::data_t data;
             data.settings = settings;
-            data.corpus = corpus; // TODO: consider removing
+            data.corpus = corpus;
             
             // initialize variables
             data.bpWeights.reset(new std::vector<float>(matrixSize, 0.0f));
@@ -134,13 +134,6 @@ namespace w2v {
             for (auto &thread:threads) {
                 thread->join();
             }
-            
-            // std::cout << "word2vec_t::train()\n";
-            // std::cout << data.bpWeights << "\n";
-            // for (size_t i = 0; i < 10; i++){
-            //     std::cout << (*data.bpWeights)[i] << ", ";
-            // }
-            // std::cout << "\n";
             
             m_pjLayerValues = *data.pjLayerValues;
             m_bpWeights = *data.bpWeights;
