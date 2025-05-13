@@ -37,8 +37,7 @@ test_that("Skip-gram models are similar", {
     wdv <- textmodel_word2vec(toks, dim = 100, iter = 20, min_count = 0, type = "skip-gram",
                               verbose = FALSE, sample = 0)
     w2v <- word2vec(lis, dim = 100, iter = 20, min_count = 0, type = "skip-gram",
-                    verbose = FALSE, threads = 2, sample = 0,
-                    normalize = TRUE)
+                    verbose = FALSE, threads = 2, sample = 0)
     
     expect_true(all(
         correlation(proxyC::simil(as.matrix(wdv)[feat,]),

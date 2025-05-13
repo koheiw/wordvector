@@ -235,3 +235,14 @@ test_that("get_threads are working", {
     
     options("wordvector_threads" = NULL)
 })
+
+test_that("as.matrix() is working", {
+    
+    expect_true(
+        all(as.matrix(wov_nn, normalize = TRUE) != wov_nn$values)
+    )
+    expect_true(
+        all(as.matrix(wov_nn, normalize = FALSE) == wov_nn$values)
+    )
+    
+})

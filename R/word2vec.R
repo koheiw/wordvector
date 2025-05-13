@@ -97,7 +97,7 @@ textmodel_word2vec.tokens <- function(x, dim = 50L, type = c("cbow", "skip-gram"
     verbose <- check_logical(verbose)
     
     if (normalize)
-        .Deprecated(msg = "normalize is deprecated and defaults to FALSE.")
+        .Deprecated(msg = "normalize is deprecated. Use as.matrix(x, normalize = TRUE) instead.")
     
     type <- match(type, c("cbow", "skip-gram"))
     if (old)
@@ -172,9 +172,15 @@ print.textmodel_docvector <- function(x, ...) {
 #'
 #' Extract word vectors from a `textmodel_wordvector` or `textmodel_docvector` object.
 #' @param x a `textmodel_wordvector` or `textmodel_docvector` object.
+#' @param if `TRUE`, returns normalized the vectors.
 #' @param ... not used
 #' @return a matrix that contain the word vectors in rows
 #' @export
-as.matrix.textmodel_wordvector <- function(x, ...){
+as.matrix.textmodel_wordvector <- function(x, normalize = TRUE, ...){
+    normalize <- check_logical(normalize)
+    if (normalize) {
+        v <- sqrt(rowSums(x$values ^ 2) / ncol(x$values))
+        x$values <- x$values / v
+    }
     return(x$values) 
 }
