@@ -137,7 +137,7 @@ word2vec <- function(...) {
 
 #' Print method for trained word vectors
 #' @param x for print method, the object to be printed
-#' @param ... unused
+#' @param ... not used.
 #' @method print textmodel_wordvector
 #' @keywords internal
 #' @return an invisible copy of `x`. 
@@ -172,9 +172,9 @@ print.textmodel_docvector <- function(x, ...) {
 #'
 #' Extract word vectors from a `textmodel_wordvector` or `textmodel_docvector` object.
 #' @param x a `textmodel_wordvector` or `textmodel_docvector` object.
-#' @param if `TRUE`, returns normalized the vectors.
-#' @param ... not used
-#' @return a matrix that contain the word vectors in rows
+#' @param normalize if `TRUE`, returns normalized word vectors.
+#' @param ... not used.
+#' @return a matrix that contain the word vectors in rows.
 #' @export
 as.matrix.textmodel_wordvector <- function(x, normalize = TRUE, ...){
     normalize <- check_logical(normalize)

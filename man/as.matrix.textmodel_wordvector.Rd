@@ -9,12 +9,12 @@
 \arguments{
 \item{x}{a \code{textmodel_wordvector} or \code{textmodel_docvector} object.}
 
-\item{...}{not used}
+\item{normalize}{if \code{TRUE}, returns normalized word vectors.}
 
-\item{if}{\code{TRUE}, returns normalized the vectors.}
+\item{...}{not used.}
 }
 \value{
-a matrix that contain the word vectors in rows
+a matrix that contain the word vectors in rows.
 }
 \description{
 Extract word vectors from a \code{textmodel_wordvector} or \code{textmodel_docvector} object.
