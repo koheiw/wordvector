@@ -1,3 +1,9 @@
+## Changes in v0.5.0
+
+- Add the `model` argument to `textmodel_word2vec()` update existing models.
+- Deprecate the `normalize` argument and set to `FALSE` by default. 
+- Improve the structure of C++ code.
+
 ## Changes in v0.4.0
 
 - Add the `tolower` argument and set to `TRUE` to lower-case tokens.
