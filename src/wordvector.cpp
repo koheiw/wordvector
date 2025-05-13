@@ -95,7 +95,7 @@ Rcpp::List cpp_w2v(TokensPtr xptr,
                    int type = 1,
                    bool verbose = false,
                    bool normalize = true,
-                   List model_ = R_NilValue) {
+                   List model = R_NilValue) {
   
     if (verbose) {
         if (type == 1 || type == 10) {
@@ -130,7 +130,7 @@ Rcpp::List cpp_w2v(TokensPtr xptr,
     settings.verbose = verbose;
     
     // NOTE: consider initializing models with corpus
-    w2v::word2vec_t word2vec_pre = as_word2vec(model_);
+    w2v::word2vec_t word2vec_pre = as_word2vec(model);
     w2v::word2vec_t word2vec;
     bool trained;
     

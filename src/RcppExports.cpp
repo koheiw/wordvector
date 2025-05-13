@@ -22,8 +22,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // cpp_w2v
-Rcpp::List cpp_w2v(TokensPtr xptr, uint16_t size, uint16_t window, float sample, bool withHS, uint16_t negative, uint16_t threads, uint16_t iterations, float alpha, int type, bool verbose, bool normalize, List model_);
-RcppExport SEXP _wordvector_cpp_w2v(SEXP xptrSEXP, SEXP sizeSEXP, SEXP windowSEXP, SEXP sampleSEXP, SEXP withHSSEXP, SEXP negativeSEXP, SEXP threadsSEXP, SEXP iterationsSEXP, SEXP alphaSEXP, SEXP typeSEXP, SEXP verboseSEXP, SEXP normalizeSEXP, SEXP model_SEXP) {
+Rcpp::List cpp_w2v(TokensPtr xptr, uint16_t size, uint16_t window, float sample, bool withHS, uint16_t negative, uint16_t threads, uint16_t iterations, float alpha, int type, bool verbose, bool normalize, List model);
+RcppExport SEXP _wordvector_cpp_w2v(SEXP xptrSEXP, SEXP sizeSEXP, SEXP windowSEXP, SEXP sampleSEXP, SEXP withHSSEXP, SEXP negativeSEXP, SEXP threadsSEXP, SEXP iterationsSEXP, SEXP alphaSEXP, SEXP typeSEXP, SEXP verboseSEXP, SEXP normalizeSEXP, SEXP modelSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -39,8 +39,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type type(typeSEXP);
     Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
     Rcpp::traits::input_parameter< bool >::type normalize(normalizeSEXP);
-    Rcpp::traits::input_parameter< List >::type model_(model_SEXP);
-    rcpp_result_gen = Rcpp::wrap(cpp_w2v(xptr, size, window, sample, withHS, negative, threads, iterations, alpha, type, verbose, normalize, model_));
+    Rcpp::traits::input_parameter< List >::type model(modelSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_w2v(xptr, size, window, sample, withHS, negative, threads, iterations, alpha, type, verbose, normalize, model));
     return rcpp_result_gen;
 END_RCPP
 }
