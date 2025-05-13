@@ -16,6 +16,7 @@
 #' @param sample the rate of sampling of words based on their frequency. Sampling is 
 #'   disabled when `sample = 1.0`
 #' @param tolower lower-case all the tokens before fitting the model.
+#' @param model a trained Word2vec model; if provided, its word vectors are updated for `x`.
 #' @param verbose if `TRUE`, print the progress of training.
 #' @param ... additional arguments.
 #' @returns Returns a textmodel_wordvector object with the following elements:
@@ -65,9 +66,9 @@
 #' }
 textmodel_word2vec <- function(x, dim = 50, type = c("cbow", "skip-gram"), 
                                min_count = 5L, window = ifelse(type == "cbow", 5L, 10L), 
-                               iter = 10L, alpha = 0.05, use_ns = TRUE, ns_size = 5L, 
-                               sample = 0.001, tolower = TRUE,
-                               model = NULL, verbose = FALSE, ...) {
+                               iter = 10L, alpha = 0.05, model = NULL, 
+                               use_ns = TRUE, ns_size = 5L, sample = 0.001, tolower = TRUE,
+                               verbose = FALSE, ...) {
     UseMethod("textmodel_word2vec")
 }
 
@@ -77,9 +78,10 @@ textmodel_word2vec <- function(x, dim = 50, type = c("cbow", "skip-gram"),
 #' @method textmodel_word2vec tokens
 textmodel_word2vec.tokens <- function(x, dim = 50L, type = c("cbow", "skip-gram"), 
                                       min_count = 5L, window = ifelse(type == "cbow", 5L, 10L), 
-                                      iter = 10L, alpha = 0.05, use_ns = TRUE, ns_size = 5L, 
-                                      sample = 0.001, normalize = FALSE, tolower = TRUE,
-                                      model = NULL, verbose = FALSE, ..., old = FALSE) {
+                                      iter = 10L, alpha = 0.05, model = NULL, 
+                                      use_ns = TRUE, ns_size = 5L, sample = 0.001, tolower = TRUE,
+                                      verbose = FALSE, ..., 
+                                      normalize = FALSE, old = FALSE) {
     
     type <- match.arg(type)
     dim <- check_integer(dim, min = 2)
@@ -100,6 +102,13 @@ textmodel_word2vec.tokens <- function(x, dim = 50L, type = c("cbow", "skip-gram"
     type <- match(type, c("cbow", "skip-gram"))
     if (old)
         type <- type * 10
+    
+    if (!is.null(model)) {
+        if (!identical(class(model), "textmodel_wordvector"))
+            stop("model must be a trained textmodel_wordvector")
+        if (!identical(model$dim, dim))
+            stop("model must be trained with dim = ", dim)
+    }
     
     x <- as.tokens_xptr(x)
     if (tolower)

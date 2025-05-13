@@ -12,12 +12,11 @@ textmodel_word2vec(
   window = ifelse(type == "cbow", 5L, 10L),
   iter = 10L,
   alpha = 0.05,
+  model = NULL,
   use_ns = TRUE,
   ns_size = 5L,
   sample = 0.001,
-  normalize = TRUE,
   tolower = TRUE,
-  model = NULL,
   verbose = FALSE,
   ...
 )
@@ -39,6 +38,8 @@ to be the context of a target word.}
 
 \item{alpha}{the initial learning rate.}
 
+\item{model}{a trained Word2vec model; if provided, its word vectors are updated for \code{x}.}
+
 \item{use_ns}{if \code{TRUE}, negative sampling is used. Otherwise, hierarchical softmax
 is used.}
 
@@ -46,8 +47,6 @@ is used.}
 
 \item{sample}{the rate of sampling of words based on their frequency. Sampling is
 disabled when \code{sample = 1.0}}
-
-\item{normalize}{if \code{TRUE}, normalize the vectors in \code{values} and \code{weights}.}
 
 \item{tolower}{lower-case all the tokens before fitting the model.}
 
