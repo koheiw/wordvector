@@ -9,7 +9,7 @@
 \arguments{
 \item{x}{for print method, the object to be printed}
 
-\item{...}{unused}
+\item{...}{not used.}
 }
 \value{
 an invisible copy of \code{x}.

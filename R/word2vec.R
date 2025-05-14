@@ -15,8 +15,8 @@
 #' @param ns_size the size of negative samples. Only used when `use_ns = TRUE`.
 #' @param sample the rate of sampling of words based on their frequency. Sampling is 
 #'   disabled when `sample = 1.0`
-#' @param normalize if `TRUE`, normalize the vectors in `values` and `weights`.
 #' @param tolower lower-case all the tokens before fitting the model.
+#' @param model a trained Word2vec model; if provided, its word vectors are updated for `x`.
 #' @param verbose if `TRUE`, print the progress of training.
 #' @param ... additional arguments.
 #' @returns Returns a textmodel_wordvector object with the following elements:
@@ -66,8 +66,8 @@
 #' }
 textmodel_word2vec <- function(x, dim = 50, type = c("cbow", "skip-gram"), 
                                min_count = 5L, window = ifelse(type == "cbow", 5L, 10L), 
-                               iter = 10L, alpha = 0.05, use_ns = TRUE, ns_size = 5L, 
-                               sample = 0.001, normalize = TRUE, tolower = TRUE,
+                               iter = 10L, alpha = 0.05, model = NULL, 
+                               use_ns = TRUE, ns_size = 5L, sample = 0.001, tolower = TRUE,
                                verbose = FALSE, ...) {
     UseMethod("textmodel_word2vec")
 }
@@ -78,9 +78,10 @@ textmodel_word2vec <- function(x, dim = 50, type = c("cbow", "skip-gram"),
 #' @method textmodel_word2vec tokens
 textmodel_word2vec.tokens <- function(x, dim = 50L, type = c("cbow", "skip-gram"), 
                                       min_count = 5L, window = ifelse(type == "cbow", 5L, 10L), 
-                                      iter = 10L, alpha = 0.05, use_ns = TRUE, ns_size = 5L, 
-                                      sample = 0.001, normalize = TRUE, tolower = TRUE,
-                                      verbose = FALSE, ..., old = FALSE) {
+                                      iter = 10L, alpha = 0.05, model = NULL, 
+                                      use_ns = TRUE, ns_size = 5L, sample = 0.001, tolower = TRUE,
+                                      verbose = FALSE, ..., 
+                                      normalize = FALSE, old = FALSE) {
     
     type <- match.arg(type)
     dim <- check_integer(dim, min = 2)
@@ -94,10 +95,20 @@ textmodel_word2vec.tokens <- function(x, dim = 50L, type = c("cbow", "skip-gram"
     normalize <- check_logical(normalize)
     tolower <- check_logical(tolower)
     verbose <- check_logical(verbose)
-
+    
+    if (normalize)
+        .Deprecated(msg = "normalize is deprecated. Use as.matrix(x, normalize = TRUE) instead.")
+    
     type <- match(type, c("cbow", "skip-gram"))
     if (old)
         type <- type * 10
+    
+    if (!is.null(model)) {
+        if (!identical(class(model), "textmodel_wordvector"))
+            stop("model must be a trained textmodel_wordvector")
+        if (!identical(model$dim, dim))
+            stop("model must be trained with dim = ", dim)
+    }
     
     x <- as.tokens_xptr(x)
     if (tolower)
@@ -107,7 +118,8 @@ textmodel_word2vec.tokens <- function(x, dim = 50L, type = c("cbow", "skip-gram"
     result <- cpp_w2v(x, size = dim, window = window,
                       sample = sample, withHS = !use_ns, negative = ns_size, 
                       threads = get_threads(), iterations = iter,
-                      alpha = alpha, type = type, normalize = normalize, verbose = verbose)
+                      alpha = alpha, type = type, normalize = normalize, model = model,
+                      verbose = verbose)
     if (!is.null(result$message))
         stop("Failed to train word2vec (", result$message, ")")
     
@@ -125,7 +137,7 @@ word2vec <- function(...) {
 
 #' Print method for trained word vectors
 #' @param x for print method, the object to be printed
-#' @param ... unused
+#' @param ... not used.
 #' @method print textmodel_wordvector
 #' @keywords internal
 #' @return an invisible copy of `x`. 
@@ -160,9 +172,15 @@ print.textmodel_docvector <- function(x, ...) {
 #'
 #' Extract word vectors from a `textmodel_wordvector` or `textmodel_docvector` object.
 #' @param x a `textmodel_wordvector` or `textmodel_docvector` object.
-#' @param ... not used
-#' @return a matrix that contain the word vectors in rows
+#' @param normalize if `TRUE`, returns normalized word vectors.
+#' @param ... not used.
+#' @return a matrix that contain the word vectors in rows.
 #' @export
-as.matrix.textmodel_wordvector <- function(x, ...){
+as.matrix.textmodel_wordvector <- function(x, normalize = TRUE, ...){
+    normalize <- check_logical(normalize)
+    if (normalize) {
+        v <- sqrt(rowSums(x$values ^ 2) / ncol(x$values))
+        x$values <- x$values / v
+    }
     return(x$values) 
 }

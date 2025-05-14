@@ -145,29 +145,6 @@ probability <- function(x, words, mode = c("words", "values")) {
     return(res)
 }
 
-#' \[experimental\] Extract word vector weights
-#' 
-#' @param x a `textmodel_wordvector` object.
-#' @param mode specify the type of resulting object.
-#' @return a `matrix` of word vector weights when `mode = "value"` or of 
-#'   words sorted in descending order by the weights when `mode = "word"`.
-#' @export
-weights <- function(x, mode = c("words", "values")) {
-    
-    if (!identical(class(x), "textmodel_wordvector"))
-        stop("x must be a textmodel_wordvector object")
-    
-    mode <- match.arg(mode)
-    if (mode == "values") {
-        res <- x$weights
-    } else {
-        res <- apply(x$weights, 2, function(x) {
-            names(sort(x, decreasing = TRUE))
-        })
-    }
-    return(res)
-}
-
 get_threads <- function() {
     
     # respect other settings

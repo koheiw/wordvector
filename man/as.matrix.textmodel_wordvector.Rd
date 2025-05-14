@@ -4,15 +4,17 @@
 \alias{as.matrix.textmodel_wordvector}
 \title{Extract word vectors}
 \usage{
-\method{as.matrix}{textmodel_wordvector}(x, ...)
+\method{as.matrix}{textmodel_wordvector}(x, normalize = TRUE, ...)
 }
 \arguments{
 \item{x}{a \code{textmodel_wordvector} or \code{textmodel_docvector} object.}
 
-\item{...}{not used}
+\item{normalize}{if \code{TRUE}, returns normalized word vectors.}
+
+\item{...}{not used.}
 }
 \value{
-a matrix that contain the word vectors in rows
+a matrix that contain the word vectors in rows.
 }
 \description{
 Extract word vectors from a \code{textmodel_wordvector} or \code{textmodel_docvector} object.

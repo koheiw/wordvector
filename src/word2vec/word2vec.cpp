@@ -11,15 +11,21 @@
 
 namespace w2v {
     bool word2vec_t::train(const settings_t &_settings,
-                           const corpus_t &_corpus) noexcept {
+                           const corpus_t &_corpus,
+                           const word2vec_t &_model) noexcept {
         try {
             
             std::shared_ptr<corpus_t> corpus(new corpus_t(_corpus));
             std::shared_ptr<settings_t> settings(new settings_t(_settings));
             
+            m_vocabulary = corpus->types;
+            m_vocabularySize = corpus->types.size();
             m_vectorSize = settings->size;
-            m_vocaburarySize = corpus->words.size();
-            std::size_t matrixSize = m_vectorSize * m_vocaburarySize;
+            
+            // TODO: pass corpus values to the model
+            // m_frequency = corpus->frequency;
+            // m_trainWords = corpus->trainWords;
+            std::size_t matrixSize = m_vectorSize * m_vocabularySize;
             std::mt19937_64 randomGenerator(settings->random);
             int iter_max = settings->iterations;
             bool verbose = settings->verbose;
@@ -27,8 +33,8 @@ namespace w2v {
             if (m_vectorSize == 0)
                 throw std::runtime_error("vectorSize is zero");
                 
-            if (m_vocaburarySize == 0)
-                throw std::runtime_error("vocaburarySize is zero");
+            if (m_vocabularySize == 0)
+                throw std::runtime_error("vocabularySize is zero");
             
             if (_corpus.trainWords == 0)
                 throw std::runtime_error("trainWords is zero");
@@ -57,9 +63,28 @@ namespace w2v {
             if (settings->withHS) {
                 data.huffmanTree.reset(new huffmanTree_t(corpus->frequency));;
             }
-            
             data.processedWords.reset(new std::atomic<std::size_t>(0));
             data.alpha.reset(new std::atomic<float>(settings->alpha));
+            
+            // inherit parameters
+            if (_model.m_vocabulary.size() > 0) {
+                
+                if (verbose)
+                    Rprintf(" ......copy pre-trained word vectos\n");
+                
+                std::unordered_map<std::string, std::size_t> map;
+                for (std::size_t i = 0; i < m_vocabularySize; ++i) {
+                    map.insert(std::make_pair(m_vocabulary[i], i));
+                }
+                for (std::size_t j = 0; j < _model.m_vocabularySize; ++j) {
+                    if (auto it = map.find(_model.m_vocabulary[j]); it != map.end()) {
+                        for (std::size_t k = 0; k < m_vectorSize; k++) {
+                            (*data.pjLayerValues)[k + (it->second * m_vectorSize)] = _model.m_pjLayerValues[k + (j * _model.m_vectorSize)];
+                            //(*data.bpWeights)[k + (it->second * m_vectorSize)] = _model.m_bpWeights[k + (j * _model.m_vectorSize)];
+                        }
+                    }
+                }
+            }
             
             // create threads
             std::vector<std::unique_ptr<trainThread_t>> threads;
@@ -73,6 +98,16 @@ namespace w2v {
                 if (n - 1 == to) 
                     break;
             }
+            
+            if (verbose) {
+                if (settings->withHS) {
+                    Rprintf(" ...hierarchical softmax in %d iterations\n", 
+                            settings->iterations);
+                } else {
+                    Rprintf(" ...negative sampling in %d iterations\n", 
+                            settings->iterations);
+                }
+            } 
             
             int iter = 0;
             float alpha = 0.0;
@@ -100,15 +135,9 @@ namespace w2v {
                 thread->join();
             }
             
-            // std::cout << "word2vec_t::train()\n";
-            // std::cout << data.bpWeights << "\n";
-            // for (size_t i = 0; i < 10; i++){
-            //     std::cout << (*data.bpWeights)[i] << ", ";
-            // }
-            // std::cout << "\n";
-            
             m_pjLayerValues = *data.pjLayerValues;
             m_bpWeights = *data.bpWeights;
+            
             
             return true;
         } catch (const std::exception &_e) {

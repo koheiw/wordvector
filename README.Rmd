@@ -58,8 +58,7 @@ corp <- corpus(dat, text_field = 'text', docid_field = "tid")
 toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>% 
     tokens_remove(stopwords("en", "marimo"), padding = TRUE) %>% 
     tokens_select("^[a-zA-Z-]+$", valuetype = "regex", case_insensitive = FALSE,
-                  padding = TRUE) %>% 
-    tokens_tolower()
+                  padding = TRUE)
 
 # Train word2vec
 wdv <- textmodel_word2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose = TRUE)

@@ -1,3 +1,10 @@
+## Changes in v0.5.0
+
+- Add the `model` argument to `textmodel_word2vec()` to update existing models.
+- The `normalize` argument is moved from `textmodel_word2vec()` to `as.matrix()`. The original argument is deprecated and set to `FALSE` by default. 
+- Remove `weights()`.
+- Improve the structure of C++ code.
+
 ## Changes in v0.4.0
 
 - Add the `tolower` argument and set to `TRUE` to lower-case tokens.

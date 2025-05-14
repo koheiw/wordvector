@@ -1,7 +1,7 @@
 library(quanteda)
 library(wordvector)
 
-corp <- data_corpus_inaugural %>% 
+corp <- head(data_corpus_inaugural, 59) %>% 
     corpus_reshape()
 
 toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>% 

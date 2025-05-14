@@ -1,7 +1,7 @@
 library(quanteda)
 library(wordvector)
 
-corp <- data_corpus_inaugural %>% 
+corp <- head(data_corpus_inaugural, 59) %>% 
     corpus_reshape()
 
 toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>% 
@@ -9,7 +9,8 @@ toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>%
     tokens_tolower()
 
 set.seed(1234)
-wov <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1)
+wov <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1,
+                          normalize = TRUE)
 wov_nn <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1,
                              normalize = FALSE)
 
@@ -233,4 +234,15 @@ test_that("get_threads are working", {
     Sys.unsetenv("RCPP_PARALLEL_NUM_THREADS")
     
     options("wordvector_threads" = NULL)
+})
+
+test_that("as.matrix() is working", {
+    
+    expect_true(
+        all(as.matrix(wov_nn, normalize = TRUE) != wov_nn$values)
+    )
+    expect_true(
+        all(as.matrix(wov_nn, normalize = FALSE) == wov_nn$values)
+    )
+    
 })
