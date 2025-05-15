@@ -69,7 +69,7 @@ namespace w2v {
             // inherit parameters
             if (_model.m_vocabulary.size() > 0) {
                 if (verbose) {
-                    Rprintf(" ......copy pre-trained word vectos\n");
+                    Rprintf(" ......copy pre-trained word vectors\n");
                 }
                 std::unordered_map<std::string, std::size_t> map;
                 for (std::size_t i = 0; i < m_vocabularySize; ++i) {
