@@ -137,8 +137,8 @@ namespace w2v {
             m_pjLayerValues = *data.pjLayerValues;
             m_bpWeights = *data.bpWeights;
             
-            
             return true;
+            
         } catch (const std::exception &_e) {
             m_errMsg = _e.what();
         } catch (...) {

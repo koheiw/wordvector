@@ -17,7 +17,7 @@ Rcpp::CharacterVector encode(std::vector<std::string> types){
         type_.set_encoding(CE_UTF8);
         types_[i] = type_;
     }
-    return(types_);
+    return types_;
 }
 
 Rcpp::NumericMatrix get_values(w2v::word2vec_t model) {
@@ -39,16 +39,16 @@ Rcpp::NumericMatrix get_weights(w2v::word2vec_t model) {
 }
 
 Rcpp::NumericVector get_frequency(w2v::corpus_t corpus) {
-    Rcpp::NumericVector v = Rcpp::wrap(corpus.frequency);
-    v.names() = encode(corpus.types);
-    return(v);
+    Rcpp::NumericVector vec_ = Rcpp::wrap(corpus.frequency);
+    vec_.names() = encode(corpus.types);
+    return vec_;
 }
 
 w2v::word2vec_t as_word2vec(List model_) {
     
     w2v::word2vec_t model;
     if (model_.length() == 0)
-        return(model);
+        return model;
         
     Rcpp::NumericMatrix values_ = model_["values"];
     Rcpp::NumericMatrix weights_ = model_["weights"];
@@ -65,7 +65,7 @@ w2v::word2vec_t as_word2vec(List model_) {
     std::size_t vectorSize = values_.nrow();
     
     model = w2v::word2vec_t(vocabulary, vectorSize, values, weights);
-    return(model);
+    return model;
 }
 
 /*
