@@ -1,0 +1,72 @@
+---
+title: Transfer word vectors to new models 
+author: Kohei Watanabe
+date: "`r Sys.Date()`"
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = FALSE,
+  comment = "#>",
+  message = FALSE
+)
+```
+
+In the version 0.5 of the package, `model` argument was added to textmodel_word2vec()`. 
+
+```{r}
+require(quanteda)
+require(wordvector)
+require(proxyC)
+require(Matrix)
+
+# Load data
+dat <- readRDS('~/yahoo-news.RDS')
+dat$text <- paste0(dat$head, ". ", dat$body)
+dat$year <- as.integer(format(dat$date, "%Y"))
+corp <- corpus(dat, text_field = 'text', docid_field = "tid")
+
+# Pre-processing
+toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>% 
+    tokens_remove(stopwords("en", "marimo"), padding = TRUE) %>% 
+    tokens_select("^[a-zA-Z-]+$", valuetype = "regex", case_insensitive = FALSE,
+                  padding = TRUE)
+```
+
+```{r}
+toks14 <- tokens_subset(toks, year == 2014)
+toks15 <- tokens_subset(toks, year == 2015)
+keyword <- c("migration", "europe")
+```
+
+```{r}
+wdv14 <- textmodel_word2vec(toks14)
+head(similarity(wdv14, keyword))
+```
+
+```{r}
+wdv15 <- textmodel_word2vec(toks15)
+head(similarity(wdv15, keyword))
+```
+
+```{r}
+wdv15s <- textmodel_word2vec(toks15, model = wdv14)
+head(similarity(wdv15s, keyword))
+```
+
+```{r}
+wdv15w <- textmodel_word2vec(toks15, model = wdv14, alpha = 0.1)
+head(similarity(wdv15w, keyword))
+```
+
+
+```{r}
+rbind(
+"none" = diag(simil(wdv14$values[keyword,], wdv15$values[keyword,])),
+"strong" = diag(simil(wdv14$values[keyword,], wdv15s$values[keyword,])),
+"weak" = diag(simil(wdv14$values[keyword,], wdv15w$values[keyword,]))
+)
+```
+
