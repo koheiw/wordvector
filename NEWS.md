@@ -1,3 +1,7 @@
+## Change in v0.5.1
+
+- Add `normalize` to `textmodel_doc2vec()` and pass it to `as.matrix()`.
+
 ## Changes in v0.5.0
 
 - Add the `model` argument to `textmodel_word2vec()` to update existing models.

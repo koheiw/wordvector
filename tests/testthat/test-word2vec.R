@@ -81,7 +81,7 @@ test_that("textmodel_word2vec works", {
     )
     expect_equal(
         names(dov),
-        c("values", "dim", "concatenator", "docvars", "call", "version")
+        c("values", "dim", "concatenator", "docvars", "normalize", "call", "version")
     )
     
     # docvector with grouped data
@@ -93,7 +93,7 @@ test_that("textmodel_word2vec works", {
     )
     expect_equal(
         names(dov_gp),
-        c("values", "dim", "concatenator", "docvars", "call", "version")
+        c("values", "dim", "concatenator", "docvars", "normalize", "call", "version")
     )
     
 })
@@ -199,7 +199,7 @@ test_that("textmodel_word2vec is robust", {
   
 })  
 
-test_that("textmodel_word2doc returns zero for emptry documents (#17)", {
+test_that("textmodel_doc2vec returns zero for emptry documents (#17)", {
     toks <- tokens(c("Citizens of the United States", "")) %>% 
         tokens_tolower()
     dov <- textmodel_doc2vec(toks, wov)
