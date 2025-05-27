@@ -15,7 +15,7 @@ as.matrix.textmodel_docvector <- function(x, ...){
 #'   \item{values}{a matrix for document vectors.}
 #'   \item{dim}{the size of the document vectors.}
 #'   \item{concatenator}{the concatenator in `x`.}
-#'   \item{docvars}{document variables compied from `x`.}
+#'   \item{docvars}{document variables copied from `x`.}
 #'   \item{call}{the command used to execute the function.}
 #'   \item{version}{the version of the wordvector package.}
 #' @export
