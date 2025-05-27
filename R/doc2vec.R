@@ -9,6 +9,7 @@ as.matrix.textmodel_docvector <- function(x, ...){
 #' Create distributed representation of documents as weighted word vectors.
 #' @param x a [quanteda::tokens] object.
 #' @param model a textmodel_wordvector object.
+#' @param normalize if `TRUE`, normalized word vectors before creating document vectors.
 #' @param group_data if `TRUE`, apply `dfm_group(x)` before creating document vectors.
 #' @returns Returns a textmodel_docvector object with the following elements:
 #'   \item{values}{a matrix for document vectors.}
@@ -18,13 +19,13 @@ as.matrix.textmodel_docvector <- function(x, ...){
 #'   \item{call}{the command used to execute the function.}
 #'   \item{version}{the version of the wordvector package.}
 #' @export
-textmodel_doc2vec <- function(x, model, group_data = FALSE) {
+textmodel_doc2vec <- function(x, model, normalize = TRUE, group_data = FALSE) {
     UseMethod("textmodel_doc2vec")
 }
 
 #' @export
 #' @method textmodel_doc2vec tokens
-textmodel_doc2vec.tokens <- function(x, model, group_data = FALSE) {
+textmodel_doc2vec.tokens <- function(x, model, normalize = TRUE, group_data = FALSE) {
     
     if (!identical(class(model), "textmodel_wordvector"))
         stop("The object for 'model' must be a trained textmodel_wordvector")
@@ -37,12 +38,12 @@ textmodel_doc2vec.tokens <- function(x, model, group_data = FALSE) {
 
 #' @export
 #' @method textmodel_doc2vec dfm
-textmodel_doc2vec.dfm <- function(x, model = NULL, group_data = FALSE) {
+textmodel_doc2vec.dfm <- function(x, model = NULL, normalize = TRUE, group_data = FALSE) {
     
     if (group_data)
         x <- dfm_group(x)
     
-    wov <- as.matrix(model)
+    wov <- as.matrix(model, normalize)
     x <- dfm_match(x, rownames(wov))
     
     l <- rowSums(x) == 0
