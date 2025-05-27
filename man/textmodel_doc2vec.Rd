@@ -4,12 +4,14 @@
 \alias{textmodel_doc2vec}
 \title{Create distributed representation of documents}
 \usage{
-textmodel_doc2vec(x, model, group_data = FALSE)
+textmodel_doc2vec(x, model, normalize = FALSE, group_data = FALSE)
 }
 \arguments{
 \item{x}{a \link[quanteda:tokens]{quanteda::tokens} object.}
 
 \item{model}{a textmodel_wordvector object.}
+
+\item{normalize}{if \code{TRUE}, normalized word vectors before creating document vectors.}
 
 \item{group_data}{if \code{TRUE}, apply \code{dfm_group(x)} before creating document vectors.}
 }
