@@ -19,13 +19,13 @@ as.matrix.textmodel_docvector <- function(x, ...){
 #'   \item{call}{the command used to execute the function.}
 #'   \item{version}{the version of the wordvector package.}
 #' @export
-textmodel_doc2vec <- function(x, model, normalize = TRUE, group_data = FALSE) {
+textmodel_doc2vec <- function(x, model, normalize = FALSE, group_data = FALSE) {
     UseMethod("textmodel_doc2vec")
 }
 
 #' @export
 #' @method textmodel_doc2vec tokens
-textmodel_doc2vec.tokens <- function(x, model, normalize = TRUE, group_data = FALSE) {
+textmodel_doc2vec.tokens <- function(x, model, normalize = FALSE, group_data = FALSE) {
     
     if (!identical(class(model), "textmodel_wordvector"))
         stop("The object for 'model' must be a trained textmodel_wordvector")
@@ -38,7 +38,7 @@ textmodel_doc2vec.tokens <- function(x, model, normalize = TRUE, group_data = FA
 
 #' @export
 #' @method textmodel_doc2vec dfm
-textmodel_doc2vec.dfm <- function(x, model = NULL, normalize = TRUE, group_data = FALSE) {
+textmodel_doc2vec.dfm <- function(x, model = NULL, normalize = FALSE, group_data = FALSE) {
     
     if (group_data)
         x <- dfm_group(x)
@@ -56,6 +56,7 @@ textmodel_doc2vec.dfm <- function(x, model = NULL, normalize = TRUE, group_data 
         "dim" = model$dim,
         "concatenator" = meta(x, field = "concatenator", type = "object"), 
         "docvars" = x@docvars,
+        "normalize" = normalize,
         "call" = try(match.call(sys.function(-1), call = sys.call(-1)), silent = TRUE), 
         "version" = utils::packageVersion("wordvector")
     )
