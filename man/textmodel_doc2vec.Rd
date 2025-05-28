@@ -36,6 +36,7 @@ Returns a textmodel_docvector object with the following elements:
 \item{dim}{the size of the document vectors.}
 \item{concatenator}{the concatenator in \code{x}.}
 \item{docvars}{document variables copied from \code{x}.}
+\item{normalize}{if the document vectors are normalized.}
 \item{call}{the command used to execute the function.}
 \item{version}{the version of the wordvector package.}
 }

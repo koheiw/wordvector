@@ -53,9 +53,7 @@ textmodel_doc2vec.dfm <- function(x, model = NULL, normalize = FALSE,
                                   weight = 1.0, pattern = NULL,
                                   group_data = FALSE, ...) {
     
-    if (group_data)
-        x <- dfm_group(x)
-    
+    conc <- meta(x, field = "concatenator", type = "object")
     wov <- as.matrix(model, normalize)
     
     if (is.null(pattern)) {
@@ -66,7 +64,6 @@ textmodel_doc2vec.dfm <- function(x, model = NULL, normalize = FALSE,
         wov <- wov * weight 
     } else {
         weight <- check_double(weight, min = 0)
-        conc <- meta(x, field = "concatenator", type = "object")
         ids <- object2id(pattern, types = rownames(wov), match_pattern = "single", 
                          keep_nomatch = FALSE, concatenator = conc,
                          ...)
@@ -76,6 +73,8 @@ textmodel_doc2vec.dfm <- function(x, model = NULL, normalize = FALSE,
         }
     }
     
+    if (group_data)
+        x <- dfm_group(x)
     x <- dfm_match(x, rownames(wov))
     
     l <- rowSums(x) == 0
