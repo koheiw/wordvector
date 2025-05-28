@@ -15,7 +15,7 @@ textmodel_doc2vec(
 )
 }
 \arguments{
-\item{x}{a \link[quanteda:tokens]{quanteda::tokens} object.}
+\item{x}{a \link[quanteda:tokens]{quanteda::tokens} or \link[quanteda:dfm]{quanteda::dfm} object.}
 
 \item{model}{a textmodel_wordvector object.}
 
