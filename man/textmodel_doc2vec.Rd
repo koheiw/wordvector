@@ -4,7 +4,15 @@
 \alias{textmodel_doc2vec}
 \title{Create distributed representation of documents}
 \usage{
-textmodel_doc2vec(x, model, normalize = FALSE, group_data = FALSE)
+textmodel_doc2vec(
+  x,
+  model,
+  normalize = FALSE,
+  weight = 1,
+  pattern = NULL,
+  group_data = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{a \link[quanteda:tokens]{quanteda::tokens} object.}
@@ -13,7 +21,14 @@ textmodel_doc2vec(x, model, normalize = FALSE, group_data = FALSE)
 
 \item{normalize}{if \code{TRUE}, normalized word vectors before creating document vectors.}
 
+\item{weight}{weight the word vectors by user-provided values; either a single value or
+multiple values sorted in the same order as the word vectors.}
+
+\item{pattern}{\link[quanteda:pattern]{quanteda::pattern} to select words to apply \code{weight}.}
+
 \item{group_data}{if \code{TRUE}, apply \code{dfm_group(x)} before creating document vectors.}
+
+\item{...}{additional arguments passed to \link[quanteda:object2id]{quanteda::object2id}.}
 }
 \value{
 Returns a textmodel_docvector object with the following elements:
