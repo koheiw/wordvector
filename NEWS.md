@@ -1,6 +1,8 @@
 ## Change in v0.5.1
 
 - Add `normalize` to `textmodel_doc2vec()` and pass it to `as.matrix()`.
+- Add `weight` to `textmodel_doc2vec()` to adjust the salience of words in the resulting document vectors.
+- Add `include_data` to `textmodel_word2vec()` to save the original tokens object.
 
 ## Changes in v0.5.0
 

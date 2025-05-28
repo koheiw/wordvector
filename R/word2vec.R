@@ -17,6 +17,7 @@
 #'   disabled when `sample = 1.0`
 #' @param tolower lower-case all the tokens before fitting the model.
 #' @param model a trained Word2vec model; if provided, its word vectors are updated for `x`.
+#' @param include_data if `TRUE`, the resulting object includes the data supplied as `x`.
 #' @param verbose if `TRUE`, print the progress of training.
 #' @param ... additional arguments.
 #' @returns Returns a textmodel_wordvector object with the following elements:
@@ -32,6 +33,7 @@
 #'   \item{ns_size}{the size of negative samples.}
 #'   \item{min_count}{the value of min_count.}
 #'   \item{concatenator}{the concatenator in `x`.}
+#'   \item{data}{the original data supplied as `x` if `include_data = TRUE`.}
 #'   \item{call}{the command used to execute the function.}
 #'   \item{version}{the version of the wordvector package.}
 #' @details
@@ -68,7 +70,7 @@ textmodel_word2vec <- function(x, dim = 50, type = c("cbow", "skip-gram"),
                                min_count = 5L, window = ifelse(type == "cbow", 5L, 10L), 
                                iter = 10L, alpha = 0.05, model = NULL, 
                                use_ns = TRUE, ns_size = 5L, sample = 0.001, tolower = TRUE,
-                               verbose = FALSE, ...) {
+                               include_data = FALSE, verbose = FALSE, ...) {
     UseMethod("textmodel_word2vec")
 }
 
@@ -80,7 +82,7 @@ textmodel_word2vec.tokens <- function(x, dim = 50L, type = c("cbow", "skip-gram"
                                       min_count = 5L, window = ifelse(type == "cbow", 5L, 10L), 
                                       iter = 10L, alpha = 0.05, model = NULL, 
                                       use_ns = TRUE, ns_size = 5L, sample = 0.001, tolower = TRUE,
-                                      verbose = FALSE, ..., 
+                                      include_data = FALSE, verbose = FALSE, ..., 
                                       normalize = FALSE, old = FALSE) {
     
     type <- match.arg(type)
@@ -94,6 +96,7 @@ textmodel_word2vec.tokens <- function(x, dim = 50L, type = c("cbow", "skip-gram"
     sample <- check_double(sample, min = 0)
     normalize <- check_logical(normalize)
     tolower <- check_logical(tolower)
+    include_data <- check_logical(include_data)
     verbose <- check_logical(verbose)
     
     if (normalize)
@@ -110,6 +113,9 @@ textmodel_word2vec.tokens <- function(x, dim = 50L, type = c("cbow", "skip-gram"
             stop("model must be trained with dim = ", dim)
     }
     
+    if (include_data)
+        y <- as.tokens(x)
+    
     x <- as.tokens_xptr(x)
     if (tolower)
         x <- tokens_tolower(x)
@@ -125,6 +131,8 @@ textmodel_word2vec.tokens <- function(x, dim = 50L, type = c("cbow", "skip-gram"
     
     result$min_count <- min_count
     result$concatenator <- meta(x, field = "concatenator", type = "object")
+    if (include_data)
+        result$data <- y
     result$call <- try(match.call(sys.function(-1), call = sys.call(-1)), silent = TRUE)
     result$version <- utils::packageVersion("wordvector")
     return(result)

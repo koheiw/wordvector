@@ -11,7 +11,6 @@ toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>%
 set.seed(1234)
 wov <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1)
 dov <- textmodel_doc2vec(toks, wov)
-dov_gp <- textmodel_doc2vec(toks, wov, group_data = TRUE)
 
 test_that("textmodel_word2vec works", {
     
@@ -60,60 +59,19 @@ test_that("textmodel_word2vec works", {
         class(print(wov)), "textmodel_wordvector"
     )
     
-    # docvector with model
-    expect_equal(
-        dim(dov$values), c(5234L, 50L)
-    )
-    expect_equal(
-        class(dov), "textmodel_docvector"
-    )
-    expect_output(
-        print(dov),
-        paste(
-            "",
-            "Call:",
-            "textmodel_doc2vec(x = toks, model = wov)",
-            "",
-            "50 dimensions; 5,234 documents.", sep = "\n"), fixed = TRUE
-    )
-    expect_equal(
-        class(print(dov)), "textmodel_docvector"
-    )
-    expect_equal(
-        names(dov),
-        c("values", "dim", "concatenator", "docvars", "normalize", "call", "version")
-    )
-    
-    # docvector with grouped data
-    expect_identical(
-        dim(dov_gp$values), c(59L, 50L)
-    )
-    expect_equal(
-        class(dov_gp), "textmodel_docvector"
-    )
-    expect_equal(
-        names(dov_gp),
-        c("values", "dim", "concatenator", "docvars", "normalize", "call", "version")
-    )
-    
 })
 
-test_that("textmodel_doc2vec works with different objects", {
+test_that("textmodel_word2vec works with include_data", {
     
-    expect_equal(
-        class(textmodel_doc2vec(toks, wov)),
-        "textmodel_docvector"
-    )
+    skip_on_cran()
+    wov0 <- textmodel_word2vec(toks, dim = 10, iter = 1, min_count = 10, 
+                               include_data = TRUE)
+    expect_identical(wov0$data, toks)
     
-    expect_equal(
-        class(textmodel_doc2vec(as.tokens_xptr(toks), wov)),
-        "textmodel_docvector"
-    )
+    wov1 <- textmodel_word2vec(as.tokens_xptr(toks), dim = 10, iter = 1, min_count = 10, 
+                               include_data = TRUE)
+    expect_identical(wov1$data, toks)
     
-    expect_error(
-        textmodel_doc2vec(toks, list),
-        "The object for 'model' must be a trained textmodel_wordvector"
-    )
 })
 
 test_that("normalize is working", {
@@ -198,13 +156,3 @@ test_that("textmodel_word2vec is robust", {
     )
   
 })  
-
-test_that("textmodel_doc2vec returns zero for emptry documents (#17)", {
-    toks <- tokens(c("Citizens of the United States", "")) %>% 
-        tokens_tolower()
-    dov <- textmodel_doc2vec(toks, wov)
-    expect_true(all(dov$values[1,] != 0))
-    expect_true(all(dov$values[2,] == 0))
-})
-
-
