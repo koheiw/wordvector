@@ -17,14 +17,15 @@ arXiv
 arxiv
 cbow
 concatenator
+docvars
 docvector
 doi
 et
-http
 https
 proxyC
 quanteda
+quanteda's
 softmax
 textmodel
 vec
-docvars
+xptr
