@@ -76,12 +76,45 @@ test_that("textmodeldoc2vec works", {
 
 })
 
-
-test_that("textmodel_doc2vec returns zero for emptry documents (#17)", {
-    toks <- tokens(c("Citizens of the United States", "")) %>% 
-        tokens_tolower()
-    dov <- textmodel_doc2vec(toks, wov)
-    expect_true(all(dov$values[1,] != 0))
-    expect_true(all(dov$values[2,] == 0))
+test_that("textmodel_doc2vec works with different objects", {
+    
+    expect_equal(
+        class(textmodel_doc2vec(toks, wov)),
+        "textmodel_docvector"
+    )
+    
+    expect_equal(
+        class(textmodel_doc2vec(as.tokens_xptr(toks), wov)),
+        "textmodel_docvector"
+    )
+    
+    expect_error(
+        textmodel_doc2vec(toks, list),
+        "The object for 'model' must be a trained textmodel_wordvector"
+    )
 })
 
+test_that("textmodeldoc2vec works grouped data", {
+    
+    dov_gp <- textmodel_doc2vec(toks, wov, group_data = TRUE)
+    
+    expect_identical(
+        dim(dov_gp$values), c(59L, 50L)
+    )
+    expect_equal(
+        class(dov_gp), "textmodel_docvector"
+    )
+    expect_equal(
+        names(dov_gp),
+        c("values", "dim", "concatenator", "docvars", "normalize", "call", "version")
+    )
+    
+    test_that("textmodel_doc2vec returns zero for emptry documents (#17)", {
+        toks <- tokens(c("Citizens of the United States", "")) %>% 
+            tokens_tolower()
+        dov <- textmodel_doc2vec(toks, wov)
+        expect_true(all(dov$values[1,] != 0))
+        expect_true(all(dov$values[2,] == 0))
+    })
+
+})
