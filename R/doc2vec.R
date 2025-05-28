@@ -20,6 +20,7 @@ as.matrix.textmodel_docvector <- function(x, ...){
 #'   \item{dim}{the size of the document vectors.}
 #'   \item{concatenator}{the concatenator in `x`.}
 #'   \item{docvars}{document variables copied from `x`.}
+#'   \item{normalize}{if the document vectors are normalized.}
 #'   \item{call}{the command used to execute the function.}
 #'   \item{version}{the version of the wordvector package.}
 #' @export
@@ -85,7 +86,7 @@ textmodel_doc2vec.dfm <- function(x, model = NULL, normalize = FALSE,
     result <- list(
         "values" = dov,
         "dim" = model$dim,
-        "concatenator" = meta(x, field = "concatenator", type = "object"), 
+        "concatenator" = conc, 
         "docvars" = x@docvars,
         "normalize" = normalize,
         "call" = try(match.call(sys.function(-1), call = sys.call(-1)), silent = TRUE), 
