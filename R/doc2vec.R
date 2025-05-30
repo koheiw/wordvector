@@ -9,7 +9,8 @@ as.matrix.textmodel_docvector <- function(x, ...){
 #' Create distributed representation of documents as weighted word vectors.
 #' @param x a [quanteda::tokens] or [quanteda::dfm] object.
 #' @param model a textmodel_wordvector object.
-#' @param normalize if `TRUE`, normalized word vectors before creating document vectors.
+#' @param normalize if `TRUE`, normalized the word frequencies relatively to the most 
+#'    frequent word in each document. See `scheme = propmax` in [quanteda::dfm_weight()].
 #' @param weights weight the word vectors by user-provided values; either a single value or 
 #'    multiple values sorted in the same order as the word vectors.
 #' @param pattern [quanteda::pattern] to select words to apply `weights`. 
@@ -20,7 +21,7 @@ as.matrix.textmodel_docvector <- function(x, ...){
 #'   \item{dim}{the size of the document vectors.}
 #'   \item{concatenator}{the concatenator in `x`.}
 #'   \item{docvars}{document variables copied from `x`.}
-#'   \item{normalize}{if the document vectors are normalized.}
+#'   \item{normalize}{if word frequencies are normalized.}
 #'   \item{call}{the command used to execute the function.}
 #'   \item{version}{the version of the wordvector package.}
 #' @export
@@ -54,7 +55,7 @@ textmodel_doc2vec.dfm <- function(x, model = NULL, normalize = FALSE,
                                   group_data = FALSE, ...) {
     
     conc <- meta(x, field = "concatenator", type = "object")
-    wov <- as.matrix(model, normalize)
+    wov <- as.matrix(model, normalize = FALSE)
     
     if (is.null(pattern)) {
         n <- nrow(wov)
@@ -75,6 +76,8 @@ textmodel_doc2vec.dfm <- function(x, model = NULL, normalize = FALSE,
     
     if (group_data)
         x <- dfm_group(x)
+    if (normalize)
+        x <- dfm_weight(x, scheme = "propmax")
     x <- dfm_match(x, rownames(wov))
     
     l <- rowSums(x) == 0

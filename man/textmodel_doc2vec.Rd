@@ -19,7 +19,8 @@ textmodel_doc2vec(
 
 \item{model}{a textmodel_wordvector object.}
 
-\item{normalize}{if \code{TRUE}, normalized word vectors before creating document vectors.}
+\item{normalize}{if \code{TRUE}, normalized the word frequencies relatively to the most
+frequent word in each document. See \code{scheme = propmax} in \code{\link[quanteda:dfm_weight]{quanteda::dfm_weight()}}.}
 
 \item{weights}{weight the word vectors by user-provided values; either a single value or
 multiple values sorted in the same order as the word vectors.}
@@ -36,7 +37,7 @@ Returns a textmodel_docvector object with the following elements:
 \item{dim}{the size of the document vectors.}
 \item{concatenator}{the concatenator in \code{x}.}
 \item{docvars}{document variables copied from \code{x}.}
-\item{normalize}{if the document vectors are normalized.}
+\item{normalize}{if word frequencies are normalized.}
 \item{call}{the command used to execute the function.}
 \item{version}{the version of the wordvector package.}
 }
