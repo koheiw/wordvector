@@ -42,36 +42,36 @@ test_that("textmodeldoc2vec works", {
     expect_false(identical(dov1$values, dov2$values))
     expect_true(dov2$normalize)
     
-    # weight
+    # weights
     w <- abs(rnorm(nrow(wov$values)))
-    dov3 <- textmodel_doc2vec(toks, wov, weight = w)
+    dov3 <- textmodel_doc2vec(toks, wov, weights = w)
     expect_false(identical(dov1$values, dov3$values))
     
     # pattern
-    dov4 <- textmodel_doc2vec(toks, wov, weight = 2.0, 
+    dov4 <- textmodel_doc2vec(toks, wov, weights = 2.0, 
                               pattern = data_dictionary_LSD2015)
     expect_false(identical(dov1$values, dov4$values))
     
     dict <- dictionary(list(hard = "hard *"))
-    dov5 <- textmodel_doc2vec(toks, wov, weight = 2.0, 
+    dov5 <- textmodel_doc2vec(toks, wov, weights = 2.0, 
                               pattern = dict)
     expect_false(identical(dov1$values, dov5$values))
     
     # errors
     expect_error(
-        textmodel_doc2vec(toks, wov, weight = c(0.1, 0.2, 0.2)),
-        "The length of weight must be 5363"
+        textmodel_doc2vec(toks, wov, weights = c(0.1, 0.2, 0.2)),
+        "The length of weights must be 5363"
     )
     
     w <- sample(c(1.0, NA), 5363, replace = TRUE)
     expect_error(
-        textmodel_doc2vec(toks, wov, weight = w),
-        "The value of weight cannot be NA"
+        textmodel_doc2vec(toks, wov, weights = w),
+        "The value of weights cannot be NA"
     )
     
     expect_error(
-        textmodel_doc2vec(toks, wov, weight = -0.1),
-        "The value of weight must be between 0 and Inf"
+        textmodel_doc2vec(toks, wov, weights = -0.1),
+        "The value of weights must be between 0 and Inf"
     )
 
 })

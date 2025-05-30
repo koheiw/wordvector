@@ -8,7 +8,7 @@ textmodel_doc2vec(
   x,
   model,
   normalize = FALSE,
-  weight = 1,
+  weights = 1,
   pattern = NULL,
   group_data = FALSE,
   ...
@@ -21,10 +21,10 @@ textmodel_doc2vec(
 
 \item{normalize}{if \code{TRUE}, normalized word vectors before creating document vectors.}
 
-\item{weight}{weight the word vectors by user-provided values; either a single value or
+\item{weights}{weight the word vectors by user-provided values; either a single value or
 multiple values sorted in the same order as the word vectors.}
 
-\item{pattern}{\link[quanteda:pattern]{quanteda::pattern} to select words to apply \code{weight}.}
+\item{pattern}{\link[quanteda:pattern]{quanteda::pattern} to select words to apply \code{weights}.}
 
 \item{group_data}{if \code{TRUE}, apply \code{dfm_group(x)} before creating document vectors.}
 
