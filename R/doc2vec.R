@@ -9,7 +9,7 @@ as.matrix.textmodel_docvector <- function(x, ...){
 #' Create distributed representation of documents as weighted word vectors.
 #' @param x a [quanteda::tokens] or [quanteda::dfm] object.
 #' @param model a textmodel_wordvector object.
-#' @param normalize if `TRUE`, normalized word vectors before creating document vectors.
+#' @param normalize if `TRUE`, normalized the document vecotrs by the lengths of the documents.
 #' @param weights weight the word vectors by user-provided values; either a single value or 
 #'    multiple values sorted in the same order as the word vectors.
 #' @param pattern [quanteda::pattern] to select words to apply `weights`. 
@@ -20,11 +20,11 @@ as.matrix.textmodel_docvector <- function(x, ...){
 #'   \item{dim}{the size of the document vectors.}
 #'   \item{concatenator}{the concatenator in `x`.}
 #'   \item{docvars}{document variables copied from `x`.}
-#'   \item{normalize}{if the document vectors are normalized.}
+#'   \item{normalize}{if word frequencies are normalized.}
 #'   \item{call}{the command used to execute the function.}
 #'   \item{version}{the version of the wordvector package.}
 #' @export
-textmodel_doc2vec <- function(x, model, normalize = FALSE, 
+textmodel_doc2vec <- function(x, model, normalize = TRUE, 
                               weights = 1.0, pattern = NULL, 
                               group_data = FALSE, ...) {
     UseMethod("textmodel_doc2vec")
@@ -32,7 +32,7 @@ textmodel_doc2vec <- function(x, model, normalize = FALSE,
 
 #' @export
 #' @method textmodel_doc2vec tokens
-textmodel_doc2vec.tokens <- function(x, model, normalize = FALSE, 
+textmodel_doc2vec.tokens <- function(x, model, normalize = TRUE, 
                                      weights = 1.0, pattern = NULL, 
                                      group_data = FALSE, ...) {
     
@@ -49,12 +49,12 @@ textmodel_doc2vec.tokens <- function(x, model, normalize = FALSE,
 
 #' @export
 #' @method textmodel_doc2vec dfm
-textmodel_doc2vec.dfm <- function(x, model = NULL, normalize = FALSE, 
+textmodel_doc2vec.dfm <- function(x, model = NULL, normalize = TRUE, 
                                   weights = 1.0, pattern = NULL,
-                                  group_data = FALSE, ...) {
+                                  group_data = FALSE, ..., old = FALSE) {
     
     conc <- meta(x, field = "concatenator", type = "object")
-    wov <- as.matrix(model, normalize)
+    wov <- as.matrix(model, normalize = FALSE)
     
     if (is.null(pattern)) {
         n <- nrow(wov)
@@ -78,8 +78,13 @@ textmodel_doc2vec.dfm <- function(x, model = NULL, normalize = FALSE,
     x <- dfm_match(x, rownames(wov))
     
     l <- rowSums(x) == 0
-    dov <- Matrix::tcrossprod(x, t(wov)) # NOTE: consider using proxyC::prod
-    dov <- dov / sqrt(Matrix::rowSums(dov ^ 2) / ncol(dov))
+    dov <- as.matrix(Matrix::tcrossprod(x, t(wov))) # NOTE: consider using proxyC::prod
+    if (old) {
+        dov <- dov / sqrt(rowSums(dov ^ 2) / ncol(dov))
+    } else {
+        if (normalize)
+            dov <- dov / rowSums(x)
+    }
     dov[l,] <- 0
     
     result <- list(

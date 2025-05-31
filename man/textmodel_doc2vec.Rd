@@ -7,7 +7,7 @@
 textmodel_doc2vec(
   x,
   model,
-  normalize = FALSE,
+  normalize = TRUE,
   weights = 1,
   pattern = NULL,
   group_data = FALSE,
@@ -19,7 +19,7 @@ textmodel_doc2vec(
 
 \item{model}{a textmodel_wordvector object.}
 
-\item{normalize}{if \code{TRUE}, normalized word vectors before creating document vectors.}
+\item{normalize}{if \code{TRUE}, normalized the document vecotrs by the lengths of the documents.}
 
 \item{weights}{weight the word vectors by user-provided values; either a single value or
 multiple values sorted in the same order as the word vectors.}
@@ -36,7 +36,7 @@ Returns a textmodel_docvector object with the following elements:
 \item{dim}{the size of the document vectors.}
 \item{concatenator}{the concatenator in \code{x}.}
 \item{docvars}{document variables copied from \code{x}.}
-\item{normalize}{if the document vectors are normalized.}
+\item{normalize}{if word frequencies are normalized.}
 \item{call}{the command used to execute the function.}
 \item{version}{the version of the wordvector package.}
 }
