@@ -13,7 +13,7 @@ toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE,
 set.seed(1234)
 wov <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1)
 
-test_that("textmodeldoc2vec works", {
+test_that("textmodel_doc2vec works", {
     
     dov1 <- textmodel_doc2vec(toks, wov)
     expect_false(dov1$normalize)
@@ -24,6 +24,7 @@ test_that("textmodeldoc2vec works", {
     expect_equal(
         dim(dov1$values), c(5234L, 50L)
     )
+    expect_equal(class(dov1$values), c("matrix", "array"))
     expect_equal(
         class(dov1), "textmodel_docvector"
     )
@@ -94,7 +95,7 @@ test_that("textmodel_doc2vec works with different objects", {
     )
 })
 
-test_that("textmodeldoc2vec works grouped data", {
+test_that("grouped_data works", {
     
     dov_gp <- textmodel_doc2vec(toks, wov, group_data = TRUE)
     
@@ -109,12 +110,27 @@ test_that("textmodeldoc2vec works grouped data", {
         c("values", "dim", "concatenator", "docvars", "normalize", "call", "version")
     )
     
-    test_that("textmodel_doc2vec returns zero for emptry documents (#17)", {
-        toks <- tokens(c("Citizens of the United States", "")) %>% 
-            tokens_tolower()
-        dov <- textmodel_doc2vec(toks, wov)
-        expect_true(all(dov$values[1,] != 0))
-        expect_true(all(dov$values[2,] == 0))
-    })
+})
 
+test_that("old and new produce similar results", {
+    
+    dfmt <- dfm(toks) %>% 
+        dfm_group()
+    dov0 <- textmodel_doc2vec(dfmt, wov, old = TRUE)
+    dov1 <- textmodel_doc2vec(dfmt, wov, old = FALSE)
+    expect_false(identical(dov0$values, dov1$values))
+    
+    expect_equal(cor(dov0$values[1,], dov1$values[1,]), 1.0)
+    expect_equal(cor(dov0$values[10,], dov1$values[10,]), 1.0)
+    
+    expect_gte(cor(dov0$values[,1], dov1$values[,1]), 0.95)
+    expect_gte(cor(dov0$values[,10], dov1$values[,10]), 0.95)
+})
+
+test_that("textmodel_doc2vec returns zero for emptry documents (#17)", {
+    toks <- tokens(c("Citizens of the United States", "")) %>% 
+        tokens_tolower()
+    dov <- textmodel_doc2vec(toks, wov)
+    expect_true(all(dov$values[1,] != 0))
+    expect_true(all(dov$values[2,] == 0))
 })

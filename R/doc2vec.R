@@ -52,7 +52,7 @@ textmodel_doc2vec.tokens <- function(x, model, normalize = FALSE,
 #' @method textmodel_doc2vec dfm
 textmodel_doc2vec.dfm <- function(x, model = NULL, normalize = FALSE, 
                                   weights = 1.0, pattern = NULL,
-                                  group_data = FALSE, ...) {
+                                  group_data = FALSE, ..., old = FALSE) {
     
     conc <- meta(x, field = "concatenator", type = "object")
     wov <- as.matrix(model, normalize = FALSE)
@@ -81,8 +81,12 @@ textmodel_doc2vec.dfm <- function(x, model = NULL, normalize = FALSE,
     x <- dfm_match(x, rownames(wov))
     
     l <- rowSums(x) == 0
-    dov <- Matrix::tcrossprod(x, t(wov)) # NOTE: consider using proxyC::prod
-    dov <- dov / sqrt(Matrix::rowSums(dov ^ 2) / ncol(dov))
+    dov <- as.matrix(Matrix::tcrossprod(x, t(wov))) # NOTE: consider using proxyC::prod
+    if (old) {
+        dov <- dov / sqrt(rowSums(dov ^ 2) / ncol(dov))
+    } else {
+        dov <- dov / rowSums(x)
+    }
     dov[l,] <- 0
     
     result <- list(
