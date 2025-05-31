@@ -16,7 +16,7 @@ wov <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1)
 test_that("textmodel_doc2vec works", {
     
     dov1 <- textmodel_doc2vec(toks, wov)
-    expect_false(dov1$normalize)
+    expect_true(dov1$normalize)
     expect_equal(
         names(dov1),
         c("values", "dim", "concatenator", "docvars", "normalize", "call", "version")
@@ -39,9 +39,9 @@ test_that("textmodel_doc2vec works", {
     )
     
     # normalize
-    dov2 <- textmodel_doc2vec(toks, wov, normalize = TRUE)
+    dov2 <- textmodel_doc2vec(toks, wov, normalize = FALSE)
     expect_false(identical(dov1$values, dov2$values))
-    expect_true(dov2$normalize)
+    expect_false(dov2$normalize)
     
     # weights
     w <- abs(rnorm(nrow(wov$values)))
@@ -117,14 +117,16 @@ test_that("old and new produce similar results", {
     dfmt <- dfm(toks) %>% 
         dfm_group()
     dov0 <- textmodel_doc2vec(dfmt, wov, old = TRUE)
-    dov1 <- textmodel_doc2vec(dfmt, wov, old = FALSE)
+    dov1 <- textmodel_doc2vec(dfmt, wov)
+    dov2 <- textmodel_doc2vec(dfmt, wov, normalize = FALSE)
     expect_false(identical(dov0$values, dov1$values))
+    expect_false(identical(dov1$values, dov2$values))
     
     expect_equal(cor(dov0$values[1,], dov1$values[1,]), 1.0)
-    expect_equal(cor(dov0$values[10,], dov1$values[10,]), 1.0)
+    expect_equal(cor(dov1$values[1,], dov2$values[1,]), 1.0)
     
-    expect_gte(cor(dov0$values[,1], dov1$values[,1]), 0.95)
-    expect_gte(cor(dov0$values[,10], dov1$values[,10]), 0.95)
+    expect_gte(cor(dov0$values[,1], dov1$values[,1]), 0.9)
+    expect_lte(cor(dov1$values[,1], dov2$values[,1]), 0.5)
 })
 
 test_that("textmodel_doc2vec returns zero for emptry documents (#17)", {
