@@ -9,8 +9,7 @@ as.matrix.textmodel_docvector <- function(x, ...){
 #' Create distributed representation of documents as weighted word vectors.
 #' @param x a [quanteda::tokens] or [quanteda::dfm] object.
 #' @param model a textmodel_wordvector object.
-#' @param normalize if `TRUE`, normalized the word frequencies relatively to the most 
-#'    frequent word in each document. See `scheme = propmax` in [quanteda::dfm_weight()].
+#' @param normalize if `TRUE`, normalized the document vecotrs by the lengths of the documents.
 #' @param weights weight the word vectors by user-provided values; either a single value or 
 #'    multiple values sorted in the same order as the word vectors.
 #' @param pattern [quanteda::pattern] to select words to apply `weights`. 
@@ -25,7 +24,7 @@ as.matrix.textmodel_docvector <- function(x, ...){
 #'   \item{call}{the command used to execute the function.}
 #'   \item{version}{the version of the wordvector package.}
 #' @export
-textmodel_doc2vec <- function(x, model, normalize = FALSE, 
+textmodel_doc2vec <- function(x, model, normalize = TRUE, 
                               weights = 1.0, pattern = NULL, 
                               group_data = FALSE, ...) {
     UseMethod("textmodel_doc2vec")
@@ -33,7 +32,7 @@ textmodel_doc2vec <- function(x, model, normalize = FALSE,
 
 #' @export
 #' @method textmodel_doc2vec tokens
-textmodel_doc2vec.tokens <- function(x, model, normalize = FALSE, 
+textmodel_doc2vec.tokens <- function(x, model, normalize = TRUE, 
                                      weights = 1.0, pattern = NULL, 
                                      group_data = FALSE, ...) {
     
@@ -50,7 +49,7 @@ textmodel_doc2vec.tokens <- function(x, model, normalize = FALSE,
 
 #' @export
 #' @method textmodel_doc2vec dfm
-textmodel_doc2vec.dfm <- function(x, model = NULL, normalize = FALSE, 
+textmodel_doc2vec.dfm <- function(x, model = NULL, normalize = TRUE, 
                                   weights = 1.0, pattern = NULL,
                                   group_data = FALSE, ..., old = FALSE) {
     
@@ -76,8 +75,6 @@ textmodel_doc2vec.dfm <- function(x, model = NULL, normalize = FALSE,
     
     if (group_data)
         x <- dfm_group(x)
-    if (normalize)
-        x <- dfm_weight(x, scheme = "propmax")
     x <- dfm_match(x, rownames(wov))
     
     l <- rowSums(x) == 0
@@ -85,7 +82,8 @@ textmodel_doc2vec.dfm <- function(x, model = NULL, normalize = FALSE,
     if (old) {
         dov <- dov / sqrt(rowSums(dov ^ 2) / ncol(dov))
     } else {
-        dov <- dov / rowSums(x)
+        if (normalize)
+            dov <- dov / rowSums(x)
     }
     dov[l,] <- 0
     

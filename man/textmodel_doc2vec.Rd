@@ -7,7 +7,7 @@
 textmodel_doc2vec(
   x,
   model,
-  normalize = FALSE,
+  normalize = TRUE,
   weights = 1,
   pattern = NULL,
   group_data = FALSE,
@@ -19,8 +19,7 @@ textmodel_doc2vec(
 
 \item{model}{a textmodel_wordvector object.}
 
-\item{normalize}{if \code{TRUE}, normalized the word frequencies relatively to the most
-frequent word in each document. See \code{scheme = propmax} in \code{\link[quanteda:dfm_weight]{quanteda::dfm_weight()}}.}
+\item{normalize}{if \code{TRUE}, normalized the document vecotrs by the lengths of the documents.}
 
 \item{weights}{weight the word vectors by user-provided values; either a single value or
 multiple values sorted in the same order as the word vectors.}
