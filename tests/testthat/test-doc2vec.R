@@ -13,10 +13,10 @@ toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE,
 set.seed(1234)
 wov <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1)
 
-test_that("textmodeldoc2vec works", {
+test_that("textmodel_doc2vec works", {
     
     dov1 <- textmodel_doc2vec(toks, wov)
-    expect_false(dov1$normalize)
+    expect_true(dov1$normalize)
     expect_equal(
         names(dov1),
         c("values", "dim", "concatenator", "docvars", "normalize", "call", "version")
@@ -24,6 +24,7 @@ test_that("textmodeldoc2vec works", {
     expect_equal(
         dim(dov1$values), c(5234L, 50L)
     )
+    expect_equal(class(dov1$values), c("matrix", "array"))
     expect_equal(
         class(dov1), "textmodel_docvector"
     )
@@ -38,9 +39,9 @@ test_that("textmodeldoc2vec works", {
     )
     
     # normalize
-    dov2 <- textmodel_doc2vec(toks, wov, normalize = TRUE)
+    dov2 <- textmodel_doc2vec(toks, wov, normalize = FALSE)
     expect_false(identical(dov1$values, dov2$values))
-    expect_true(dov2$normalize)
+    expect_false(dov2$normalize)
     
     # weights
     w <- abs(rnorm(nrow(wov$values)))
@@ -94,7 +95,7 @@ test_that("textmodel_doc2vec works with different objects", {
     )
 })
 
-test_that("textmodeldoc2vec works grouped data", {
+test_that("grouped_data works", {
     
     dov_gp <- textmodel_doc2vec(toks, wov, group_data = TRUE)
     
@@ -109,12 +110,39 @@ test_that("textmodeldoc2vec works grouped data", {
         c("values", "dim", "concatenator", "docvars", "normalize", "call", "version")
     )
     
-    test_that("textmodel_doc2vec returns zero for emptry documents (#17)", {
-        toks <- tokens(c("Citizens of the United States", "")) %>% 
-            tokens_tolower()
-        dov <- textmodel_doc2vec(toks, wov)
-        expect_true(all(dov$values[1,] != 0))
-        expect_true(all(dov$values[2,] == 0))
-    })
+})
 
+test_that("old and new produce similar results", {
+    
+    dfmt <- dfm(toks) %>% 
+        dfm_group()
+    dov0 <- textmodel_doc2vec(dfmt, wov, old = TRUE)
+    dov1 <- textmodel_doc2vec(dfmt, wov)
+    dov2 <- textmodel_doc2vec(dfmt, wov, normalize = FALSE)
+    
+    expect_false(identical(dov0$values, dov1$values))
+    expect_false(identical(dov1$values, dov2$values))
+    
+    expect_lte(sd(dov0$values), 2)
+    expect_lte(sd(dov1$values), 2)
+    expect_gte(sd(dov2$values), 100)
+    
+    expect_equal(
+        cor(t(dov0$values[1:5,]), t(dov0$values[1:5,])),
+        cor(t(dov1$values[1:5,]), t(dov1$values[1:5,]))
+    )
+    
+    expect_equal(
+        cor(t(dov0$values[1:5,]), t(dov0$values[1:5,])),
+        cor(t(dov2$values[1:5,]), t(dov2$values[1:5,]))
+    )
+    
+})
+
+test_that("textmodel_doc2vec returns zero for emptry documents (#17)", {
+    toks <- tokens(c("Citizens of the United States", "")) %>% 
+        tokens_tolower()
+    dov <- textmodel_doc2vec(toks, wov)
+    expect_true(all(dov$values[1,] != 0))
+    expect_true(all(dov$values[2,] == 0))
 })
