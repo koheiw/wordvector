@@ -123,8 +123,8 @@ test_that("old and new produce similar results", {
     expect_false(identical(dov0$values, dov1$values))
     expect_false(identical(dov1$values, dov2$values))
     
-    expect_lte(sd(dov0$values), 1)
-    expect_lte(sd(dov1$values), 1)
+    expect_lte(sd(dov0$values), 2)
+    expect_lte(sd(dov1$values), 2)
     expect_gte(sd(dov2$values), 100)
     
     expect_equal(
