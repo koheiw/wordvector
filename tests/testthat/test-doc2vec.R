@@ -119,14 +119,24 @@ test_that("old and new produce similar results", {
     dov0 <- textmodel_doc2vec(dfmt, wov, old = TRUE)
     dov1 <- textmodel_doc2vec(dfmt, wov)
     dov2 <- textmodel_doc2vec(dfmt, wov, normalize = FALSE)
+    
     expect_false(identical(dov0$values, dov1$values))
     expect_false(identical(dov1$values, dov2$values))
     
-    expect_equal(cor(dov0$values[1,], dov1$values[1,]), 1.0)
-    expect_equal(cor(dov1$values[1,], dov2$values[1,]), 1.0)
+    expect_lte(sd(dov0$values), 1)
+    expect_lte(sd(dov1$values), 1)
+    expect_gte(sd(dov2$values), 100)
     
-    expect_gte(cor(dov0$values[,1], dov1$values[,1]), 0.9)
-    expect_lte(cor(dov1$values[,1], dov2$values[,1]), 0.5)
+    expect_equal(
+        cor(t(dov0$values[1:5,]), t(dov0$values[1:5,])),
+        cor(t(dov1$values[1:5,]), t(dov1$values[1:5,]))
+    )
+    
+    expect_equal(
+        cor(t(dov0$values[1:5,]), t(dov0$values[1:5,])),
+        cor(t(dov2$values[1:5,]), t(dov2$values[1:5,]))
+    )
+    
 })
 
 test_that("textmodel_doc2vec returns zero for emptry documents (#17)", {
