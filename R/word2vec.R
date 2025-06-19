@@ -67,9 +67,9 @@
 #' head(similarity(w2v, analogy(~ berlin - germany + france), mode = "words"))
 #' }
 textmodel_word2vec <- function(x, dim = 50, type = c("cbow", "skip-gram"), 
-                               min_count = 5L, window = ifelse(type == "cbow", 5L, 10L), 
-                               iter = 10L, alpha = 0.05, model = NULL, 
-                               use_ns = TRUE, ns_size = 5L, sample = 0.001, tolower = TRUE,
+                               min_count = 5, window = ifelse(type == "cbow", 5, 10), 
+                               iter = 10, alpha = 0.05, model = NULL, 
+                               use_ns = TRUE, ns_size = 5, sample = 0.001, tolower = TRUE,
                                include_data = FALSE, verbose = FALSE, ...) {
     UseMethod("textmodel_word2vec")
 }
@@ -78,10 +78,10 @@ textmodel_word2vec <- function(x, dim = 50, type = c("cbow", "skip-gram"),
 #' @useDynLib wordvector
 #' @export
 #' @method textmodel_word2vec tokens
-textmodel_word2vec.tokens <- function(x, dim = 50L, type = c("cbow", "skip-gram"), 
-                                      min_count = 5L, window = ifelse(type == "cbow", 5L, 10L), 
-                                      iter = 10L, alpha = 0.05, model = NULL, 
-                                      use_ns = TRUE, ns_size = 5L, sample = 0.001, tolower = TRUE,
+textmodel_word2vec.tokens <- function(x, dim = 50, type = c("cbow", "skip-gram"), 
+                                      min_count = 5, window = ifelse(type == "cbow", 5, 10), 
+                                      iter = 10, alpha = 0.05, model = NULL, 
+                                      use_ns = TRUE, ns_size = 5, sample = 0.001, tolower = TRUE,
                                       include_data = FALSE, verbose = FALSE, ..., 
                                       normalize = FALSE, old = FALSE) {
     
