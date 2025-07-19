@@ -68,7 +68,7 @@
 #' }
 textmodel_word2vec <- function(x, dim = 50, type = c("cbow", "skip-gram"), 
                                min_count = 5, window = ifelse(type == "cbow", 5, 10), 
-                               iter = 10, alpha = 0.05, model = NULL, 
+                               iter = 10, alpha = 0.05, target = NULL, model = NULL, 
                                use_ns = TRUE, ns_size = 5, sample = 0.001, tolower = TRUE,
                                include_data = FALSE, verbose = FALSE, ...) {
     UseMethod("textmodel_word2vec")
@@ -80,7 +80,7 @@ textmodel_word2vec <- function(x, dim = 50, type = c("cbow", "skip-gram"),
 #' @method textmodel_word2vec tokens
 textmodel_word2vec.tokens <- function(x, dim = 50, type = c("cbow", "skip-gram"), 
                                       min_count = 5, window = ifelse(type == "cbow", 5, 10), 
-                                      iter = 10, alpha = 0.05, model = NULL, 
+                                      iter = 10, alpha = 0.05, target = NULL, model = NULL, 
                                       use_ns = TRUE, ns_size = 5, sample = 0.001, tolower = TRUE,
                                       include_data = FALSE, verbose = FALSE, ..., 
                                       normalize = FALSE, old = FALSE) {
@@ -121,14 +121,27 @@ textmodel_word2vec.tokens <- function(x, dim = 50, type = c("cbow", "skip-gram")
         x <- tokens_tolower(x)
     x <- tokens_trim(x, min_termfreq = min_count, termfreq_type = "count")
     
+    if (!is.null(target)) {
+        id <- na.omit(match(target, types(x)))
+    } else {
+        id <- integer()
+    }
+    
     result <- cpp_w2v(x, size = dim, window = window,
                       sample = sample, withHS = !use_ns, negative = ns_size, 
                       threads = get_threads(), iterations = iter,
-                      alpha = alpha, type = type, normalize = normalize, model = model,
+                      alpha = alpha, type = type, normalize = normalize, 
+                      target = id, model = model,
                       verbose = verbose)
     if (!is.null(result$message))
         stop("Failed to train word2vec (", result$message, ")")
     
+    # if (!is.null(target)) {
+    #     result$values <- result$values[id,, drop = FALSE]
+    #     result$weights <- result$weights[id,, drop = FALSE]
+    #     result$frequency <- result$frequency[id, drop = FALSE]
+    # }
+        
     result$min_count <- min_count
     result$concatenator <- meta(x, field = "concatenator", type = "object")
     if (include_data)

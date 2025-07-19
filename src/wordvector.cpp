@@ -131,10 +131,11 @@ Rcpp::List cpp_w2v(TokensPtr xptr,
     settings.verbose = verbose;
     
     std::vector<int> target = Rcpp::as< std::vector<int> >(target_);
-    std::unordered_set<int> setTarget;
+    std::unordered_set<int> idTarget;
     for (size_t i = 0; i < target.size(); i++) {
-        setTarget.insert(target[i]);
+        idTarget.insert(target[i]);
     }
+    settings.target = idTarget;
     
     // NOTE: consider initializing models with corpus
     w2v::word2vec_t word2vec_pre = as_word2vec(model_);

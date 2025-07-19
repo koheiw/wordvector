@@ -86,14 +86,6 @@ namespace w2v {
                         continue; 
                     }
                     
-                    if (m_data.settings->target.size() > 0) {
-                        auto it = m_data.settings->target.find(word);
-                        // ignore non-target
-                        if (it == m_data.settings->target.end()) {
-                            continue;
-                        }
-                    }
-                    
                     threadProcessedWords++;
                     if (m_data.settings->sample < 1.0f) {
                         if ((*m_downSampling)(m_data.corpus->frequency[word - 1], m_randomGenerator)) {
@@ -132,6 +124,15 @@ namespace w2v {
         if (_text.size() == 0)
             return;
         for (std::size_t i = 0; i < _text.size(); ++i) {
+            
+            // ignore non-target
+            if (m_data.settings->target.size() > 0) {
+                auto it = m_data.settings->target.find(_text[i]);
+                if (it == m_data.settings->target.end()) {
+                    continue;
+                }
+            }
+            
             // hidden layers initialized with 0 values for each target word
             std::memset(m_hiddenLayerValues->data(), 0, m_hiddenLayerValues->size() * sizeof(float));
             std::memset(m_hiddenLayerErrors->data(), 0, m_hiddenLayerErrors->size() * sizeof(float));

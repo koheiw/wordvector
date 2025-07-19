@@ -22,8 +22,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // cpp_w2v
-Rcpp::List cpp_w2v(TokensPtr xptr, uint16_t size, uint16_t window, float sample, bool withHS, uint16_t negative, uint16_t threads, uint16_t iterations, float alpha, int type, bool verbose, bool normalize, List model);
-RcppExport SEXP _wordvector_cpp_w2v(SEXP xptrSEXP, SEXP sizeSEXP, SEXP windowSEXP, SEXP sampleSEXP, SEXP withHSSEXP, SEXP negativeSEXP, SEXP threadsSEXP, SEXP iterationsSEXP, SEXP alphaSEXP, SEXP typeSEXP, SEXP verboseSEXP, SEXP normalizeSEXP, SEXP modelSEXP) {
+Rcpp::List cpp_w2v(TokensPtr xptr, uint16_t size, uint16_t window, float sample, bool withHS, uint16_t negative, uint16_t threads, uint16_t iterations, float alpha, int type, bool verbose, bool normalize, IntegerVector target_, List model_);
+RcppExport SEXP _wordvector_cpp_w2v(SEXP xptrSEXP, SEXP sizeSEXP, SEXP windowSEXP, SEXP sampleSEXP, SEXP withHSSEXP, SEXP negativeSEXP, SEXP threadsSEXP, SEXP iterationsSEXP, SEXP alphaSEXP, SEXP typeSEXP, SEXP verboseSEXP, SEXP normalizeSEXP, SEXP target_SEXP, SEXP model_SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -39,15 +39,16 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type type(typeSEXP);
     Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
     Rcpp::traits::input_parameter< bool >::type normalize(normalizeSEXP);
-    Rcpp::traits::input_parameter< List >::type model(modelSEXP);
-    rcpp_result_gen = Rcpp::wrap(cpp_w2v(xptr, size, window, sample, withHS, negative, threads, iterations, alpha, type, verbose, normalize, model));
+    Rcpp::traits::input_parameter< IntegerVector >::type target_(target_SEXP);
+    Rcpp::traits::input_parameter< List >::type model_(model_SEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_w2v(xptr, size, window, sample, withHS, negative, threads, iterations, alpha, type, verbose, normalize, target_, model_));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
     {"_wordvector_cpp_get_max_thread", (DL_FUNC) &_wordvector_cpp_get_max_thread, 0},
-    {"_wordvector_cpp_w2v", (DL_FUNC) &_wordvector_cpp_w2v, 13},
+    {"_wordvector_cpp_w2v", (DL_FUNC) &_wordvector_cpp_w2v, 14},
     {NULL, NULL, 0}
 };
 

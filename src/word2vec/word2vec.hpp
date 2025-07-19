@@ -69,19 +69,20 @@ namespace w2v {
      * @brief settings structure holds all training parameters
      */
     struct settings_t final {
-        uint16_t size = 100; //< word vector size
-        uint16_t window = 5; //< skip length between words
-        uint16_t expTableSize = 1000; //< exp(x) / (exp(x) + 1) values lookup table size
-        uint16_t expValueMax = 6; //< max value in the lookup table
-        float sample = 1e-3f; //< threshold for occurrence of words
-        bool withHS = false; //< use hierarchical softmax instead of negative sampling
-        uint16_t negative = 5; //< negative examples number
-        uint16_t threads = 1; //< train threads number
-        uint16_t iterations = 5; //< train iterations
-        float alpha = 0.05f; //< starting learn rate
-        int type = 1; //< 1:CBOW 2:Skip-Gram
-        uint32_t random = 1234; // < random number seed
+        uint16_t size = 100; // word vector size
+        uint16_t window = 5; // skip length between words
+        uint16_t expTableSize = 1000; // exp(x) / (exp(x) + 1) values lookup table size
+        uint16_t expValueMax = 6; // max value in the lookup table
+        float sample = 1e-3f; // threshold for occurrence of words
+        bool withHS = false; // use hierarchical softmax instead of negative sampling
+        uint16_t negative = 5; // negative examples number
+        uint16_t threads = 1; // train threads number
+        uint16_t iterations = 5; // train iterations
+        float alpha = 0.05f; // starting learn rate
+        int type = 1; // 1:CBOW 2:Skip-Gram
+        uint32_t random = 1234; // random number seed
         bool verbose = false; // print progress
+        std::unordered_set<int> target; // save target tokens
         settings_t() = default;
     };
 
