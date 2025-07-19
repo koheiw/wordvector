@@ -95,7 +95,8 @@ Rcpp::List cpp_w2v(TokensPtr xptr,
                    int type = 1,
                    bool verbose = false,
                    bool normalize = true,
-                   List model = R_NilValue) {
+                   IntegerVector target_ = IntegerVector(),
+                   List model_ = R_NilValue) {
   
     if (verbose) {
         if (type == 1 || type == 10) {
@@ -129,12 +130,16 @@ Rcpp::List cpp_w2v(TokensPtr xptr,
     settings.random = (uint32_t)(Rcpp::runif(1)[0] * std::numeric_limits<uint32_t>::max());
     settings.verbose = verbose;
     
-    // NOTE: consider initializing models with corpus
-    w2v::word2vec_t word2vec_pre = as_word2vec(model);
-    w2v::word2vec_t word2vec;
-    bool trained;
+    std::vector<int> target = Rcpp::as< std::vector<int> >(target_);
+    std::unordered_set<int> setTarget;
+    for (size_t i = 0; i < target.size(); i++) {
+        setTarget.insert(target[i]);
+    }
     
-    trained = word2vec.train(settings, corpus, word2vec_pre);
+    // NOTE: consider initializing models with corpus
+    w2v::word2vec_t word2vec_pre = as_word2vec(model_);
+    w2v::word2vec_t word2vec;
+    bool trained = word2vec.train(settings, corpus, word2vec_pre);
     
     if (!trained) {
         Rcpp::List out = Rcpp::List::create(
