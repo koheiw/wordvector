@@ -85,11 +85,14 @@ namespace w2v {
                         //std::cout << "padding: " << word << "\n";
                         continue; 
                     }
-                    // ignore infrequent words
-                    // if (m_data.corpus->frequency[word - 1] < m_data.settings->minWordFreq) {
-                    //     //std::cout << "infrequent: " << word << "\n";
-                    //     continue;
-                    // }
+                    
+                    if (m_data.settings->target.size() > 0) {
+                        auto it = m_data.settings->target.find(word);
+                        // ignore non-target
+                        if (it == m_data.settings->target.end()) {
+                            continue;
+                        }
+                    }
                     
                     threadProcessedWords++;
                     if (m_data.settings->sample < 1.0f) {
