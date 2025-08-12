@@ -19,6 +19,13 @@ test_that("model works", {
     wov1 <- textmodel_word2vec(toks1, dim = 50, type = "cbow")
     wov2 <- textmodel_word2vec(toks1, dim = 50, type = "cbow", model = wov0)
     
+    expect_false(identical(rownames(wov1$values), 
+                           rownames(wov0$values)))
+    expect_false(identical(rownames(wov2$values), 
+                           rownames(wov0$values)))
+    expect_true(identical(rownames(wov1$values), 
+                          rownames(wov2$values)))
+    
     # without model
     f1 <- intersect(rownames(wov0$values), rownames(wov1$values))
     sim1 <- Matrix::diag(proxyC::simil(wov0$values[f1,], wov1$values[f1,], diag = TRUE))
