@@ -384,7 +384,7 @@ namespace w2v {
             // predict likelihood of _word using logistic regression
             for (std::size_t k = 0; k < K; ++k) {
                 f += _hiddenLayerValues[k + _hiddenLayerShift] * (*m_data.bpWeights)[k + shift];
-                f += _docLayerValues[k + _docLayerShift] * (*m_data.docWeights)[k + _docLayerShift]; // latter should not be zero
+                f += _docLayerValues[k + _docLayerShift] * (*m_data.docWeights)[k + _docLayerShift];
             }
             //std::cout << f << "\n";
             float prob = 0;

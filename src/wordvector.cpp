@@ -20,10 +20,8 @@ Rcpp::CharacterVector encode(std::vector<std::string> types){
     return types_;
 }
 
-// NOTE: change to get_documents(model, weight = false) and get_words(model, weight = false)
-
-Rcpp::NumericMatrix get_words(w2v::word2vec_t model, bool weight = false) {
-    std::vector<float> mat = weight ? model.weights() : model.values();
+Rcpp::NumericMatrix get_words(w2v::word2vec_t model, bool weights = false) {
+    std::vector<float> mat = weights ? model.weights() : model.values();
     if (model.vectorSize() * model.vocabularySize() != mat.size())
         throw std::runtime_error("Invalid word matrix");
     Rcpp::NumericMatrix mat_(model.vectorSize(), model.vocabularySize(), mat.begin());
@@ -31,13 +29,11 @@ Rcpp::NumericMatrix get_words(w2v::word2vec_t model, bool weight = false) {
     return Rcpp::transpose(mat_);
 }
 
-Rcpp::NumericMatrix get_documents(w2v::word2vec_t model, bool weight = false) {
-    std::vector<float> mat = weight ? model.docWeights() : model.docValues();
-    Rcout << model.vectorSize() << ", " << model.corpusSize()  << ", " << mat.size() << "\n";
+Rcpp::NumericMatrix get_documents(w2v::word2vec_t model, bool weights = false) {
+    std::vector<float> mat = weights ? model.docWeights() : model.docValues();
     if (model.vectorSize() * model.corpusSize() != mat.size())
         throw std::runtime_error("Invalid document matrix");
     Rcpp::NumericMatrix mat_(model.vectorSize(), model.corpusSize(), mat.begin());
-    //colnames(mat_) = encode(model.vocabulary()); 
     return Rcpp::transpose(mat_);
 }
 
