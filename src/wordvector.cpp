@@ -31,7 +31,7 @@ Rcpp::NumericMatrix get_words(w2v::word2vec_t model, bool weight = false) {
     return Rcpp::transpose(mat_);
 }
 
-Rcpp::NumericMatrix get_documents(w2v::word2vec_t model, bool weight = true) {
+Rcpp::NumericMatrix get_documents(w2v::word2vec_t model, bool weight = false) {
     std::vector<float> mat = weight ? model.docWeights() : model.docValues();
     Rcout << model.vectorSize() << ", " << model.corpusSize()  << ", " << mat.size() << "\n";
     if (model.vectorSize() * model.corpusSize() != mat.size())
