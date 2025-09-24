@@ -9,7 +9,7 @@ toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>%
                  padding = TRUE) %>%
     tokens_tolower()
 
-wdv <- textmodel_word2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose = TRUE, iter = 10)
+wdv <- textmodel_word2vec(toks, dim = 50, type = "cbow2", min_count = 5, verbose = TRUE, iter = 10)
 
 for (i in 1:10) {
     cat(i, "\n")

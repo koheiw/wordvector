@@ -61,8 +61,12 @@ namespace w2v {
         std::uniform_int_distribution<short> m_rndWindow;
         std::unique_ptr<downSampling_t> m_downSampling;
         std::unique_ptr<nsDistribution_t> m_nsDistribution;
-        std::unique_ptr<std::vector<float>> m_hiddenLayerValues;
+        // word vector
+        std::unique_ptr<std::vector<float>> m_hiddenLayerValues; 
         std::unique_ptr<std::vector<float>> m_hiddenLayerErrors;
+        // document vector
+        std::unique_ptr<std::vector<float>> m_docLayerValues;
+        std::unique_ptr<std::vector<float>> m_docLayerErrors;
         std::unique_ptr<std::thread> m_thread;
 
     public:
@@ -88,6 +92,7 @@ namespace w2v {
         void worker(int &_iter, float &_alpha) noexcept;
 
         inline void cbow(const std::vector<unsigned int> &_sentence) noexcept;
+        inline void cbow2(const std::vector<unsigned int> &_sentence) noexcept; // for document vector
         inline void skipGram(const std::vector<unsigned int> &_sentence) noexcept;
         inline void hierarchicalSoftmax(std::size_t _index,
                                         std::vector<float> &_hiddenLayer,
@@ -95,6 +100,13 @@ namespace w2v {
         inline void negativeSampling(std::size_t _index,
                                      std::vector<float> &_hiddenLayer,
                                      std::vector<float> &_trainLayer, std::size_t _trainLayerShift) noexcept;
+        inline void negativeSampling2(std::size_t _index,
+                                     std::vector<float> &_wordLayer,
+                                     std::vector<float> &_wordLayerError, 
+                                     std::size_t _wordLayerShift,
+                                     std::vector<float> &_docLayer,
+                                     std::vector<float> &_docLayerError, 
+                                     std::size_t _docLayerShift) noexcept;
     };
 
 }

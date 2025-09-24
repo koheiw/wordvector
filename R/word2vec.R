@@ -78,8 +78,8 @@ textmodel_word2vec <- function(x, dim = 50, type = c("cbow", "skip-gram"),
 #' @useDynLib wordvector
 #' @export
 #' @method textmodel_word2vec tokens
-textmodel_word2vec.tokens <- function(x, dim = 50, type = c("cbow", "skip-gram"), 
-                                      min_count = 5, window = ifelse(type == "cbow", 5, 10), 
+textmodel_word2vec.tokens <- function(x, dim = 50, type = c("cbow", "skip-gram", "cbow2"), 
+                                      min_count = 5, window = ifelse(type %in% c("cbow", "cbow2"), 5, 10), 
                                       iter = 10, alpha = 0.05, model = NULL, 
                                       use_ns = TRUE, ns_size = 5, sample = 0.001, tolower = TRUE,
                                       include_data = FALSE, verbose = FALSE, ..., 
@@ -102,7 +102,7 @@ textmodel_word2vec.tokens <- function(x, dim = 50, type = c("cbow", "skip-gram")
     if (normalize)
         .Deprecated(msg = "normalize is deprecated. Use as.matrix(x, normalize = TRUE) instead.")
     
-    type <- match(type, c("cbow", "skip-gram"))
+    type <- match(type, c("cbow", "skip-gram", "cbow2"))
     if (old)
         type <- type * 10
     
