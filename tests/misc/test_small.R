@@ -9,7 +9,21 @@ toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>%
                  padding = TRUE) %>%
     tokens_tolower()
 
-wdv <- textmodel_word2vec(toks, dim = 50, type = "cbow2", min_count = 5, verbose = TRUE, iter = 10)
+wdv <- textmodel_word2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose = TRUE, iter = 10)
+similarity(wdv, analogy(~ washington - america + france)) %>% 
+    head()
+
+wdv2 <- textmodel_word2vec(toks, dim = 50, type = "cbow2", min_count = 5, verbose = TRUE, iter = 10)
+similarity(wdv2, analogy(~ washington - america + france)) %>% 
+    head()
+
+sim <- proxyC::simil(
+    wdv2$doc_values,
+    wdv2$doc_values["4263794",, drop = FALSE]
+)
+s <- rowSums(sim)
+print(tail(toks[order(s)]), max_ntoken = -1)
+
 
 for (i in 1:10) {
     cat(i, "\n")
