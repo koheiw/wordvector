@@ -9,22 +9,25 @@ toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>%
                  padding = TRUE) %>%
     tokens_tolower()
 
-wdv <- word2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose = TRUE, iter = 10)
+wdv <- textmodel_word2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose = TRUE, iter = 10)
 
 for (i in 1:10) {
     cat(i, "\n")
-    wdv <- word2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose = TRUE, iter = 30)
+    wdv <- textmodel_word2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose = TRUE, iter = 30)
 }
 
 # word2vec -------------------------------------
-wdv <- wordvector::word2vec(toks, dim = 50, type = "cbow", min_count = 5, iter = 5, 
-                            verbose = TRUE)
+wdv <- textmodel_word2vec(toks, dim = 50, type = "cbow", min_count = 5, iter = 5, 
+                          verbose = TRUE)
 
-analogy(wdv, ~ washington - america + france)
-analogy(wdv, ~ berlin - germany + france, exclude = FALSE, n = 10)
+similarity(wdv, analogy(~ washington - america + france)) %>% 
+    head()
+similarity(wdv, analogy(~ berlin - germany + france)) %>% 
+    head()
 
 
 # LSA -------------------------------------
 
-lsa <- wordvector::lsa(toks, dim = 50, min_count = 0, verbose = TRUE)
-analogy(wdv, ~ berlin - germany + france, exclude = FALSE, n = 10)
+lsa <- textmodel_lsa(toks, dim = 50, min_count = 0, verbose = TRUE)
+similarity(wdv, analogy(~ berlin - germany + france)) %>% 
+    head()
