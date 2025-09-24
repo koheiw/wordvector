@@ -111,7 +111,7 @@ namespace w2v {
                 } else if (m_data.settings->type == 2) {
                     skipGram(sentence);
                 } else if (m_data.settings->type == 3) {
-                    cbow2(sentence);
+                    cbow2(sentence, h);
                 }
             }
             // for progress message
@@ -177,7 +177,7 @@ namespace w2v {
         }
     }
 
-    inline void trainThread_t::cbow2(const std::vector<unsigned int> &_text) noexcept {
+    inline void trainThread_t::cbow2(const std::vector<unsigned int> &_text, std::size_t docIndex) noexcept {
         
         std::size_t K = m_data.settings->size;
         if (_text.size() == 0)
@@ -209,6 +209,10 @@ namespace w2v {
                 (*m_hiddenLayerValues)[k] /= cw;
             }
             
+            auto docShift = docIndex * K;
+            for (std::size_t k = 0; k < K; ++k) {
+                (*m_docLayerValues)[k] += (*m_data.docValues)[k + docShift];
+            }
             if (m_data.settings->withHS) {
                 hierarchicalSoftmax(_text[i], *m_hiddenLayerErrors, *m_hiddenLayerValues, 0);
             } else {
@@ -223,6 +227,7 @@ namespace w2v {
                 auto shift = _text[j] * K;
                 for (std::size_t k = 0; k < K; ++k) {
                     (*m_data.pjLayerValues)[k + shift] += (*m_hiddenLayerErrors)[k];
+                    (*m_data.docValues)[k + docShift] += (*m_docLayerErrors)[k];
                 }
             }
         }
@@ -384,6 +389,7 @@ namespace w2v {
             // predict likelihood of _word using logistic regression
             for (std::size_t k = 0; k < K; ++k) {
                 f += _hiddenLayerValues[k + _hiddenLayerShift] * (*m_data.bpWeights)[k + shift];
+                f += _docLayerValues[k + _docLayerShift] * (*m_data.docWeights)[k + shift];
             }
             //std::cout << f << "\n";
             float prob = 0;
@@ -402,10 +408,12 @@ namespace w2v {
             // propagate errors output -> hidden
             for (std::size_t k = 0; k < K; ++k) {
                 _hiddenLayerErrors[k] += gxa * (*m_data.bpWeights)[k + shift]; // added to pjLayerValues
+                _docLayerErrors[k] += gxa * (*m_data.docWeights)[k + shift];
             }
             // learn weights hidden -> output
             for (std::size_t k = 0; k < K; ++k) {
                 (*m_data.bpWeights)[k + shift] += gxa * _hiddenLayerValues[k + _hiddenLayerShift];
+                (*m_data.docWeights)[k + shift] += gxa * _docLayerValues[k + _docLayerShift];
             }
         }
     }
