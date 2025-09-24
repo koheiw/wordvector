@@ -208,14 +208,11 @@ namespace w2v {
             }
             
             auto docShift = docIndex * K;
-            for (std::size_t k = 0; k < K; ++k) {
-                (*m_docLayerValues)[k] += (*m_data.docValues)[k + docShift];
-            }
             if (m_data.settings->withHS) {
                 hierarchicalSoftmax(_text[i], *m_hiddenLayerErrors, *m_hiddenLayerValues, 0);
             } else {
                 negativeSampling2(_text[i], *m_hiddenLayerErrors, *m_hiddenLayerValues, 0,
-                                            *m_docLayerErrors, *m_docLayerValues, 0);
+                                            *m_docLayerErrors, *m_data.docValues, docShift);
             }
             
             // hidden -> in
@@ -387,7 +384,7 @@ namespace w2v {
             // predict likelihood of _word using logistic regression
             for (std::size_t k = 0; k < K; ++k) {
                 f += _hiddenLayerValues[k + _hiddenLayerShift] * (*m_data.bpWeights)[k + shift];
-                f += _docLayerValues[k + _docLayerShift] * (*m_data.docWeights)[k + shift];
+                f += _docLayerValues[k + _docLayerShift] * (*m_data.docWeights)[k + _docLayerShift]; // latter should not be zero
             }
             //std::cout << f << "\n";
             float prob = 0;
@@ -406,12 +403,12 @@ namespace w2v {
             // propagate errors output -> hidden
             for (std::size_t k = 0; k < K; ++k) {
                 _hiddenLayerErrors[k] += gxa * (*m_data.bpWeights)[k + shift]; // added to pjLayerValues
-                _docLayerErrors[k] += gxa * (*m_data.docWeights)[k + shift];
+                _docLayerErrors[k] += gxa * (*m_data.docWeights)[k + _docLayerShift];
             }
             // learn weights hidden -> output
             for (std::size_t k = 0; k < K; ++k) {
                 (*m_data.bpWeights)[k + shift] += gxa * _hiddenLayerValues[k + _hiddenLayerShift];
-                (*m_data.docWeights)[k + shift] += gxa * _docLayerValues[k + _docLayerShift];
+                (*m_data.docWeights)[k + _docLayerShift] += gxa * _docLayerValues[k + _docLayerShift];
             }
         }
     }
