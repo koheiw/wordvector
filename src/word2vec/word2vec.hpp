@@ -98,6 +98,9 @@ namespace w2v {
         std::vector<float> m_pjLayerValues;
         std::vector<float> m_bpWeights;
         
+        // document vector
+        std::size_t m_corpusSize = 0;
+        
         mutable std::string m_errMsg;
         
     public:
