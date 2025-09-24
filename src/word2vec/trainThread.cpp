@@ -57,8 +57,6 @@ namespace w2v {
             auto wordsPerAllThreads = m_data.settings->iterations * m_data.corpus->trainWords;
             auto wordsPerAlpha = wordsPerAllThreads / 10000;
             
-            std::cout << "m_data.settings->type: " << m_data.settings->type << "\n";
-            
             float alpha = 0;
             for (std::size_t h = m_range.first; h <= m_range.second; ++h) {
                 

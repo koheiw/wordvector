@@ -20,21 +20,24 @@ Rcpp::CharacterVector encode(std::vector<std::string> types){
     return types_;
 }
 
-Rcpp::NumericMatrix get_values(w2v::word2vec_t model) {
-    std::vector<float> mat = model.values();
+// NOTE: change to get_documents(model, weight = false) and get_words(model, weight = false)
+
+Rcpp::NumericMatrix get_words(w2v::word2vec_t model, bool weight = false) {
+    std::vector<float> mat = weight ? model.weights() : model.values();
     if (model.vectorSize() * model.vocabularySize() != mat.size())
-        throw std::runtime_error("Invalid model values");
+        throw std::runtime_error("Invalid word matrix");
     Rcpp::NumericMatrix mat_(model.vectorSize(), model.vocabularySize(), mat.begin());
     colnames(mat_) = encode(model.vocabulary()); 
     return Rcpp::transpose(mat_);
 }
 
-Rcpp::NumericMatrix get_weights(w2v::word2vec_t model) {
-    std::vector<float> mat = model.weights();
-    if (model.vectorSize() * model.vocabularySize() != mat.size())
-        throw std::runtime_error("Invalid model weights");
-    Rcpp::NumericMatrix mat_(model.vectorSize(), model.vocabularySize(), mat.begin());
-    colnames(mat_) = encode(model.vocabulary()); 
+Rcpp::NumericMatrix get_documents(w2v::word2vec_t model, bool weight = true) {
+    std::vector<float> mat = weight ? model.docWeights() : model.docValues();
+    Rcout << model.vectorSize() << ", " << model.corpusSize()  << ", " << mat.size() << "\n";
+    if (model.vectorSize() * model.corpusSize() != mat.size())
+        throw std::runtime_error("Invalid document matrix");
+    Rcpp::NumericMatrix mat_(model.vectorSize(), model.corpusSize(), mat.begin());
+    //colnames(mat_) = encode(model.vocabulary()); 
     return Rcpp::transpose(mat_);
 }
 
@@ -151,8 +154,10 @@ Rcpp::List cpp_w2v(TokensPtr xptr,
         Rprintf(" ...complete\n");
     
     Rcpp::List out = Rcpp::List::create(
-        Rcpp::Named("values") = get_values(word2vec), 
-        Rcpp::Named("weights") = get_weights(word2vec), 
+        Rcpp::Named("values") = get_words(word2vec), 
+        Rcpp::Named("weights") = get_words(word2vec, true), 
+        Rcpp::Named("doc_values") = get_documents(word2vec), 
+        Rcpp::Named("doc_weights") = get_documents(word2vec, true), 
         Rcpp::Named("type") = type,
         Rcpp::Named("dim") = size,
         Rcpp::Named("frequency") = get_frequency(corpus),
