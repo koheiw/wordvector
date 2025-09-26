@@ -187,9 +187,7 @@ namespace w2v {
             // hidden layers initialized with 0 values for each target word
             std::memset(m_hiddenLayerValues->data(), 0, m_hiddenLayerValues->size() * sizeof(float));
             std::memset(m_hiddenLayerErrors->data(), 0, m_hiddenLayerErrors->size() * sizeof(float));
-            std::memset(m_docLayerValues->data(), 0, m_docLayerValues->size() * sizeof(float));
-            std::memset(m_docLayerErrors->data(), 0, m_docLayerErrors->size() * sizeof(float));
-            
+
             int window = m_rndWindow(m_randomGenerator);
             std::size_t from = std::max(0, (int)i - window);
             std::size_t to = std::min((int)_text.size(), (int)i + window);
@@ -198,24 +196,24 @@ namespace w2v {
                 if (j == i)
                     continue;
                 auto shift = _text[j] * K;
-                for (std::size_t k = 0; k < K; ++k) {
+                for (std::size_t k = 0; k < K; ++k)
                     (*m_hiddenLayerValues)[k] += (*m_data.pjLayerValues)[k + shift];
-                }
                 cw++;
+                
             }
+            for (std::size_t k = 0; k < K; ++k)
+                (*m_hiddenLayerValues)[k] += (*m_data.docValues)[k + docShift];
+            cw++;
             
             if (cw == 0)
                 continue;
-            for (std::size_t k = 0; k < K; ++k) {
+            for (std::size_t k = 0; k < K; ++k)
                 (*m_hiddenLayerValues)[k] /= cw;
-            }
             
             if (m_data.settings->withHS) {
-                hierarchicalSoftmax2(_text[i], *m_hiddenLayerErrors, *m_hiddenLayerValues, 0,
-                                               *m_docLayerErrors, *m_data.docValues, docShift);
+                hierarchicalSoftmax(_text[i], *m_hiddenLayerErrors, *m_hiddenLayerValues, 0);
             } else {
-                negativeSampling2(_text[i], *m_hiddenLayerErrors, *m_hiddenLayerValues, 0,
-                                            *m_docLayerErrors, *m_data.docValues, docShift);
+                negativeSampling(_text[i], *m_hiddenLayerErrors, *m_hiddenLayerValues, 0);
             }
             
             // hidden -> in
@@ -225,12 +223,12 @@ namespace w2v {
                 auto shift = _text[j] * K;
                 for (std::size_t k = 0; k < K; ++k) {
                     (*m_data.pjLayerValues)[k + shift] += (*m_hiddenLayerErrors)[k];
-                    (*m_data.docValues)[k + docShift] += (*m_docLayerErrors)[k];
+                    (*m_data.docValues)[k + docShift] += (*m_hiddenLayerErrors)[k];
                 }
             }
         }
     }
-    
+
     inline void trainThread_t::skipGram(const std::vector<unsigned int> &_text) noexcept {
         
         std::size_t K = m_data.settings->size;
@@ -276,22 +274,23 @@ namespace w2v {
                     continue;
                 
                 // hidden layer initialized with 0 values for each context word
+                std::memset(m_hiddenLayerValues->data(), 0, m_hiddenLayerValues->size() * sizeof(float));
                 std::memset(m_hiddenLayerErrors->data(), 0, m_hiddenLayerErrors->size() * sizeof(float));
-                std::memset(m_docLayerErrors->data(), 0, m_docLayerErrors->size() * sizeof(float));
                 
-                // shift to the selected word vector in the matrix
-                auto shift = _text[j] * K;
+                auto wordShift = _text[j] * K;
+                for (std::size_t k = 0; k < K; ++k)
+                    (*m_hiddenLayerValues)[k] += (*m_data.pjLayerValues)[k + wordShift] + 
+                                                 (*m_data.docValues)[k + docShift];
+                
                 if (m_data.settings->withHS) {
-                    hierarchicalSoftmax2(_text[i], *m_hiddenLayerErrors, *m_data.pjLayerValues, shift,
-                                         *m_docLayerErrors, *m_data.docValues, docShift);
+                    hierarchicalSoftmax(_text[i], *m_hiddenLayerErrors, *m_hiddenLayerValues, 0);
                 } else {
-                    negativeSampling2(_text[i], *m_hiddenLayerErrors, *m_data.pjLayerValues, shift,
-                                      *m_docLayerErrors, *m_data.docValues, docShift);
+                    negativeSampling(_text[i], *m_hiddenLayerErrors, *m_hiddenLayerValues, 0);
                 }
                 
                 for (std::size_t k = 0; k < m_data.settings->size; ++k) {
-                    (*m_data.pjLayerValues)[k + shift] += (*m_hiddenLayerErrors)[k];
-                    (*m_data.docValues)[k + docShift] += (*m_docLayerErrors)[k];
+                    (*m_data.pjLayerValues)[k + wordShift] += (*m_hiddenLayerErrors)[k];
+                    (*m_data.docValues)[k + docShift] += (*m_hiddenLayerErrors)[k];
                 }
             }
         }
@@ -337,52 +336,6 @@ namespace w2v {
         }
     }
 
-    inline void trainThread_t::hierarchicalSoftmax2(std::size_t _word,
-                                                   std::vector<float> &_wordLayerErrors,
-                                                   std::vector<float> &_wordLayerValues,
-                                                   std::size_t _wordLayerShift,
-                                                   std::vector<float> &_docLayerErrors,
-                                                   std::vector<float> &_docLayerValues, 
-                                                   std::size_t _docLayerShift) noexcept {
-        
-        std::size_t K = m_data.settings->size;
-        auto huffmanData = m_data.huffmanTree->huffmanData(_word);
-        for (std::size_t i = 0; i < huffmanData->huffmanCode.size(); ++i) {
-            auto shift = huffmanData->huffmanPoint[i] * K;
-            
-            // propagate hidden -> output
-            float f = 0.0f;
-            for (std::size_t k = 0; k < K; ++k) {
-                f += _wordLayerValues[k + _wordLayerShift] * (*m_data.bpWeights)[k + shift];
-                f += _docLayerValues[k + _docLayerShift] * (*m_data.docWeights)[k + _docLayerShift];
-            }
-            float prob = 0;
-            if (f < -m_data.settings->expValueMax) {
-                //continue;
-                prob = 0.0f;
-            } else if (f > m_data.settings->expValueMax) {
-                //continue;
-                prob = 1.0f;
-            } else {
-                auto r = (f + m_data.settings->expValueMax) * (m_data.expTable->size() / m_data.settings->expValueMax / 2);
-                prob = (*m_data.expTable)[static_cast<std::size_t>(r)];
-            }
-            
-            // compute gradient x alpha
-            auto gxa = (1.0f - static_cast<float>(huffmanData->huffmanCode[i]) - prob) * (*m_data.alpha);
-            // propagate errors output -> hidden
-            for (std::size_t k = 0; k < K; ++k) {
-                _wordLayerErrors[k] += gxa * (*m_data.bpWeights)[k + shift];
-                _docLayerErrors[k] += gxa * (*m_data.docWeights)[k + _docLayerShift];
-            }
-            // learn weights hidden -> output
-            for (std::size_t k = 0; k < K; ++k) {
-                (*m_data.bpWeights)[k + shift] += gxa * _wordLayerValues[k + _wordLayerShift];
-                (*m_data.docWeights)[k + _docLayerShift] += gxa * _docLayerValues[k + _docLayerShift];
-            }
-        }
-    }
-
     inline void trainThread_t::negativeSampling(std::size_t _word,
                                                 std::vector<float> &_hiddenLayerErrors,
                                                 std::vector<float> &_hiddenLayerValues,
@@ -422,9 +375,6 @@ namespace w2v {
                 prob = (*m_data.expTable)[static_cast<std::size_t>(r)];
             }
             
-            //std::cout << i << " ";
-            //std::cout << prob << "\n";
-            
             // compute gradient x alpha
             auto gxa = (static_cast<float>(label) - prob) * (*m_data.alpha); // gxa >= 0 in the positive case
             //std::cout << i << ": " << _word << ", " <<  target << ", " << gxa << "\n";
@@ -435,70 +385,6 @@ namespace w2v {
             // learn weights hidden -> output
             for (std::size_t k = 0; k < K; ++k) {
                 (*m_data.bpWeights)[k + shift] += gxa * _hiddenLayerValues[k + _hiddenLayerShift];
-            }
-        }
-    }
-
-    
-
-    inline void trainThread_t::negativeSampling2(std::size_t _word,
-                                                std::vector<float> &_wordLayerErrors,
-                                                std::vector<float> &_wordLayerValues,
-                                                std::size_t _wordLayerShift,
-                                                std::vector<float> &_docLayerErrors,
-                                                std::vector<float> &_docLayerValues,
-                                                std::size_t _docLayerShift
-                                                ) noexcept {
-        
-        std::size_t K = m_data.settings->size;
-        for (std::size_t i = 0; i < static_cast<std::size_t>(m_data.settings->negative) + 1; ++i) {
-            std::size_t target = 0;
-            bool label = false;
-            if (i == 0) {
-                // positive case
-                target = _word;
-                label = true;
-            } else {
-                // negative case
-                target = (*m_nsDistribution)(m_randomGenerator);
-                if (target == _word) {
-                    continue;
-                }
-            }
-            auto shift = target * K;
-            
-            // propagate hidden -> output
-            float f = 0.0f;
-            // predict likelihood of _word using logistic regression
-            for (std::size_t k = 0; k < K; ++k) {
-                f += _wordLayerValues[k + _wordLayerShift] * (*m_data.bpWeights)[k + shift];
-                f += _docLayerValues[k + _docLayerShift] * (*m_data.docWeights)[k + _docLayerShift];
-            }
-            float prob = 0;
-            if (f < -m_data.settings->expValueMax) {
-                prob = 0.0f;
-            } else if (f > m_data.settings->expValueMax) {
-                prob = 1.0f;
-            } else {
-                auto r = (f + m_data.settings->expValueMax) * (m_data.expTable->size() / m_data.settings->expValueMax / 2);
-                prob = (*m_data.expTable)[static_cast<std::size_t>(r)];
-            }
-            
-            //std::cout << i << " " << _docLayerShift << " ";
-            //std::cout << prob << "\n";
-            
-            // compute gradient x alpha
-            auto gxa = (static_cast<float>(label) - prob) * (*m_data.alpha); // gxa >= 0 in the positive case
-            //std::cout << i << ": " << _word << ", " <<  target << ", " << gxa << "\n";
-            // propagate errors output -> hidden
-            for (std::size_t k = 0; k < K; ++k) {
-                _wordLayerErrors[k] += gxa * (*m_data.bpWeights)[k + shift]; // added to pjLayerValues
-                _docLayerErrors[k] += gxa * (*m_data.docWeights)[k + _docLayerShift];
-            }
-            // learn weights hidden -> output
-            for (std::size_t k = 0; k < K; ++k) {
-                (*m_data.bpWeights)[k + shift] += gxa * _wordLayerValues[k + _wordLayerShift];
-                (*m_data.docWeights)[k + _docLayerShift] += gxa * _docLayerValues[k + _docLayerShift];
             }
         }
     }
