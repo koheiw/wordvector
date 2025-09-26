@@ -45,7 +45,6 @@ namespace w2v {
             //std::shared_ptr<std::vector<float>> wordValues; ///< projection layer values
             //std::shared_ptr<std::vector<float>> wordWeights; ///< back propagation weights
             std::shared_ptr<std::vector<float>> docValues; ///< document vector
-            std::shared_ptr<std::vector<float>> docWeights; ///< document vector wights
             std::shared_ptr<std::vector<float>> expTable; ///< exp(x) / (exp(x) + 1) values lookup table
             std::shared_ptr<huffmanTree_t> huffmanTree; ///< Huffman tree used by hierarchical softmax
             std::shared_ptr<std::atomic<std::size_t>> processedWords; ///< total words processed by train threads

@@ -101,7 +101,6 @@ namespace w2v {
         // document vector
         std::size_t m_corpusSize = 0;
         std::vector<float> m_docValues;
-        std::vector<float> m_docWeights;
         
         mutable std::string m_errMsg;
         
@@ -125,7 +124,6 @@ namespace w2v {
         const std::vector<float> &values() {return m_pjLayerValues;} 
         const std::vector<float> &weights() {return m_bpWeights;}
         const std::vector<float> &docValues() {return m_docValues;} 
-        const std::vector<float> &docWeights() {return m_docWeights;} 
         
         // @returns m_corpusSize size (number of documents)
         std::size_t corpusSize() const noexcept {return m_corpusSize;}

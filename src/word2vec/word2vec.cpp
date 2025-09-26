@@ -56,8 +56,6 @@ namespace w2v {
                 return rndMatrixInitializer(randomGenerator);
             });
             // document vector
-            //std::cout << "docMatrixSize: " << docMatrixSize << "\n";
-            data.docWeights.reset(new std::vector<float>(docMatrixSize, 0.0f));
             data.docValues.reset(new std::vector<float>(docMatrixSize, 0.0f));
             std::generate((*data.docValues).begin(), (*data.docValues).end(), [&]() {
                 return rndMatrixInitializer(randomGenerator);
@@ -148,7 +146,6 @@ namespace w2v {
             m_pjLayerValues = *data.pjLayerValues;
             m_bpWeights = *data.bpWeights;
             m_docValues = *data.docValues;
-            m_docWeights = *data.docWeights;
             
             return true;
             

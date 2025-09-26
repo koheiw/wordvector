@@ -29,8 +29,8 @@ Rcpp::NumericMatrix get_words(w2v::word2vec_t model, bool weights = false) {
     return Rcpp::transpose(mat_);
 }
 
-Rcpp::NumericMatrix get_documents(w2v::word2vec_t model, bool weights = false) {
-    std::vector<float> mat = weights ? model.docWeights() : model.docValues();
+Rcpp::NumericMatrix get_documents(w2v::word2vec_t model) {
+    std::vector<float> mat = model.docValues();
     if (model.vectorSize() * model.corpusSize() != mat.size())
         throw std::runtime_error("Invalid document matrix");
     Rcpp::NumericMatrix mat_(model.vectorSize(), model.corpusSize(), mat.begin());
@@ -152,8 +152,7 @@ Rcpp::List cpp_w2v(TokensPtr xptr,
     Rcpp::List out = Rcpp::List::create(
         Rcpp::Named("values") = get_words(word2vec), 
         Rcpp::Named("weights") = get_words(word2vec, true), 
-        Rcpp::Named("doc_values") = get_documents(word2vec), 
-        Rcpp::Named("doc_weights") = get_documents(word2vec, true), 
+        Rcpp::Named("documents") = get_documents(word2vec), 
         Rcpp::Named("type") = type,
         Rcpp::Named("dim") = size,
         Rcpp::Named("frequency") = get_frequency(corpus),
