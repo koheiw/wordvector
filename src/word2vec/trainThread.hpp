@@ -96,16 +96,25 @@ namespace w2v {
         inline void skipGram(const std::vector<unsigned int> &_sentence) noexcept;
         inline void hierarchicalSoftmax(std::size_t _word,
                                         std::vector<float> &_hiddenLayer,
-                                        std::vector<float> &_trainLayer, std::size_t _trainLayerShift) noexcept;
+                                        std::vector<float> &_trainLayer, 
+                                        std::size_t _trainLayerShift) noexcept;
+        inline void hierarchicalSoftmax2(std::size_t _word,
+                                        std::vector<float> &_wordLayerErrors,
+                                        std::vector<float> &_wordLayerValues, 
+                                        std::size_t _wordLayerShift,
+                                        std::vector<float> &_docLayerErrors,
+                                        std::vector<float> &_docLayerValues, 
+                                        std::size_t _docLayerShift) noexcept;
         inline void negativeSampling(std::size_t _word,
                                      std::vector<float> &_hiddenLayer,
-                                     std::vector<float> &_trainLayer, std::size_t _trainLayerShift) noexcept;
+                                     std::vector<float> &_trainLayer, 
+                                     std::size_t _trainLayerShift) noexcept;
         inline void negativeSampling2(std::size_t _word,
-                                     std::vector<float> &_wordLayer,
-                                     std::vector<float> &_wordLayerError, 
+                                     std::vector<float> &_wordLayerErrors,
+                                     std::vector<float> &_wordLayerValues, 
                                      std::size_t _wordLayerShift,
-                                     std::vector<float> &_docLayer,
-                                     std::vector<float> &_docLayerError, 
+                                     std::vector<float> &_docLayerErrors,
+                                     std::vector<float> &_docLayerValues, 
                                      std::size_t _docLayerShift) noexcept;
     };
 
