@@ -92,8 +92,9 @@ namespace w2v {
         void worker(int &_iter, float &_alpha) noexcept;
 
         inline void cbow(const std::vector<unsigned int> &_sentence) noexcept;
-        inline void cbow2(const std::vector<unsigned int> &_sentence, size_t docIndex) noexcept; // for document vector
+        inline void cbow2(const std::vector<unsigned int> &_sentence, std::size_t docIndex) noexcept; // for document vector
         inline void skipGram(const std::vector<unsigned int> &_sentence) noexcept;
+        inline void skipGram2(const std::vector<unsigned int> &_sentence, std::size_t docIndex) noexcept;
         inline void hierarchicalSoftmax(std::size_t _word,
                                         std::vector<float> &_hiddenLayer,
                                         std::vector<float> &_trainLayer, 

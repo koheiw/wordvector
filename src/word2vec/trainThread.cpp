@@ -110,6 +110,8 @@ namespace w2v {
                     skipGram(sentence);
                 } else if (m_data.settings->type == 3) {
                     cbow2(sentence, h);
+                } else if (m_data.settings->type == 4) {
+                    skipGram2(sentence, h);
                 }
             }
             // for progress message
@@ -180,6 +182,7 @@ namespace w2v {
         std::size_t K = m_data.settings->size;
         if (_text.size() == 0)
             return;
+        auto docShift = _docIndex * K;
         for (std::size_t i = 0; i < _text.size(); ++i) {
             // hidden layers initialized with 0 values for each target word
             std::memset(m_hiddenLayerValues->data(), 0, m_hiddenLayerValues->size() * sizeof(float));
@@ -207,7 +210,6 @@ namespace w2v {
                 (*m_hiddenLayerValues)[k] /= cw;
             }
             
-            auto docShift = _docIndex * K;
             if (m_data.settings->withHS) {
                 hierarchicalSoftmax2(_text[i], *m_hiddenLayerErrors, *m_hiddenLayerValues, 0,
                                                *m_docLayerErrors, *m_data.docValues, docShift);
@@ -254,6 +256,42 @@ namespace w2v {
                 }
                 for (std::size_t k = 0; k < m_data.settings->size; ++k) {
                     (*m_data.pjLayerValues)[k + shift] += (*m_hiddenLayerErrors)[k];
+                }
+            }
+        }
+    }
+
+    inline void trainThread_t::skipGram2(const std::vector<unsigned int> &_text, std::size_t _docIndex) noexcept {
+        
+        std::size_t K = m_data.settings->size;
+        if (_text.size() == 0)
+            return;
+        auto docShift = _docIndex * K;
+        for (std::size_t i = 0; i < _text.size(); ++i) {
+            int window = m_rndWindow(m_randomGenerator);
+            std::size_t from = std::max(0, (int)i - window);
+            std::size_t to = std::min((int)_text.size(), (int)i + window);
+            for (std::size_t j = from; j < to; j++) {
+                if (j == i)
+                    continue;
+                
+                // hidden layer initialized with 0 values for each context word
+                std::memset(m_hiddenLayerErrors->data(), 0, m_hiddenLayerErrors->size() * sizeof(float));
+                std::memset(m_docLayerErrors->data(), 0, m_docLayerErrors->size() * sizeof(float));
+                
+                // shift to the selected word vector in the matrix
+                auto shift = _text[j] * K;
+                if (m_data.settings->withHS) {
+                    hierarchicalSoftmax2(_text[i], *m_hiddenLayerErrors, *m_data.pjLayerValues, shift,
+                                         *m_docLayerErrors, *m_data.docValues, docShift);
+                } else {
+                    negativeSampling2(_text[i], *m_hiddenLayerErrors, *m_data.pjLayerValues, shift,
+                                      *m_docLayerErrors, *m_data.docValues, docShift);
+                }
+                
+                for (std::size_t k = 0; k < m_data.settings->size; ++k) {
+                    (*m_data.pjLayerValues)[k + shift] += (*m_hiddenLayerErrors)[k];
+                    (*m_data.docValues)[k + docShift] += (*m_docLayerErrors)[k];
                 }
             }
         }
@@ -384,6 +422,9 @@ namespace w2v {
                 prob = (*m_data.expTable)[static_cast<std::size_t>(r)];
             }
             
+            //std::cout << i << " ";
+            //std::cout << prob << "\n";
+            
             // compute gradient x alpha
             auto gxa = (static_cast<float>(label) - prob) * (*m_data.alpha); // gxa >= 0 in the positive case
             //std::cout << i << ": " << _word << ", " <<  target << ", " << gxa << "\n";
@@ -433,7 +474,6 @@ namespace w2v {
                 f += _wordLayerValues[k + _wordLayerShift] * (*m_data.bpWeights)[k + shift];
                 f += _docLayerValues[k + _docLayerShift] * (*m_data.docWeights)[k + _docLayerShift];
             }
-            //std::cout << f << "\n";
             float prob = 0;
             if (f < -m_data.settings->expValueMax) {
                 prob = 0.0f;
@@ -443,6 +483,9 @@ namespace w2v {
                 auto r = (f + m_data.settings->expValueMax) * (m_data.expTable->size() / m_data.settings->expValueMax / 2);
                 prob = (*m_data.expTable)[static_cast<std::size_t>(r)];
             }
+            
+            //std::cout << i << " " << _docLayerShift << " ";
+            //std::cout << prob << "\n";
             
             // compute gradient x alpha
             auto gxa = (static_cast<float>(label) - prob) * (*m_data.alpha); // gxa >= 0 in the positive case
