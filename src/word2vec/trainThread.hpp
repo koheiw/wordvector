@@ -91,32 +91,20 @@ namespace w2v {
     private:
         void worker(int &_iter, float &_alpha) noexcept;
 
-        inline void cbow(const std::vector<unsigned int> &_sentence) noexcept;
-        inline void cbow2(const std::vector<unsigned int> &_sentence, std::size_t docIndex) noexcept; // for document vector
-        inline void skipGram(const std::vector<unsigned int> &_sentence) noexcept;
-        inline void skipGram2(const std::vector<unsigned int> &_sentence, std::size_t docIndex) noexcept;
+        inline void cbow(const std::vector<unsigned int> &_text) noexcept;
+        inline void cbow2(const std::vector<unsigned int> &_text, 
+                          std::size_t _id, bool doc2vec) noexcept; // for document vector
+        inline void skipGram(const std::vector<unsigned int> &_text) noexcept;
+        inline void skipGram2(const std::vector<unsigned int> &_text, 
+                              std::size_t _id, bool doc2vec) noexcept;
         inline void hierarchicalSoftmax(std::size_t _word,
                                         std::vector<float> &_hiddenLayer,
                                         std::vector<float> &_trainLayer, 
                                         std::size_t _trainLayerShift) noexcept;
-        inline void hierarchicalSoftmax2(std::size_t _word,
-                                        std::vector<float> &_wordLayerErrors,
-                                        std::vector<float> &_wordLayerValues, 
-                                        std::size_t _wordLayerShift,
-                                        std::vector<float> &_docLayerErrors,
-                                        std::vector<float> &_docLayerValues, 
-                                        std::size_t _docLayerShift) noexcept;
         inline void negativeSampling(std::size_t _word,
                                      std::vector<float> &_hiddenLayer,
                                      std::vector<float> &_trainLayer, 
                                      std::size_t _trainLayerShift) noexcept;
-        inline void negativeSampling2(std::size_t _word,
-                                     std::vector<float> &_wordLayerErrors,
-                                     std::vector<float> &_wordLayerValues, 
-                                     std::size_t _wordLayerShift,
-                                     std::vector<float> &_docLayerErrors,
-                                     std::vector<float> &_docLayerValues, 
-                                     std::size_t _docLayerShift) noexcept;
     };
 
 }

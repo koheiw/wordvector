@@ -105,13 +105,13 @@ namespace w2v {
                 
                 //std::cout << "sentence = " <<  sentence.size() << "\n";
                 if (m_data.settings->type == 1) {
-                    cbow(sentence);
+                    cbow2(sentence, h, false);
                 } else if (m_data.settings->type == 2) {
-                    skipGram(sentence);
+                    skipGram2(sentence, h, false);
                 } else if (m_data.settings->type == 3) {
-                    cbow2(sentence, h);
+                    cbow2(sentence, h, true);
                 } else if (m_data.settings->type == 4) {
-                    skipGram2(sentence, h);
+                    skipGram2(sentence, h, true);
                 }
             }
             // for progress message
@@ -177,12 +177,14 @@ namespace w2v {
         }
     }
 
-    inline void trainThread_t::cbow2(const std::vector<unsigned int> &_text, std::size_t _docIndex) noexcept {
+    inline void trainThread_t::cbow2(const std::vector<unsigned int> &_text, 
+                                     std::size_t _id,
+                                     bool doc2vec = false) noexcept {
         
         std::size_t K = m_data.settings->size;
         if (_text.size() == 0)
             return;
-        auto docShift = _docIndex * K;
+        auto docShift = _id * K;
         for (std::size_t i = 0; i < _text.size(); ++i) {
             // hidden layers initialized with 0 values for each target word
             std::memset(m_hiddenLayerValues->data(), 0, m_hiddenLayerValues->size() * sizeof(float));
@@ -201,9 +203,11 @@ namespace w2v {
                 cw++;
                 
             }
-            for (std::size_t k = 0; k < K; ++k)
-                (*m_hiddenLayerValues)[k] += (*m_data.docValues)[k + docShift];
-            cw++;
+            if (doc2vec) {
+                for (std::size_t k = 0; k < K; ++k)
+                    (*m_hiddenLayerValues)[k] += (*m_data.docValues)[k + docShift];
+                cw++;
+            }
             
             if (cw == 0)
                 continue;
@@ -223,7 +227,8 @@ namespace w2v {
                 auto shift = _text[j] * K;
                 for (std::size_t k = 0; k < K; ++k) {
                     (*m_data.pjLayerValues)[k + shift] += (*m_hiddenLayerErrors)[k];
-                    (*m_data.docValues)[k + docShift] += (*m_hiddenLayerErrors)[k];
+                    if (doc2vec)
+                        (*m_data.docValues)[k + docShift] += (*m_hiddenLayerErrors)[k];
                 }
             }
         }
@@ -259,12 +264,14 @@ namespace w2v {
         }
     }
 
-    inline void trainThread_t::skipGram2(const std::vector<unsigned int> &_text, std::size_t _docIndex) noexcept {
+    inline void trainThread_t::skipGram2(const std::vector<unsigned int> &_text, 
+                                         std::size_t _id, 
+                                         bool doc2vec = false) noexcept {
         
         std::size_t K = m_data.settings->size;
         if (_text.size() == 0)
             return;
-        auto docShift = _docIndex * K;
+        auto docShift = _id * K;
         for (std::size_t i = 0; i < _text.size(); ++i) {
             int window = m_rndWindow(m_randomGenerator);
             std::size_t from = std::max(0, (int)i - window);
@@ -278,9 +285,14 @@ namespace w2v {
                 std::memset(m_hiddenLayerErrors->data(), 0, m_hiddenLayerErrors->size() * sizeof(float));
                 
                 auto wordShift = _text[j] * K;
-                for (std::size_t k = 0; k < K; ++k)
-                    (*m_hiddenLayerValues)[k] += (*m_data.pjLayerValues)[k + wordShift] + 
-                                                 (*m_data.docValues)[k + docShift];
+                for (std::size_t k = 0; k < K; ++k) {
+                    if (doc2vec) {
+                        (*m_hiddenLayerValues)[k] += (*m_data.pjLayerValues)[k + wordShift] / 2 + 
+                                                     (*m_data.docValues)[k + docShift] / 2;
+                    } else {
+                        (*m_hiddenLayerValues)[k] += (*m_data.pjLayerValues)[k + wordShift];
+                    }
+                }
                 
                 if (m_data.settings->withHS) {
                     hierarchicalSoftmax(_text[i], *m_hiddenLayerErrors, *m_hiddenLayerValues, 0);
@@ -290,7 +302,8 @@ namespace w2v {
                 
                 for (std::size_t k = 0; k < m_data.settings->size; ++k) {
                     (*m_data.pjLayerValues)[k + wordShift] += (*m_hiddenLayerErrors)[k];
-                    (*m_data.docValues)[k + docShift] += (*m_hiddenLayerErrors)[k];
+                    if (doc2vec)
+                        (*m_data.docValues)[k + docShift] += (*m_hiddenLayerErrors)[k];
                 }
             }
         }
