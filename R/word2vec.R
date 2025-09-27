@@ -126,11 +126,10 @@ textmodel_word2vec.tokens <- function(x, dim = 50, type = c("cbow", "skip-gram",
                       threads = get_threads(), iterations = iter,
                       alpha = alpha, type = type, normalize = normalize, model = model,
                       verbose = verbose)
+    rownames(result$values$doc) <- docnames(x) # TODO: move to C++
+    
     if (!is.null(result$message))
         stop("Failed to train word2vec (", result$message, ")")
-    
-    rownames(result$doc_values) <- docnames(x)
-    rownames(result$doc_weights) <- docnames(x)
     
     result$min_count <- min_count
     result$concatenator <- meta(x, field = "concatenator", type = "object")
