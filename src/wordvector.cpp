@@ -31,6 +31,8 @@ Rcpp::NumericMatrix get_words(w2v::word2vec_t model) {
 
 Rcpp::NumericMatrix get_documents(w2v::word2vec_t model) {
     std::vector<float> mat = model.docValues();
+    if (mat.size() == 0)
+        return Rcpp::NumericMatrix();
     if (model.vectorSize() * model.corpusSize() != mat.size())
         throw std::runtime_error("Invalid document matrix");
     Rcpp::NumericMatrix mat_(model.vectorSize(), model.corpusSize(), mat.begin());
@@ -150,6 +152,7 @@ Rcpp::List cpp_w2v(TokensPtr xptr,
         );
         return out;
     }
+    // TODO: delete
     if (normalize) {
         if (verbose)
             Rprintf(" ...normalizing vectors\n");
@@ -158,7 +161,7 @@ Rcpp::List cpp_w2v(TokensPtr xptr,
     if (verbose)
         Rprintf(" ...complete\n");
     
-    Rcpp::List out = Rcpp::List::create(
+    Rcpp::List res = Rcpp::List::create(
         Rcpp::Named("values") = Rcpp::List::create(
             Rcpp::Named("word") = get_words(word2vec), 
             Rcpp::Named("doc") = get_documents(word2vec)
@@ -175,6 +178,5 @@ Rcpp::List cpp_w2v(TokensPtr xptr,
         Rcpp::Named("sample") = sample,
         Rcpp::Named("normalize") = normalize
     );
-    out.attr("class") = "textmodel_wordvector";
-    return out;
+    return res;
 }

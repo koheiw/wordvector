@@ -121,7 +121,7 @@ namespace w2v {
         // virtual destructor
         virtual ~word2vec_t() = default;
         
-        const std::vector<float> &values() {return m_pjLayerValues;} 
+        const std::vector<float> &values() {return m_pjLayerValues;}  // TODO: change to wordValues
         const std::vector<float> &weights() {return m_bpWeights;}
         const std::vector<float> &docValues() {return m_docValues;} 
         

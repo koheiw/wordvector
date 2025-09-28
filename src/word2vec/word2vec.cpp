@@ -23,11 +23,10 @@ namespace w2v {
             m_vectorSize = settings->size;
             m_corpusSize = corpus->texts.size();
             
-            // TODO: pass corpus values to the model
-            // m_frequency = corpus->frequency;
-            // m_trainWords = corpus->trainWords;
             std::size_t matrixSize = m_vectorSize * m_vocabularySize;
-            std::size_t docMatrixSize = m_vectorSize * m_corpusSize; // NOTE: change m_vectorSize to m_docVecSize
+            std::size_t docMatrixSize = 0;
+            if (settings->type > 2) 
+                docMatrixSize = m_vectorSize * m_corpusSize;
             std::mt19937_64 randomGenerator(settings->random);
             int iter_max = settings->iterations;
             bool verbose = settings->verbose;
