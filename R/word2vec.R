@@ -155,6 +155,11 @@ wordvector <- function(x, dim = 50, type = c("cbow", "skip-gram"), doc2vec = FAL
         result$data <- y
     result$call <- try(match.call(sys.function(-1), call = sys.call(-1)), silent = TRUE)
     result$version <- utils::packageVersion("wordvector")
+    if (doc2vec) {
+        class(result) <- "textmodel_docvector" # TODO change to textmodel_doc2vec
+    } else {
+        class(result) <- "textmodel_wordvector" # TODO change to textmodel_word2vec
+    }
     return(result)
 }
 
@@ -196,19 +201,24 @@ print.textmodel_docvector <- function(x, ...) {
 }
 
 
-#' Extract word vectors
+#' Extract word or document vectors
 #'
-#' Extract word vectors from a `textmodel_wordvector` or `textmodel_docvector` object.
+#' Extract word or document vectors from a `textmodel_wordvector` or `textmodel_docvector` object.
 #' @param x a `textmodel_wordvector` or `textmodel_docvector` object.
-#' @param normalize if `TRUE`, returns normalized word vectors.
+#' @param normalize if `TRUE`, returns normalized vectors.
+#' @param layer the layer from which the vectors are extracted.
 #' @param ... not used.
 #' @return a matrix that contain the word vectors in rows.
 #' @export
-as.matrix.textmodel_wordvector <- function(x, normalize = TRUE, ...){
+as.matrix.textmodel_wordvector <- function(x, normalize = TRUE, 
+                                           layer = "words", ...){
+    
+    layer <- match.arg(layer)
     normalize <- check_logical(normalize)
+    result <- x$values
     if (normalize) {
-        v <- sqrt(rowSums(x$values ^ 2) / ncol(x$values))
-        x$values <- x$values / v
+        v <- sqrt(rowSums(result ^ 2) / ncol(result))
+        result <- result / v
     }
-    return(x$values) 
+    return(result) 
 }

@@ -4,7 +4,9 @@ textmodel_doc2vec <- function(x, dim = 50, type = c("cbow", "skip-gram"),
                               min_count = 5, window = ifelse(type == "cbow", 5, 10), 
                               iter = 10, alpha = 0.05, model = NULL, 
                               use_ns = TRUE, ns_size = 5, sample = 0.001, tolower = TRUE,
-                              include_data = FALSE, verbose = FALSE, ...)
+                              include_data = FALSE, verbose = FALSE, ...) {
+    UseMethod("textmodel_doc2vec")
+}
 
 #' @export
 #' @method textmodel_doc2vec tokens
@@ -42,7 +44,7 @@ textmodel_doc2vec.tokens <- function(x, dim = 50, type = c("cbow", "skip-gram"),
 as.textmodel_doc2vec <- function(x, model, normalize = FALSE, 
                               weights = 1.0, pattern = NULL, 
                               group_data = FALSE, ...) {
-    UseMethod("textmodel_doc2vec")
+    UseMethod("as.textmodel_doc2vec")
 }
 
 
@@ -95,7 +97,21 @@ as.textmodel_doc2vec.dfm <- function(x, model = NULL, normalize = FALSE,
 }
 
 #' @export
-as.matrix.textmodel_docvector <- function(x, ...){
-    return(x$values$doc) 
+as.matrix.textmodel_docvector <- function(x, normalize = TRUE, 
+                                          layer = c("words", "documents"), ...) {
+        
+    normalize <- check_logical(normalize)
+    layer <- match.arg(layer)
+    if (layer == "words") {
+        result <- x$values$word
+    } else {
+        result <- x$values$doc
+    }
+    if (normalize) {
+        v <- sqrt(rowSums(result ^ 2) / ncol(result))
+        result <- result / v
+    }
+    return(result) 
 }
+
 
