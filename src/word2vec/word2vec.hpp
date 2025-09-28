@@ -79,7 +79,7 @@ namespace w2v {
         uint16_t threads = 1; //< train threads number
         uint16_t iterations = 5; //< train iterations
         float alpha = 0.05f; //< starting learn rate
-        int type = 1; //< 1:CBOW 2:Skip-Gram
+        int type = 1; //< 1:CBOW 2:Skip-Gram 3:CBOW (doc2vec) 4:Skip-Gram (doc2vec)
         uint32_t random = 1234; // < random number seed
         bool verbose = false; // print progress
         settings_t() = default;
