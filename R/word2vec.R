@@ -78,14 +78,27 @@ textmodel_word2vec <- function(x, dim = 50, type = c("cbow", "skip-gram"),
 #' @useDynLib wordvector
 #' @export
 #' @method textmodel_word2vec tokens
-textmodel_word2vec.tokens <- function(x, dim = 50, type = c("cbow", "skip-gram", "cbow2", "skip-gram2"), 
-                                      min_count = 5, window = ifelse(type %in% c("cbow", "cbow2"), 5, 10), 
-                                      iter = 10, alpha = 0.05, model = NULL, 
-                                      use_ns = TRUE, ns_size = 5, sample = 0.001, tolower = TRUE,
-                                      include_data = FALSE, verbose = FALSE, ..., 
-                                      normalize = FALSE, old = FALSE) {
+#' 
+textmodel_word2vec.tokens <- function(x, dim = 50, type = c("cbow", "skip-gram"), 
+                               min_count = 5, window = ifelse(type == "cbow", 5, 10), 
+                               iter = 10, alpha = 0.05, model = NULL, 
+                               use_ns = TRUE, ns_size = 5, sample = 0.001, tolower = TRUE,
+                               include_data = FALSE, verbose = FALSE, ...) {
     
+    wordvector(x, dim, type, FALSE, min_count, window, iter, alpha, model, 
+               use_ns, ns_size, sample, tolower, include_data, verbose, ...)
+    
+}
+
+wordvector <- function(x, dim = 50, type = c("cbow", "skip-gram"), doc2vec = FALSE, 
+                       min_count = 5, window = ifelse(type %in% c("cbow", "cbow2"), 5, 10), 
+                       iter = 10, alpha = 0.05, model = NULL, 
+                       use_ns = TRUE, ns_size = 5, sample = 0.001, tolower = TRUE,
+                       include_data = FALSE, verbose = FALSE, ..., 
+                       normalize = FALSE, old = FALSE) {
+
     type <- match.arg(type)
+    doc2vec <- check_logical(doc2vec)
     dim <- check_integer(dim, min = 2)
     min_count <- check_integer(min_count, min = 0)
     window <- check_integer(window, min = 1)
@@ -102,7 +115,9 @@ textmodel_word2vec.tokens <- function(x, dim = 50, type = c("cbow", "skip-gram",
     if (normalize)
         .Deprecated(msg = "normalize is deprecated. Use as.matrix(x, normalize = TRUE) instead.")
     
-    type <- match(type, c("cbow", "skip-gram", "cbow2", "skip-gram2"))
+    type <- match(type, c("cbow", "skip-gram"))
+    if (doc2vec) 
+        type <- type + 2
     if (old)
         type <- type * 10
     
@@ -126,8 +141,11 @@ textmodel_word2vec.tokens <- function(x, dim = 50, type = c("cbow", "skip-gram",
                       threads = get_threads(), iterations = iter,
                       alpha = alpha, type = type, normalize = normalize, model = model,
                       verbose = verbose)
-    rownames(result$values$doc) <- docnames(x) # TODO: move to C++
-    
+    if (doc2vec) {
+        rownames(result$values$doc) <- docnames(x)
+    } else {
+        result$values <- result$values$word
+    }
     if (!is.null(result$message))
         stop("Failed to train word2vec (", result$message, ")")
     

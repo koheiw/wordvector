@@ -1,7 +1,22 @@
+#' @export
+#' @rdname textmodel_word2vec
+textmodel_doc2vec <- function(x, dim = 50, type = c("cbow", "skip-gram"), 
+                              min_count = 5, window = ifelse(type == "cbow", 5, 10), 
+                              iter = 10, alpha = 0.05, model = NULL, 
+                              use_ns = TRUE, ns_size = 5, sample = 0.001, tolower = TRUE,
+                              include_data = FALSE, verbose = FALSE, ...)
 
 #' @export
-as.matrix.textmodel_docvector <- function(x, ...){
-    return(x$values) 
+#' @method textmodel_doc2vec tokens
+textmodel_doc2vec.tokens <- function(x, dim = 50, type = c("cbow", "skip-gram"), 
+                                     min_count = 5, window = ifelse(type == "cbow", 5, 10), 
+                                     iter = 10, alpha = 0.05, model = NULL, 
+                                     use_ns = TRUE, ns_size = 5, sample = 0.001, tolower = TRUE,
+                                     include_data = FALSE, verbose = FALSE, ...) {
+    
+    wordvector(x, dim, type, TRUE, min_count, window, iter, alpha, model, 
+               use_ns, ns_size, sample, tolower, include_data, verbose, ...)
+    
 }
 
 #' Create distributed representation of documents
@@ -16,7 +31,7 @@ as.matrix.textmodel_docvector <- function(x, ...){
 #' @param group_data if `TRUE`, apply `dfm_group(x)` before creating document vectors.
 #' @param ... additional arguments passed to [quanteda::object2id].
 #' @returns Returns a textmodel_docvector object with the following elements:
-#'   \item{values}{a matrix for document vectors.}
+#'   \item{values}{a list of matrices for word and document vectors.}
 #'   \item{dim}{the size of the document vectors.}
 #'   \item{concatenator}{the concatenator in `x`.}
 #'   \item{docvars}{document variables copied from `x`.}
@@ -24,32 +39,16 @@ as.matrix.textmodel_docvector <- function(x, ...){
 #'   \item{call}{the command used to execute the function.}
 #'   \item{version}{the version of the wordvector package.}
 #' @export
-textmodel_doc2vec <- function(x, model, normalize = FALSE, 
+as.textmodel_doc2vec <- function(x, model, normalize = FALSE, 
                               weights = 1.0, pattern = NULL, 
                               group_data = FALSE, ...) {
     UseMethod("textmodel_doc2vec")
 }
 
-#' @export
-#' @method textmodel_doc2vec tokens
-textmodel_doc2vec.tokens <- function(x, model, normalize = FALSE, 
-                                     weights = 1.0, pattern = NULL, 
-                                     group_data = FALSE, ...) {
-    
-    if (!identical(class(model), "textmodel_wordvector"))
-        stop("The object for 'model' must be a trained textmodel_wordvector")
-
-    x <- dfm(x, remove_padding = TRUE, tolower = FALSE)
-    result <- textmodel_doc2vec(x, model = model, normalize = normalize,
-                                weights = weights, pattern = pattern, 
-                                group_data = group_data, ...)
-    result$call <- try(match.call(sys.function(-1), call = sys.call(-1)), silent = TRUE)
-    return(result)
-}
 
 #' @export
-#' @method textmodel_doc2vec dfm
-textmodel_doc2vec.dfm <- function(x, model = NULL, normalize = FALSE, 
+#' @method as.textmodel_doc2vec dfm
+as.textmodel_doc2vec.dfm <- function(x, model = NULL, normalize = FALSE, 
                                   weights = 1.0, pattern = NULL,
                                   group_data = FALSE, ...) {
     
@@ -83,7 +82,7 @@ textmodel_doc2vec.dfm <- function(x, model = NULL, normalize = FALSE,
     dov[l,] <- 0
     
     result <- list(
-        "values" = dov,
+        "values" = list("word" = wov, "doc" = dov),
         "dim" = model$dim,
         "concatenator" = conc, 
         "docvars" = x@docvars,
@@ -95,8 +94,8 @@ textmodel_doc2vec.dfm <- function(x, model = NULL, normalize = FALSE,
     return(result)
 }
 
-doc2vec <- function(...) {
-    .Deprecated("textmodel_doc2vec")
-    textmodel_doc2vec(...)
+#' @export
+as.matrix.textmodel_docvector <- function(x, ...){
+    return(x$values$doc) 
 }
 
