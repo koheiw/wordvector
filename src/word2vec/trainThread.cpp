@@ -203,11 +203,12 @@ namespace w2v {
                 cw++;
                 
             }
-            // if (doc2vec) {
-            //     for (std::size_t k = 0; k < K; ++k)
-            //         (*m_hiddenLayerValues)[k] += (*m_data.docValues)[k + docShift];
-            //     cw++;
-            // }
+            // NOTE: the same as doc2vec pacakge
+            if (doc2vec) {
+                for (std::size_t k = 0; k < K; ++k)
+                    (*m_hiddenLayerValues)[k] += (*m_data.docValues)[k + docShift];
+                cw++;
+            }
             
             if (cw == 0)
                 continue;
@@ -215,11 +216,11 @@ namespace w2v {
                 (*m_hiddenLayerValues)[k] /= cw;
             
             // treat word and document equally
-            if (doc2vec) {
-                for (std::size_t k = 0; k < K; ++k)
-                    (*m_hiddenLayerValues)[k] = (*m_hiddenLayerValues)[k] / 2 +
-                                                (*m_data.docValues)[k + docShift] / 2;
-            }
+            // if (doc2vec) {
+            //     for (std::size_t k = 0; k < K; ++k)
+            //         (*m_hiddenLayerValues)[k] = (*m_hiddenLayerValues)[k] / 2 +
+            //                                     (*m_data.docValues)[k + docShift] / 2;
+            // }
             
             if (m_data.settings->withHS) {
                 hierarchicalSoftmax(_text[i], *m_hiddenLayerErrors, *m_hiddenLayerValues, 0);
