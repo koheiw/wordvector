@@ -2,14 +2,16 @@
 % Please edit documentation in R/word2vec.R
 \name{as.matrix.textmodel_wordvector}
 \alias{as.matrix.textmodel_wordvector}
-\title{Extract word vectors}
+\title{Extract word or document vectors}
 \usage{
-\method{as.matrix}{textmodel_wordvector}(x, normalize = TRUE, ...)
+\method{as.matrix}{textmodel_wordvector}(x, normalize = TRUE, layer = "words", ...)
 }
 \arguments{
 \item{x}{a \code{textmodel_wordvector} or \code{textmodel_docvector} object.}
 
-\item{normalize}{if \code{TRUE}, returns normalized word vectors.}
+\item{normalize}{if \code{TRUE}, returns normalized vectors.}
+
+\item{layer}{the layer from which the vectors are extracted.}
 
 \item{...}{not used.}
 }
@@ -17,5 +19,5 @@
 a matrix that contain the word vectors in rows.
 }
 \description{
-Extract word vectors from a \code{textmodel_wordvector} or \code{textmodel_docvector} object.
+Extract word or document vectors from a \code{textmodel_wordvector} or \code{textmodel_docvector} object.
 }

@@ -1,6 +1,6 @@
 #' Word2vec model
 #' 
-#' Train a Word2vec model (Mikolov et al., 2023) in different architectures on a [quanteda::tokens] object.
+#' Train a word2vec model (Mikolov et al., 2013) using a [quanteda::tokens] object.
 #' @param x a [quanteda::tokens] or [quanteda::tokens_xptr] object.
 #' @param dim the size of the word vectors.
 #' @param type the architecture of the model; either "cbow" (continuous back of words) or "skip-gram".

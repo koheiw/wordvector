@@ -1,5 +1,14 @@
+#' Doc2vec model
+#' 
+#' Train a doc2vec model (Le & Mikolov, 2014) using a [quanteda::tokens] object.
 #' @export
-#' @rdname textmodel_word2vec
+#' @inheritParams textmodel_word2vec
+#' @return 
+#' Returns a textmodel_docvector object with matrices for words and documents under `values`.
+#' Other elements are the same as [wordvector::textmodel_word2vec].
+#' @references 
+#'   Le, Q. V., & Mikolov, T. (2014). Distributed Representations of Sentences and 
+#'   Documents (No. arXiv:1405.4053). arXiv. https://doi.org/10.48550/arXiv.1405.4053
 textmodel_doc2vec <- function(x, dim = 50, type = c("cbow", "skip-gram"), 
                               min_count = 5, window = ifelse(type == "cbow", 5, 10), 
                               iter = 10, alpha = 0.05, model = NULL, 
