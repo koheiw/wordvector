@@ -13,17 +13,26 @@ wdv <- textmodel_word2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose 
 similarity(wdv, analogy(~ washington - america + france)) %>% 
     head()
 
-wdv2 <- textmodel_word2vec(toks, dim = 50, type = "cbow2", min_count = 5, verbose = TRUE, iter = 10)
-similarity(wdv2, analogy(~ washington - america + france)) %>% 
+dov <- textmodel_doc2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose = TRUE, iter = 10)
+
+similarity(dov, analogy(~ washington - america + france)) %>% 
     head()
 
 sim <- proxyC::simil(
-    wdv2$doc_values,
-    wdv2$doc_values["4263794",, drop = FALSE]
+    dov$values$doc,
+    dov$values$doc["4263794",, drop = FALSE]
 )
-s <- rowSums(sim)
-print(tail(toks[order(s)]), max_ntoken = -1)
+sim <- proxyC::simil(
+    dov$values$doc,
+    dov$values$doc["3016236",, drop = FALSE]
+)
+sim <- proxyC::simil(
+    dov$values$doc,
+    dov$values$doc["3555430",, drop = FALSE]
+)
 
+tail(sort(s <- rowSums(sim)))
+print(tail(toks[order(s)]), max_ntoken = -1)
 
 for (i in 1:10) {
     cat(i, "\n")
