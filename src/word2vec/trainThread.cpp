@@ -254,7 +254,7 @@ namespace w2v {
             int window = m_rndWindow(m_randomGenerator);
             std::size_t from = std::max(0, (int)i - window);
             std::size_t to = std::min((int)_text.size(), (int)i + window);
-            for (std::size_t j = from; j < to; j++) {
+            for (std::size_t j = from; j < to; ++j) {
                 if (j == i)
                     continue;
                 
@@ -287,7 +287,7 @@ namespace w2v {
             int window = m_rndWindow(m_randomGenerator);
             std::size_t from = std::max(0, (int)i - window);
             std::size_t to = std::min((int)_text.size(), (int)i + window);
-            for (std::size_t j = from; j < to; j++) {
+            for (std::size_t j = from; j < to; ++j) {
                 if (j == i)
                     continue;
                 
