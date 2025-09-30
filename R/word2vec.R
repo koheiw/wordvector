@@ -154,8 +154,10 @@ wordvector <- function(x, dim = 50, type = c("cbow", "skip-gram"), doc2vec = FAL
     result$concatenator <- meta(x, field = "concatenator", type = "object")
     if (include_data) # NOTE: consider removing
         result$data <- y
-    if (doc2vec)
+    if (doc2vec) {
         result$docvars <- docvars(x)
+        rownames(result$docvars) <- docnames(x)
+    }
     result$call <- try(match.call(sys.function(-1), call = sys.call(-1)), silent = TRUE)
     result$version <- utils::packageVersion("wordvector")
     if (doc2vec) {
