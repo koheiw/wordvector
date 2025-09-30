@@ -235,8 +235,11 @@ namespace w2v {
                 auto shift = _text[j] * K;
                 for (std::size_t k = 0; k < K; ++k) {
                     (*m_data.pjLayerValues)[k + shift] += (*m_hiddenLayerErrors)[k];
-                    if (doc2vec)
-                        (*m_data.docValues)[k + docShift] += (*m_hiddenLayerErrors)[k];
+                }
+            }
+            if (doc2vec) {
+                for (std::size_t k = 0; k < K; ++k) {
+                    (*m_data.docValues)[k + docShift] += (*m_hiddenLayerErrors)[k];
                 }
             }
         }
