@@ -25,6 +25,7 @@ textmodel_doc2vec.tokens <- function(x, dim = 50, type = c("cbow", "skip-gram"),
                                      use_ns = TRUE, ns_size = 5, sample = 0.001, tolower = TRUE,
                                      include_data = FALSE, verbose = FALSE, ...) {
     
+    type <- match.arg(type)
     wordvector(x, dim, type, TRUE, min_count, window, iter, alpha, model, 
                use_ns, ns_size, sample, tolower, include_data, verbose, ...)
     

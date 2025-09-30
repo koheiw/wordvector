@@ -85,13 +85,14 @@ textmodel_word2vec.tokens <- function(x, dim = 50, type = c("cbow", "skip-gram")
                                use_ns = TRUE, ns_size = 5, sample = 0.001, tolower = TRUE,
                                include_data = FALSE, verbose = FALSE, ...) {
     
+    type <- match.arg(type)
     wordvector(x, dim, type, FALSE, min_count, window, iter, alpha, model, 
                use_ns, ns_size, sample, tolower, include_data, verbose, ...)
     
 }
 
 wordvector <- function(x, dim = 50, type = c("cbow", "skip-gram"), doc2vec = FALSE, 
-                       min_count = 5, window = ifelse(type %in% c("cbow", "cbow2"), 5, 10), 
+                       min_count = 5, window = ifelse(type == "cbow", 5, 10), 
                        iter = 10, alpha = 0.05, model = NULL, 
                        use_ns = TRUE, ns_size = 5, sample = 0.001, tolower = TRUE,
                        include_data = FALSE, verbose = FALSE, ..., 
