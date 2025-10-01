@@ -98,8 +98,10 @@ similarity <- function(x, words, mode = c("words", "values")) {
 #'   the  values.
 #' @export
 #' @seealso [similarity()]
-probability <- function(x, words, mode = c("words", "values")) {
+probability <- function(x, words, layer = c("words", "documents"),
+                        mode = c("words", "values")) {
     
+    layer <- match.arg(layer)
     mode <- match.arg(mode)
     
     if (!class(x) %in% c("textmodel_wordvector", "textmodel_docvector"))
@@ -118,7 +120,12 @@ probability <- function(x, words, mode = c("words", "values")) {
     } else {
         stop("words must be a character or named numeric vector")
     }
-    b <- names(words) %in% rownames(x$values)
+    if (layer == "words") {
+        values <- x$values$word
+    } else {
+        values <- x$values$doc
+    }
+    b <- names(words) %in% rownames(x$weights)
     if (sum(!b) == 1) {
         warning(paste0('"', names(words[!b]), '"',  collapse = ", "),  ' is not found')
     } else if (sum(!b) > 1) {
@@ -126,7 +133,7 @@ probability <- function(x, words, mode = c("words", "values")) {
     }
     words <- words[b]
     
-    e <- exp(x$values %*% t(x$weights[names(words),, drop = FALSE]))
+    e <- exp(values %*% t(x$weights[names(words),, drop = FALSE]))
     prob <- e / (e + 1) # sigmoid function
     
     res <- prob %*% diag(words)
