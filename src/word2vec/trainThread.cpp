@@ -111,7 +111,8 @@ namespace w2v {
                 } else if (m_data.settings->type == 3) {
                     cbow2(sentence, h, true);
                 } else if (m_data.settings->type == 4) {
-                    skipGram2(sentence, h, true);
+                    skipGram2(sentence, h, false);
+                    skipGram2(sentence, h, true); // use fixed weights
                 }
             }
             // for progress message
@@ -298,23 +299,24 @@ namespace w2v {
                 auto wordShift = _text[j] * K;
                 for (std::size_t k = 0; k < K; ++k) {
                     if (doc2vec) {
-                        (*m_hiddenLayerValues)[k] += (*m_data.pjLayerValues)[k + wordShift] / 2 + 
-                                                     (*m_data.docValues)[k + docShift] / 2;
+                        (*m_hiddenLayerValues)[k] += (*m_data.docValues)[k + docShift];
                     } else {
                         (*m_hiddenLayerValues)[k] += (*m_data.pjLayerValues)[k + wordShift];
                     }
                 }
                 
                 if (m_data.settings->withHS) {
-                    hierarchicalSoftmax(_text[i], *m_hiddenLayerErrors, *m_hiddenLayerValues, 0);
+                    hierarchicalSoftmax(_text[i], *m_hiddenLayerErrors, *m_hiddenLayerValues, 0, !doc2vec);
                 } else {
-                    negativeSampling(_text[i], *m_hiddenLayerErrors, *m_hiddenLayerValues, 0);
+                    negativeSampling(_text[i], *m_hiddenLayerErrors, *m_hiddenLayerValues, 0, !doc2vec);
                 }
                 
                 for (std::size_t k = 0; k < m_data.settings->size; ++k) {
-                    (*m_data.pjLayerValues)[k + wordShift] += (*m_hiddenLayerErrors)[k];
-                    if (doc2vec)
+                    if (doc2vec) {
                         (*m_data.docValues)[k + docShift] += (*m_hiddenLayerErrors)[k];
+                    } else {
+                        (*m_data.pjLayerValues)[k + wordShift] += (*m_hiddenLayerErrors)[k];
+                    }
                 }
             }
         }
@@ -323,7 +325,8 @@ namespace w2v {
     inline void trainThread_t::hierarchicalSoftmax(std::size_t _word,
                                                    std::vector<float> &_hiddenLayerErrors,
                                                    std::vector<float> &_hiddenLayerValues,
-                                                   std::size_t _hiddenLayerShift) noexcept {
+                                                   std::size_t _hiddenLayerShift,
+                                                   bool updateWeights) noexcept {
         
         std::size_t K = m_data.settings->size;
         auto huffmanData = m_data.huffmanTree->huffmanData(_word);
@@ -353,9 +356,11 @@ namespace w2v {
             for (std::size_t k = 0; k < K; ++k) {
                 _hiddenLayerErrors[k] += gxa * (*m_data.bpWeights)[k + shift];
             }
-            // learn weights hidden -> output
-            for (std::size_t k = 0; k < K; ++k) {
-                (*m_data.bpWeights)[k + shift] += gxa * _hiddenLayerValues[k + _hiddenLayerShift];
+            if (updateWeights) {
+                // learn weights hidden -> output
+                for (std::size_t k = 0; k < K; ++k) {
+                    (*m_data.bpWeights)[k + shift] += gxa * _hiddenLayerValues[k + _hiddenLayerShift];
+                }
             }
         }
     }
@@ -363,7 +368,8 @@ namespace w2v {
     inline void trainThread_t::negativeSampling(std::size_t _word,
                                                 std::vector<float> &_hiddenLayerErrors,
                                                 std::vector<float> &_hiddenLayerValues,
-                                                std::size_t _hiddenLayerShift) noexcept {
+                                                std::size_t _hiddenLayerShift,
+                                                bool updateWeights) noexcept {
         
         std::size_t K = m_data.settings->size;
         for (std::size_t i = 0; i < static_cast<std::size_t>(m_data.settings->negative) + 1; ++i) {
@@ -406,9 +412,11 @@ namespace w2v {
             for (std::size_t k = 0; k < K; ++k) {
                 _hiddenLayerErrors[k] += gxa * (*m_data.bpWeights)[k + shift]; // added to pjLayerValues
             }
-            // learn weights hidden -> output
-            for (std::size_t k = 0; k < K; ++k) {
-                (*m_data.bpWeights)[k + shift] += gxa * _hiddenLayerValues[k + _hiddenLayerShift];
+            if (updateWeights) {
+                // learn weights hidden -> output
+                for (std::size_t k = 0; k < K; ++k) {
+                    (*m_data.bpWeights)[k + shift] += gxa * _hiddenLayerValues[k + _hiddenLayerShift];
+                }
             }
         }
     }

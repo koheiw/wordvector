@@ -99,11 +99,13 @@ namespace w2v {
         inline void hierarchicalSoftmax(std::size_t _word,
                                         std::vector<float> &_hiddenLayer,
                                         std::vector<float> &_trainLayer, 
-                                        std::size_t _trainLayerShift) noexcept;
+                                        std::size_t _trainLayerShift,
+                                        bool updateWeights = true) noexcept;
         inline void negativeSampling(std::size_t _word,
                                      std::vector<float> &_hiddenLayer,
                                      std::vector<float> &_trainLayer, 
-                                     std::size_t _trainLayerShift) noexcept;
+                                     std::size_t _trainLayerShift,
+                                     bool updateWeights = true) noexcept;
     };
 
 }
