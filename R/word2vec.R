@@ -145,7 +145,7 @@ wordvector <- function(x, dim = 50, type = c("cbow", "skip-gram"), doc2vec = FAL
     if (doc2vec) {
         rownames(result$values$doc) <- docnames(x)
     } else {
-        result$values <- result$values$word
+        result$values$doc <- NULL
     }
     if (!is.null(result$message))
         stop("Failed to train word2vec (", result$message, ")")
