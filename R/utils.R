@@ -120,14 +120,15 @@ probability <- function(x, words, layer = c("words", "documents"),
     } else {
         stop("words must be a character or named numeric vector")
     }
-    if (layer == "documents") {
+    if (!is.list(x$values)) {
+        x$values$word <- x$values # < v0.6.0
+    }
+    if (layer == "words") {
+        values <- x$values$word
+    } else {
         values <- x$values$doc
         if (is.null(values))
             stop("only doc2vec models have the document layer")
-    } else {
-        values <- x$values$word
-        if (is.null(values))
-            values <- x$values # for backward compatibility
     }
     
     b <- names(words) %in% rownames(x$weights)
