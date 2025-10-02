@@ -43,7 +43,7 @@ analogy <- function(formula) {
 #'   before computing similarity scores.
 #' @export
 #' @seealso [probability()]
-similarity <- function(x, words, mode = c("words", "values")) {
+similarity <- function(x, words, mode = c("character", "numeric")) {
     
     if (!class(x) %in% c("textmodel_wordvector", "textmodel_docvector"))
         stop("x must be a textmodel_wordvector or textmodel_docvector object")
@@ -77,7 +77,7 @@ similarity <- function(x, words, mode = c("words", "values")) {
     if (ncol(res) == 0) {
         res <- matrix(nrow = 0, ncol = 0)
     } else {
-        if (mode == "words") {
+        if (mode == "character") {
             res <- apply(res, 2, function(v) {
                 names(sort(v, decreasing = TRUE))
             })
@@ -92,14 +92,14 @@ similarity <- function(x, words, mode = c("words", "values")) {
 #' @param x a `textmodel_wordvector` object fitted with `normalize = FALSE`.
 #' @param words words for which probability is computed.
 #' @param mode specify the type of resulting object.
-#' @return a `matrix` of probability scores when `mode = "values"` or of words
-#'   sorted in descending order by the probability scores when `mode = "words"`.
+#' @return a matrix of words or documents sorted in descending order by the probability 
+#'   scores when `mode = "character"`; a matrix of the probability scores when `mode = "numeric"`.
 #'   When `words` is a named numeric vector, probability scores are weighted by
 #'   the  values.
 #' @export
 #' @seealso [similarity()]
 probability <- function(x, words, layer = c("words", "documents"),
-                        mode = c("words", "values")) {
+                        mode = c("character", "numeric")) {
     
     layer <- match.arg(layer)
     mode <- match.arg(mode)
@@ -120,11 +120,16 @@ probability <- function(x, words, layer = c("words", "documents"),
     } else {
         stop("words must be a character or named numeric vector")
     }
-    if (layer == "words") {
-        values <- x$values$word
-    } else {
+    if (layer == "documents") {
         values <- x$values$doc
+        if (is.null(values))
+            stop("only doc2vec models have the document layer")
+    } else {
+        values <- x$values$word
+        if (is.null(values))
+            values <- x$values # for backward compatibility
     }
+    
     b <- names(words) %in% rownames(x$weights)
     if (sum(!b) == 1) {
         warning(paste0('"', names(words[!b]), '"',  collapse = ", "),  ' is not found')
@@ -143,7 +148,7 @@ probability <- function(x, words, layer = c("words", "documents"),
     if (ncol(res) == 0) {
         res <- matrix(nrow = 0, ncol = 0)
     } else {
-        if (mode == "words") {
+        if (mode == "character") {
             res <- apply(res, 2, function(v) {
                 names(sort(v, decreasing = TRUE))
             })
