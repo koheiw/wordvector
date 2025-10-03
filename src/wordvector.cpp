@@ -59,20 +59,21 @@ w2v::word2vec_t as_word2vec(List model_) {
     w2v::word2vec_t model;
     if (model_.length() == 0)
         return model;
-        
-    Rcpp::NumericMatrix values_ = model_["values"];
+    
+    Rcpp::List values_ = model_["values"];
+    Rcpp::NumericMatrix wordValues_ = values_["word"];
     Rcpp::NumericMatrix weights_ = model_["weights"];
     
     // columns are words internally
-    values_ = Rcpp::transpose(values_);
+    wordValues_ = Rcpp::transpose(wordValues_);
     weights_ = Rcpp::transpose(weights_);
     
-    CharacterVector vocabulary_ = colnames(values_);
+    CharacterVector vocabulary_ = colnames(wordValues_);
     vocabulary_t vocabulary = Rcpp::as<vocabulary_t>(vocabulary_);
     
-    wordvector_t values = Rcpp::as<wordvector_t>(NumericVector(values_));
+    wordvector_t values = Rcpp::as<wordvector_t>(NumericVector(wordValues_));
     wordvector_t weights = Rcpp::as<wordvector_t>(NumericVector(weights_));
-    std::size_t vectorSize = values_.nrow();
+    std::size_t vectorSize = wordValues_.nrow();
     
     model = w2v::word2vec_t(vocabulary, vectorSize, values, weights);
     return model;
