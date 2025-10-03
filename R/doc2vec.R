@@ -102,13 +102,13 @@ as.textmodel_doc2vec.dfm <- function(x, model = NULL, normalize = FALSE,
         "call" = try(match.call(sys.function(-1), call = sys.call(-1)), silent = TRUE), 
         "version" = utils::packageVersion("wordvector")
     )
-    class(result) <- "textmodel_docvector"
+    class(result) <- c("textmodel_wordvector", "textmodel_doc2vec")
     return(result)
 }
 
 #' @export
-as.matrix.textmodel_docvector <- function(x, normalize = TRUE, 
-                                          layer = c("words", "documents"), ...) {
+as.matrix.textmodel_doc2vec <- function(x, normalize = TRUE, 
+                                        layer = c("words", "documents"), ...) {
         
     normalize <- check_logical(normalize)
     layer <- match.arg(layer)

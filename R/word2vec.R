@@ -161,9 +161,9 @@ wordvector <- function(x, dim = 50, type = c("cbow", "skip-gram"), doc2vec = FAL
     result$call <- try(match.call(sys.function(-1), call = sys.call(-1)), silent = TRUE)
     result$version <- utils::packageVersion("wordvector")
     if (doc2vec) {
-        class(result) <- "textmodel_docvector" # TODO change to textmodel_doc2vec
+        class(result) <- c("textmodel_wordvector", "textmodel_doc2vec")
     } else {
-        class(result) <- "textmodel_wordvector" # TODO change to textmodel_word2vec
+        class(result) <- c("textmodel_wordvector", "textmodel_word2vec")
     }
     return(result)
 }
@@ -176,11 +176,11 @@ word2vec <- function(...) {
 #' Print method for trained word vectors
 #' @param x for print method, the object to be printed
 #' @param ... not used.
-#' @method print textmodel_wordvector
+#' @method print textmodel_word2vec
 #' @keywords internal
 #' @return an invisible copy of `x`. 
 #' @export
-print.textmodel_wordvector <- function(x, ...) {
+print.textmodel_word2vec <- function(x, ...) {
     cat("\nCall:\n")
     print(x$call)
     cat("\n", prettyNum(x$dim, big.mark = ","), " dimensions; ",
@@ -192,11 +192,11 @@ print.textmodel_wordvector <- function(x, ...) {
 #' Print method for trained document vectors
 #' @param x for print method, the object to be printed
 #' @param ... unused
-#' @method print textmodel_docvector
+#' @method print textmodel_doc2vec
 #' @keywords internal
 #' @return an invisible copy of `x`. 
 #' @export
-print.textmodel_docvector <- function(x, ...) {
+print.textmodel_doc2vec <- function(x, ...) {
     cat("\nCall:\n")
     print(x$call)
     cat("\n", prettyNum(x$dim, big.mark = ","), " dimensions; ",
@@ -215,7 +215,7 @@ print.textmodel_docvector <- function(x, ...) {
 #' @param ... not used.
 #' @return a matrix that contain the word vectors in rows.
 #' @export
-as.matrix.textmodel_wordvector <- function(x, normalize = TRUE, 
+as.matrix.textmodel_word2vec <- function(x, normalize = TRUE, 
                                            layer = "words", ...){
     
     layer <- match.arg(layer)

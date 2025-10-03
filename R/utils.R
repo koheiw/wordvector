@@ -45,8 +45,8 @@ analogy <- function(formula) {
 #' @seealso [probability()]
 similarity <- function(x, words, mode = c("character", "numeric")) {
     
-    if (!class(x) %in% c("textmodel_wordvector", "textmodel_docvector"))
-        stop("x must be a textmodel_wordvector or textmodel_docvector object")
+    if (!"textmodel_wordvector" %in% class(x))
+        stop("x must be a textmodel_wordvector object")
 
     mode <- match.arg(mode)
     emb1 <- as.matrix(x)
@@ -104,8 +104,8 @@ probability <- function(x, words, layer = c("words", "documents"),
     layer <- match.arg(layer)
     mode <- match.arg(mode)
     
-    if (!class(x) %in% c("textmodel_wordvector", "textmodel_docvector"))
-        stop("x must be a textmodel_wordvector or textmodel_docvector object")
+    if (!"textmodel_wordvector" %in% class(x))
+        stop("x must be a textmodel_wordvector object")
     
     if (x$normalize)
         stop("x must be trained with normalize = FALSE")

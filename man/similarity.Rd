@@ -4,7 +4,7 @@
 \alias{similarity}
 \title{Compute similarity between word vectors}
 \usage{
-similarity(x, words, mode = c("words", "values"))
+similarity(x, words, mode = c("character", "numeric"))
 }
 \arguments{
 \item{x}{a \code{textmodel_wordvector} object.}
