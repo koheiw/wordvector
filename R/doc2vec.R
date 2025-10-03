@@ -102,7 +102,7 @@ as.textmodel_doc2vec.dfm <- function(x, model = NULL, normalize = FALSE,
         "call" = try(match.call(sys.function(-1), call = sys.call(-1)), silent = TRUE), 
         "version" = utils::packageVersion("wordvector")
     )
-    class(result) <- c("textmodel_wordvector", "textmodel_doc2vec")
+    class(result) <- c("textmodel_doc2vec", "textmodel_wordvector")
     return(result)
 }
 

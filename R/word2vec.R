@@ -123,7 +123,7 @@ wordvector <- function(x, dim = 50, type = c("cbow", "skip-gram"), doc2vec = FAL
         type <- type * 10
     
     if (!is.null(model)) {
-        if (!identical(class(model), "textmodel_wordvector"))
+        if (!"textmodel_wordvector" %in% class(model))
             stop("model must be a trained textmodel_wordvector")
         if (!identical(model$dim, dim))
             stop("model must be trained with dim = ", dim)
@@ -161,9 +161,9 @@ wordvector <- function(x, dim = 50, type = c("cbow", "skip-gram"), doc2vec = FAL
     result$call <- try(match.call(sys.function(-1), call = sys.call(-1)), silent = TRUE)
     result$version <- utils::packageVersion("wordvector")
     if (doc2vec) {
-        class(result) <- c("textmodel_wordvector", "textmodel_doc2vec")
+        class(result) <- c("textmodel_doc2vec", "textmodel_wordvector")
     } else {
-        class(result) <- c("textmodel_wordvector", "textmodel_word2vec")
+        class(result) <- c("textmodel_word2vec", "textmodel_wordvector")
     }
     return(result)
 }
