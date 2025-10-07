@@ -3,7 +3,7 @@
 #' Train a word2vec model (Mikolov et al., 2013) using a [quanteda::tokens] object.
 #' @param x a [quanteda::tokens] or [quanteda::tokens_xptr] object.
 #' @param dim the size of the word vectors.
-#' @param type the architecture of the model; either "cbow" (continuous back of words) or "skip-gram".
+#' @param type the architecture of the model; either "cbow" (continuous back-of-words) or "sg" (skip-gram).
 #' @param min_count the minimum frequency of the words. Words less frequent than 
 #'   this in `x` are removed before training.
 #' @param window the size of the word window. Words within this window are considered 
@@ -66,7 +66,7 @@
 #' head(similarity(w2v, c("berlin" = 1, "germany" = -1, "france" = 1), mode = "values"))
 #' head(similarity(w2v, analogy(~ berlin - germany + france), mode = "words"))
 #' }
-textmodel_word2vec <- function(x, dim = 50, type = c("cbow", "skip-gram"), 
+textmodel_word2vec <- function(x, dim = 50, type = c("cbow", "sg"), 
                                min_count = 5, window = ifelse(type == "cbow", 5, 10), 
                                iter = 10, alpha = 0.05, model = NULL, 
                                use_ns = TRUE, ns_size = 5, sample = 0.001, tolower = TRUE,
@@ -79,19 +79,21 @@ textmodel_word2vec <- function(x, dim = 50, type = c("cbow", "skip-gram"),
 #' @export
 #' @method textmodel_word2vec tokens
 #' 
-textmodel_word2vec.tokens <- function(x, dim = 50, type = c("cbow", "skip-gram"), 
+textmodel_word2vec.tokens <- function(x, dim = 50, type = c("cbow", "sg"), 
                                min_count = 5, window = ifelse(type == "cbow", 5, 10), 
                                iter = 10, alpha = 0.05, model = NULL, 
                                use_ns = TRUE, ns_size = 5, sample = 0.001, tolower = TRUE,
                                include_data = FALSE, verbose = FALSE, ...) {
-    
-    type <- match.arg(type)
+    if (type == "skip-gram")
+        type <- "sg" # for backward compatibility
+    type <- match.arg(type, c("cbow", "sg"))
     wordvector(x, dim, type, FALSE, min_count, window, iter, alpha, model, 
                use_ns, ns_size, sample, tolower, include_data, verbose, ...)
     
 }
 
-wordvector <- function(x, dim = 50, type = c("cbow", "skip-gram"), doc2vec = FALSE, 
+wordvector <- function(x, dim = 50, type = c("cbow", "sg", "dm", "dbow", "dbow2"), 
+                       doc2vec = FALSE, 
                        min_count = 5, window = ifelse(type == "cbow", 5, 10), 
                        iter = 10, alpha = 0.05, model = NULL, 
                        use_ns = TRUE, ns_size = 5, sample = 0.001, tolower = TRUE,
@@ -99,7 +101,6 @@ wordvector <- function(x, dim = 50, type = c("cbow", "skip-gram"), doc2vec = FAL
                        normalize = FALSE, old = FALSE) {
 
     type <- match.arg(type)
-    doc2vec <- check_logical(doc2vec)
     dim <- check_integer(dim, min = 2)
     min_count <- check_integer(min_count, min = 0)
     window <- check_integer(window, min = 1)
@@ -116,12 +117,9 @@ wordvector <- function(x, dim = 50, type = c("cbow", "skip-gram"), doc2vec = FAL
     if (normalize)
         .Deprecated(msg = "normalize is deprecated. Use as.matrix(x, normalize = TRUE) instead.")
     
-    type <- match(type, c("cbow", "skip-gram"))
-    if (doc2vec) 
-        type <- type + 2
+    type <- match(type, c("cbow", "sg", "dm", "dbow", "dbow2"))
     if (old)
         type <- type * 10
-    
     if (!is.null(model)) {
         if (!"textmodel_wordvector" %in% class(model))
             stop("model must be a trained textmodel_wordvector")
@@ -137,12 +135,13 @@ wordvector <- function(x, dim = 50, type = c("cbow", "skip-gram"), doc2vec = FAL
         x <- tokens_tolower(x)
     x <- tokens_trim(x, min_termfreq = min_count, termfreq_type = "count")
     
-    result <- cpp_w2v(x, size = dim, window = window,
-                      sample = sample, withHS = !use_ns, negative = ns_size, 
-                      threads = get_threads(), iterations = iter,
-                      alpha = alpha, type = type, normalize = normalize, model = model,
-                      verbose = verbose)
-    if (doc2vec) {
+    result <- cpp_word2vec(x, model, size = dim, window = window,
+                           sample = sample, withHS = !use_ns, negative = ns_size, 
+                           threads = get_threads(), iterations = iter,
+                           alpha = alpha, type = type, normalize = normalize, 
+                           verbose = verbose)
+    is_doc <- type > 2
+    if (is_doc) {
         rownames(result$values$doc) <- docnames(x)
     } else {
         result$values$doc <- NULL
@@ -154,13 +153,13 @@ wordvector <- function(x, dim = 50, type = c("cbow", "skip-gram"), doc2vec = FAL
     result$concatenator <- meta(x, field = "concatenator", type = "object")
     if (include_data) # NOTE: consider removing
         result$data <- y
-    if (doc2vec) {
+    if (is_doc) {
         result$docvars <- docvars(x)
         rownames(result$docvars) <- docnames(x)
     }
     result$call <- try(match.call(sys.function(-1), call = sys.call(-1)), silent = TRUE)
     result$version <- utils::packageVersion("wordvector")
-    if (doc2vec) {
+    if (is_doc) {
         class(result) <- c("textmodel_doc2vec", "textmodel_wordvector")
     } else {
         class(result) <- c("textmodel_word2vec", "textmodel_wordvector")

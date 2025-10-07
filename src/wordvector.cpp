@@ -94,19 +94,19 @@ w2v::word2vec_t as_word2vec(List model_) {
 */
 
 // [[Rcpp::export]]
-Rcpp::List cpp_w2v(TokensPtr xptr, 
-                   uint16_t size = 100,
-                   uint16_t window = 5,
-                   float sample = 0.001,
-                   bool withHS = false,
-                   uint16_t negative = 5,
-                   uint16_t threads = 1,
-                   uint16_t iterations = 5,
-                   float alpha = 0.05,
-                   int type = 1,
-                   bool verbose = false,
-                   bool normalize = true,
-                   List model = R_NilValue) {
+Rcpp::List cpp_word2vec(TokensPtr xptr, 
+                        List model,
+                        uint16_t size = 100,
+                        uint16_t window = 5,
+                        float sample = 0.001,
+                        bool withHS = false,
+                        uint16_t negative = 5,
+                        uint16_t threads = 1,
+                        uint16_t iterations = 5,
+                        float alpha = 0.05,
+                        int type = 1,
+                        bool verbose = false,
+                        bool normalize = true) {
   
     if (verbose) {
         if (type == 1 || type == 10) {
