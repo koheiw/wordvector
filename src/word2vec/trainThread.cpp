@@ -113,7 +113,8 @@ namespace w2v {
                 } else if (m_data.settings->type == 4) {
                     skipGram2(sentence, h, false);
                     skipGram2(sentence, h, true); // use fixed weights
-                    //skipGram2(sentence, h, true);
+                } else if (m_data.settings->type == 5) {
+                    skipGram2(sentence, h, true);
                 }
             }
             // for progress message
