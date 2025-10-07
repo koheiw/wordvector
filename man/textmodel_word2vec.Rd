@@ -7,7 +7,7 @@
 textmodel_word2vec(
   x,
   dim = 50,
-  type = c("cbow", "skip-gram"),
+  type = c("cbow", "sg"),
   min_count = 5,
   window = ifelse(type == "cbow", 5, 10),
   iter = 10,
@@ -27,7 +27,7 @@ textmodel_word2vec(
 
 \item{dim}{the size of the word vectors.}
 
-\item{type}{the architecture of the model; either "cbow" (continuous back of words) or "skip-gram".}
+\item{type}{the architecture of the model; either "cbow" (continuous back-of-words) or "sg" (skip-gram).}
 
 \item{min_count}{the minimum frequency of the words. Words less frequent than
 this in \code{x} are removed before training.}
