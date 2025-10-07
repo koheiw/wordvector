@@ -100,12 +100,12 @@ namespace w2v {
                                         std::vector<float> &_hiddenLayer,
                                         std::vector<float> &_trainLayer, 
                                         std::size_t _trainLayerShift,
-                                        bool updateWeights = true) noexcept;
+                                        bool freezeWeights = false) noexcept;
         inline void negativeSampling(std::size_t _word,
                                      std::vector<float> &_hiddenLayer,
                                      std::vector<float> &_trainLayer, 
                                      std::size_t _trainLayerShift,
-                                     bool updateWeights = true) noexcept;
+                                     bool freezeWeights = false) noexcept;
     };
 
 }
