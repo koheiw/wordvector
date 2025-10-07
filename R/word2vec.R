@@ -140,8 +140,8 @@ wordvector <- function(x, dim = 50, type = c("cbow", "sg", "dm", "dbow", "dbow2"
                            threads = get_threads(), iterations = iter,
                            alpha = alpha, type = type, normalize = normalize, 
                            verbose = verbose)
-    is_doc <- type > 2
-    if (is_doc) {
+    is_dov <- type > 2
+    if (is_dov) {
         rownames(result$values$doc) <- docnames(x)
     } else {
         result$values$doc <- NULL
@@ -153,13 +153,13 @@ wordvector <- function(x, dim = 50, type = c("cbow", "sg", "dm", "dbow", "dbow2"
     result$concatenator <- meta(x, field = "concatenator", type = "object")
     if (include_data) # NOTE: consider removing
         result$data <- y
-    if (is_doc) {
+    if (is_dov) {
         result$docvars <- docvars(x)
         rownames(result$docvars) <- docnames(x)
     }
     result$call <- try(match.call(sys.function(-1), call = sys.call(-1)), silent = TRUE)
     result$version <- utils::packageVersion("wordvector")
-    if (is_doc) {
+    if (is_dov) {
         class(result) <- c("textmodel_doc2vec", "textmodel_wordvector")
     } else {
         class(result) <- c("textmodel_word2vec", "textmodel_wordvector")

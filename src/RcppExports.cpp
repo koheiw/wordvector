@@ -21,13 +21,14 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// cpp_w2v
-Rcpp::List cpp_w2v(TokensPtr xptr, uint16_t size, uint16_t window, float sample, bool withHS, uint16_t negative, uint16_t threads, uint16_t iterations, float alpha, int type, bool verbose, bool normalize, List model);
-RcppExport SEXP _wordvector_cpp_w2v(SEXP xptrSEXP, SEXP sizeSEXP, SEXP windowSEXP, SEXP sampleSEXP, SEXP withHSSEXP, SEXP negativeSEXP, SEXP threadsSEXP, SEXP iterationsSEXP, SEXP alphaSEXP, SEXP typeSEXP, SEXP verboseSEXP, SEXP normalizeSEXP, SEXP modelSEXP) {
+// cpp_word2vec
+Rcpp::List cpp_word2vec(TokensPtr xptr, List model, uint16_t size, uint16_t window, float sample, bool withHS, uint16_t negative, uint16_t threads, uint16_t iterations, float alpha, int type, bool verbose, bool normalize);
+RcppExport SEXP _wordvector_cpp_word2vec(SEXP xptrSEXP, SEXP modelSEXP, SEXP sizeSEXP, SEXP windowSEXP, SEXP sampleSEXP, SEXP withHSSEXP, SEXP negativeSEXP, SEXP threadsSEXP, SEXP iterationsSEXP, SEXP alphaSEXP, SEXP typeSEXP, SEXP verboseSEXP, SEXP normalizeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< TokensPtr >::type xptr(xptrSEXP);
+    Rcpp::traits::input_parameter< List >::type model(modelSEXP);
     Rcpp::traits::input_parameter< uint16_t >::type size(sizeSEXP);
     Rcpp::traits::input_parameter< uint16_t >::type window(windowSEXP);
     Rcpp::traits::input_parameter< float >::type sample(sampleSEXP);
@@ -39,15 +40,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type type(typeSEXP);
     Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
     Rcpp::traits::input_parameter< bool >::type normalize(normalizeSEXP);
-    Rcpp::traits::input_parameter< List >::type model(modelSEXP);
-    rcpp_result_gen = Rcpp::wrap(cpp_w2v(xptr, size, window, sample, withHS, negative, threads, iterations, alpha, type, verbose, normalize, model));
+    rcpp_result_gen = Rcpp::wrap(cpp_word2vec(xptr, model, size, window, sample, withHS, negative, threads, iterations, alpha, type, verbose, normalize));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
     {"_wordvector_cpp_get_max_thread", (DL_FUNC) &_wordvector_cpp_get_max_thread, 0},
-    {"_wordvector_cpp_w2v", (DL_FUNC) &_wordvector_cpp_w2v, 13},
+    {"_wordvector_cpp_word2vec", (DL_FUNC) &_wordvector_cpp_word2vec, 13},
     {NULL, NULL, 0}
 };
 
