@@ -164,3 +164,16 @@ get_threads <- function() {
     }
     return(value)
 }
+
+upgrade_pre06 <- function(x) {
+    
+    if (is.list(x$values))
+        return(x)
+    if (identical(class(x), "textmodel_wordvector")) {
+        x$values <- list(word = x$values)
+    } else if (identical(class(x), "textmodel_docvector")) {
+        x$values  <- list(doc = x$values)
+    }
+    return(x)
+}
+

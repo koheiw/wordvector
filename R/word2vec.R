@@ -180,10 +180,11 @@ word2vec <- function(...) {
 #' @return an invisible copy of `x`. 
 #' @export
 print.textmodel_word2vec <- function(x, ...) {
+    x <- upgrade_pre06(x)
     cat("\nCall:\n")
     print(x$call)
     cat("\n", prettyNum(x$dim, big.mark = ","), " dimensions; ",
-        prettyNum(nrow(x$values), big.mark = ","), " words.",
+        prettyNum(nrow(x$values$word), big.mark = ","), " words.",
         "\n", sep = "")
     invisible(x)
 }
@@ -196,10 +197,11 @@ print.textmodel_word2vec <- function(x, ...) {
 #' @return an invisible copy of `x`. 
 #' @export
 print.textmodel_doc2vec <- function(x, ...) {
+    x <- upgrade_pre06(x)
     cat("\nCall:\n")
     print(x$call)
     cat("\n", prettyNum(x$dim, big.mark = ","), " dimensions; ",
-        prettyNum(nrow(x$values), big.mark = ","), " documents.",
+        prettyNum(nrow(x$values$doc), big.mark = ","), " documents.",
         "\n", sep = "")
     invisible(x)
 }
@@ -217,16 +219,16 @@ print.textmodel_doc2vec <- function(x, ...) {
 as.matrix.textmodel_word2vec <- function(x, normalize = TRUE, 
                                            layer = "words", ...){
     
+    x <- upgrade_pre06(x)
     layer <- match.arg(layer)
     normalize <- check_logical(normalize)
-    if (!is.list(x$values)) {
-        x$values$word <- x$values # < v0.6.0
-    } else {
-        result <- x$values$word
-    }
+    
+    result <- x$values$word
     if (normalize) {
         v <- sqrt(rowSums(result ^ 2) / ncol(result))
         result <- result / v
     }
     return(result) 
 }
+
+

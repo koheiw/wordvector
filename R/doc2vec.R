@@ -91,8 +91,8 @@ as.textmodel_doc2vec.dfm <- function(x, model = NULL, normalize = FALSE,
     x <- dfm_match(x, rownames(wov))
     
     l <- rowSums(x) == 0
-    dov <- Matrix::tcrossprod(x, t(wov)) # NOTE: consider using proxyC::prod
-    dov <- dov / sqrt(Matrix::rowSums(dov ^ 2) / ncol(dov))
+    dov <- as.matrix(Matrix::tcrossprod(x, t(wov))) # NOTE: consider using proxyC::prod
+    dov <- dov / sqrt(rowSums(dov ^ 2) / ncol(dov))
     dov[l,] <- 0
     
     result <- list(
@@ -112,12 +112,10 @@ as.textmodel_doc2vec.dfm <- function(x, model = NULL, normalize = FALSE,
 as.matrix.textmodel_doc2vec <- function(x, normalize = TRUE, 
                                         layer = c("words", "documents"), ...) {
         
+    x <- upgrade_pre06(x)
     normalize <- check_logical(normalize)
     layer <- match.arg(layer)
     
-    if (!is.list(x$values)) {
-        x$values$word <- x$values # < v0.6.0
-    }
     if (layer == "words") {
         result <- x$values$word
     } else {
