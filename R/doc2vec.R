@@ -114,10 +114,16 @@ as.matrix.textmodel_doc2vec <- function(x, normalize = TRUE,
         
     normalize <- check_logical(normalize)
     layer <- match.arg(layer)
+    
+    if (!is.list(x$values)) {
+        x$values$word <- x$values # < v0.6.0
+    }
     if (layer == "words") {
         result <- x$values$word
     } else {
         result <- x$values$doc
+        if (is.null(result))
+            stop("only doc2vec models have the document layer")
     }
     if (normalize) {
         v <- sqrt(rowSums(result ^ 2) / ncol(result))

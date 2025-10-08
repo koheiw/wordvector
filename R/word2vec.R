@@ -84,9 +84,9 @@ textmodel_word2vec.tokens <- function(x, dim = 50, type = c("cbow", "sg"),
                                iter = 10, alpha = 0.05, model = NULL, 
                                use_ns = TRUE, ns_size = 5, sample = 0.001, tolower = TRUE,
                                include_data = FALSE, verbose = FALSE, ...) {
-    if (type == "skip-gram")
-        type <- "sg" # for backward compatibility
-    type <- match.arg(type, c("cbow", "sg"))
+    
+    type <- ifelse(type == "skip-gram", "sg", type) # for backward compatibility
+    type <- match.arg(type)
     wordvector(x, dim, type, FALSE, min_count, window, iter, alpha, model, 
                use_ns, ns_size, sample, tolower, include_data, verbose, ...)
     
@@ -219,7 +219,11 @@ as.matrix.textmodel_word2vec <- function(x, normalize = TRUE,
     
     layer <- match.arg(layer)
     normalize <- check_logical(normalize)
-    result <- x$values
+    if (!is.list(x$values)) {
+        x$values$word <- x$values # < v0.6.0
+    } else {
+        result <- x$values$word
+    }
     if (normalize) {
         v <- sqrt(rowSums(result ^ 2) / ncol(result))
         result <- result / v

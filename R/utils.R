@@ -49,7 +49,7 @@ similarity <- function(x, words, mode = c("character", "numeric")) {
         stop("x must be a textmodel_wordvector object")
 
     mode <- match.arg(mode)
-    emb1 <- as.matrix(x)
+    emb1 <- as.matrix(x, layer = "word", normalize = TRUE)
     
     if (is.character(words)) {
         words <- structure(rep(1.0, length(words)), names = words)
@@ -120,17 +120,7 @@ probability <- function(x, words, layer = c("words", "documents"),
     } else {
         stop("words must be a character or named numeric vector")
     }
-    if (!is.list(x$values)) {
-        x$values$word <- x$values # < v0.6.0
-    }
-    if (layer == "words") {
-        values <- x$values$word
-    } else {
-        values <- x$values$doc
-        if (is.null(values))
-            stop("only doc2vec models have the document layer")
-    }
-    
+
     b <- names(words) %in% rownames(x$weights)
     if (sum(!b) == 1) {
         warning(paste0('"', names(words[!b]), '"',  collapse = ", "),  ' is not found')
@@ -139,6 +129,7 @@ probability <- function(x, words, layer = c("words", "documents"),
     }
     words <- words[b]
     
+    values <- as.matrix(x, layer = layer, normalize = FALSE)
     e <- exp(values %*% t(x$weights[names(words),, drop = FALSE]))
     prob <- e / (e + 1) # sigmoid function
     
