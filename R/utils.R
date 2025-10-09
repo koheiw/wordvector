@@ -171,9 +171,35 @@ upgrade_pre06 <- function(x) {
         return(x)
     if (identical(class(x), "textmodel_wordvector")) {
         x$values <- list(word = x$values)
+        class(x) <- c("textmodel_word2vec", "textmodel_wordvector")
     } else if (identical(class(x), "textmodel_docvector")) {
         x$values  <- list(doc = x$values)
+        class(x) <- c("textmodel_doc2vec", "textmodel_wordvector")
     }
     return(x)
+}
+
+is_word2vec <- function(x) {
+    identical(class(x), c("textmodel_word2vec", "textmodel_wordvector"))
+}
+
+is_doc2vec <- function(x) {
+    identical(class(x), c("textmodel_doc2vec", "textmodel_wordvector"))
+}
+
+check_word2vec <- function(x) {
+    if (is_word2vec(x)) {
+        return(x)
+    } else {
+        stop("'model' must be a trained textmodel_word2vec")
+    }
+}
+
+check_doc2vec <- function(x) {
+    if (is_doc2vec(x)) {
+        return(x)
+    } else {
+        stop("'model' must be a trained textmodel_doc2vec")
+    }
 }
 
