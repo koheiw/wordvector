@@ -2,16 +2,14 @@ library(quanteda)
 library(wordvector)
 options(wordvector_threads = 2)
 
-corp <- head(data_corpus_inaugural, 59) %>% 
-    corpus_reshape()
+corp <- head(data_corpus_inaugural, 59) 
 
 toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE,
                concatenator = " ") %>% 
     tokens_remove(stopwords(), padding = TRUE) %>% 
     tokens_compound(data_dictionary_LSD2015, keep_unigrams = TRUE)
 
-dfmt <- dfm(toks, remove_padding = TRUE) %>% 
-    dfm_group()
+dfmt <- dfm(toks, remove_padding = TRUE) 
 
 set.seed(1234)
 wov <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1)

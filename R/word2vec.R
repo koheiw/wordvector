@@ -98,7 +98,7 @@ wordvector <- function(x, dim = 50, type = c("cbow", "sg", "dm", "dbow", "dbow2"
                        iter = 10, alpha = 0.05, model = NULL, 
                        use_ns = TRUE, ns_size = 5, sample = 0.001, tolower = TRUE,
                        include_data = FALSE, verbose = FALSE, ..., 
-                       normalize = FALSE, old = FALSE) {
+                       normalize = FALSE) {
 
     type <- match.arg(type)
     dim <- check_integer(dim, min = 2)
@@ -115,16 +115,15 @@ wordvector <- function(x, dim = 50, type = c("cbow", "sg", "dm", "dbow", "dbow2"
     verbose <- check_logical(verbose)
     
     if (normalize)
-        .Deprecated(msg = "normalize is deprecated. Use as.matrix(x, normalize = TRUE) instead.")
+        .Deprecated(msg = "'normalize' is deprecated. Use 'as.matrix(x, normalize = TRUE)' instead.")
     
-    type <- match(type, c("cbow", "sg", "dm", "dbow", "dbow2"))
-    if (old)
-        type <- type * 10
     if (!is.null(model)) {
         if (!"textmodel_wordvector" %in% class(model))
-            stop("model must be a trained textmodel_wordvector")
+            stop("'model' must be a trained textmodel_wordvector")
+        if (!identical(type, model$type))
+            stop("'model' is trained with the same 'type'")
         if (!identical(model$dim, dim))
-            stop("model must be trained with dim = ", dim)
+            stop("'model' must be trained with dim = ", dim)
     }
     
     if (include_data)
@@ -138,9 +137,12 @@ wordvector <- function(x, dim = 50, type = c("cbow", "sg", "dm", "dbow", "dbow2"
     result <- cpp_word2vec(x, model, size = dim, window = window,
                            sample = sample, withHS = !use_ns, negative = ns_size, 
                            threads = get_threads(), iterations = iter,
-                           alpha = alpha, type = type, normalize = normalize, 
+                           alpha = alpha, 
+                           type = match(type, c("cbow", "sg", "dm", "dbow", "dbow2")), 
+                           normalize = normalize, 
                            verbose = verbose)
-    is_dov <- type > 2
+    
+    is_dov <- type %in% c("dm", "dbow", "dbow2")
     if (is_dov) {
         rownames(result$values$doc) <- docnames(x)
     } else {
@@ -149,6 +151,7 @@ wordvector <- function(x, dim = 50, type = c("cbow", "sg", "dm", "dbow", "dbow2"
     if (!is.null(result$message))
         stop("Failed to train word2vec (", result$message, ")")
     
+    result$type <- type
     result$min_count <- min_count
     result$concatenator <- meta(x, field = "concatenator", type = "object")
     if (include_data) # NOTE: consider removing
@@ -157,7 +160,7 @@ wordvector <- function(x, dim = 50, type = c("cbow", "sg", "dm", "dbow", "dbow2"
         result$docvars <- docvars(x)
         rownames(result$docvars) <- docnames(x)
     }
-    result$call <- try(match.call(sys.function(-1), call = sys.call(-1)), silent = TRUE)
+    result$call <- try(match.call(sys.function(-2), call = sys.call(-2)), silent = TRUE)
     result$version <- utils::packageVersion("wordvector")
     if (is_dov) {
         class(result) <- c("textmodel_doc2vec", "textmodel_wordvector")
