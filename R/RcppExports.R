@@ -5,7 +5,7 @@ cpp_get_max_thread <- function() {
     .Call('_wordvector_cpp_get_max_thread', PACKAGE = 'wordvector')
 }
 
-cpp_word2vec <- function(xptr, model, size = 100L, window = 5L, sample = 0.001, withHS = FALSE, negative = 5L, threads = 1L, iterations = 5L, alpha = 0.05, type = 1L, verbose = FALSE, normalize = TRUE) {
-    .Call('_wordvector_cpp_word2vec', PACKAGE = 'wordvector', xptr, model, size, window, sample, withHS, negative, threads, iterations, alpha, type, verbose, normalize)
+cpp_word2vec <- function(xptr, model, size = 100L, window = 5L, sample = 0.001, withHS = FALSE, negative = 5L, threads = 1L, iterations = 5L, alpha = 0.05, freeze = FALSE, type = 1L, verbose = FALSE, normalize = TRUE) {
+    .Call('_wordvector_cpp_word2vec', PACKAGE = 'wordvector', xptr, model, size, window, sample, withHS, negative, threads, iterations, alpha, freeze, type, verbose, normalize)
 }
 

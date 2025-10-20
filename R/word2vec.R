@@ -68,7 +68,7 @@
 #' }
 textmodel_word2vec <- function(x, dim = 50, type = c("cbow", "sg"), 
                                min_count = 5, window = ifelse(type == "cbow", 5, 10), 
-                               iter = 10, alpha = 0.05, model = NULL, 
+                               iter = 10, alpha = 0.05, model = NULL, update_weights = TRUE,
                                use_ns = TRUE, ns_size = 5, sample = 0.001, tolower = TRUE,
                                include_data = FALSE, verbose = FALSE, ...) {
     UseMethod("textmodel_word2vec")
@@ -81,13 +81,13 @@ textmodel_word2vec <- function(x, dim = 50, type = c("cbow", "sg"),
 #' 
 textmodel_word2vec.tokens <- function(x, dim = 50, type = c("cbow", "sg"), 
                                min_count = 5, window = ifelse(type == "cbow", 5, 10), 
-                               iter = 10, alpha = 0.05, model = NULL, 
+                               iter = 10, alpha = 0.05, model = NULL, update_weights = TRUE,
                                use_ns = TRUE, ns_size = 5, sample = 0.001, tolower = TRUE,
                                include_data = FALSE, verbose = FALSE, ...) {
     
     type <- ifelse(type == "skip-gram", "sg", type) # for backward compatibility
     type <- match.arg(type)
-    wordvector(x, dim, type, FALSE, min_count, window, iter, alpha, model, 
+    wordvector(x, dim, type, FALSE, min_count, window, iter, alpha, model, update_weights,
                use_ns, ns_size, sample, tolower, include_data, verbose, ...)
     
 }
@@ -95,7 +95,7 @@ textmodel_word2vec.tokens <- function(x, dim = 50, type = c("cbow", "sg"),
 wordvector <- function(x, dim = 50, type = c("cbow", "sg", "dm", "dbow", "dbow2"), 
                        doc2vec = FALSE, 
                        min_count = 5, window = ifelse(type == "cbow", 5, 10), 
-                       iter = 10, alpha = 0.05, model = NULL, 
+                       iter = 10, alpha = 0.05, model = NULL, update_weights = TRUE,
                        use_ns = TRUE, ns_size = 5, sample = 0.001, tolower = TRUE,
                        include_data = FALSE, verbose = FALSE, ..., 
                        normalize = FALSE) {
@@ -105,6 +105,7 @@ wordvector <- function(x, dim = 50, type = c("cbow", "sg", "dm", "dbow", "dbow2"
     min_count <- check_integer(min_count, min = 0)
     window <- check_integer(window, min = 1)
     iter <- check_integer(iter, min = 1)
+    update_weights <- check_logical(update_weights)
     use_ns <- check_logical(use_ns)
     ns_size <- check_integer(ns_size, min_len = 1)
     alpha <- check_double(alpha, min = 0)
@@ -137,7 +138,7 @@ wordvector <- function(x, dim = 50, type = c("cbow", "sg", "dm", "dbow", "dbow2"
     result <- cpp_word2vec(x, model, size = dim, window = window,
                            sample = sample, withHS = !use_ns, negative = ns_size, 
                            threads = get_threads(), iterations = iter,
-                           alpha = alpha, 
+                           alpha = alpha, freeze = !update_weights,
                            type = match(type, c("cbow", "sg", "dm", "dbow", "dbow2")), 
                            normalize = normalize, 
                            verbose = verbose)

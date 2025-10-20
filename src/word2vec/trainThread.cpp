@@ -99,16 +99,18 @@ namespace w2v {
                 }
                 
                 if (m_data.settings->type == 1) {
-                    cbow2(sentence, h, false);     // cbow
+                    //cbow2(sentence, h, false);     // cbow
+                    cbow2(sentence, h, false, m_data.settings->freeze);     // cbow
                 } else if (m_data.settings->type == 2) {
-                    skipGram2(sentence, h, false); // sg
+                    //skipGram2(sentence, h, false); // sg
+                    skipGram2(sentence, h, false, m_data.settings->freeze); // sg
                 } else if (m_data.settings->type == 3) {
-                    cbow2(sentence, h, true);      // dm
+                    cbow2(sentence, h, true, false);      // dm
                 } else if (m_data.settings->type == 4) {
-                    skipGram2(sentence, h, false); // bow
+                    skipGram2(sentence, h, false, false); // bow
                     skipGram2(sentence, h, true, true); // use fixed weights
                 } else if (m_data.settings->type == 5) {
-                    skipGram2(sentence, h, true);  // dbow2 (experimental)
+                    skipGram2(sentence, h, true, false);  // dbow2 (experimental)
                 }
             }
             // for progress message
@@ -176,7 +178,8 @@ namespace w2v {
 
     inline void trainThread_t::cbow2(const std::vector<unsigned int> &_text, 
                                      std::size_t _id,
-                                     bool doc2vec = false) noexcept {
+                                     bool doc2vec = false,
+                                     bool freeze = false) noexcept {
         
         std::size_t K = m_data.settings->size;
         if (_text.size() == 0)
@@ -220,9 +223,9 @@ namespace w2v {
             // }
             
             if (m_data.settings->withHS) {
-                hierarchicalSoftmax(_text[i], *m_hiddenLayerErrors, *m_hiddenLayerValues, 0);
+                hierarchicalSoftmax(_text[i], *m_hiddenLayerErrors, *m_hiddenLayerValues, 0, freeze);
             } else {
-                negativeSampling(_text[i], *m_hiddenLayerErrors, *m_hiddenLayerValues, 0);
+                negativeSampling(_text[i], *m_hiddenLayerErrors, *m_hiddenLayerValues, 0, freeze);
             }
             
             // hidden -> in

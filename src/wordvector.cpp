@@ -104,14 +104,15 @@ Rcpp::List cpp_word2vec(TokensPtr xptr,
                         uint16_t threads = 1,
                         uint16_t iterations = 5,
                         float alpha = 0.05,
+                        bool freeze = false,
                         int type = 1,
                         bool verbose = false,
                         bool normalize = true) {
   
     if (verbose) {
-        if (type == 1 || type == 10) {
+        if (type == 1) {
             Rprintf("Training CBOW model with %d dimensions\n", size);
-        } else if (type == 2 || type == 20) {
+        } else if (type == 2) {
             Rprintf("Training skip-gram model with %d dimensions\n", size);
         }
         Rprintf(" ...using %d threads for distributed computing\n", threads);
@@ -136,6 +137,7 @@ Rcpp::List cpp_word2vec(TokensPtr xptr,
     settings.threads = threads > 0 ? threads : std::thread::hardware_concurrency();
     settings.iterations = iterations;
     settings.alpha = alpha;
+    settings.freeze = freeze;
     settings.type = type;
     settings.random = (uint32_t)(Rcpp::runif(1)[0] * std::numeric_limits<uint32_t>::max());
     settings.verbose = verbose;

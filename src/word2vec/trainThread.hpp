@@ -92,10 +92,10 @@ namespace w2v {
 
         inline void cbow(const std::vector<unsigned int> &_text) noexcept;
         inline void cbow2(const std::vector<unsigned int> &_text, 
-                          std::size_t _id, bool doc2vec) noexcept; // for document vector
+                          std::size_t _id, bool doc2vec, bool freeze) noexcept; // for document vector
         inline void skipGram(const std::vector<unsigned int> &_text) noexcept;
         inline void skipGram2(const std::vector<unsigned int> &_text, 
-                              std::size_t _id, bool doc2vec = false, bool freeze = false) noexcept;
+                              std::size_t _id, bool doc2vec, bool freeze) noexcept;
         inline void hierarchicalSoftmax(std::size_t _word,
                                         std::vector<float> &_hiddenLayer,
                                         std::vector<float> &_trainLayer, 

@@ -48,13 +48,15 @@ namespace w2v {
             // initialize variables
             std::uniform_real_distribution<float> rndMatrixInitializer(-0.005f, 0.005f);
             
-            // word vector
+            // weights
             data.bpWeights.reset(new std::vector<float>(matrixSize, 0.0f));
+            
+            // projection layer for words
             data.pjLayerValues.reset(new std::vector<float>(matrixSize, 0.0f));
             std::generate((*data.pjLayerValues).begin(), (*data.pjLayerValues).end(), [&]() {
                 return rndMatrixInitializer(randomGenerator);
             });
-            // document vector
+            // projection layer for documents
             data.docValues.reset(new std::vector<float>(docMatrixSize, 0.0f));
             std::generate((*data.docValues).begin(), (*data.docValues).end(), [&]() {
                 return rndMatrixInitializer(randomGenerator);
@@ -87,7 +89,7 @@ namespace w2v {
                     if (auto it = map.find(_model.m_vocabulary[j]); it != map.end()) {
                         for (std::size_t k = 0; k < m_vectorSize; k++) {
                             (*data.pjLayerValues)[k + (it->second * m_vectorSize)] = _model.m_pjLayerValues[k + (j * _model.m_vectorSize)];
-                            //(*data.bpWeights)[k + (it->second * m_vectorSize)] = _model.m_bpWeights[k + (j * _model.m_vectorSize)];
+                            (*data.bpWeights)[k + (it->second * m_vectorSize)] = _model.m_bpWeights[k + (j * _model.m_vectorSize)];
                         }
                     }
                 }
