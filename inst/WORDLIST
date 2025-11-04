@@ -13,10 +13,11 @@ Newsmap
 SICI
 Sutskever
 al
-arXiv
 arxiv
 cbow
 concatenator
+dbow
+dm
 docvars
 docvector
 doi
@@ -25,6 +26,7 @@ https
 proxyC
 quanteda
 quanteda's
+sg
 softmax
 textmodel
 vec
