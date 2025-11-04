@@ -10,9 +10,9 @@ toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>%
 
 set.seed(1234)
 wov <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1,
+                          normalize = FALSE)
+wov_nm <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1,
                           normalize = TRUE)
-wov_nn <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1,
-                             normalize = FALSE)
 
 test_that("analogy works", {
     
@@ -120,25 +120,25 @@ test_that("probability works", {
     skip_on_cran()
     skip_on_os("mac")
     
-    prob1 <- probability(wov_nn, "us", mode = "values")
+    prob1 <- probability(wov, "us", mode = "values")
     expect_true(all(prob1 <= 1.0))
     expect_true(all(prob1 >= 0.0))
     expect_true(is.matrix(prob1))
     expect_identical(
         dimnames(prob1),
-        list(names(wov_nn$frequency), "us")
+        list(names(wov$frequency), "us")
     )
     
-    prob2 <- probability(wov_nn, c("us", "people"), mode = "values")
+    prob2 <- probability(wov, c("us", "people"), mode = "values")
     expect_true(all(prob2 <= 1.0))
     expect_true(all(prob2 >= 0.0))
     expect_true(is.matrix(prob2))
     expect_identical(
         dimnames(prob2),
-        list(names(wov_nn$frequency), c("us", "people"))
+        list(names(wov$frequency), c("us", "people"))
     )
     
-    prob3 <- probability(wov_nn, "us", mode = "words")
+    prob3 <- probability(wov, "us", mode = "words")
     expect_true(is.matrix(prob3))
     expect_identical(
         prob3[1,],
@@ -146,10 +146,10 @@ test_that("probability works", {
     )
     expect_identical(
         dim(prob3),
-        c(length(wov_nn$frequency), 1L)
+        c(length(wov$frequency), 1L)
     )
     
-    prob4 <- probability(wov_nn, c("us", "people"), mode = "words")
+    prob4 <- probability(wov, c("us", "people"), mode = "words")
     expect_true(is.matrix(prob4))
     expect_identical(
         prob4[1,],
@@ -157,36 +157,36 @@ test_that("probability works", {
     )
     expect_identical(
         dim(prob4),
-        c(length(wov_nn$frequency), 2L)
+        c(length(wov$frequency), 2L)
     )
     expect_warning(
-        probability(wov_nn, c("xx", "yyy", "us"), mode = "values"),
+        probability(wov, c("xx", "yyy", "us"), mode = "values"),
         '"xx", "yyy" are not found'
     )
     expect_true(
         suppressWarnings(
-            is.matrix(probability(wov_nn, c("xx", "yyy"), mode = "values"))
+            is.matrix(probability(wov, c("xx", "yyy"), mode = "values"))
         )
     )
     expect_warning(
-        probability(wov_nn, c("xx", "yyy", "us"), mode = "words"),
+        probability(wov, c("xx", "yyy", "us"), mode = "words"),
         '"xx", "yyy" are not found'
     )
     expect_true(
         suppressWarnings(
-            is.matrix(probability(wov_nn, c("xx", "yyy"), mode = "words"))
+            is.matrix(probability(wov, c("xx", "yyy"), mode = "words"))
         )
     )
     
-    prob5 <- probability(wov_nn, c("us" = 1, "people" = -1), mode = "values")
+    prob5 <- probability(wov, c("us" = 1, "people" = -1), mode = "values")
     expect_equal(ncol(prob5), 1)
     expect_true(is.matrix(prob5))
     expect_identical(
         dimnames(prob5),
-        list(names(wov_nn$frequency), NULL)
+        list(names(wov$frequency), NULL)
     )
     
-    prob6 <- probability(wov_nn, c("us" = 1, "people" = -1), mode = "words")
+    prob6 <- probability(wov, c("us" = 1, "people" = -1), mode = "words")
     expect_equal(ncol(prob6), 1)
     expect_true(is.matrix(prob6))
     expect_identical(
@@ -195,13 +195,13 @@ test_that("probability works", {
     )
     
     expect_error(
-        probability(wov_nn, c(1, -1), mode = "words"),
+        probability(wov, c(1, -1), mode = "words"),
         "words must be named"
     )
     
     expect_error(
         probability(wov, c(1, -1), mode = "words"),
-        "textmodel_wordvector must be trained with normalize = FALSE"
+        "x must be trained with normalize = FALSE"
     )
 })
 
@@ -238,11 +238,12 @@ test_that("get_threads are working", {
 
 test_that("as.matrix() is working", {
     
+    
     expect_true(
-        all(as.matrix(wov_nn, normalize = TRUE) != wov_nn$values)
+        all(as.matrix(wov, normalize = TRUE) != wov$values$word)
     )
     expect_true(
-        all(as.matrix(wov_nn, normalize = FALSE) == wov_nn$values)
+        all(as.matrix(wov, normalize = FALSE) == wov$values$word)
     )
     
 })
