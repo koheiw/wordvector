@@ -11,8 +11,6 @@ toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>%
 set.seed(1234)
 wov <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1,
                           normalize = FALSE)
-wov_nm <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1,
-                          normalize = TRUE)
 
 test_that("analogy works", {
     
@@ -199,6 +197,7 @@ test_that("probability works", {
         "words must be named"
     )
     
+    wov$normalize <- TRUE
     expect_error(
         probability(wov, c(1, -1), mode = "words"),
         "x must be trained with normalize = FALSE"
@@ -247,3 +246,39 @@ test_that("as.matrix() is working", {
     )
     
 })
+
+test_that("methods works with old objects", {
+
+    wov_nn <- readRDS("../data/word2vec_v0.5.1.RDS") 
+    
+    expect_identical(dim(as.matrix(wov_nn)), c(5360L, 10L))
+    expect_error(as.matrix(wov_nn, layer = "documents"),
+                 "'arg' should be \"words\"")
+    expect_output(
+        print(wov_nn),
+        paste(
+            "",
+            "Call:",
+            "textmodel_word2vec(x = toks, dim = 10, min_count = 2, iter = 10, ",
+            "    sample = 1, normalize = FALSE)",
+            "",
+            "10 dimensions; 5,360 words.", sep = "\n"), fixed = TRUE
+    )
+    
+    wov_nm <- readRDS("../data/word2vec-norm_v0.5.1.RDS")
+    expect_identical(dim(as.matrix(wov_nm)), c(5360L, 10L))
+    expect_error(as.matrix(wov_nm, layer = "documents"),
+                 "'arg' should be \"words\"")
+    expect_output(
+        print(wov_nm),
+        paste(
+            "",
+            "Call:",
+            "textmodel_word2vec(x = toks, dim = 10, min_count = 2, iter = 10, ",
+            "    sample = 1, normalize = TRUE)",
+            "",
+            "10 dimensions; 5,360 words.", sep = "\n"), fixed = TRUE
+    )
+
+})
+
