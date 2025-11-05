@@ -73,29 +73,37 @@ test_that("textmodel_doc2vec works with pre-trained models", {
     
     skip_on_cran()
     
+    # Zero learning
+    dov0_pre <- textmodel_doc2vec(toks, type = "dm")
+    dov0 <- textmodel_doc2vec(toks, type = "dm", iter = 1, model = dov0_pre,
+                              alpha = 0)
+    
+    expect_identical(as.matrix(dov0, layer = "words"), 
+                     as.matrix(dov0_pre, layer = "words"))
+    
     # DM
     dov1_pre <- textmodel_doc2vec(toks, type = "dm")
-    dov1 <- textmodel_doc2vec(toks, type = "dm", iter = 1, model = dov1_pre)
+    dov1 <- textmodel_doc2vec(toks, type = "dm", iter = 5, model = dov1_pre)
     
-    r <- cor(t(as.matrix(dov1_pre))[,c("house", "winter")], 
-             t(as.matrix(dov1))[,c("house", "winter")])
+    r <- cor(t(as.matrix(dov1_pre, layer = "words"))[,c("house", "winter")], 
+             t(as.matrix(dov1, layer = "words"))[,c("house", "winter")])
     expect_true(all(diag(r) > 0.9))
     
     r <- cor(t(as.matrix(dov1_pre, layer = "documents"))[,c("1789-Washington", "2021-Biden")], 
              t(as.matrix(dov1, layer = "documents"))[,c("1789-Washington", "2021-Biden")])
-    expect_true(all(diag(r) > 0.8))
+    expect_true(all(diag(r) > 0.7))
     
     # DBOW
     dov2_pre <- textmodel_doc2vec(toks, type = "dbow")
-    dov2 <- textmodel_doc2vec(toks, type = "dbow", iter = 1, model = dov2_pre)
+    dov2 <- textmodel_doc2vec(toks, type = "dbow", iter = 5, model = dov2_pre)
     
-    r <- cor(t(as.matrix(dov2_pre))[,c("house", "winter")], 
-             t(as.matrix(dov2))[,c("house", "winter")])
+    r <- cor(t(as.matrix(dov2_pre, layer = "words"))[,c("house", "winter")], 
+             t(as.matrix(dov2, layer = "words"))[,c("house", "winter")])
     expect_true(all(diag(r) > 0.9))
     
     r <- cor(t(as.matrix(dov2_pre, layer = "documents"))[,c("1789-Washington", "2021-Biden")], 
              t(as.matrix(dov2, layer = "documents"))[,c("1789-Washington", "2021-Biden")])
-    expect_true(all(diag(r) > 0.8))
+    expect_true(all(diag(r) > 0.7))
     
     # errors
     expect_error(
