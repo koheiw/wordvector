@@ -15,6 +15,7 @@ wov_nm <- readRDS("../data/word2vec-norm_v0.5.1.RDS")
 
 test_that("as.matrix() works with old objects", {
     
+    skip_on_cran()
     
     expect_identical(dim(as.matrix(wov_nn)), c(5360L, 10L))
     expect_error(as.matrix(wov_nn, layer = "documents"),
@@ -26,7 +27,9 @@ test_that("as.matrix() works with old objects", {
 })
 
 test_that("print() works", {
-
+    
+    skip_on_cran()
+    
     expect_output(
         print(wov_nn),
         paste(
@@ -52,6 +55,8 @@ test_that("print() works", {
 })
 
 test_that("as.textmodel_doc2vec() works", {
+    
+    skip_on_cran()
     
     wov_nn <- readRDS("../data/word2vec_v0.5.1.RDS") 
     expect_identical(
