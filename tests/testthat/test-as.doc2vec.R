@@ -93,7 +93,7 @@ test_that("as.textmodel_doc2vec works with different objects", {
     )
     
     expect_error(
-        as.textmodel_doc2vec(dfmt, list),
+        as.textmodel_doc2vec(dfmt, list()),
         "'model' must be a trained textmodel_word2vec"
     )
 })
@@ -106,3 +106,19 @@ test_that("textmodel_doc2vec returns zero for emptry documents (#17)", {
     expect_true(all(dov$values$doc[1,] != 0))
     expect_true(all(dov$values$doc[2,] == 0))
 })
+
+test_that("as.textmodel_doc2vec works with old objects", {
+    
+    wov_nn <- readRDS("../data/word2vec_v0.5.1.RDS") 
+    expect_identical(
+        rownames(as.matrix(as.textmodel_doc2vec(dfmt, wov_nn))),
+        docnames(dfmt)
+    )
+
+    wov_nm <- readRDS("../data/word2vec-norm_v0.5.1.RDS")
+    expect_identical(
+        rownames(as.matrix(as.textmodel_doc2vec(dfmt, wov_nm))),
+        docnames(dfmt)
+    )
+})
+
