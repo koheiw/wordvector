@@ -7,19 +7,22 @@ corp <- head(data_corpus_inaugural, 59) %>%
 toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>% 
     tokens_remove(stopwords(), padding = FALSE)
 
+dfmt <- dfm(toks, remove_padding = TRUE) 
+
 set.seed(1234)
 wov <- textmodel_lsa(toks, dim = 50, min_count = 2, sample = 0)
-dov <- textmodel_doc2vec(toks, wov)
-dov_gp <- textmodel_doc2vec(toks, wov, group_data = TRUE)
+dov <- as.textmodel_doc2vec(dfmt, wov)
+dov_gp <- as.textmodel_doc2vec(dfmt, wov, group_data = TRUE)
 
 test_that("word2vec words", {
     
     # wordvector
     expect_equal(
-        class(wov), "textmodel_wordvector"
+        class(wov), 
+        c("textmodel_lsa", "textmodel_wordvector")
     )
     expect_identical(
-        dim(wov$values), c(5360L, 50L)
+        dim(wov$values$word), c(5360L, 50L)
     )
     expect_equal(
         wov$weight, "count"
@@ -41,7 +44,7 @@ test_that("word2vec words", {
             "50 dimensions; 5,360 words.", sep = "\n"), fixed = TRUE
     )
     expect_equal(
-        class(print(wov)), "textmodel_wordvector"
+        class(print(wov)), class(wov)
     )
     expect_equal(
         names(dov),
@@ -49,23 +52,27 @@ test_that("word2vec words", {
     )
     
     # docvector with model
-    expect_equal(
-        dim(dov$values), c(5234L, 50L)
+    expect_identical(
+        dim(dov$values$word), c(5360L, 50L)
     )
     expect_equal(
-        class(dov), "textmodel_docvector"
+        dim(dov$values$doc), c(5234L, 50L)
+    )
+    expect_equal(
+        class(dov), 
+        c("textmodel_doc2vec", "textmodel_wordvector")
     )
     expect_output(
         print(dov),
         paste(
             "",
             "Call:",
-            "textmodel_doc2vec(x = toks, model = wov)",
+            "as.textmodel_doc2vec(x = dfmt, model = wov)",
             "",
             "50 dimensions; 5,234 documents.", sep = "\n"), fixed = TRUE
     )
     expect_equal(
-        class(print(dov)), "textmodel_docvector"
+        class(print(dov)), class(dov)
     )
     expect_equal(
         names(dov),
@@ -74,10 +81,14 @@ test_that("word2vec words", {
     
     # docvector with grouped data
     expect_identical(
-        dim(dov_gp$values), c(59L, 50L)
+        dim(dov_gp$values$word), c(5360L, 50L)
+    )
+    expect_identical(
+        dim(dov_gp$values$doc), c(59L, 50L)
     )
     expect_equal(
-        class(dov_gp), "textmodel_docvector"
+        class(dov_gp), 
+        c("textmodel_doc2vec", "textmodel_wordvector")
     )
     expect_equal(
         names(dov_gp),
@@ -91,13 +102,13 @@ test_that("tolower is working", {
     
     wov0 <- textmodel_lsa(toks, dim = 50, iter = 10, min_count = 2, 
                           tolower = FALSE)
-    expect_equal(dim(wov0$values),
+    expect_equal(dim(wov0$values$word),
                  c(5556L, 50L))
     
     
     wov1 <- textmodel_lsa(toks, dim = 50, iter = 10, min_count = 2, 
                           tolower = TRUE)
-    expect_equal(dim(wov1$values),
+    expect_equal(dim(wov1$values$word),
                  c(5360L, 50L))
     
 })

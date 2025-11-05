@@ -90,7 +90,7 @@ textmodel_lsa.dfm <- function(x, dim = 50L, min_count = 5L,
         rownames(wov) <- featnames(x)
     }
     result <- list(
-        values = wov,
+        values = list(word = wov),
         dim = dim,
         frequency = featfreq(x),
         engine = engine,
@@ -100,7 +100,7 @@ textmodel_lsa.dfm <- function(x, dim = 50L, min_count = 5L,
         call = try(match.call(sys.function(-1), call = sys.call(-1)), silent = TRUE),
         version = utils::packageVersion("wordvector")
     )
-    class(result) <- "textmodel_wordvector"
+    class(result) <- c("textmodel_lsa", "textmodel_wordvector")
     return(result)
 }
 

@@ -183,6 +183,10 @@ upgrade_pre06 <- function(x) {
     return(x)
 }
 
+is_lsa <- function(x) {
+    identical(class(x), c("textmodel_lsa", "textmodel_wordvector"))
+}
+
 is_word2vec <- function(x) {
     identical(class(x), c("textmodel_word2vec", "textmodel_wordvector"))
 }
@@ -191,11 +195,19 @@ is_doc2vec <- function(x) {
     identical(class(x), c("textmodel_doc2vec", "textmodel_wordvector"))
 }
 
-check_word2vec <- function(x) {
-    if (is_word2vec(x)) {
-        return(x)
+check_word2vec <- function(x, allow_lsa = FALSE) {
+    if (allow_lsa) {
+        if (is_word2vec(x) || is_lsa(x)) {
+            return(x)
+        } else {
+            stop("'model' must be a trained textmodel_word2vec or textmodel_lsa")
+        }
     } else {
-        stop("'model' must be a trained textmodel_word2vec")
+        if (is_word2vec(x)) {
+            return(x)
+        } else {
+            stop("'model' must be a trained textmodel_word2vec")
+        }
     }
 }
 
