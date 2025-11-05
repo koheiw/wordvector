@@ -247,10 +247,9 @@ test_that("as.matrix() is working", {
     
 })
 
-test_that("methods works with old objects", {
+test_that("print() and as.matrix() works with old objects", {
 
     wov_nn <- readRDS("../data/word2vec_v0.5.1.RDS") 
-    
     expect_identical(dim(as.matrix(wov_nn)), c(5360L, 10L))
     expect_error(as.matrix(wov_nn, layer = "documents"),
                  "'arg' should be \"words\"")
