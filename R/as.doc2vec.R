@@ -31,7 +31,7 @@ as.textmodel_doc2vec.dfm <- function(x, model = NULL, normalize = FALSE,
                                   weights = 1.0, pattern = NULL,
                                   group_data = FALSE, ...) {
     
-    x <- upgrade_pre06(x)
+    model <- upgrade_pre06(model)
     model <- check_word2vec(model)
     conc <- meta(x, field = "concatenator", type = "object")
 
@@ -77,7 +77,7 @@ as.textmodel_doc2vec.dfm <- function(x, model = NULL, normalize = FALSE,
 
 #' @export
 as.matrix.textmodel_doc2vec <- function(x, normalize = TRUE, 
-                                        layer = c("words", "documents"), ...) {
+                                        layer = c("documents", "words"), ...) {
         
     x <- upgrade_pre06(x)
     normalize <- check_logical(normalize)

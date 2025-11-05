@@ -209,7 +209,6 @@ print.textmodel_doc2vec <- function(x, ...) {
     invisible(x)
 }
 
-
 #' Extract word or document vectors
 #'
 #' Extract word or document vectors from a `textmodel_wordvector` or `textmodel_docvector` object.
@@ -220,7 +219,7 @@ print.textmodel_doc2vec <- function(x, ...) {
 #' @return a matrix that contain the word vectors in rows.
 #' @export
 as.matrix.textmodel_word2vec <- function(x, normalize = TRUE, 
-                                           layer = "words", ...){
+                                         layer = "words", ...){
     
     x <- upgrade_pre06(x)
     layer <- match.arg(layer)
@@ -234,4 +233,23 @@ as.matrix.textmodel_word2vec <- function(x, normalize = TRUE,
     return(result) 
 }
 
+# for old objects before v0.6.0
+
+#' @noRd
+#' @method print textmodel_docvector
+#' @export
+print.textmodel_docvector <- print.textmodel_doc2vec
+
+#' @noRd
+#' @method print textmodel_wordvector
+#' @export
+print.textmodel_wordvector <- print.textmodel_word2vec
+
+#' @noRd
+#' @export
+as.matrix.textmodel_docvector <- as.matrix.textmodel_doc2vec
+
+#' @noRd
+#' @export
+as.matrix.textmodel_wordvector <- as.matrix.textmodel_word2vec
 
