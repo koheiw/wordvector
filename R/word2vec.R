@@ -115,7 +115,7 @@ wordvector <- function(x, dim = 50, type = c("cbow", "sg", "dm", "dbow", "dbow2"
     verbose <- check_logical(verbose)
     
     if (normalize)
-        .Deprecated(msg = "'normalize' is deprecated. Use 'as.matrix(x, normalize = TRUE)' instead.")
+        .Defunct(msg = "'normalize' is defunct. Use 'as.matrix(x, normalize = TRUE)' instead.")
     
     if (!is.null(model)) {
         if (!"textmodel_wordvector" %in% class(model))
@@ -139,7 +139,7 @@ wordvector <- function(x, dim = 50, type = c("cbow", "sg", "dm", "dbow", "dbow2"
                            threads = get_threads(), iterations = iter,
                            alpha = alpha, 
                            type = match(type, c("cbow", "sg", "dm", "dbow", "dbow2")), 
-                           normalize = normalize, 
+                           normalize = FALSE, 
                            verbose = verbose)
     
     is_dov <- type %in% c("dm", "dbow", "dbow2")
