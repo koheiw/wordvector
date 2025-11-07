@@ -180,6 +180,9 @@ upgrade_pre06 <- function(x) {
         x$values  <- list(doc = x$values)
         class(x) <- c("textmodel_doc2vec", "textmodel_wordvector")
     }
+    if (is.numeric(x$type)) {
+        x$type <- c("cbow", "sg")[x$type]
+    }
     return(x)
 }
 
@@ -195,19 +198,11 @@ is_doc2vec <- function(x) {
     identical(class(x), c("textmodel_doc2vec", "textmodel_wordvector"))
 }
 
-check_word2vec <- function(x, allow_lsa = FALSE) {
-    if (allow_lsa) {
-        if (is_word2vec(x) || is_lsa(x)) {
-            return(x)
-        } else {
-            stop("'model' must be a trained textmodel_word2vec or textmodel_lsa")
-        }
+check_word2vec <- function(x) {
+    if (is_word2vec(x)) {
+        return(x)
     } else {
-        if (is_word2vec(x)) {
-            return(x)
-        } else {
-            stop("'model' must be a trained textmodel_word2vec")
-        }
+        stop("'model' must be a trained textmodel_word2vec")
     }
 }
 
@@ -216,6 +211,16 @@ check_doc2vec <- function(x) {
         return(x)
     } else {
         stop("'model' must be a trained textmodel_doc2vec")
+    }
+}
+
+check_model <- function(x, allow = c("word2vec", "doc2vec", "lsa")) {
+    allow <- match.arg(allow, several.ok = TRUE)
+    m <- paste0("textmodel_", allow)
+    if (any(class(x)[1] == m & class(x)[2] == "textmodel_wordvector")) {
+        return(x)
+    } else {
+        stop("'model' must be a trained ", paste(m, collapse = " or "))
     }
 }
 

@@ -32,7 +32,7 @@ as.textmodel_doc2vec.dfm <- function(x, model = NULL, normalize = FALSE,
                                   group_data = FALSE, ...) {
     
     model <- upgrade_pre06(model)
-    model <- check_word2vec(model, allow_lsa = TRUE)
+    model <- check_model(model, c("word2vec", "lsa"))
     conc <- meta(x, field = "concatenator", type = "object")
 
     wov <- as.matrix(model, normalize)
