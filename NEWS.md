@@ -1,3 +1,10 @@
+## Change in v0.6.0
+
+- Upgrade `textmodel_doc2vec` to train the distributed memory (DM) and distributed bag-of-word (DBOW) models.
+- Add `as.textmodel_doc2vec()` to create document vectors as weighted average of word vectors.
+- Add `layer` to `as.matrix()` to choose between word or document vectors.
+- `normalize` is now defunct in `textmodel_word2vec()`.
+
 ## Change in v0.5.1
 
 - Add `normalize` to `textmodel_doc2vec()` and pass it to `as.matrix()`.
