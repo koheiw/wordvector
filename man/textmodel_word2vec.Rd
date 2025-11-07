@@ -58,8 +58,8 @@ disabled when \code{sample = 1.0}}
 \item{...}{additional arguments.}
 }
 \value{
-Returns a textmodel_wordvector object with the following elements:
-\item{values}{a matrix for word vector values.}
+Returns a textmodel_word2vec object with the following elements:
+\item{values}{a list of a matrix for word vector values.}
 \item{weights}{a matrix for word vector weights.}
 \item{dim}{the size of the word vectors.}
 \item{type}{the architecture of the model.}

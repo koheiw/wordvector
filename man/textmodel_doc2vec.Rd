@@ -9,7 +9,7 @@ textmodel_doc2vec(
   dim = 50,
   type = c("dm", "dbow", "dbow2"),
   min_count = 5,
-  window = ifelse(type == "cbow", 5, 10),
+  window = ifelse(type == "dm", 5, 10),
   iter = 10,
   alpha = 0.05,
   model = NULL,
@@ -27,7 +27,8 @@ textmodel_doc2vec(
 
 \item{dim}{the size of the word vectors.}
 
-\item{type}{the architecture of the model; either "dm" (distributed memory) or "dbow" (distributed bag-of-words).}
+\item{type}{the architecture of the model; either "dm" (distributed memory) or
+"dbow" (distributed bag-of-words).}
 
 \item{min_count}{the minimum frequency of the words. Words less frequent than
 this in \code{x} are removed before training.}
@@ -58,7 +59,7 @@ disabled when \code{sample = 1.0}}
 \item{...}{additional arguments.}
 }
 \value{
-Returns a textmodel_docvector object with matrices for words and documents under \code{values}.
+Returns a textmodel_doc2vec object with matrices for word and document vector values in \code{values}.
 Other elements are the same as \link{textmodel_word2vec}.
 }
 \description{

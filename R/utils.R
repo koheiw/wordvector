@@ -93,6 +93,7 @@ similarity <- function(x, words, mode = c("character", "numeric")) {
 #' Compute the probability of words given other words.
 #' @param x a `textmodel_wordvector` object fitted with `normalize = FALSE`.
 #' @param words words for which probability is computed.
+#' @param layer the layer based on which probability is computed.
 #' @param mode specify the type of resulting object.
 #' @return a matrix of words or documents sorted in descending order by the probability 
 #'   scores when `mode = "character"`; a matrix of the probability scores when `mode = "numeric"`.

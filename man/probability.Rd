@@ -16,6 +16,8 @@ probability(
 
 \item{words}{words for which probability is computed.}
 
+\item{layer}{the layer based on which probability is computed.}
+
 \item{mode}{specify the type of resulting object.}
 }
 \value{

@@ -20,8 +20,8 @@
 #' @param include_data if `TRUE`, the resulting object includes the data supplied as `x`.
 #' @param verbose if `TRUE`, print the progress of training.
 #' @param ... additional arguments.
-#' @returns Returns a textmodel_wordvector object with the following elements:
-#'   \item{values}{a matrix for word vector values.}
+#' @returns Returns a textmodel_word2vec object with the following elements:
+#'   \item{values}{a list of a matrix for word vector values.}
 #'   \item{weights}{a matrix for word vector weights.}
 #'   \item{dim}{the size of the word vectors.}
 #'   \item{type}{the architecture of the model.}
@@ -218,12 +218,13 @@ print.textmodel_doc2vec <- function(x, ...) {
 
 #' Extract word or document vectors
 #'
-#' Extract word or document vectors from a `textmodel_wordvector` or `textmodel_docvector` object.
-#' @param x a `textmodel_wordvector` or `textmodel_docvector` object.
+#' Extract word or document vectors from a `textmodel_word2vec` or `textmodel_doc2vec` object.
+#' @rdname as.matrix
+#' @param x a `textmodel_word2vec` or `textmodel_doc2vec` object.
 #' @param normalize if `TRUE`, returns normalized vectors.
 #' @param layer the layer from which the vectors are extracted.
 #' @param ... not used.
-#' @return a matrix that contain the word vectors in rows.
+#' @return a matrix that contain the word or document vectors in rows.
 #' @export
 as.matrix.textmodel_word2vec <- function(x, normalize = TRUE, 
                                          layer = "words", ...){

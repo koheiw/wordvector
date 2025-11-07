@@ -75,6 +75,7 @@ as.textmodel_doc2vec.dfm <- function(x, model = NULL, normalize = FALSE,
     return(result)
 }
 
+#' @rdname as.matrix
 #' @export
 as.matrix.textmodel_doc2vec <- function(x, normalize = TRUE, 
                                         layer = c("documents", "words"), ...) {
