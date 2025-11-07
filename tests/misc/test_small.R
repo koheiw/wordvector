@@ -13,9 +13,30 @@ wdv <- textmodel_word2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose 
 similarity(wdv, analogy(~ washington - america + france)) %>% 
     head()
 
-dov <- textmodel_doc2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose = TRUE, iter = 10)
+wdv2 <- textmodel_word2vec(toks[1:1000], dim = 50, type = "cbow", min_count = 2, verbose = TRUE, iter = 10, 
+                           model = wdv, update_weights = TRUE)
+wdv3 <- textmodel_word2vec(toks[1:1000], dim = 50, type = "cbow", min_count = 2, verbose = TRUE, iter = 10, 
+                           model = wdv, update_weights = FALSE)
+
+
+similarity(wdv, analogy(~ washington - america + france)) %>% 
+    head()
+similarity(wdv2, analogy(~ washington - america + france)) %>% 
+    head()
+similarity(wdv3, analogy(~ washington - america + france)) %>% 
+    head()
+
+wdv$weights["america",]
+wdv2$weights["america",]
+wdv3$weights["america",]
+
+#dov <- textmodel_doc2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose = TRUE, iter = 10)
+dov <- textmodel_doc2vec(toks, dim = 50, type = "skip-gram", min_count = 5, verbose = TRUE, iter = 10)
 
 similarity(dov, analogy(~ washington - america + france)) %>% 
+    head()
+
+probability(dov, c("good")) %>% 
     head()
 
 sim <- proxyC::simil(
@@ -48,6 +69,13 @@ similarity(wdv, analogy(~ washington - america + france)) %>%
 similarity(wdv, analogy(~ berlin - germany + france)) %>% 
     head()
 
+# -----------------------------
+
+dov <- textmodel_doc2vec(toks, dim = 50, type = "skip-gram", min_count = 5, verbose = TRUE, iter = 10)
+seed <- LSX::seedwords("sentiment")
+doc <- probability(dov, seed, layer = "documents")[,1]
+print(toks[head(doc)], -1, -1)
+print(toks[tail(doc)], -1, -1)
 
 # LSA -------------------------------------
 

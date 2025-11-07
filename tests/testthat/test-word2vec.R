@@ -10,13 +10,13 @@ toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>%
 
 set.seed(1234)
 wov <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1)
-dov <- textmodel_doc2vec(toks, wov)
 
 test_that("textmodel_word2vec works", {
     
     # wordvector
     expect_equal(
-        class(wov), "textmodel_wordvector"
+        class(wov), 
+        c("textmodel_word2vec", "textmodel_wordvector")
     )
     expect_true(
         wov$use_ns
@@ -28,7 +28,7 @@ test_that("textmodel_word2vec works", {
         wov$window, 5L
     )
     expect_identical(
-        dim(wov$values), c(5360L, 50L)
+        dim(wov$values$word), c(5360L, 50L)
     )
     expect_identical(
         dim(wov$weights), c(5360L, 50L)
@@ -39,7 +39,9 @@ test_that("textmodel_word2vec works", {
     expect_equal(
         wov$min_count, 2L
     )
-    
+    expect_false(
+        wov$normalize
+    )
     expect_identical(
         featfreq(dfm_trim(dfm(toks), 2)),
         wov$frequency
@@ -56,7 +58,8 @@ test_that("textmodel_word2vec works", {
             "50 dimensions; 5,360 words.", sep = "\n"), fixed = TRUE
     )
     expect_equal(
-        class(print(wov)), "textmodel_wordvector"
+        class(expect_output(print(wov))), 
+        class(wov)
     )
     
 })
@@ -74,18 +77,16 @@ test_that("textmodel_word2vec works with include_data", {
     
 })
 
-test_that("normalize is working", {
+test_that("normalize is defunct", {
     
     skip_on_cran()
     
-    wov0 <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1,
-                               normalize = FALSE)
-    expect_false(wov0$normalize)
-    
-    wov1 <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1,
-                               normalize = TRUE)
-    expect_true(wov1$normalize)
-    
+    expect_error({
+        textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1,
+                                   normalize = TRUE)
+        "'normalize' is defunct."
+    })
+
 })
 
 test_that("tolower is working", {
@@ -94,13 +95,13 @@ test_that("tolower is working", {
     
     wov0 <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1,
                                tolower = FALSE)
-    expect_equal(dim(wov0$values),
+    expect_equal(dim(wov0$values$word),
                  c(5556L, 50L))
                  
     
     wov1 <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1,
                                tolower = TRUE)
-    expect_equal(dim(wov1$values),
+    expect_equal(dim(wov1$values$word),
                  c(5360L, 50L))
     
 })
@@ -122,7 +123,8 @@ test_that("tokens and tokens_xptr produce the same result", {
     )
     
     expect_equal(
-        dimnames(wov0$values), dimnames(wov1$values) 
+        dimnames(wov0$values$word), 
+        dimnames(wov1$values$word) 
     )
 
 })
@@ -131,7 +133,7 @@ test_that("textmodel_word2vec is robust", {
     
     expect_s3_class(
         textmodel_word2vec(head(toks, 1), dim = 50, iter = 10, min_count = 1),
-        "textmodel_wordvector"
+        c("textmodel_word2vec", "textmodel_wordvector")
     )
     
     expect_error(

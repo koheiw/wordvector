@@ -13,6 +13,19 @@ dfmt <- dfm(toks, remove_padding = TRUE)
 wov_nn <- readRDS("../data/word2vec_v0.5.1.RDS") 
 wov_nm <- readRDS("../data/word2vec-norm_v0.5.1.RDS")
 
+test_that("upgrade_pre06() works", {
+    wov_nn2 <- wordvector:::upgrade_pre06(wov_nn)
+    expect_equal(names(wov_nn2$values),
+                 "word")
+    expect_equal(wov_nn2$type,
+                 "cbow")
+    wov_nm2 <- wordvector:::upgrade_pre06(wov_nn)
+    expect_equal(names(wov_nm2$values),
+                 "word")
+    expect_equal(wov_nm2$type,
+                 "cbow")
+})
+
 test_that("as.matrix() works with old objects", {
     
     skip_on_cran()

@@ -44,7 +44,8 @@ test_that("word2vec words", {
             "50 dimensions; 5,360 words.", sep = "\n"), fixed = TRUE
     )
     expect_equal(
-        class(print(wov)), class(wov)
+        class(expect_output(print(wov))), 
+        class(wov)
     )
     expect_equal(
         names(dov),
@@ -72,7 +73,8 @@ test_that("word2vec words", {
             "50 dimensions; 5,234 documents.", sep = "\n"), fixed = TRUE
     )
     expect_equal(
-        class(print(dov)), class(dov)
+        class(expect_output(print(dov))), 
+        class(dov)
     )
     expect_equal(
         names(dov),

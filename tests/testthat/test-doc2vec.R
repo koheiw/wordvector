@@ -26,9 +26,6 @@ test_that("textmodel_doc2vec works", {
     expect_equal(
         dim(dov1$values$doc), c(59L, 50L)
     )
-    expect_equal(
-        class(dov1), c("textmodel_doc2vec", "textmodel_wordvector")
-    )
     expect_output(
         print(dov1),
         paste(
@@ -37,6 +34,10 @@ test_that("textmodel_doc2vec works", {
             "textmodel_doc2vec(x = toks, dim = 50, min_count = 2, iter = 5)",
             "",
             "50 dimensions; 59 documents.", sep = "\n"), fixed = TRUE
+    )
+    expect_equal(
+        class(expect_output(print(dov1))), 
+        class(dov1)
     )
     
     # DBOW
@@ -54,9 +55,6 @@ test_that("textmodel_doc2vec works", {
     expect_equal(
         dim(dov2$values$doc), c(59L, 50L)
     )
-    expect_equal(
-        class(dov2), c("textmodel_doc2vec", "textmodel_wordvector")
-    )
     expect_output(
         print(dov2),
         paste(
@@ -66,6 +64,10 @@ test_that("textmodel_doc2vec works", {
             "    iter = 5)",
             "",
             "50 dimensions; 59 documents.", sep = "\n"), fixed = TRUE
+    )
+    expect_equal(
+        class(expect_output(print(dov2))), 
+        class(dov2)
     )
 })
 
@@ -108,10 +110,10 @@ test_that("textmodel_doc2vec works with pre-trained models", {
     # errors
     expect_error(
         textmodel_doc2vec(toks, type = "dbow", iter = 1, model = list()),
-        "'model' must be a trained textmodel_wordvector", fixed = TRUE
+        "'model' must be a trained textmodel_word2vec or textmodel_doc2vec", fixed = TRUE
     )
-    expect_error(
+    expect_warning(
         textmodel_doc2vec(toks, type = "dbow", iter = 1, model = dov1_pre),
-        "'model' is trained with the same 'type'", fixed = TRUE
+        "'dim', 'type' and 'use_na' are overwritten by the pre-trained model", fixed = TRUE
     )
 })
