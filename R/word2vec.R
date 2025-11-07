@@ -118,12 +118,19 @@ wordvector <- function(x, dim = 50, type = c("cbow", "sg", "dm", "dbow", "dbow2"
         .Defunct(msg = "'normalize' is defunct. Use 'as.matrix(x, normalize = TRUE)' instead.")
     
     if (!is.null(model)) {
-        if (!"textmodel_wordvector" %in% class(model))
-            stop("'model' must be a trained textmodel_wordvector")
-        if (!identical(type, model$type))
-            stop("'model' is trained with the same 'type'")
-        if (!identical(model$dim, dim))
-            stop("'model' must be trained with dim = ", dim)
+        model <- upgrade_pre06(model)
+        if (doc2vec) {
+            model <- check_model(model, c("word2vec", "doc2vec"))
+        } else {
+            model <- check_model(model, c("word2vec"))
+        }
+        if (model$dim != dim || model$type != type || model$use_ns != use_ns) {
+            dim <- model$dim
+            type <- model$type
+            use_ns <- model$use_ns
+            warning("'dim', 'type' and 'use_na' are overwritten by the pre-trained model", 
+                    call. = FALSE)
+        }
     }
     
     if (include_data)
