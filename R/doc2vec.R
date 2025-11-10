@@ -32,3 +32,27 @@ textmodel_doc2vec.tokens <- function(x, dim = 50, type = c("dm", "dbow", "dbow2"
                use_ns, ns_size, sample, tolower, include_data, verbose, ...)
     
 }
+
+#' @rdname as.matrix
+#' @export
+as.matrix.textmodel_doc2vec <- function(x, normalize = TRUE, 
+                                        layer = c("documents", "words"), ...) {
+    
+    x <- upgrade_pre06(x)
+    normalize <- check_logical(normalize)
+    layer <- match.arg(layer)
+    
+    if (layer == "words") {
+        result <- x$values$word
+    } else {
+        result <- x$values$doc
+    }
+    if (is.null(result))
+        stop("models trained before v0.6.0 do not the layer for ", layer, call. = FALSE)
+    if (normalize) {
+        v <- sqrt(rowSums(result ^ 2) / ncol(result))
+        result <- result / v
+    }
+    return(result) 
+}
+
