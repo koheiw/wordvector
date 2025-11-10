@@ -15,6 +15,25 @@ wov <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1,
                           normalize = FALSE)
 dov <- as.textmodel_doc2vec(dfmt, model = wov)
 
+
+test_that("as.matrix works", {
+    
+    # word2vec
+    expect_setequal(rownames(as.matrix(wov)), 
+                    types(tokens_trim(tokens_tolower(toks), min_termfreq = 2)))
+    expect_error(
+        as.matrix(wov, layer = "documents"),
+        "'arg' should be \"words\""
+    )
+    
+    # doc2vec
+    expect_setequal(rownames(as.matrix(dov)), 
+                    docnames(dfmt))
+    expect_setequal(rownames(as.matrix(dov, layer = "words")), 
+                    featnames(dfm_trim(dfmt, min_termfreq = 2)))
+        
+})
+
 test_that("analogy works", {
     
     expect_equal(
@@ -250,7 +269,7 @@ test_that("as.matrix() is working", {
     
 })
 
-test_that("print() and as.matrix() works with old objects", {
+test_that("print and as.matrix works with old objects", {
 
     wov_nn <- readRDS("../data/word2vec_v0.5.1.RDS") 
     expect_identical(dim(as.matrix(wov_nn)), c(5360L, 10L))
