@@ -28,9 +28,6 @@ Suggests:
     testthat,
     word2vec, 
     spelling
-Enhances:
-    word2vec,
-    doc2vec
 LinkingTo: Rcpp, quanteda
 Roxygen: list(markdown = TRUE)
 Language: en-US
