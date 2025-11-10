@@ -300,7 +300,20 @@ test_that("print and as.matrix works with old objects", {
             "",
             "10 dimensions; 5,360 words.", sep = "\n"), fixed = TRUE
     )
-
+    
+    dov <- readRDS("../data/doc2vec_v0.5.1.RDS")
+    expect_identical(dim(as.matrix(dov)), c(5234L, 10L))
+    expect_error(as.matrix(dov, layer = "words"),
+                 "models trained before v0.6.0 do not the layer for words")
+    expect_output(
+        print(dov),
+        paste(
+            "",
+            "Call:",
+            "textmodel_doc2vec(x = dfmt, model = wov)",
+            "",
+            "10 dimensions; 5,234 documents", sep = "\n"), fixed = TRUE
+    )
 })
 
 test_that("ckass check functions work as expected", {
