@@ -8,9 +8,12 @@ toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>%
     tokens_remove(stopwords(), padding = FALSE) %>% 
     tokens_tolower()
 
+dfmt <- dfm(toks, remove_padding = TRUE)
+
 set.seed(1234)
 wov <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1,
                           normalize = FALSE)
+dov <- as.textmodel_doc2vec(dfmt, model = wov)
 
 test_that("analogy works", {
     
@@ -281,3 +284,24 @@ test_that("print() and as.matrix() works with old objects", {
 
 })
 
+test_that("ckass check functions work as expected", {
+    
+    # word2vec
+    expect_silent(
+        wordvector:::check_word2vec(wov)
+    )
+    expect_error(
+        wordvector:::check_word2vec(dov),
+        "'model' must be a trained textmodel_word2vec"
+    )
+    
+    # doc2vec
+    expect_silent(
+        wordvector:::check_doc2vec(dov)
+    )
+    expect_error(
+        wordvector:::check_doc2vec(wov),
+        "'model' must be a trained textmodel_doc2vec"
+    )
+
+})
