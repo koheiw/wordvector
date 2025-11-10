@@ -153,12 +153,6 @@ Rcpp::List cpp_word2vec(TokensPtr xptr,
         );
         return out;
     }
-    // TODO: delete
-    if (normalize) {
-        if (verbose)
-            Rprintf(" ...normalizing vectors\n");
-        word2vec.normalizeValues();
-    }
     if (verbose)
         Rprintf(" ...complete\n");
     

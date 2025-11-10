@@ -142,20 +142,20 @@ namespace w2v {
                    const word2vec_t &_model) noexcept;
         
         // normalize by factors
-        void normalizeValues() {
-            for(std::size_t i = 0; i < m_vocabularySize; i += m_vectorSize) {
-                float ss = 0.0f;
-                for(std::size_t j = 0; j < m_vectorSize; ++j) {
-                    ss += m_pjLayerValues[i + j] * m_pjLayerValues[i + j];
-                }
-                if (ss <= 0.0f) 
-                    throw std::runtime_error("failed to normalize pjLayerValues");
-                float d = std::sqrt(ss / m_vectorSize);
-                for(std::size_t j = 0; j < m_vectorSize; ++j) {
-                    m_pjLayerValues[i + j] = m_pjLayerValues[i + j] / d;
-                }
-            }
-        }
+        // void normalizeValues() {
+        //     for(std::size_t i = 0; i < m_vocabularySize; i += m_vectorSize) {
+        //         float ss = 0.0f;
+        //         for(std::size_t j = 0; j < m_vectorSize; ++j) {
+        //             ss += m_pjLayerValues[i + j] * m_pjLayerValues[i + j];
+        //         }
+        //         if (ss <= 0.0f) 
+        //             throw std::runtime_error("failed to normalize pjLayerValues");
+        //         float d = std::sqrt(ss / m_vectorSize);
+        //         for(std::size_t j = 0; j < m_vectorSize; ++j) {
+        //             m_pjLayerValues[i + j] = m_pjLayerValues[i + j] / d;
+        //         }
+        //     }
+        // }
         
     };
 }
