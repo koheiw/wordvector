@@ -79,7 +79,7 @@ namespace w2v {
         uint16_t threads = 1; //< train threads number
         uint16_t iterations = 5; //< train iterations
         float alpha = 0.05f; //< starting learn rate
-        int type = 1; //< 1:CBOW 2:Skip-Gram
+        int type = 1; //< 1:CBOW 2:Skip-Gram 3:CBOW (doc2vec) 4:Skip-Gram (doc2vec)
         uint32_t random = 1234; // < random number seed
         bool verbose = false; // print progress
         settings_t() = default;
@@ -97,6 +97,10 @@ namespace w2v {
         std::size_t m_vectorSize = 0;
         std::vector<float> m_pjLayerValues;
         std::vector<float> m_bpWeights;
+        
+        // document vector
+        std::size_t m_corpusSize = 0;
+        std::vector<float> m_docValues;
         
         mutable std::string m_errMsg;
         
@@ -117,9 +121,12 @@ namespace w2v {
         // virtual destructor
         virtual ~word2vec_t() = default;
         
-        const std::vector<float> &values() {return m_pjLayerValues;} 
-        const std::vector<float> &weights() {return m_bpWeights;} 
+        const std::vector<float> &values() {return m_pjLayerValues;}  // TODO: change to wordValues
+        const std::vector<float> &weights() {return m_bpWeights;}
+        const std::vector<float> &docValues() {return m_docValues;} 
         
+        // @returns m_corpusSize size (number of documents)
+        std::size_t corpusSize() const noexcept {return m_corpusSize;}
         // @returns vector size of model
         std::size_t vectorSize() const noexcept {return m_vectorSize;}
         // @returns m_vocabularySize size (number of unique words)
@@ -135,20 +142,20 @@ namespace w2v {
                    const word2vec_t &_model) noexcept;
         
         // normalize by factors
-        void normalizeValues() {
-            for(std::size_t i = 0; i < m_vocabularySize; i += m_vectorSize) {
-                float ss = 0.0f;
-                for(std::size_t j = 0; j < m_vectorSize; ++j) {
-                    ss += m_pjLayerValues[i + j] * m_pjLayerValues[i + j];
-                }
-                if (ss <= 0.0f) 
-                    throw std::runtime_error("failed to normalize pjLayerValues");
-                float d = std::sqrt(ss / m_vectorSize);
-                for(std::size_t j = 0; j < m_vectorSize; ++j) {
-                    m_pjLayerValues[i + j] = m_pjLayerValues[i + j] / d;
-                }
-            }
-        }
+        // void normalizeValues() {
+        //     for(std::size_t i = 0; i < m_vocabularySize; i += m_vectorSize) {
+        //         float ss = 0.0f;
+        //         for(std::size_t j = 0; j < m_vectorSize; ++j) {
+        //             ss += m_pjLayerValues[i + j] * m_pjLayerValues[i + j];
+        //         }
+        //         if (ss <= 0.0f) 
+        //             throw std::runtime_error("failed to normalize pjLayerValues");
+        //         float d = std::sqrt(ss / m_vectorSize);
+        //         for(std::size_t j = 0; j < m_vectorSize; ++j) {
+        //             m_pjLayerValues[i + j] = m_pjLayerValues[i + j] / d;
+        //         }
+        //     }
+        // }
         
     };
 }

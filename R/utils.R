@@ -43,13 +43,15 @@ analogy <- function(formula) {
 #'   before computing similarity scores.
 #' @export
 #' @seealso [probability()]
-similarity <- function(x, words, mode = c("words", "values")) {
+similarity <- function(x, words, mode = c("character", "numeric")) {
     
-    if (!identical(class(x), "textmodel_wordvector"))
-        stop("x must be a textmodel_wordvector object")
-
+    mode <- ifelse(mode == "words", "character", mode) # for < v0.6.0
+    mode <- ifelse(mode == "values", "numeric", mode) # for < v0.6.0
     mode <- match.arg(mode)
-    emb1 <- as.matrix(x)
+    emb1 <- as.matrix(x, layer = "word", normalize = TRUE)
+    
+    if (!"textmodel_wordvector" %in% class(x))
+        stop("x must be a textmodel_wordvector object")
     
     if (is.character(words)) {
         words <- structure(rep(1.0, length(words)), names = words)
@@ -77,7 +79,7 @@ similarity <- function(x, words, mode = c("words", "values")) {
     if (ncol(res) == 0) {
         res <- matrix(nrow = 0, ncol = 0)
     } else {
-        if (mode == "words") {
+        if (mode == "character") {
             res <- apply(res, 2, function(v) {
                 names(sort(v, decreasing = TRUE))
             })
@@ -91,22 +93,33 @@ similarity <- function(x, words, mode = c("words", "values")) {
 #' Compute the probability of words given other words.
 #' @param x a `textmodel_wordvector` object fitted with `normalize = FALSE`.
 #' @param words words for which probability is computed.
+#' @param layer the layer based on which probability is computed.
 #' @param mode specify the type of resulting object.
-#' @return a `matrix` of probability scores when `mode = "values"` or of words
-#'   sorted in descending order by the probability scores when `mode = "words"`.
+#' @return a matrix of words or documents sorted in descending order by the probability 
+#'   scores when `mode = "character"`; a matrix of the probability scores when `mode = "numeric"`.
 #'   When `words` is a named numeric vector, probability scores are weighted by
 #'   the  values.
 #' @export
 #' @seealso [similarity()]
-probability <- function(x, words, mode = c("words", "values")) {
+probability <- function(x, words, layer = c("words", "documents"),
+                        mode = c("character", "numeric")) {
     
+    layer <- match.arg(layer)
+    mode <- ifelse(mode == "words", "character", mode) # for < v0.6.0
+    mode <- ifelse(mode == "values", "numeric", mode) # for < v0.6.0
     mode <- match.arg(mode)
     
-    if (!identical(class(x), "textmodel_wordvector"))
+    if ("textmodel_word2vec" %in% class(x) && layer == "documents")
+        stop("textmodel_word2vec does not have the layer for documents")
+    
+    if (!"textmodel_wordvector" %in% class(x))
         stop("x must be a textmodel_wordvector object")
     
+    if (is.null(x$weights))
+        stop("x must be a trained textmodel_wordvector object")
+    
     if (x$normalize)
-        stop("textmodel_wordvector must be trained with normalize = FALSE")
+        stop("x must be trained with normalize = FALSE")
     
     if (is.character(words)) {
         words <- structure(rep(1.0, length(words)), names = words)
@@ -118,7 +131,8 @@ probability <- function(x, words, mode = c("words", "values")) {
     } else {
         stop("words must be a character or named numeric vector")
     }
-    b <- names(words) %in% rownames(x$values)
+
+    b <- names(words) %in% rownames(x$weights)
     if (sum(!b) == 1) {
         warning(paste0('"', names(words[!b]), '"',  collapse = ", "),  ' is not found')
     } else if (sum(!b) > 1) {
@@ -126,7 +140,8 @@ probability <- function(x, words, mode = c("words", "values")) {
     }
     words <- words[b]
     
-    e <- exp(x$values %*% t(x$weights[names(words),, drop = FALSE]))
+    values <- as.matrix(x, layer = layer, normalize = FALSE)
+    e <- exp(values %*% t(x$weights[names(words),, drop = FALSE]))
     prob <- e / (e + 1) # sigmoid function
     
     res <- prob %*% diag(words)
@@ -136,7 +151,7 @@ probability <- function(x, words, mode = c("words", "values")) {
     if (ncol(res) == 0) {
         res <- matrix(nrow = 0, ncol = 0)
     } else {
-        if (mode == "words") {
+        if (mode == "character") {
             res <- apply(res, 2, function(v) {
                 names(sort(v, decreasing = TRUE))
             })
@@ -160,3 +175,55 @@ get_threads <- function() {
     }
     return(value)
 }
+
+upgrade_pre06 <- function(x) {
+    
+    if (is.list(x$values))
+        return(x)
+    if (identical(class(x), "textmodel_wordvector")) {
+        x$values <- list(word = x$values)
+        class(x) <- c("textmodel_word2vec", "textmodel_wordvector")
+    } else if (identical(class(x), "textmodel_docvector")) {
+        x$values  <- list(doc = x$values)
+        class(x) <- c("textmodel_doc2vec", "textmodel_wordvector")
+    }
+    if (is.numeric(x$type)) {
+        x$type <- c("cbow", "sg")[x$type]
+    }
+    return(x)
+}
+
+is_word2vec <- function(x) {
+    identical(class(x), c("textmodel_word2vec", "textmodel_wordvector"))
+}
+
+is_doc2vec <- function(x) {
+    identical(class(x), c("textmodel_doc2vec", "textmodel_wordvector"))
+}
+
+check_word2vec <- function(x) {
+    if (is_word2vec(x)) {
+        return(x)
+    } else {
+        stop("'model' must be a trained textmodel_word2vec")
+    }
+}
+
+check_doc2vec <- function(x) {
+    if (is_doc2vec(x)) {
+        return(x)
+    } else {
+        stop("'model' must be a trained textmodel_doc2vec")
+    }
+}
+
+check_model <- function(x, allow = c("word2vec", "doc2vec", "lsa")) {
+    allow <- match.arg(allow, several.ok = TRUE)
+    m <- paste0("textmodel_", allow)
+    if (any(class(x)[1] == m & class(x)[2] == "textmodel_wordvector")) {
+        return(x)
+    } else {
+        stop("'model' must be a trained ", paste(m, collapse = " or "))
+    }
+}
+

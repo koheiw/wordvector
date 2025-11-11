@@ -4,18 +4,25 @@
 \alias{probability}
 \title{Compute probability of words}
 \usage{
-probability(x, words, mode = c("words", "values"))
+probability(
+  x,
+  words,
+  layer = c("words", "documents"),
+  mode = c("character", "numeric")
+)
 }
 \arguments{
 \item{x}{a \code{textmodel_wordvector} object fitted with \code{normalize = FALSE}.}
 
 \item{words}{words for which probability is computed.}
 
+\item{layer}{the layer based on which probability is computed.}
+
 \item{mode}{specify the type of resulting object.}
 }
 \value{
-a \code{matrix} of probability scores when \code{mode = "values"} or of words
-sorted in descending order by the probability scores when \code{mode = "words"}.
+a matrix of words or documents sorted in descending order by the probability
+scores when \code{mode = "character"}; a matrix of the probability scores when \code{mode = "numeric"}.
 When \code{words} is a named numeric vector, probability scores are weighted by
 the  values.
 }

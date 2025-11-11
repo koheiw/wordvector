@@ -1,9 +1,9 @@
 #' Word2vec model
 #' 
-#' Train a Word2vec model (Mikolov et al., 2023) in different architectures on a [quanteda::tokens] object.
+#' Train a word2vec model (Mikolov et al., 2013) using a [quanteda::tokens] object.
 #' @param x a [quanteda::tokens] or [quanteda::tokens_xptr] object.
 #' @param dim the size of the word vectors.
-#' @param type the architecture of the model; either "cbow" (continuous back of words) or "skip-gram".
+#' @param type the architecture of the model; either "cbow" (continuous back-of-words) or "sg" (skip-gram).
 #' @param min_count the minimum frequency of the words. Words less frequent than 
 #'   this in `x` are removed before training.
 #' @param window the size of the word window. Words within this window are considered 
@@ -20,8 +20,8 @@
 #' @param include_data if `TRUE`, the resulting object includes the data supplied as `x`.
 #' @param verbose if `TRUE`, print the progress of training.
 #' @param ... additional arguments.
-#' @returns Returns a textmodel_wordvector object with the following elements:
-#'   \item{values}{a matrix for word vector values.}
+#' @returns Returns a textmodel_word2vec object with the following elements:
+#'   \item{values}{a list of a matrix for word vector values.}
 #'   \item{weights}{a matrix for word vector weights.}
 #'   \item{dim}{the size of the word vectors.}
 #'   \item{type}{the architecture of the model.}
@@ -66,7 +66,7 @@
 #' head(similarity(w2v, c("berlin" = 1, "germany" = -1, "france" = 1), mode = "values"))
 #' head(similarity(w2v, analogy(~ berlin - germany + france), mode = "words"))
 #' }
-textmodel_word2vec <- function(x, dim = 50, type = c("cbow", "skip-gram"), 
+textmodel_word2vec <- function(x, dim = 50, type = c("cbow", "sg"), 
                                min_count = 5, window = ifelse(type == "cbow", 5, 10), 
                                iter = 10, alpha = 0.05, model = NULL, 
                                use_ns = TRUE, ns_size = 5, sample = 0.001, tolower = TRUE,
@@ -78,13 +78,28 @@ textmodel_word2vec <- function(x, dim = 50, type = c("cbow", "skip-gram"),
 #' @useDynLib wordvector
 #' @export
 #' @method textmodel_word2vec tokens
-textmodel_word2vec.tokens <- function(x, dim = 50, type = c("cbow", "skip-gram"), 
-                                      min_count = 5, window = ifelse(type == "cbow", 5, 10), 
-                                      iter = 10, alpha = 0.05, model = NULL, 
-                                      use_ns = TRUE, ns_size = 5, sample = 0.001, tolower = TRUE,
-                                      include_data = FALSE, verbose = FALSE, ..., 
-                                      normalize = FALSE, old = FALSE) {
+#' 
+textmodel_word2vec.tokens <- function(x, dim = 50, type = c("cbow", "sg"), 
+                               min_count = 5, window = ifelse(type == "cbow", 5, 10), 
+                               iter = 10, alpha = 0.05, model = NULL, 
+                               use_ns = TRUE, ns_size = 5, sample = 0.001, tolower = TRUE,
+                               include_data = FALSE, verbose = FALSE, ...) {
     
+    type <- ifelse(type == "skip-gram", "sg", type) # for backward compatibility
+    type <- match.arg(type)
+    wordvector(x, dim, type, FALSE, min_count, window, iter, alpha, model, 
+               use_ns, ns_size, sample, tolower, include_data, verbose, ...)
+    
+}
+
+wordvector <- function(x, dim = 50, type = c("cbow", "sg", "dm", "dbow", "dbow2"), 
+                       doc2vec = FALSE, 
+                       min_count = 5, window = ifelse(type == "cbow", 5, 10), 
+                       iter = 10, alpha = 0.05, model = NULL, 
+                       use_ns = TRUE, ns_size = 5, sample = 0.001, tolower = TRUE,
+                       include_data = FALSE, verbose = FALSE, ..., 
+                       normalize = FALSE) {
+
     type <- match.arg(type)
     dim <- check_integer(dim, min = 2)
     min_count <- check_integer(min_count, min = 0)
@@ -100,17 +115,22 @@ textmodel_word2vec.tokens <- function(x, dim = 50, type = c("cbow", "skip-gram")
     verbose <- check_logical(verbose)
     
     if (normalize)
-        .Deprecated(msg = "normalize is deprecated. Use as.matrix(x, normalize = TRUE) instead.")
-    
-    type <- match(type, c("cbow", "skip-gram"))
-    if (old)
-        type <- type * 10
+        .Defunct(msg = "'normalize' is defunct. Use 'as.matrix(x, normalize = TRUE)' instead.")
     
     if (!is.null(model)) {
-        if (!identical(class(model), "textmodel_wordvector"))
-            stop("model must be a trained textmodel_wordvector")
-        if (!identical(model$dim, dim))
-            stop("model must be trained with dim = ", dim)
+        model <- upgrade_pre06(model)
+        if (doc2vec) {
+            model <- check_model(model, c("word2vec", "doc2vec"))
+        } else {
+            model <- check_model(model, c("word2vec"))
+        }
+        if (model$dim != dim || model$type != type || model$use_ns != use_ns) {
+            dim <- model$dim
+            type <- model$type
+            use_ns <- model$use_ns
+            warning("'dim', 'type' and 'use_na' are overwritten by the pre-trained model", 
+                    call. = FALSE)
+        }
     }
     
     if (include_data)
@@ -121,20 +141,39 @@ textmodel_word2vec.tokens <- function(x, dim = 50, type = c("cbow", "skip-gram")
         x <- tokens_tolower(x)
     x <- tokens_trim(x, min_termfreq = min_count, termfreq_type = "count")
     
-    result <- cpp_w2v(x, size = dim, window = window,
-                      sample = sample, withHS = !use_ns, negative = ns_size, 
-                      threads = get_threads(), iterations = iter,
-                      alpha = alpha, type = type, normalize = normalize, model = model,
-                      verbose = verbose)
+    result <- cpp_word2vec(x, model, size = dim, window = window,
+                           sample = sample, withHS = !use_ns, negative = ns_size, 
+                           threads = get_threads(), iterations = iter,
+                           alpha = alpha, 
+                           type = match(type, c("cbow", "sg", "dm", "dbow", "dbow2")), 
+                           normalize = FALSE, 
+                           verbose = verbose)
+    
+    is_dov <- type %in% c("dm", "dbow", "dbow2")
+    if (is_dov) {
+        rownames(result$values$doc) <- docnames(x)
+    } else {
+        result$values$doc <- NULL
+    }
     if (!is.null(result$message))
         stop("Failed to train word2vec (", result$message, ")")
     
+    result$type <- type
     result$min_count <- min_count
     result$concatenator <- meta(x, field = "concatenator", type = "object")
-    if (include_data)
+    if (include_data) # NOTE: consider removing
         result$data <- y
-    result$call <- try(match.call(sys.function(-1), call = sys.call(-1)), silent = TRUE)
+    if (is_dov) {
+        result$docvars <- docvars(x)
+        rownames(result$docvars) <- docnames(x)
+    }
+    result$call <- try(match.call(sys.function(-2), call = sys.call(-2)), silent = TRUE)
     result$version <- utils::packageVersion("wordvector")
+    if (is_dov) {
+        class(result) <- c("textmodel_doc2vec", "textmodel_wordvector")
+    } else {
+        class(result) <- c("textmodel_word2vec", "textmodel_wordvector")
+    }
     return(result)
 }
 
@@ -146,15 +185,16 @@ word2vec <- function(...) {
 #' Print method for trained word vectors
 #' @param x for print method, the object to be printed
 #' @param ... not used.
-#' @method print textmodel_wordvector
+#' @method print textmodel_word2vec
 #' @keywords internal
 #' @return an invisible copy of `x`. 
 #' @export
-print.textmodel_wordvector <- function(x, ...) {
+print.textmodel_word2vec <- function(x, ...) {
+    x <- upgrade_pre06(x)
     cat("\nCall:\n")
     print(x$call)
     cat("\n", prettyNum(x$dim, big.mark = ","), " dimensions; ",
-        prettyNum(nrow(x$values), big.mark = ","), " words.",
+        prettyNum(nrow(x$values$word), big.mark = ","), " words.",
         "\n", sep = "")
     invisible(x)
 }
@@ -162,33 +202,62 @@ print.textmodel_wordvector <- function(x, ...) {
 #' Print method for trained document vectors
 #' @param x for print method, the object to be printed
 #' @param ... unused
-#' @method print textmodel_docvector
+#' @method print textmodel_doc2vec
 #' @keywords internal
 #' @return an invisible copy of `x`. 
 #' @export
-print.textmodel_docvector <- function(x, ...) {
+print.textmodel_doc2vec <- function(x, ...) {
+    x <- upgrade_pre06(x)
     cat("\nCall:\n")
     print(x$call)
     cat("\n", prettyNum(x$dim, big.mark = ","), " dimensions; ",
-        prettyNum(nrow(x$values), big.mark = ","), " documents.",
+        prettyNum(nrow(x$values$doc), big.mark = ","), " documents.",
         "\n", sep = "")
     invisible(x)
 }
 
-
-#' Extract word vectors
+#' Extract word or document vectors
 #'
-#' Extract word vectors from a `textmodel_wordvector` or `textmodel_docvector` object.
-#' @param x a `textmodel_wordvector` or `textmodel_docvector` object.
-#' @param normalize if `TRUE`, returns normalized word vectors.
+#' Extract word or document vectors from a `textmodel_word2vec` or `textmodel_doc2vec` object.
+#' @rdname as.matrix
+#' @param x a `textmodel_word2vec` or `textmodel_doc2vec` object.
+#' @param normalize if `TRUE`, returns normalized vectors.
+#' @param layer the layer from which the vectors are extracted.
 #' @param ... not used.
-#' @return a matrix that contain the word vectors in rows.
+#' @return a matrix that contain the word or document vectors in rows.
 #' @export
-as.matrix.textmodel_wordvector <- function(x, normalize = TRUE, ...){
+as.matrix.textmodel_word2vec <- function(x, normalize = TRUE, 
+                                         layer = "words", ...){
+    
+    x <- upgrade_pre06(x)
+    layer <- match.arg(layer)
     normalize <- check_logical(normalize)
+    
+    result <- x$values$word
     if (normalize) {
-        v <- sqrt(rowSums(x$values ^ 2) / ncol(x$values))
-        x$values <- x$values / v
+        v <- sqrt(rowSums(result ^ 2) / ncol(result))
+        result <- result / v
     }
-    return(x$values) 
+    return(result) 
 }
+
+# for old objects before v0.6.0
+
+#' @noRd
+#' @method print textmodel_docvector
+#' @export
+print.textmodel_docvector <- print.textmodel_doc2vec
+
+#' @noRd
+#' @method print textmodel_wordvector
+#' @export
+print.textmodel_wordvector <- print.textmodel_word2vec
+
+#' @noRd
+#' @export
+as.matrix.textmodel_docvector <- as.matrix.textmodel_doc2vec
+
+#' @noRd
+#' @export
+as.matrix.textmodel_wordvector <- as.matrix.textmodel_word2vec
+

@@ -42,6 +42,9 @@ namespace w2v {
             std::shared_ptr<corpus_t> corpus; ///< train data 
             std::shared_ptr<std::vector<float>> pjLayerValues; ///< projection layer values
             std::shared_ptr<std::vector<float>> bpWeights; ///< back propagation weights
+            //std::shared_ptr<std::vector<float>> wordValues; ///< projection layer values
+            //std::shared_ptr<std::vector<float>> wordWeights; ///< back propagation weights
+            std::shared_ptr<std::vector<float>> docValues; ///< document vector
             std::shared_ptr<std::vector<float>> expTable; ///< exp(x) / (exp(x) + 1) values lookup table
             std::shared_ptr<huffmanTree_t> huffmanTree; ///< Huffman tree used by hierarchical softmax
             std::shared_ptr<std::atomic<std::size_t>> processedWords; ///< total words processed by train threads
@@ -57,8 +60,12 @@ namespace w2v {
         std::uniform_int_distribution<short> m_rndWindow;
         std::unique_ptr<downSampling_t> m_downSampling;
         std::unique_ptr<nsDistribution_t> m_nsDistribution;
-        std::unique_ptr<std::vector<float>> m_hiddenLayerValues;
+        // word vector
+        std::unique_ptr<std::vector<float>> m_hiddenLayerValues; 
         std::unique_ptr<std::vector<float>> m_hiddenLayerErrors;
+        // document vector
+        std::unique_ptr<std::vector<float>> m_docLayerValues;
+        std::unique_ptr<std::vector<float>> m_docLayerErrors;
         std::unique_ptr<std::thread> m_thread;
 
     public:
@@ -83,14 +90,22 @@ namespace w2v {
     private:
         void worker(int &_iter, float &_alpha) noexcept;
 
-        inline void cbow(const std::vector<unsigned int> &_sentence) noexcept;
-        inline void skipGram(const std::vector<unsigned int> &_sentence) noexcept;
-        inline void hierarchicalSoftmax(std::size_t _index,
+        inline void cbow(const std::vector<unsigned int> &_text) noexcept;
+        inline void cbow2(const std::vector<unsigned int> &_text, 
+                          std::size_t _id, bool doc2vec) noexcept; // for document vector
+        inline void skipGram(const std::vector<unsigned int> &_text) noexcept;
+        inline void skipGram2(const std::vector<unsigned int> &_text, 
+                              std::size_t _id, bool doc2vec = false, bool freeze = false) noexcept;
+        inline void hierarchicalSoftmax(std::size_t _word,
                                         std::vector<float> &_hiddenLayer,
-                                        std::vector<float> &_trainLayer, std::size_t _trainLayerShift) noexcept;
-        inline void negativeSampling(std::size_t _index,
+                                        std::vector<float> &_trainLayer, 
+                                        std::size_t _trainLayerShift,
+                                        bool freezeWeights = false) noexcept;
+        inline void negativeSampling(std::size_t _word,
                                      std::vector<float> &_hiddenLayer,
-                                     std::vector<float> &_trainLayer, std::size_t _trainLayerShift) noexcept;
+                                     std::vector<float> &_trainLayer, 
+                                     std::size_t _trainLayerShift,
+                                     bool freezeWeights = false) noexcept;
     };
 
 }

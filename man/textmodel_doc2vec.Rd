@@ -2,44 +2,70 @@
 % Please edit documentation in R/doc2vec.R
 \name{textmodel_doc2vec}
 \alias{textmodel_doc2vec}
-\title{Create distributed representation of documents}
+\title{Doc2vec model}
 \usage{
 textmodel_doc2vec(
   x,
-  model,
-  normalize = FALSE,
-  weights = 1,
-  pattern = NULL,
-  group_data = FALSE,
+  dim = 50,
+  type = c("dm", "dbow", "dbow2"),
+  min_count = 5,
+  window = ifelse(type == "dm", 5, 10),
+  iter = 10,
+  alpha = 0.05,
+  model = NULL,
+  use_ns = TRUE,
+  ns_size = 5,
+  sample = 0.001,
+  tolower = TRUE,
+  include_data = FALSE,
+  verbose = FALSE,
   ...
 )
 }
 \arguments{
-\item{x}{a \link[quanteda:tokens]{quanteda::tokens} or \link[quanteda:dfm]{quanteda::dfm} object.}
+\item{x}{a \link[quanteda:tokens]{quanteda::tokens} or \link[quanteda:tokens_xptr]{quanteda::tokens_xptr} object.}
 
-\item{model}{a textmodel_wordvector object.}
+\item{dim}{the size of the word vectors.}
 
-\item{normalize}{if \code{TRUE}, normalized word vectors before creating document vectors.}
+\item{type}{the architecture of the model; either "dm" (distributed memory) or
+"dbow" (distributed bag-of-words).}
 
-\item{weights}{weight the word vectors by user-provided values; either a single value or
-multiple values sorted in the same order as the word vectors.}
+\item{min_count}{the minimum frequency of the words. Words less frequent than
+this in \code{x} are removed before training.}
 
-\item{pattern}{\link[quanteda:pattern]{quanteda::pattern} to select words to apply \code{weights}.}
+\item{window}{the size of the word window. Words within this window are considered
+to be the context of a target word.}
 
-\item{group_data}{if \code{TRUE}, apply \code{dfm_group(x)} before creating document vectors.}
+\item{iter}{the number of iterations in model training.}
 
-\item{...}{additional arguments passed to \link[quanteda:object2id]{quanteda::object2id}.}
+\item{alpha}{the initial learning rate.}
+
+\item{model}{a trained Word2vec model; if provided, its word vectors are updated for \code{x}.}
+
+\item{use_ns}{if \code{TRUE}, negative sampling is used. Otherwise, hierarchical softmax
+is used.}
+
+\item{ns_size}{the size of negative samples. Only used when \code{use_ns = TRUE}.}
+
+\item{sample}{the rate of sampling of words based on their frequency. Sampling is
+disabled when \code{sample = 1.0}}
+
+\item{tolower}{lower-case all the tokens before fitting the model.}
+
+\item{include_data}{if \code{TRUE}, the resulting object includes the data supplied as \code{x}.}
+
+\item{verbose}{if \code{TRUE}, print the progress of training.}
+
+\item{...}{additional arguments.}
 }
 \value{
-Returns a textmodel_docvector object with the following elements:
-\item{values}{a matrix for document vectors.}
-\item{dim}{the size of the document vectors.}
-\item{concatenator}{the concatenator in \code{x}.}
-\item{docvars}{document variables copied from \code{x}.}
-\item{normalize}{if the document vectors are normalized.}
-\item{call}{the command used to execute the function.}
-\item{version}{the version of the wordvector package.}
+Returns a textmodel_doc2vec object with matrices for word and document vector values in \code{values}.
+Other elements are the same as \link{textmodel_word2vec}.
 }
 \description{
-Create distributed representation of documents as weighted word vectors.
+Train a doc2vec model (Le & Mikolov, 2014) using a \link[quanteda:tokens]{quanteda::tokens} object.
+}
+\references{
+Le, Q. V., & Mikolov, T. (2014). Distributed Representations of Sentences and
+Documents (No. arXiv:1405.4053). arXiv. https://doi.org/10.48550/arXiv.1405.4053
 }

@@ -8,11 +8,45 @@ toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>%
     tokens_remove(stopwords(), padding = FALSE) %>% 
     tokens_tolower()
 
+dfmt <- dfm(toks, remove_padding = TRUE)
+
 set.seed(1234)
 wov <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1,
-                          normalize = TRUE)
-wov_nn <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1,
-                             normalize = FALSE)
+                          normalize = FALSE)
+dov <- as.textmodel_doc2vec(dfmt, model = wov)
+
+
+test_that("as.matrix works", {
+    
+    # word2vec
+    expect_setequal(rownames(as.matrix(wov)), 
+                    types(tokens_trim(tokens_tolower(toks), min_termfreq = 2)))
+    expect_error(
+        as.matrix(wov, layer = "documents"),
+        "'arg' should be \"words\""
+    )
+    
+    expect_false(
+        identical(as.matrix(wov, normalize = TRUE), wov$values$word)
+    )
+    expect_true(
+        identical(as.matrix(wov, normalize = FALSE), wov$values$word)
+    )
+    
+    # doc2vec
+    expect_setequal(rownames(as.matrix(dov)), 
+                    docnames(dfmt))
+    expect_setequal(rownames(as.matrix(dov, layer = "words")), 
+                    featnames(dfm_trim(dfmt, min_termfreq = 2)))
+    
+    expect_false(
+        identical(as.matrix(dov, normalize = TRUE), dov$values$doc)
+    )
+    expect_true(
+        identical(as.matrix(dov, normalize = FALSE), dov$values$doc)
+    )
+    
+})
 
 test_that("analogy works", {
     
@@ -39,6 +73,7 @@ test_that("analogy works", {
 
 test_that("similarity works", {
     
+    # word2vec
     sim1 <- similarity(wov, "us", mode = "values")
     expect_true(is.matrix(sim1))
     expect_identical(
@@ -113,32 +148,55 @@ test_that("similarity works", {
         similarity(wov, c(1, -1), mode = "words"),
         "words must be named"
     )
+    
+    # doc2vec
+    sim10 <- similarity(dov, c("us" = 1, "people" = -1), mode = "values")
+    expect_equal(ncol(sim10), 1)
+    expect_true(is.matrix(sim10))
+    expect_identical(
+        dimnames(sim10),
+        list(names(wov$frequency), NULL)
+    )
+    
+    sim11 <- similarity(wov, c("us" = 1, "people" = -1), mode = "words")
+    expect_equal(ncol(sim11), 1)
+    expect_true(is.matrix(sim11))
+    expect_identical(
+        dimnames(sim11),
+        NULL
+    )
+    
+    expect_error(
+        similarity(list(), c("us" = 1, "people" = -1)),
+        "x must be a textmodel_wordvector object"
+    )
 })
 
 test_that("probability works", {
     
     skip_on_cran()
-    skip_on_os("mac")
-    
-    prob1 <- probability(wov_nn, "us", mode = "values")
+    skip_on_os("mac") # for github action
+
+    # word2vec
+    prob1 <- probability(wov, "us", mode = "values")
     expect_true(all(prob1 <= 1.0))
     expect_true(all(prob1 >= 0.0))
     expect_true(is.matrix(prob1))
     expect_identical(
         dimnames(prob1),
-        list(names(wov_nn$frequency), "us")
+        list(names(wov$frequency), "us")
     )
     
-    prob2 <- probability(wov_nn, c("us", "people"), mode = "values")
+    prob2 <- probability(wov, c("us", "people"), mode = "values")
     expect_true(all(prob2 <= 1.0))
     expect_true(all(prob2 >= 0.0))
     expect_true(is.matrix(prob2))
     expect_identical(
         dimnames(prob2),
-        list(names(wov_nn$frequency), c("us", "people"))
+        list(names(wov$frequency), c("us", "people"))
     )
     
-    prob3 <- probability(wov_nn, "us", mode = "words")
+    prob3 <- probability(wov, "us", mode = "words")
     expect_true(is.matrix(prob3))
     expect_identical(
         prob3[1,],
@@ -146,10 +204,10 @@ test_that("probability works", {
     )
     expect_identical(
         dim(prob3),
-        c(length(wov_nn$frequency), 1L)
+        c(length(wov$frequency), 1L)
     )
     
-    prob4 <- probability(wov_nn, c("us", "people"), mode = "words")
+    prob4 <- probability(wov, c("us", "people"), mode = "words")
     expect_true(is.matrix(prob4))
     expect_identical(
         prob4[1,],
@@ -157,36 +215,36 @@ test_that("probability works", {
     )
     expect_identical(
         dim(prob4),
-        c(length(wov_nn$frequency), 2L)
+        c(length(wov$frequency), 2L)
     )
     expect_warning(
-        probability(wov_nn, c("xx", "yyy", "us"), mode = "values"),
+        probability(wov, c("xx", "yyy", "us"), mode = "values"),
         '"xx", "yyy" are not found'
     )
     expect_true(
         suppressWarnings(
-            is.matrix(probability(wov_nn, c("xx", "yyy"), mode = "values"))
+            is.matrix(probability(wov, c("xx", "yyy"), mode = "values"))
         )
     )
     expect_warning(
-        probability(wov_nn, c("xx", "yyy", "us"), mode = "words"),
+        probability(wov, c("xx", "yyy", "us"), mode = "words"),
         '"xx", "yyy" are not found'
     )
     expect_true(
         suppressWarnings(
-            is.matrix(probability(wov_nn, c("xx", "yyy"), mode = "words"))
+            is.matrix(probability(wov, c("xx", "yyy"), mode = "words"))
         )
     )
     
-    prob5 <- probability(wov_nn, c("us" = 1, "people" = -1), mode = "values")
+    prob5 <- probability(wov, c("us" = 1, "people" = -1), mode = "values")
     expect_equal(ncol(prob5), 1)
     expect_true(is.matrix(prob5))
     expect_identical(
         dimnames(prob5),
-        list(names(wov_nn$frequency), NULL)
+        list(names(wov$frequency), NULL)
     )
     
-    prob6 <- probability(wov_nn, c("us" = 1, "people" = -1), mode = "words")
+    prob6 <- probability(wov, c("us" = 1, "people" = -1), mode = "words")
     expect_equal(ncol(prob6), 1)
     expect_true(is.matrix(prob6))
     expect_identical(
@@ -195,13 +253,25 @@ test_that("probability works", {
     )
     
     expect_error(
-        probability(wov_nn, c(1, -1), mode = "words"),
+        probability(wov, c(1, -1), mode = "words"),
         "words must be named"
     )
     
+    wov$normalize <- TRUE
     expect_error(
         probability(wov, c(1, -1), mode = "words"),
-        "textmodel_wordvector must be trained with normalize = FALSE"
+        "x must be trained with normalize = FALSE"
+    )
+    
+    # doc2vec
+    expect_error(
+        probability(dov, c("us" = 1, "people" = -1), mode = "values"),
+        "x must be a trained textmodel_wordvector object"
+    )
+    
+    expect_error(
+        probability(list(), c("us" = 1, "people" = -1)),
+        "x must be a textmodel_wordvector object"
     )
 })
 
@@ -236,13 +306,71 @@ test_that("get_threads are working", {
     options("wordvector_threads" = NULL)
 })
 
-test_that("as.matrix() is working", {
-    
-    expect_true(
-        all(as.matrix(wov_nn, normalize = TRUE) != wov_nn$values)
+test_that("print and as.matrix works with old objects", {
+
+    wov_nn <- readRDS("../data/word2vec_v0.5.1.RDS") 
+    expect_identical(dim(as.matrix(wov_nn)), c(5360L, 10L))
+    expect_error(as.matrix(wov_nn, layer = "documents"),
+                 "'arg' should be \"words\"")
+    expect_output(
+        print(wov_nn),
+        paste(
+            "",
+            "Call:",
+            "textmodel_word2vec(x = toks, dim = 10, min_count = 2, iter = 10, ",
+            "    sample = 1, normalize = FALSE)",
+            "",
+            "10 dimensions; 5,360 words.", sep = "\n"), fixed = TRUE
     )
-    expect_true(
-        all(as.matrix(wov_nn, normalize = FALSE) == wov_nn$values)
+    
+    wov_nm <- readRDS("../data/word2vec-norm_v0.5.1.RDS")
+    expect_identical(dim(as.matrix(wov_nm)), c(5360L, 10L))
+    expect_error(as.matrix(wov_nm, layer = "documents"),
+                 "'arg' should be \"words\"")
+    expect_output(
+        print(wov_nm),
+        paste(
+            "",
+            "Call:",
+            "textmodel_word2vec(x = toks, dim = 10, min_count = 2, iter = 10, ",
+            "    sample = 1, normalize = TRUE)",
+            "",
+            "10 dimensions; 5,360 words.", sep = "\n"), fixed = TRUE
     )
     
+    dov <- readRDS("../data/doc2vec_v0.5.1.RDS")
+    expect_identical(dim(as.matrix(dov)), c(5234L, 10L))
+    expect_error(as.matrix(dov, layer = "words"),
+                 "models trained before v0.6.0 do not the layer for words")
+    expect_output(
+        print(dov),
+        paste(
+            "",
+            "Call:",
+            "textmodel_doc2vec(x = dfmt, model = wov)",
+            "",
+            "10 dimensions; 5,234 documents", sep = "\n"), fixed = TRUE
+    )
+})
+
+test_that("ckass check functions work as expected", {
+    
+    # word2vec
+    expect_silent(
+        wordvector:::check_word2vec(wov)
+    )
+    expect_error(
+        wordvector:::check_word2vec(dov),
+        "'model' must be a trained textmodel_word2vec"
+    )
+    
+    # doc2vec
+    expect_silent(
+        wordvector:::check_doc2vec(dov)
+    )
+    expect_error(
+        wordvector:::check_doc2vec(wov),
+        "'model' must be a trained textmodel_doc2vec"
+    )
+
 })

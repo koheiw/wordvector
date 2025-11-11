@@ -15,16 +15,28 @@ toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>%
                   padding = TRUE) %>% 
     tokens_tolower()
 
+wdv <- textmodel_word2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose = TRUE, iter = 10, alpha = 0.1)
+similarity(wdv, analogy(~ washington - america + france)) %>% 
+    head()
+
+wdv2 <- textmodel_word2vec(toks, dim = 50, type = "skip-gram2", min_count = 5, verbose = TRUE, iter = 10, alpha = 0.1)
+similarity(wdv2, analogy(~ washington - america + france)) %>% 
+    head()
+
+sim <- proxyC::simil(
+    wdv2$doc_values,
+    wdv2$doc_values["4263794",, drop = FALSE]
+)
+tail(sort(s <- rowSums(sim)))
+print(tail(toks[order(s)]), max_ntoken = -1)
+
+
 for (i in 1:10) {
     cat(i, "\n")
-    wdv <- word2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose = TRUE)
+    wdv <- textmotel_word2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose = TRUE)
 }
 
-analogy(wdv, ~ france + terror, exclude = FALSE, n = 10)
-analogy(wdv, ~ britain, exclude = FALSE, n = 20)
-analogy(wdv, ~ america, exclude = FALSE, n = 20)
-analogy(wdv, ~ america - obama, exclude = FALSE, n = 10)
-analogy(wdv, ~ america - trump, exclude = FALSE, n = 10)
-analogy(wdv, ~ eu - immigrants, exclude = FALSE, n = 10)
-analogy(wdv, ~ eu - refugees, exclude = FALSE, n = 10)
-analogy(wdv, ~ eu - terrorism, exclude = FALSE, n = 10)
+similarity(wdv, analogy(~ washington - america + france)) %>% 
+    head()
+similarity(wdv, analogy(~ berlin - germany + france)) %>% 
+    head()
