@@ -175,6 +175,7 @@ test_that("similarity works", {
 test_that("probability works", {
     
     skip_on_cran()
+    skip_on_os("mac") # for github action
 
     # word2vec
     prob1 <- probability(wov, "us", mode = "values")
