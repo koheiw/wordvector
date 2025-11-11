@@ -48,7 +48,7 @@ as.matrix.textmodel_doc2vec <- function(x, normalize = TRUE,
         result <- x$values$doc
     }
     if (is.null(result))
-        stop("models trained before v0.6.0 do not the layer for ", layer, call. = FALSE)
+        stop("models trained before v0.6.0 do not the layer for ", layer)
     if (normalize) {
         v <- sqrt(rowSums(result ^ 2) / ncol(result))
         result <- result / v

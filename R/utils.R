@@ -112,6 +112,9 @@ probability <- function(x, words, layer = c("words", "documents"),
     if (!"textmodel_wordvector" %in% class(x))
         stop("x must be a textmodel_wordvector object")
     
+    if (is.null(x$weights))
+        stop("x must be a trained textmodel_wordvector object")
+    
     if (x$normalize)
         stop("x must be trained with normalize = FALSE")
     

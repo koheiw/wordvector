@@ -8,47 +8,48 @@ corp <- head(data_corpus_inaugural, 59) %>%
 toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>% 
     tokens_remove(stopwords(), padding = FALSE) 
 
-set.seed(1234)
-wov <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1)
-
 test_that("textmodel_word2vec works", {
     
-    # wordvector
+    skip_on_cran()
+    
+    # DBOW
+    wov1 <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1)
+    
     expect_equal(
-        class(wov), 
+        class(wov1), 
         c("textmodel_word2vec", "textmodel_wordvector")
     )
     expect_true(
-        wov$use_ns
+        wov1$use_ns
     )
     expect_identical(
-        wov$ns_size, 5L
+        wov1$ns_size, 5L
     )
     expect_identical(
-        wov$window, 5L
+        wov1$window, 5L
     )
     expect_identical(
-        dim(wov$values$word), c(5360L, 50L)
+        dim(wov1$values$word), c(5360L, 50L)
     )
     expect_identical(
-        dim(wov$weights), c(5360L, 50L)
+        dim(wov1$weights), c(5360L, 50L)
     )
     expect_identical(
-        wov$sample, 1.0
+        wov1$sample, 1.0
     )
     expect_equal(
-        wov$min_count, 2L
+        wov1$min_count, 2L
     )
     expect_false(
-        wov$normalize
+        wov1$normalize
     )
     expect_identical(
         featfreq(dfm_trim(dfm(toks), 2)),
-        wov$frequency
+        wov1$frequency
     )
     
     expect_output(
-        print(wov),
+        print(wov1),
         paste(
             "",
             "Call:",
@@ -58,8 +59,80 @@ test_that("textmodel_word2vec works", {
             "50 dimensions; 5,360 words.", sep = "\n"), fixed = TRUE
     )
     expect_equal(
-        class(expect_output(print(wov))), 
-        class(wov)
+        class(expect_output(print(wov1))), 
+        class(wov1)
+    )
+    
+    expect_equal(
+        rownames(probability(wov1, c("good", "bad"), layer = "words", mode = "numeric")),
+        rownames(wov1$values$word)
+    )
+    
+    expect_error(
+        probability(wov1, c("good", "bad"), layer = "documents", mode = "numeric"),
+        "'arg' should be \"words\""
+    )
+    
+    # SG
+    wov2 <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1,
+                               type = "sg")
+    
+    expect_equal(
+        class(wov2), 
+        c("textmodel_word2vec", "textmodel_wordvector")
+    )
+    expect_true(
+        wov2$use_ns
+    )
+    expect_identical(
+        wov2$ns_size, 5L
+    )
+    expect_identical(
+        wov2$window, 10L
+    )
+    expect_identical(
+        dim(wov2$values$word), c(5360L, 50L)
+    )
+    expect_identical(
+        dim(wov2$weights), c(5360L, 50L)
+    )
+    expect_identical(
+        wov2$sample, 1.0
+    )
+    expect_equal(
+        wov2$min_count, 2L
+    )
+    expect_false(
+        wov2$normalize
+    )
+    expect_identical(
+        featfreq(dfm_trim(dfm(toks), 2)),
+        wov2$frequency
+    )
+    
+    expect_output(
+        print(wov2),
+        paste(
+            "",
+            "Call:",
+            "textmodel_word2vec(x = toks, dim = 50, type = \"sg\", min_count = 2, ",
+            "    iter = 10, sample = 1)",
+            "",
+            "50 dimensions; 5,360 words.", sep = "\n"), fixed = TRUE
+    )
+    expect_equal(
+        class(expect_output(print(wov2))), 
+        class(wov2)
+    )
+    
+    expect_equal(
+        rownames(probability(wov2, c("good", "bad"), layer = "words", mode = "numeric")),
+        rownames(wov2$values$word)
+    )
+    
+    expect_error(
+        probability(wov2, c("good", "bad"), layer = "documents", mode = "numeric"),
+        "'arg' should be \"words\""
     )
     
 })

@@ -40,6 +40,16 @@ test_that("textmodel_doc2vec works", {
         class(dov1)
     )
     
+    expect_equal(
+        rownames(probability(dov1, c("good", "bad"), layer = "words", mode = "numeric")),
+        rownames(dov1$values$word)
+    )
+    
+    expect_equal(
+        rownames(probability(dov1, c("good", "bad"), layer = "documents", mode = "numeric")),
+        rownames(dov1$values$doc)
+    )
+    
     # DBOW
     dov2 <- textmodel_doc2vec(toks, dim = 50, type = "dbow", iter = 5, min_count = 2)
     expect_equal(dov2$type, "dbow")
@@ -68,6 +78,16 @@ test_that("textmodel_doc2vec works", {
     expect_equal(
         class(expect_output(print(dov2))), 
         class(dov2)
+    )
+    
+    expect_equal(
+        rownames(probability(dov2, c("good", "bad"), layer = "words", mode = "numeric")),
+        rownames(dov2$values$word)
+    )
+    
+    expect_equal(
+        rownames(probability(dov2, c("good", "bad"), layer = "documents", mode = "numeric")),
+        rownames(dov2$values$doc)
     )
 })
 
