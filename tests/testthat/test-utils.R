@@ -26,11 +26,11 @@ test_that("as.matrix works", {
         "'arg' should be \"words\""
     )
     
-    expect_true(
-        all(as.matrix(wov, normalize = TRUE) != wov$values$word)
+    expect_false(
+        identical(as.matrix(wov, normalize = TRUE), wov$values$word)
     )
     expect_true(
-        all(as.matrix(wov, normalize = FALSE) == wov$values$word)
+        identical(as.matrix(wov, normalize = FALSE), wov$values$word)
     )
     
     # doc2vec
@@ -39,11 +39,11 @@ test_that("as.matrix works", {
     expect_setequal(rownames(as.matrix(dov, layer = "words")), 
                     featnames(dfm_trim(dfmt, min_termfreq = 2)))
     
-    expect_true(
-        all(as.matrix(dov, normalize = TRUE) != dov$values$doc)
+    expect_false(
+        identical(as.matrix(dov, normalize = TRUE), dov$values$doc)
     )
     expect_true(
-        all(as.matrix(dov, normalize = FALSE) == dov$values$dov)
+        identical(as.matrix(dov, normalize = FALSE), dov$values$doc)
     )
     
 })

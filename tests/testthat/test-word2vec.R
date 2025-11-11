@@ -70,7 +70,7 @@ test_that("textmodel_word2vec works", {
     
     expect_error(
         probability(wov1, c("good", "bad"), layer = "documents", mode = "numeric"),
-        "'arg' should be \"words\""
+        "textmodel_word2vec does not have the layer for documents"
     )
     
     # SG
@@ -132,7 +132,7 @@ test_that("textmodel_word2vec works", {
     
     expect_error(
         probability(wov2, c("good", "bad"), layer = "documents", mode = "numeric"),
-        "'arg' should be \"words\""
+        "textmodel_word2vec does not have the layer for documents"
     )
     
 })

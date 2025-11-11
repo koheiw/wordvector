@@ -109,6 +109,9 @@ probability <- function(x, words, layer = c("words", "documents"),
     mode <- ifelse(mode == "values", "numeric", mode) # for < v0.6.0
     mode <- match.arg(mode)
     
+    if ("textmodel_word2vec" %in% class(x) && layer == "documents")
+        stop("textmodel_word2vec does not have the layer for documents")
+    
     if (!"textmodel_wordvector" %in% class(x))
         stop("x must be a textmodel_wordvector object")
     
