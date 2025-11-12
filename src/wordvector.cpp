@@ -109,10 +109,16 @@ Rcpp::List cpp_word2vec(TokensPtr xptr,
                         bool normalize = true) {
   
     if (verbose) {
-        if (type == 1 || type == 10) {
-            Rprintf("Training CBOW model with %d dimensions\n", size);
-        } else if (type == 2 || type == 20) {
+        if (type == 1) {
+            Rprintf("Training continuous BOW model with %d dimensions\n", size);
+        } else if (type == 2) {
             Rprintf("Training skip-gram model with %d dimensions\n", size);
+        } else if (type == 3) {
+            Rprintf("Training distributed memory model with %d dimensions\n", size);
+        } else if (type == 4) {
+            Rprintf("Training distributed BOW model with %d dimensions\n", size);
+        } else {
+            Rprintf("Training type %d model with %d dimensions\n", type, size);
         }
         Rprintf(" ...using %d threads for distributed computing\n", threads);
         Rprintf(" ...initializing\n");

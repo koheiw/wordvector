@@ -12,9 +12,11 @@ test_that("textmodel_word2vec works", {
     
     skip_on_cran()
     
-    # DBOW
-    wov1 <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1)
-    
+    # CBOW
+    expect_output(
+        wov1 <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1, verbose = TRUE),
+        "Training continuous BOW model with 50 dimensions"
+    )
     expect_equal(
         class(wov1), 
         c("textmodel_word2vec", "textmodel_wordvector")
@@ -54,7 +56,7 @@ test_that("textmodel_word2vec works", {
             "",
             "Call:",
             "textmodel_word2vec(x = toks, dim = 50, min_count = 2, iter = 10, ",
-            "    sample = 1)",
+            "    sample = 1, verbose = TRUE)",
             "",
             "50 dimensions; 5,360 words.", sep = "\n"), fixed = TRUE
     )
@@ -74,9 +76,11 @@ test_that("textmodel_word2vec works", {
     )
     
     # SG
-    wov2 <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1,
-                               type = "sg")
-    
+    expect_output(
+        wov2 <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1,
+                                   type = "sg", verbose = TRUE),
+        "Training skip-gram model with 50 dimensions"
+    )
     expect_equal(
         class(wov2), 
         c("textmodel_word2vec", "textmodel_wordvector")
@@ -116,7 +120,7 @@ test_that("textmodel_word2vec works", {
             "",
             "Call:",
             "textmodel_word2vec(x = toks, dim = 50, type = \"sg\", min_count = 2, ",
-            "    iter = 10, sample = 1)",
+            "    iter = 10, sample = 1, verbose = TRUE)",
             "",
             "50 dimensions; 5,360 words.", sep = "\n"), fixed = TRUE
     )

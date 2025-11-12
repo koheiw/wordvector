@@ -12,7 +12,10 @@ toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE,
 test_that("textmodel_doc2vec works", {
     
     # DM
-    dov1 <- textmodel_doc2vec(toks, dim = 50, iter = 5, min_count = 2)
+    expect_output(
+        dov1 <- textmodel_doc2vec(toks, dim = 50, iter = 5, min_count = 2, verbose = TRUE),
+        "Training distributed memory model with 50 dimensions"
+    )
     expect_equal(dov1$type, "dm")
     expect_false(dov1$normalize)
     expect_equal(
@@ -31,7 +34,8 @@ test_that("textmodel_doc2vec works", {
         paste(
             "",
             "Call:",
-            "textmodel_doc2vec(x = toks, dim = 50, min_count = 2, iter = 5)",
+            "textmodel_doc2vec(x = toks, dim = 50, min_count = 2, iter = 5, ",
+            "    verbose = TRUE)",
             "",
             "50 dimensions; 59 documents.", sep = "\n"), fixed = TRUE
     )
@@ -51,7 +55,10 @@ test_that("textmodel_doc2vec works", {
     )
     
     # DBOW
-    dov2 <- textmodel_doc2vec(toks, dim = 50, type = "dbow", iter = 5, min_count = 2)
+    expect_output(
+        dov2 <- textmodel_doc2vec(toks, dim = 50, type = "dbow", iter = 5, min_count = 2, verbose = TRUE),
+        "Training distributed BOW model with 50 dimensions"
+    )
     expect_equal(dov2$type, "dbow")
     expect_false(dov2$normalize)
     expect_equal(
@@ -71,7 +78,7 @@ test_that("textmodel_doc2vec works", {
             "",
             "Call:",
             "textmodel_doc2vec(x = toks, dim = 50, type = \"dbow\", min_count = 2, ", 
-            "    iter = 5)",
+            "    iter = 5, verbose = TRUE)",
             "",
             "50 dimensions; 59 documents.", sep = "\n"), fixed = TRUE
     )
