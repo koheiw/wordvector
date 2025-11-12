@@ -3,8 +3,9 @@
 
 The **wordvector** package is developed to create word and document
 vectors using **quanteda**. This package currently supports word2vec
-([Mikolov et al., 2013](http://arxiv.org/abs/1310.4546)) and latent
-semantic analysis ([Deerwester et al.,
+([Mikolov et al., 2013](http://arxiv.org/abs/1310.4546)), doc2vec ([Le,
+Q. V., & Mikolov, T., 2014](https://doi.org/10.48550/arXiv.1405.4053))
+and latent semantic analysis ([Deerwester et al.,
 1990](https://doi.org/10.1002/(SICI)1097-4571(199009)41:6%3C391::AID-ASI1%3E3.0.CO;2-9)).
 
 ## How to install
@@ -41,7 +42,7 @@ download.file('https://www.dropbox.com/s/e19kslwhuu9yc2z/yahoo-news.RDS?dl=1',
 ``` r
 library(wordvector)
 library(quanteda)
-## Package version: 4.2.1
+## Package version: 4.3.1
 ## Unicode version: 15.1
 ## ICU version: 74.1
 ## Parallel computing: 16 of 16 threads used.
@@ -64,16 +65,16 @@ wdv <- textmodel_word2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose 
 ##  ...using 16 threads for distributed computing
 ##  ...initializing
 ##  ...negative sampling in 10 iterations
-##  ......iteration 1 elapsed time: 4.99 seconds (alpha: 0.0465)
-##  ......iteration 2 elapsed time: 10.00 seconds (alpha: 0.0431)
-##  ......iteration 3 elapsed time: 14.97 seconds (alpha: 0.0396)
-##  ......iteration 4 elapsed time: 19.94 seconds (alpha: 0.0362)
-##  ......iteration 5 elapsed time: 25.11 seconds (alpha: 0.0326)
-##  ......iteration 6 elapsed time: 30.14 seconds (alpha: 0.0291)
-##  ......iteration 7 elapsed time: 35.12 seconds (alpha: 0.0257)
-##  ......iteration 8 elapsed time: 40.22 seconds (alpha: 0.0222)
-##  ......iteration 9 elapsed time: 45.15 seconds (alpha: 0.0188)
-##  ......iteration 10 elapsed time: 50.32 seconds (alpha: 0.0152)
+##  ......iteration 1 elapsed time: 6.44 seconds (alpha: 0.0455)
+##  ......iteration 2 elapsed time: 13.22 seconds (alpha: 0.0408)
+##  ......iteration 3 elapsed time: 19.80 seconds (alpha: 0.0363)
+##  ......iteration 4 elapsed time: 26.97 seconds (alpha: 0.0317)
+##  ......iteration 5 elapsed time: 34.22 seconds (alpha: 0.0270)
+##  ......iteration 6 elapsed time: 41.09 seconds (alpha: 0.0224)
+##  ......iteration 7 elapsed time: 47.71 seconds (alpha: 0.0178)
+##  ......iteration 8 elapsed time: 54.47 seconds (alpha: 0.0131)
+##  ......iteration 9 elapsed time: 61.07 seconds (alpha: 0.0085)
+##  ......iteration 10 elapsed time: 67.54 seconds (alpha: 0.0041)
 ##  ...complete
 ```
 
@@ -82,21 +83,22 @@ wdv <- textmodel_word2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose 
 `similarity()` computes cosine similarity between word vectors.
 
 ``` r
-head(similarity(wdv, c("amazon", "forests", "obama", "america", "afghanistan"), mode = "word"))
-##      amazon        forests       obama            america          
-## [1,] "amazon"      "forests"     "obama"          "america"        
-## [2,] "rainforest"  "herds"       "barack"         "africa"         
-## [3,] "plantations" "rainforests" "biden"          "dakota"         
-## [4,] "farms"       "rainforest"  "kerry"          "american"       
-## [5,] "patagonia"   "plantations" "administration" "carolina"       
-## [6,] "warm-water"  "farmland"    "hagel"          "america-focused"
+head(similarity(wdv, c("amazon", "forests", "obama", "america", "afghanistan"), 
+                mode = "character"))
+##      amazon       forests       obama                   america          
+## [1,] "amazon"     "forests"     "obama"                 "america"        
+## [2,] "rainforest" "herds"       "biden"                 "america-focused"
+## [3,] "peat"       "rainforests" "relationship-building" "carolina"       
+## [4,] "re-grown"   "farmland"    "kerry"                 "american"       
+## [5,] "peatlands"  "rainforest"  "hagel"                 "dakota"         
+## [6,] "sunflower"  "forest"      "clinton"               "africa"         
 ##      afghanistan  
 ## [1,] "afghanistan"
 ## [2,] "afghan"     
-## [3,] "kabul"      
-## [4,] "pakistan"   
-## [5,] "taliban"    
-## [6,] "afghans"
+## [3,] "taliban"    
+## [4,] "kabul"      
+## [5,] "afghans"    
+## [6,] "pakistan"
 ```
 
 ### Arithmetic operations of word vectors
@@ -106,25 +108,25 @@ head(similarity(wdv, c("amazon", "forests", "obama", "america", "afghanistan"), 
 ``` r
 # What is Amazon without forests?
 head(similarity(wdv, analogy(~ amazon - forests))) 
-##      [,1]         
-## [1,] "choo"       
-## [2,] "smash-hit"  
-## [3,] "yahoo"      
-## [4,] "tripadvisor"
-## [5,] "univision"  
-## [6,] "dreamworks"
+##      [,1]            
+## [1,] "yahoo"         
+## [2,] "smash-hit"     
+## [3,] "gawker"        
+## [4,] "aggregators"   
+## [5,] "troll"         
+## [6,] "globe-spanning"
 ```
 
 ``` r
 # What is for Afghanistan as Obama for America? 
 head(similarity(wdv, analogy(~ obama - america + afghanistan))) 
 ##      [,1]         
-## [1,] "taliban"    
-## [2,] "afghanistan"
-## [3,] "karzai"     
-## [4,] "hagel"      
-## [5,] "hamid"      
-## [6,] "obama"
+## [1,] "afghanistan"
+## [2,] "karzai"     
+## [3,] "afghan"     
+## [4,] "taliban"    
+## [5,] "obama"      
+## [6,] "nato"
 ```
 
 These examples replicates analogical tasks in the original word2vec
@@ -133,23 +135,23 @@ paper.
 ``` r
 # What is for France as Berlin for Germany?
 head(similarity(wdv, analogy(~ berlin - germany + france))) 
-##      [,1]       
-## [1,] "paris"    
-## [2,] "berlin"   
-## [3,] "bourget"  
-## [4,] "brussels" 
-## [5,] "amsterdam"
+##      [,1]        
+## [1,] "paris"     
+## [2,] "strasbourg"
+## [3,] "brussels"  
+## [4,] "berlin"    
+## [5,] "amsterdam" 
 ## [6,] "france"
 ```
 
 ``` r
 # What is for slowly as quick for quickly?
 head(similarity(wdv, analogy(~ quick - quickly + slowly)))
-##      [,1]             
-## [1,] "uneven"         
-## [2,] "gravity-defying"
-## [3,] "slow"           
-## [4,] "super-charged"  
-## [5,] "buck"           
-## [6,] "sideways"
+##      [,1]       
+## [1,] "uneven"   
+## [2,] "stumble"  
+## [3,] "backwards"
+## [4,] "fades"    
+## [5,] "slow"     
+## [6,] "upside"
 ```
