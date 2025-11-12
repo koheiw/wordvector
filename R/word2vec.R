@@ -59,12 +59,12 @@
 #'    tokens_tolower()
 #'
 #' # train word2vec
-#' w2v <- textmodel_word2vec(toks, dim = 50, type = "cbow", min_count = 5, sample = 0.001)
+#' wov <- textmodel_word2vec(toks, dim = 50, type = "cbow", min_count = 5, sample = 0.001)
 #'
 #' # find similar words
-#' head(similarity(w2v, c("berlin", "germany", "france"), mode = "words"))
-#' head(similarity(w2v, c("berlin" = 1, "germany" = -1, "france" = 1), mode = "values"))
-#' head(similarity(w2v, analogy(~ berlin - germany + france), mode = "words"))
+#' head(similarity(wov, c("berlin", "germany", "france"), mode = "words"))
+#' head(similarity(wov, c("berlin" = 1, "germany" = -1, "france" = 1), mode = "values"))
+#' head(similarity(wov, analogy(~ berlin - germany + france), mode = "words"))
 #' }
 textmodel_word2vec <- function(x, dim = 50, type = c("cbow", "sg"), 
                                min_count = 5, window = ifelse(type == "cbow", 5, 10), 
