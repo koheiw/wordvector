@@ -12,7 +12,7 @@ rownames(dat3) <- dat3$doc_id
 
 # doc2vec package -----------------------------
 
-d2v <- paragraph2vec(dat3, dim = 50, threads = 1, type = "PV-DM", trace = FALSE)
+d2v <- paragraph2vec(dat3, dim = 50, threads = 8, type = "PV-DBOW", trace = FALSE)
 mat_d2v <- as.matrix(d2v, which = "docs", normalize = FALSE)
 hist(mat_d2v["4362315",, drop = TRUE])
 
@@ -42,7 +42,7 @@ corp <- corpus(dat3)
 toks <- tokens(corp)
 dfmt <- dfm(toks, remove_padding = TRUE)
 options(wordvector_threads = 8)
-wdv <- textmodel_doc2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose = TRUE, iter = 5,
+wdv <- textmodel_doc2vec(toks, dim = 50, type = "dbow2", min_count = 5, verbose = TRUE, iter = 5,
                          tolower = FALSE, alpha = 0.05)
 mat_wdv <- as.matrix(wdv, layer = "documents", normalize = FALSE)
 hist(mat_wdv["4362315",, drop = TRUE])
@@ -78,5 +78,7 @@ mean(diag(sim_wdv_all)) - mean(sim_wdv_all)
 plot(rowSums(sim_wdv), rowSums(sim_d2v))
 cor(rowSums(sim_wdv), rowSums(sim_d2v))
 
-
+hist(as.matrix(wdv, layer = "words", normalize = FALSE)[1,])
+hist(wdv$values$word[,1])
+hist(wdv$weights[,1])
        
