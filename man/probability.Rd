@@ -6,7 +6,7 @@
 \usage{
 probability(
   x,
-  words,
+  targets,
   layer = c("words", "documents"),
   mode = c("character", "numeric")
 )
@@ -14,7 +14,7 @@ probability(
 \arguments{
 \item{x}{a \code{textmodel_wordvector} object fitted with \code{normalize = FALSE}.}
 
-\item{words}{words for which probability is computed.}
+\item{targets}{words for which probability is computed.}
 
 \item{layer}{the layer based on which probability is computed.}
 
@@ -24,7 +24,7 @@ probability(
 a matrix of words or documents sorted in descending order by the probability
 scores when \code{mode = "character"}; a matrix of the probability scores when \code{mode = "numeric"}.
 When \code{words} is a named numeric vector, probability scores are weighted by
-the  values.
+the values.
 }
 \description{
 Compute the probability of words given other words.
