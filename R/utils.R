@@ -31,49 +31,53 @@ analogy <- function(formula) {
     return(res)
 }
 
-#' Compute similarity between word vectors
+#' Compute similarity between word or document vectors
 #' 
 #' Compute the cosine similarity between word vectors for selected words.
 #' @param x a `textmodel_wordvector` object.
-#' @param words words for which similarity is computed.
+#' @param targets words or documents for which similarity is computed.
+#' @param layer the layer based on which similarity is computed. This must be "documents" 
+#'   when `targets` are document names.
 #' @param mode specify the type of resulting object.
-#' @return a `matrix` of cosine similarity scores when `mode = "values"` or of 
-#'   words sorted in descending order by the similarity scores when `mode = "words"`.
-#'   When `words` is a named numeric vector, word vectors are weighted and summed 
+#' @return a `matrix` of cosine similarity scores when `mode = "numeric"` or of 
+#'   words sorted in descending order by the similarity scores when `mode = "character"`.
+#'   When `words` is a named numeric vector, word (or document) vectors are weighted and summed 
 #'   before computing similarity scores.
 #' @export
 #' @seealso [probability()]
-similarity <- function(x, words, mode = c("character", "numeric")) {
+similarity <- function(x, targets, layer = c("words", "documents"),
+                       mode = c("character", "numeric")) {
     
+    layer <- match.arg(layer)
     mode <- ifelse(mode == "words", "character", mode) # for < v0.6.0
     mode <- ifelse(mode == "values", "numeric", mode) # for < v0.6.0
     mode <- match.arg(mode)
-    emb1 <- as.matrix(x, layer = "word", normalize = TRUE)
+    emb1 <- as.matrix(x, layer = layer, normalize = TRUE)
     
     if (!"textmodel_wordvector" %in% class(x))
         stop("x must be a textmodel_wordvector object")
     
-    if (is.character(words)) {
-        words <- structure(rep(1.0, length(words)), names = words)
+    if (is.character(targets)) {
+        targets <- structure(rep(1.0, length(targets)), names = targets)
         weighted <- FALSE
-    } else if (is.numeric(words)) {
-        if (is.null(names(words)))
-            stop("words must be named")
+    } else if (is.numeric(targets)) {
+        if (is.null(names(targets)))
+            stop("targets must be named")
         weighted <- TRUE 
     } else {
-        stop("words must be a character or named numeric vector")
+        stop("targets must be a character or named numeric vector")
     }
-    b <- names(words) %in% rownames(emb1)
+    b <- names(targets) %in% rownames(emb1)
     if (sum(!b) == 1) {
-        warning(paste0('"', names(words[!b]), '"',  collapse = ", "),  ' is not found')
+        warning(paste0('"', names(targets[!b]), '"',  collapse = ", "),  ' is not found')
     } else if (sum(!b) > 1) {
-        warning(paste0('"', names(words[!b]), '"',  collapse = ", "),  ' are not found')
+        warning(paste0('"', names(targets[!b]), '"',  collapse = ", "),  ' are not found')
     }
-    words <- words[b]
+    targets <- targets[b]
     if (weighted) {
-        emb2 <- rbind(colSums(emb1[names(words),, drop = FALSE] * words))
+        emb2 <- rbind(colSums(emb1[names(targets),, drop = FALSE] * targets))
     } else {
-        emb2 <- emb1[names(words),, drop = FALSE]
+        emb2 <- emb1[names(targets),, drop = FALSE]
     }
     res <- as.matrix(proxyC::simil(emb1, emb2, use_nan = TRUE))
     if (ncol(res) == 0) {
@@ -92,16 +96,16 @@ similarity <- function(x, words, mode = c("character", "numeric")) {
 #'
 #' Compute the probability of words given other words.
 #' @param x a `textmodel_wordvector` object fitted with `normalize = FALSE`.
-#' @param words words for which probability is computed.
+#' @param targets words for which probability is computed.
 #' @param layer the layer based on which probability is computed.
 #' @param mode specify the type of resulting object.
 #' @return a matrix of words or documents sorted in descending order by the probability 
 #'   scores when `mode = "character"`; a matrix of the probability scores when `mode = "numeric"`.
 #'   When `words` is a named numeric vector, probability scores are weighted by
-#'   the  values.
+#'   the values.
 #' @export
 #' @seealso [similarity()]
-probability <- function(x, words, layer = c("words", "documents"),
+probability <- function(x, targets, layer = c("words", "documents"),
                         mode = c("character", "numeric")) {
     
     layer <- match.arg(layer)
@@ -121,31 +125,31 @@ probability <- function(x, words, layer = c("words", "documents"),
     if (x$normalize)
         stop("x must be trained with normalize = FALSE")
     
-    if (is.character(words)) {
-        words <- structure(rep(1.0, length(words)), names = words)
+    if (is.character(targets)) {
+        targets <- structure(rep(1.0, length(targets)), names = targets)
         weighted <- FALSE
-    } else if (is.numeric(words)) {
-        if (is.null(names(words)))
-            stop("words must be named")
+    } else if (is.numeric(targets)) {
+        if (is.null(names(targets)))
+            stop("targets must be named")
         weighted <- TRUE 
     } else {
-        stop("words must be a character or named numeric vector")
+        stop("targets must be a character or named numeric vector")
     }
 
-    b <- names(words) %in% rownames(x$weights)
+    b <- names(targets) %in% rownames(x$weights)
     if (sum(!b) == 1) {
-        warning(paste0('"', names(words[!b]), '"',  collapse = ", "),  ' is not found')
+        warning(paste0('"', names(targets[!b]), '"',  collapse = ", "),  ' is not found')
     } else if (sum(!b) > 1) {
-        warning(paste0('"', names(words[!b]), '"',  collapse = ", "),  ' are not found')
+        warning(paste0('"', names(targets[!b]), '"',  collapse = ", "),  ' are not found')
     }
-    words <- words[b]
+    targets <- targets[b]
     
     values <- as.matrix(x, layer = layer, normalize = FALSE)
-    e <- exp(values %*% t(x$weights[names(words),, drop = FALSE]))
+    e <- exp(values %*% t(x$weights[names(targets),, drop = FALSE]))
     prob <- e / (e + 1) # sigmoid function
     
-    res <- prob %*% diag(words)
-    colnames(res) <- names(words)
+    res <- prob %*% diag(targets)
+    colnames(res) <- names(targets)
     if (weighted)
         res <- cbind(rowSums(res))
     if (ncol(res) == 0) {
