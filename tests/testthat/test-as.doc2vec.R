@@ -94,7 +94,7 @@ test_that("as.textmodel_doc2vec works with different objects", {
     
     expect_error(
         as.textmodel_doc2vec(dfmt, list()),
-        "'model' must be a trained textmodel_word2vec"
+        "model must be a trained textmodel_word2vec"
     )
 })
 

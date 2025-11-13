@@ -137,10 +137,10 @@ test_that("textmodel_doc2vec works with pre-trained models", {
     # errors
     expect_error(
         textmodel_doc2vec(toks, type = "dbow", iter = 1, model = list()),
-        "'model' must be a trained textmodel_word2vec or textmodel_doc2vec", fixed = TRUE
+        "model must be a trained textmodel_word2vec or textmodel_doc2vec", fixed = TRUE
     )
     expect_warning(
         textmodel_doc2vec(toks, type = "dbow", iter = 1, model = dov1_pre),
-        "'dim', 'type' and 'use_na' are overwritten by the pre-trained model", fixed = TRUE
+        "dim, type and use_na are overwritten by the pre-trained model", fixed = TRUE
     )
 })

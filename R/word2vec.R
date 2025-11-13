@@ -128,7 +128,7 @@ wordvector <- function(x, dim = 50, type = c("cbow", "sg", "dm", "dbow", "dbow2"
             dim <- model$dim
             type <- model$type
             use_ns <- model$use_ns
-            warning("'dim', 'type' and 'use_na' are overwritten by the pre-trained model", 
+            warning("dim, type and use_na are overwritten by the pre-trained model", 
                     call. = FALSE)
         }
     }

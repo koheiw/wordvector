@@ -65,7 +65,7 @@ similarity <- function(x, targets, layer = c("words", "documents"),
             stop("targets must be named")
         weighted <- TRUE 
     } else {
-        stop("targets must be a character or named numeric vector")
+        stop("targets must be a character vector or a named numeric vector")
     }
     b <- names(targets) %in% rownames(emb1)
     if (sum(!b) == 1) {
@@ -209,7 +209,7 @@ check_word2vec <- function(x) {
     if (is_word2vec(x)) {
         return(x)
     } else {
-        stop("'model' must be a trained textmodel_word2vec")
+        stop("model must be a trained textmodel_word2vec")
     }
 }
 
@@ -217,7 +217,7 @@ check_doc2vec <- function(x) {
     if (is_doc2vec(x)) {
         return(x)
     } else {
-        stop("'model' must be a trained textmodel_doc2vec")
+        stop("model must be a trained textmodel_doc2vec")
     }
 }
 
@@ -227,7 +227,7 @@ check_model <- function(x, allow = c("word2vec", "doc2vec", "lsa")) {
     if (any(class(x)[1] == m & class(x)[2] == "textmodel_wordvector")) {
         return(x)
     } else {
-        stop("'model' must be a trained ", paste(m, collapse = " or "))
+        stop("model must be a trained ", paste(m, collapse = " or "))
     }
 }
 

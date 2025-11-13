@@ -46,7 +46,7 @@ test_that("textmodel_word2vec() works", {
     
     expect_error(
         textmodel_word2vec(toks1, dim = 50, type = "cbow", model = list()),
-        "'model' must be a trained textmodel_word2vec"
+        "model must be a trained textmodel_word2vec"
     )
     
     expect_error(
@@ -56,12 +56,12 @@ test_that("textmodel_word2vec() works", {
     
     expect_warning(
         textmodel_word2vec(toks1, dim = 25, type = "cbow", model = wov0),
-        "'dim', 'type' and 'use_na' are overwritten by the pre-trained model"
+        "dim, type and use_na are overwritten by the pre-trained model"
     )
     
     expect_warning(
         textmodel_word2vec(toks1, dim = 25, type = "sg", model = wov0),
-        "'dim', 'type' and 'use_na' are overwritten by the pre-trained model"
+        "dim, type and use_na are overwritten by the pre-trained model"
     )
 })
 
@@ -110,17 +110,17 @@ test_that("textmodel_doc2vec() works", {
     
     expect_error(
         textmodel_doc2vec(toks1, dim = 50, type = "dm", model = list()),
-        "'model' must be a trained textmodel_word2vec or textmodel_doc2vec"
+        "model must be a trained textmodel_word2vec or textmodel_doc2vec"
     )
     
     expect_warning(
         textmodel_doc2vec(toks1, dim = 10, type = "dm", model = dov0),
-        "'dim', 'type' and 'use_na' are overwritten by the pre-trained model"
+        "dim, type and use_na are overwritten by the pre-trained model"
     )
     
     expect_warning(
         textmodel_doc2vec(toks1, dim = 50, type = "dbow", model = dov0),
-        "'dim', 'type' and 'use_na' are overwritten by the pre-trained model"
+        "dim, type and use_na are overwritten by the pre-trained model"
     )
 })
 

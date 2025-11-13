@@ -118,6 +118,10 @@ test_that("similarity works", {
         )
     )
     expect_warning(
+        similarity(wov, "xx", mode = "character"),
+        '"xx" is not found'
+    )
+    expect_warning(
         similarity(wov, c("xx", "yyy", "us"), mode = "character"),
         '"xx", "yyy" are not found'
     )
@@ -142,10 +146,9 @@ test_that("similarity works", {
         dimnames(sim6),
         NULL
     )
-    
     expect_error(
-        similarity(wov, c(1, -1), mode = "character"),
-        "targets must be named"
+        similarity(wov, c(TRUE, FALSE), mode = "character"),
+        "targets must be a character vector or a named numeric vector"
     )
     
     # doc2vec
@@ -182,7 +185,10 @@ test_that("similarity works", {
         dimnames(sim13),
         list(NULL, c("2009-Obama.1", "2017-Trump.1"))
     )
-    
+    expect_error(
+        similarity(dov, c(TRUE, FALSE), mode = "character"),
+        "targets must be a character vector or a named numeric vector"
+    )
     expect_error(
         similarity(list(), c("us" = 1, "people" = -1)),
         "x must be a textmodel_wordvector object"
@@ -235,6 +241,10 @@ test_that("probability works", {
         c(length(wov$frequency), 2L)
     )
     expect_warning(
+        probability(wov, c("xx"), mode = "numeric"),
+        '"xx" is not found'
+    )
+    expect_warning(
         probability(wov, c("xx", "yyy", "us"), mode = "numeric"),
         '"xx", "yyy" are not found'
     )
@@ -268,12 +278,14 @@ test_that("probability works", {
         dimnames(prob6),
         NULL
     )
-    
+    expect_error(
+        probability(wov, c(TRUE, FALSE), mode = "character"),
+        "targets must be a character vector or a named numeric vector"
+    )
     expect_error(
         probability(wov, c(1, -1), mode = "character"),
         "targets must be named"
     )
-    
     wov$normalize <- TRUE
     expect_error(
         probability(wov, c(1, -1), mode = "character"),
@@ -285,7 +297,6 @@ test_that("probability works", {
         probability(dov, c("us" = 1, "people" = -1), mode = "numeric"),
         "x must be a trained textmodel_wordvector object"
     )
-    
     expect_error(
         probability(list(), c("us" = 1, "people" = -1)),
         "x must be a textmodel_wordvector object"
@@ -378,7 +389,7 @@ test_that("class check functions work as expected", {
     )
     expect_error(
         wordvector:::check_word2vec(dov),
-        "'model' must be a trained textmodel_word2vec"
+        "model must be a trained textmodel_word2vec"
     )
     
     # doc2vec
@@ -387,7 +398,7 @@ test_that("class check functions work as expected", {
     )
     expect_error(
         wordvector:::check_doc2vec(wov),
-        "'model' must be a trained textmodel_doc2vec"
+        "model must be a trained textmodel_doc2vec"
     )
 
 })
