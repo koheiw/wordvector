@@ -7,7 +7,7 @@
 textmodel_doc2vec(
   x,
   dim = 50,
-  type = c("dm", "dbow", "dbow2"),
+  type = c("dm", "dbow"),
   min_count = 5,
   window = ifelse(type == "dm", 5, 10),
   iter = 10,

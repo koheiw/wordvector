@@ -11,7 +11,7 @@
 #' @references 
 #'   Le, Q. V., & Mikolov, T. (2014). Distributed Representations of Sentences and 
 #'   Documents (No. arXiv:1405.4053). arXiv. https://doi.org/10.48550/arXiv.1405.4053
-textmodel_doc2vec <- function(x, dim = 50, type = c("dm", "dbow", "dbow2"), 
+textmodel_doc2vec <- function(x, dim = 50, type = c("dm", "dbow"), 
                               min_count = 5, window = ifelse(type == "dm", 5, 10), 
                               iter = 10, alpha = 0.05, model = NULL, 
                               use_ns = TRUE, ns_size = 5, sample = 0.001, tolower = TRUE,
@@ -21,7 +21,7 @@ textmodel_doc2vec <- function(x, dim = 50, type = c("dm", "dbow", "dbow2"),
 
 #' @export
 #' @method textmodel_doc2vec tokens
-textmodel_doc2vec.tokens <- function(x, dim = 50, type = c("dm", "dbow", "dbow2"), 
+textmodel_doc2vec.tokens <- function(x, dim = 50, type = c("dm", "dbow"), 
                                      min_count = 5, window = ifelse(type == "dm", 5, 10), 
                                      iter = 10, alpha = 0.05, model = NULL, 
                                      use_ns = TRUE, ns_size = 5, sample = 0.001, tolower = TRUE,

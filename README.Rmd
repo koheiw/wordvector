@@ -61,7 +61,7 @@ toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>%
                   padding = TRUE)
 
 # Train word2vec
-wdv <- textmodel_word2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose = TRUE)
+wov <- textmodel_word2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose = TRUE)
 ```
 
 ### Similarity between word vectors
@@ -69,7 +69,7 @@ wdv <- textmodel_word2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose 
 `similarity()` computes cosine similarity between word vectors.
 
 ```{r}
-head(similarity(wdv, c("amazon", "forests", "obama", "america", "afghanistan"), 
+head(similarity(wov, c("amazon", "forests", "obama", "america", "afghanistan"), 
                 mode = "character"))
 ```
 
@@ -79,24 +79,24 @@ head(similarity(wdv, c("amazon", "forests", "obama", "america", "afghanistan"),
 
 ```{r}
 # What is Amazon without forests?
-head(similarity(wdv, analogy(~ amazon - forests))) 
+head(similarity(wov, analogy(~ amazon - forests))) 
 ```
 
 ```{r}
 # What is for Afghanistan as Obama for America? 
-head(similarity(wdv, analogy(~ obama - america + afghanistan))) 
+head(similarity(wov, analogy(~ obama - america + afghanistan))) 
 ```
 
 These examples replicates analogical tasks in the original word2vec paper.
 
 ```{r}
 # What is for France as Berlin for Germany?
-head(similarity(wdv, analogy(~ berlin - germany + france))) 
+head(similarity(wov, analogy(~ berlin - germany + france))) 
 ```
 
 ```{r}
 # What is for slowly as quick for quickly?
-head(similarity(wdv, analogy(~ quick - quickly + slowly)))
+head(similarity(wov, analogy(~ quick - quickly + slowly)))
 ```
 
 
