@@ -150,6 +150,10 @@ test_that("similarity works", {
         similarity(wov, c(TRUE, FALSE), mode = "character"),
         "targets must be a character vector or a named numeric vector"
     )
+    expect_error(
+        similarity(wov, c(1, -1), mode = "character"),
+        "targets must be named"
+    )
     
     # doc2vec
     sim10 <- similarity(dov, c("us" = 1, "people" = -1), mode = "numeric")
