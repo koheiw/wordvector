@@ -133,7 +133,7 @@ probability <- function(x, targets, layer = c("words", "documents"),
             stop("targets must be named")
         weighted <- TRUE 
     } else {
-        stop("targets must be a character or named numeric vector")
+        stop("targets must be a character vector or a named numeric vector")
     }
 
     b <- names(targets) %in% rownames(x$weights)
