@@ -2,21 +2,29 @@
 % Please edit documentation in R/utils.R
 \name{similarity}
 \alias{similarity}
-\title{Compute similarity between word vectors}
+\title{Compute similarity between word or document vectors}
 \usage{
-similarity(x, words, mode = c("character", "numeric"))
+similarity(
+  x,
+  targets,
+  layer = c("words", "documents"),
+  mode = c("character", "numeric")
+)
 }
 \arguments{
 \item{x}{a \code{textmodel_wordvector} object.}
 
-\item{words}{words for which similarity is computed.}
+\item{targets}{words or documents for which similarity is computed.}
+
+\item{layer}{the layer based on which similarity is computed. This must be "documents"
+when \code{targets} are document names.}
 
 \item{mode}{specify the type of resulting object.}
 }
 \value{
-a \code{matrix} of cosine similarity scores when \code{mode = "values"} or of
-words sorted in descending order by the similarity scores when \code{mode = "words"}.
-When \code{words} is a named numeric vector, word vectors are weighted and summed
+a \code{matrix} of cosine similarity scores when \code{mode = "numeric"} or of
+words sorted in descending order by the similarity scores when \code{mode = "character"}.
+When \code{words} is a named numeric vector, word (or document) vectors are weighted and summed
 before computing similarity scores.
 }
 \description{

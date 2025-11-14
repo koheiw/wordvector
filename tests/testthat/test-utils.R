@@ -15,7 +15,6 @@ wov <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1,
                           normalize = FALSE)
 dov <- as.textmodel_doc2vec(dfmt, model = wov)
 
-
 test_that("as.matrix works", {
     
     # word2vec
@@ -74,21 +73,21 @@ test_that("analogy works", {
 test_that("similarity works", {
     
     # word2vec
-    sim1 <- similarity(wov, "us", mode = "values")
+    sim1 <- similarity(wov, "us", mode = "numeric")
     expect_true(is.matrix(sim1))
     expect_identical(
         dimnames(sim1),
         list(names(wov$frequency), "us")
     )
     
-    sim2 <- similarity(wov, c("us", "people"), mode = "values")
+    sim2 <- similarity(wov, c("us", "people"), mode = "numeric")
     expect_true(is.matrix(sim2))
     expect_identical(
         dimnames(sim2),
         list(names(wov$frequency), c("us", "people"))
     )
     
-    sim3 <- similarity(wov, "us", mode = "words")
+    sim3 <- similarity(wov, "us", mode = "character")
     expect_true(is.matrix(sim3))
     expect_identical(
         sim3[1,],
@@ -99,7 +98,7 @@ test_that("similarity works", {
         c(length(wov$frequency), 1L)
     )
     
-    sim4 <- similarity(wov, c("us", "people"), mode = "words")
+    sim4 <- similarity(wov, c("us", "people"), mode = "character")
     expect_true(is.matrix(sim4))
     expect_identical(
         sim4[1,],
@@ -110,25 +109,29 @@ test_that("similarity works", {
         c(length(wov$frequency), 2L)
     )
     expect_warning(
-        similarity(wov, c("xx", "yyy", "us"), mode = "values"),
+        similarity(wov, c("xx", "yyy", "us"), mode = "numeric"),
         '"xx", "yyy" are not found'
     )
     expect_true(
         suppressWarnings(
-        is.matrix(similarity(wov, c("xx", "yyy"), mode = "values"))
+        is.matrix(similarity(wov, c("xx", "yyy"), mode = "numeric"))
         )
     )
     expect_warning(
-        similarity(wov, c("xx", "yyy", "us"), mode = "words"),
+        similarity(wov, "xx", mode = "character"),
+        '"xx" is not found'
+    )
+    expect_warning(
+        similarity(wov, c("xx", "yyy", "us"), mode = "character"),
         '"xx", "yyy" are not found'
     )
     expect_true(
         suppressWarnings(
-            is.matrix(similarity(wov, c("xx", "yyy"), mode = "words"))
+            is.matrix(similarity(wov, c("xx", "yyy"), mode = "character"))
         )
     )
     
-    sim5 <- similarity(wov, c("us" = 1, "people" = -1), mode = "values")
+    sim5 <- similarity(wov, c("us" = 1, "people" = -1), mode = "numeric")
     expect_equal(ncol(sim5), 1)
     expect_true(is.matrix(sim5))
     expect_identical(
@@ -136,21 +139,24 @@ test_that("similarity works", {
         list(names(wov$frequency), NULL)
     )
     
-    sim6 <- similarity(wov, c("us" = 1, "people" = -1), mode = "words")
+    sim6 <- similarity(wov, c("us" = 1, "people" = -1), mode = "character")
     expect_equal(ncol(sim6), 1)
     expect_true(is.matrix(sim6))
     expect_identical(
         dimnames(sim6),
         NULL
     )
-    
     expect_error(
-        similarity(wov, c(1, -1), mode = "words"),
-        "words must be named"
+        similarity(wov, c(TRUE, FALSE), mode = "character"),
+        "targets must be a character vector or a named numeric vector"
+    )
+    expect_error(
+        similarity(wov, c(1, -1), mode = "character"),
+        "targets must be named"
     )
     
     # doc2vec
-    sim10 <- similarity(dov, c("us" = 1, "people" = -1), mode = "values")
+    sim10 <- similarity(dov, c("us" = 1, "people" = -1), mode = "numeric")
     expect_equal(ncol(sim10), 1)
     expect_true(is.matrix(sim10))
     expect_identical(
@@ -158,7 +164,7 @@ test_that("similarity works", {
         list(names(wov$frequency), NULL)
     )
     
-    sim11 <- similarity(wov, c("us" = 1, "people" = -1), mode = "words")
+    sim11 <- similarity(dov, c("us" = 1, "people" = -1), mode = "character")
     expect_equal(ncol(sim11), 1)
     expect_true(is.matrix(sim11))
     expect_identical(
@@ -166,6 +172,27 @@ test_that("similarity works", {
         NULL
     )
     
+    sim12 <- similarity(dov, c("2009-Obama.1", "2017-Trump.1"), 
+                        layer = "documents", mode = "numeric")
+    expect_equal(ncol(sim12), 2)
+    expect_true(is.matrix(sim12))
+    expect_identical(
+        dimnames(sim12),
+        list(docnames(toks), c("2009-Obama.1", "2017-Trump.1"))
+    )
+    
+    sim13 <- similarity(dov, c("2009-Obama.1", "2017-Trump.1"), 
+                        layer = "documents", mode = "character")
+    expect_equal(ncol(sim13), 2)
+    expect_true(is.matrix(sim13))
+    expect_identical(
+        dimnames(sim13),
+        list(NULL, c("2009-Obama.1", "2017-Trump.1"))
+    )
+    expect_error(
+        similarity(dov, c(TRUE, FALSE), mode = "character"),
+        "targets must be a character vector or a named numeric vector"
+    )
     expect_error(
         similarity(list(), c("us" = 1, "people" = -1)),
         "x must be a textmodel_wordvector object"
@@ -178,7 +205,7 @@ test_that("probability works", {
     skip_on_os("mac") # for github action
 
     # word2vec
-    prob1 <- probability(wov, "us", mode = "values")
+    prob1 <- probability(wov, "us", mode = "numeric")
     expect_true(all(prob1 <= 1.0))
     expect_true(all(prob1 >= 0.0))
     expect_true(is.matrix(prob1))
@@ -187,7 +214,7 @@ test_that("probability works", {
         list(names(wov$frequency), "us")
     )
     
-    prob2 <- probability(wov, c("us", "people"), mode = "values")
+    prob2 <- probability(wov, c("us", "people"), mode = "numeric")
     expect_true(all(prob2 <= 1.0))
     expect_true(all(prob2 >= 0.0))
     expect_true(is.matrix(prob2))
@@ -196,7 +223,7 @@ test_that("probability works", {
         list(names(wov$frequency), c("us", "people"))
     )
     
-    prob3 <- probability(wov, "us", mode = "words")
+    prob3 <- probability(wov, "us", mode = "character")
     expect_true(is.matrix(prob3))
     expect_identical(
         prob3[1,],
@@ -207,7 +234,7 @@ test_that("probability works", {
         c(length(wov$frequency), 1L)
     )
     
-    prob4 <- probability(wov, c("us", "people"), mode = "words")
+    prob4 <- probability(wov, c("us", "people"), mode = "character")
     expect_true(is.matrix(prob4))
     expect_identical(
         prob4[1,],
@@ -218,25 +245,29 @@ test_that("probability works", {
         c(length(wov$frequency), 2L)
     )
     expect_warning(
-        probability(wov, c("xx", "yyy", "us"), mode = "values"),
+        probability(wov, c("xx"), mode = "numeric"),
+        '"xx" is not found'
+    )
+    expect_warning(
+        probability(wov, c("xx", "yyy", "us"), mode = "numeric"),
         '"xx", "yyy" are not found'
     )
     expect_true(
         suppressWarnings(
-            is.matrix(probability(wov, c("xx", "yyy"), mode = "values"))
+            is.matrix(probability(wov, c("xx", "yyy"), mode = "numeric"))
         )
     )
     expect_warning(
-        probability(wov, c("xx", "yyy", "us"), mode = "words"),
+        probability(wov, c("xx", "yyy", "us"), mode = "character"),
         '"xx", "yyy" are not found'
     )
     expect_true(
         suppressWarnings(
-            is.matrix(probability(wov, c("xx", "yyy"), mode = "words"))
+            is.matrix(probability(wov, c("xx", "yyy"), mode = "character"))
         )
     )
     
-    prob5 <- probability(wov, c("us" = 1, "people" = -1), mode = "values")
+    prob5 <- probability(wov, c("us" = 1, "people" = -1), mode = "numeric")
     expect_equal(ncol(prob5), 1)
     expect_true(is.matrix(prob5))
     expect_identical(
@@ -244,31 +275,32 @@ test_that("probability works", {
         list(names(wov$frequency), NULL)
     )
     
-    prob6 <- probability(wov, c("us" = 1, "people" = -1), mode = "words")
+    prob6 <- probability(wov, c("us" = 1, "people" = -1), mode = "character")
     expect_equal(ncol(prob6), 1)
     expect_true(is.matrix(prob6))
     expect_identical(
         dimnames(prob6),
         NULL
     )
-    
     expect_error(
-        probability(wov, c(1, -1), mode = "words"),
-        "words must be named"
+        probability(wov, c(TRUE, FALSE), mode = "character"),
+        "targets must be a character vector or a named numeric vector"
     )
-    
+    expect_error(
+        probability(wov, c(1, -1), mode = "character"),
+        "targets must be named"
+    )
     wov$normalize <- TRUE
     expect_error(
-        probability(wov, c(1, -1), mode = "words"),
+        probability(wov, c(1, -1), mode = "character"),
         "x must be trained with normalize = FALSE"
     )
     
     # doc2vec
     expect_error(
-        probability(dov, c("us" = 1, "people" = -1), mode = "values"),
+        probability(dov, c("us" = 1, "people" = -1), mode = "numeric"),
         "x must be a trained textmodel_wordvector object"
     )
-    
     expect_error(
         probability(list(), c("us" = 1, "people" = -1)),
         "x must be a textmodel_wordvector object"
@@ -353,7 +385,7 @@ test_that("print and as.matrix works with old objects", {
     )
 })
 
-test_that("ckass check functions work as expected", {
+test_that("class check functions work as expected", {
     
     # word2vec
     expect_silent(
@@ -361,7 +393,7 @@ test_that("ckass check functions work as expected", {
     )
     expect_error(
         wordvector:::check_word2vec(dov),
-        "'model' must be a trained textmodel_word2vec"
+        "model must be a trained textmodel_word2vec"
     )
     
     # doc2vec
@@ -370,7 +402,31 @@ test_that("ckass check functions work as expected", {
     )
     expect_error(
         wordvector:::check_doc2vec(wov),
-        "'model' must be a trained textmodel_doc2vec"
+        "model must be a trained textmodel_doc2vec"
     )
 
+})
+
+test_that("old arguments still works", {
+    
+    expect_type(
+        probability(wov, c("us", "people"), mode = "words"),
+        "character"
+    )
+    
+    expect_type(
+        probability(wov, c("us", "people"), mode = "values"),
+        "double"
+    )
+    
+    expect_type(
+        similarity(wov, c("us", "people"), mode = "words"),
+        "character"
+    )
+    
+    expect_type(
+        similarity(wov, c("us", "people"), mode = "values"),
+        "double"
+    )
+    
 })
