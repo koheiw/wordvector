@@ -3,7 +3,8 @@
 #' Train a word2vec model (Mikolov et al., 2013) using a [quanteda::tokens] object.
 #' @param x a [quanteda::tokens] or [quanteda::tokens_xptr] object.
 #' @param dim the size of the word vectors.
-#' @param type the architecture of the model; either "cbow" (continuous back-of-words) or "sg" (skip-gram).
+#' @param type the architecture of the model; either "cbow" (continuous back-of-words), 
+#'   "sg" (skip-gram), or "dm" (distributed memory).
 #' @param min_count the minimum frequency of the words. Words less frequent than 
 #'   this in `x` are removed before training.
 #' @param window the size of the word window. Words within this window are considered 
@@ -37,6 +38,10 @@
 #'   \item{call}{the command used to execute the function.}
 #'   \item{version}{the version of the wordvector package.}
 #' @details
+#'  If `type = "dm"`, doc2vec is trained but the function only returns 
+#'  word vectors to save storage space. [wordvectoor::textmodel_doc2vec] should be 
+#'  used to access document vectors. 
+#'     
 #'  User can changed the number of processors used for the parallel computing via
 #'  `options(wordvector_threads)`.
 #' 
@@ -66,7 +71,7 @@
 #' head(similarity(wov, c("berlin" = 1, "germany" = -1, "france" = 1), mode = "values"))
 #' head(similarity(wov, analogy(~ berlin - germany + france), mode = "words"))
 #' }
-textmodel_word2vec <- function(x, dim = 50, type = c("cbow", "sg"), 
+textmodel_word2vec <- function(x, dim = 50, type = c("cbow", "sg", "dm"), 
                                min_count = 5, window = ifelse(type == "cbow", 5, 10), 
                                iter = 10, alpha = 0.05, model = NULL, 
                                use_ns = TRUE, ns_size = 5, sample = 0.001, tolower = TRUE,
@@ -79,7 +84,7 @@ textmodel_word2vec <- function(x, dim = 50, type = c("cbow", "sg"),
 #' @export
 #' @method textmodel_word2vec tokens
 #' 
-textmodel_word2vec.tokens <- function(x, dim = 50, type = c("cbow", "sg"), 
+textmodel_word2vec.tokens <- function(x, dim = 50, type = c("cbow", "sg", "dm"), 
                                min_count = 5, window = ifelse(type == "cbow", 5, 10), 
                                iter = 10, alpha = 0.05, model = NULL, 
                                use_ns = TRUE, ns_size = 5, sample = 0.001, tolower = TRUE,
@@ -147,14 +152,9 @@ wordvector <- function(x, dim = 50, type = c("cbow", "sg", "dm", "dbow", "dbow2"
                            alpha = alpha, 
                            type = match(type, c("cbow", "sg", "dm", "dbow", "dbow2")), 
                            normalize = FALSE, 
+                           doc2vec = doc2vec,
                            verbose = verbose)
     
-    is_dov <- type %in% c("dm", "dbow", "dbow2")
-    if (is_dov) {
-        rownames(result$values$doc) <- docnames(x)
-    } else {
-        result$values$doc <- NULL
-    }
     if (!is.null(result$message))
         stop("Failed to train word2vec (", result$message, ")")
     
@@ -163,13 +163,14 @@ wordvector <- function(x, dim = 50, type = c("cbow", "sg", "dm", "dbow", "dbow2"
     result$concatenator <- meta(x, field = "concatenator", type = "object")
     if (include_data) # NOTE: consider removing
         result$data <- y
-    if (is_dov) {
+    if (doc2vec) {
         result$docvars <- docvars(x)
         rownames(result$docvars) <- docnames(x)
+        rownames(result$values$doc) <- docnames(x)
     }
     result$call <- try(match.call(sys.function(-2), call = sys.call(-2)), silent = TRUE)
     result$version <- utils::packageVersion("wordvector")
-    if (is_dov) {
+    if (doc2vec) {
         class(result) <- c("textmodel_doc2vec", "textmodel_wordvector")
     } else {
         class(result) <- c("textmodel_word2vec", "textmodel_wordvector")
