@@ -105,6 +105,7 @@ Rcpp::List cpp_word2vec(TokensPtr xptr,
                         uint16_t iterations = 5,
                         float alpha = 0.05,
                         int type = 1,
+                        bool doc2vec = false,
                         bool verbose = false,
                         bool normalize = true) {
   
@@ -162,11 +163,19 @@ Rcpp::List cpp_word2vec(TokensPtr xptr,
     if (verbose)
         Rprintf(" ...complete\n");
     
-    Rcpp::List res = Rcpp::List::create(
-        Rcpp::Named("values") = Rcpp::List::create(
+    Rcpp::List values;
+    if (doc2vec) {
+        values = Rcpp::List::create(
             Rcpp::Named("word") = get_words(word2vec), 
             Rcpp::Named("doc") = get_documents(word2vec)
-        ),
+        );
+    } else {
+        values = Rcpp::List::create(
+            Rcpp::Named("word") = get_words(word2vec)
+        );
+    }
+    Rcpp::List res = Rcpp::List::create(
+        Rcpp::Named("values") = values,
         Rcpp::Named("weights") = get_weights(word2vec), 
         Rcpp::Named("type") = type,
         Rcpp::Named("dim") = size,
