@@ -92,7 +92,7 @@ textmodel_word2vec.tokens <- function(x, dim = 50, type = c("cbow", "sg"),
     
 }
 
-wordvector <- function(x, dim = 50, type = c("cbow", "sg", "dm", "dbow", "dbow2"), 
+wordvector <- function(x, dim = 50, type = c("cbow", "sg", "dm", "dbow"), 
                        doc2vec = FALSE, 
                        min_count = 5, window = ifelse(type == "cbow", 5, 10), 
                        iter = 10, alpha = 0.05, model = NULL, 
@@ -145,11 +145,11 @@ wordvector <- function(x, dim = 50, type = c("cbow", "sg", "dm", "dbow", "dbow2"
                            sample = sample, withHS = !use_ns, negative = ns_size, 
                            threads = get_threads(), iterations = iter,
                            alpha = alpha, 
-                           type = match(type, c("cbow", "sg", "dm", "dbow", "dbow2")), 
+                           type = match(type, c("cbow", "sg", "dm", "dbow")), 
                            normalize = FALSE, 
                            verbose = verbose)
     
-    is_dov <- type %in% c("dm", "dbow", "dbow2")
+    is_dov <- type %in% c("dm", "dbow")
     if (is_dov) {
         rownames(result$values$doc) <- docnames(x)
     } else {
