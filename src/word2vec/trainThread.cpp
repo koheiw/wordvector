@@ -105,7 +105,7 @@ namespace w2v {
                 } else if (m_data.settings->type == 3) {
                     cbow2(sentence, h, true);      // dm
                 } else if (m_data.settings->type == 4) {
-                    skipGram2(sentence, h, true); // dbow
+                    skipGram3(sentence, h); // dbow
                 }
             }
             // for progress message
