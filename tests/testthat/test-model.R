@@ -51,7 +51,7 @@ test_that("textmodel_word2vec() works", {
     
     expect_error(
         textmodel_word2vec(toks1, dim = 50, type = "dbow", model = wov0),
-        "'arg' should be one of \"cbow\", \"sg\""
+        "'arg' should be one of \"cbow\", \"sg\", \"dm\""
     )
     
     expect_warning(
