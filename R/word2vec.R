@@ -38,11 +38,11 @@
 #'   \item{call}{the command used to execute the function.}
 #'   \item{version}{the version of the wordvector package.}
 #' @details
-#'  If `type = "dm"`, doc2vec is trained but the function only returns 
-#'  word vectors to save storage space. [wordvectoor::textmodel_doc2vec] should be 
+#'  If `type = "dm"`, it trains a doc2vec model but saves only 
+#'  word vectors to save storage space. [wordvector::textmodel_doc2vec] should be 
 #'  used to access document vectors. 
 #'     
-#'  User can changed the number of processors used for the parallel computing via
+#'  Users can changed the number of processors used for the parallel computing via
 #'  `options(wordvector_threads)`.
 #' 
 #' @references 
