@@ -60,22 +60,33 @@ w2v::word2vec_t as_word2vec(List model_) {
     if (model_.length() == 0)
         return model;
     
-    Rcpp::List list_ = model_["values"];
-    Rcpp::NumericMatrix Values_ = list_["word"];
+    std::size_t dim;
+    vocabulary_t vocabulary;
+    wordvector_t words, weights;
+    
+    // vector sizes
+    dim = as<Rcpp::IntegerVector>(model_["dim"])[0];
+    
+    // vocabulary
+    CharacterVector vocabulary_ = as<Rcpp::NumericVector>(model_["frequency"]).names();
+    vocabulary = Rcpp::as<vocabulary_t>(vocabulary_);
+    
+    // word vectors
+    Rcpp::List values_ = model_["values"];
+    if (values_.containsElementNamed("word")) {
+        Rcpp::NumericMatrix words_ = values_["word"];
+        words_ = Rcpp::transpose(words_); // columns are words internally
+        words = Rcpp::as<wordvector_t>(NumericVector(words_));
+    } else {
+        words = wordvector_t(dim * vocabulary.size()); // TODO: change to empty matrix
+    }
+    
+    // weights
     Rcpp::NumericMatrix weights_ = model_["weights"];
+    weights_ = Rcpp::transpose(weights_); // columns are words internally
+    weights = Rcpp::as<wordvector_t>(NumericVector(weights_));
     
-    // columns are words internally
-    Values_ = Rcpp::transpose(Values_);
-    weights_ = Rcpp::transpose(weights_);
-    
-    CharacterVector vocabulary_ = colnames(Values_);
-    vocabulary_t vocabulary = Rcpp::as<vocabulary_t>(vocabulary_);
-    
-    wordvector_t values = Rcpp::as<wordvector_t>(NumericVector(Values_));
-    wordvector_t weights = Rcpp::as<wordvector_t>(NumericVector(weights_));
-    std::size_t vectorSize = Values_.nrow();
-    
-    model = w2v::word2vec_t(vocabulary, vectorSize, values, weights);
+    model = w2v::word2vec_t(vocabulary, dim, words, weights);
     return model;
 }
 
