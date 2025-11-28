@@ -60,20 +60,20 @@ w2v::word2vec_t as_word2vec(List model_) {
     if (model_.length() == 0)
         return model;
     
-    Rcpp::List values_ = model_["values"];
-    Rcpp::NumericMatrix wordValues_ = values_["word"];
+    Rcpp::List list_ = model_["values"];
+    Rcpp::NumericMatrix Values_ = list_["word"];
     Rcpp::NumericMatrix weights_ = model_["weights"];
     
     // columns are words internally
-    wordValues_ = Rcpp::transpose(wordValues_);
+    Values_ = Rcpp::transpose(Values_);
     weights_ = Rcpp::transpose(weights_);
     
-    CharacterVector vocabulary_ = colnames(wordValues_);
+    CharacterVector vocabulary_ = colnames(Values_);
     vocabulary_t vocabulary = Rcpp::as<vocabulary_t>(vocabulary_);
     
-    wordvector_t values = Rcpp::as<wordvector_t>(NumericVector(wordValues_));
+    wordvector_t values = Rcpp::as<wordvector_t>(NumericVector(Values_));
     wordvector_t weights = Rcpp::as<wordvector_t>(NumericVector(weights_));
-    std::size_t vectorSize = wordValues_.nrow();
+    std::size_t vectorSize = Values_.nrow();
     
     model = w2v::word2vec_t(vocabulary, vectorSize, values, weights);
     return model;
@@ -164,12 +164,16 @@ Rcpp::List cpp_word2vec(TokensPtr xptr,
         Rprintf(" ...complete\n");
     
     Rcpp::List values;
-    if (doc2vec) {
+    if (type == 3) { // dm
         values = Rcpp::List::create(
             Rcpp::Named("word") = get_words(word2vec), 
             Rcpp::Named("doc") = get_documents(word2vec)
         );
-    } else {
+    } else if (type == 4) { // dbow
+        values = Rcpp::List::create(
+            Rcpp::Named("doc") = get_documents(word2vec)
+        );
+    } else { // cbow or dbow
         values = Rcpp::List::create(
             Rcpp::Named("word") = get_words(word2vec)
         );
