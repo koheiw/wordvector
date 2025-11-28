@@ -105,10 +105,7 @@ namespace w2v {
                 } else if (m_data.settings->type == 3) {
                     cbow2(sentence, h, true);      // dm
                 } else if (m_data.settings->type == 4) {
-                    skipGram2(sentence, h, false); // bow
-                    skipGram2(sentence, h, true, true); // use fixed weights
-                } else if (m_data.settings->type == 5) {
-                    skipGram2(sentence, h, true);  // dbow2 (experimental)
+                    skipGram2(sentence, h, true); // dbow
                 }
             }
             // for progress message
@@ -200,7 +197,7 @@ namespace w2v {
                 cw++;
                 
             }
-            // NOTE: the same as doc2vec pacakge
+            // NOTE: the same as doc2vec package
             if (doc2vec) {
                 for (std::size_t k = 0; k < K; ++k)
                     (*m_hiddenLayerValues)[k] += (*m_data.docValues)[k + docShift];

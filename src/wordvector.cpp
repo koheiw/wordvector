@@ -60,22 +60,33 @@ w2v::word2vec_t as_word2vec(List model_) {
     if (model_.length() == 0)
         return model;
     
+    std::size_t dim;
+    vocabulary_t vocabulary;
+    wordvector_t words, weights;
+    
+    // vector sizes
+    dim = as<Rcpp::IntegerVector>(model_["dim"])[0];
+    
+    // vocabulary
+    CharacterVector vocabulary_ = as<Rcpp::NumericVector>(model_["frequency"]).names();
+    vocabulary = Rcpp::as<vocabulary_t>(vocabulary_);
+    
+    // word vectors
     Rcpp::List values_ = model_["values"];
-    Rcpp::NumericMatrix wordValues_ = values_["word"];
+    if (values_.containsElementNamed("word")) {
+        Rcpp::NumericMatrix words_ = values_["word"];
+        words_ = Rcpp::transpose(words_); // columns are words internally
+        words = Rcpp::as<wordvector_t>(NumericVector(words_));
+    } else {
+        words = wordvector_t(dim * vocabulary.size()); // TODO: change to empty matrix
+    }
+    
+    // weights
     Rcpp::NumericMatrix weights_ = model_["weights"];
+    weights_ = Rcpp::transpose(weights_); // columns are words internally
+    weights = Rcpp::as<wordvector_t>(NumericVector(weights_));
     
-    // columns are words internally
-    wordValues_ = Rcpp::transpose(wordValues_);
-    weights_ = Rcpp::transpose(weights_);
-    
-    CharacterVector vocabulary_ = colnames(wordValues_);
-    vocabulary_t vocabulary = Rcpp::as<vocabulary_t>(vocabulary_);
-    
-    wordvector_t values = Rcpp::as<wordvector_t>(NumericVector(wordValues_));
-    wordvector_t weights = Rcpp::as<wordvector_t>(NumericVector(weights_));
-    std::size_t vectorSize = wordValues_.nrow();
-    
-    model = w2v::word2vec_t(vocabulary, vectorSize, values, weights);
+    model = w2v::word2vec_t(vocabulary, dim, words, weights);
     return model;
 }
 
@@ -105,6 +116,7 @@ Rcpp::List cpp_word2vec(TokensPtr xptr,
                         uint16_t iterations = 5,
                         float alpha = 0.05,
                         int type = 1,
+                        bool doc2vec = false,
                         bool verbose = false,
                         bool normalize = true) {
   
@@ -162,11 +174,23 @@ Rcpp::List cpp_word2vec(TokensPtr xptr,
     if (verbose)
         Rprintf(" ...complete\n");
     
-    Rcpp::List res = Rcpp::List::create(
-        Rcpp::Named("values") = Rcpp::List::create(
+    Rcpp::List values;
+    if (type == 3) { // dm
+        values = Rcpp::List::create(
             Rcpp::Named("word") = get_words(word2vec), 
             Rcpp::Named("doc") = get_documents(word2vec)
-        ),
+        );
+    } else if (type == 4) { // dbow
+        values = Rcpp::List::create(
+            Rcpp::Named("doc") = get_documents(word2vec)
+        );
+    } else { // cbow or dbow
+        values = Rcpp::List::create(
+            Rcpp::Named("word") = get_words(word2vec)
+        );
+    }
+    Rcpp::List res = Rcpp::List::create(
+        Rcpp::Named("values") = values,
         Rcpp::Named("weights") = get_weights(word2vec), 
         Rcpp::Named("type") = type,
         Rcpp::Named("dim") = size,

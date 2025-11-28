@@ -66,8 +66,8 @@ test_that("textmodel_doc2vec works", {
         c("values", "weights", "type", "dim", "frequency", "window",  "iter", "alpha", 
           "use_ns", "ns_size", "sample", "normalize",  "min_count", "concatenator", "docvars", "call", "version")
     )
-    expect_equal(
-        dim(dov2$values$word), c(5363L, 50L)
+    expect_null(
+        dov2$values$word
     )
     expect_equal(
         dim(dov2$values$doc), c(59L, 50L)
@@ -87,9 +87,9 @@ test_that("textmodel_doc2vec works", {
         class(dov2)
     )
     
-    expect_equal(
-        rownames(probability(dov2, c("good", "bad"), layer = "words", mode = "numeric")),
-        rownames(dov2$values$word)
+    expect_error(
+        probability(dov2, c("good", "bad"), layer = "words", mode = "numeric"),
+        "x does not have the layer for words"
     )
     
     expect_equal(
@@ -125,10 +125,6 @@ test_that("textmodel_doc2vec works with pre-trained models", {
     # DBOW
     dov2_pre <- textmodel_doc2vec(toks, type = "dbow")
     dov2 <- textmodel_doc2vec(toks, type = "dbow", iter = 5, model = dov2_pre)
-    
-    r <- cor(t(as.matrix(dov2_pre, layer = "words"))[,c("house", "winter")], 
-             t(as.matrix(dov2, layer = "words"))[,c("house", "winter")])
-    expect_true(all(diag(r) > 0.9))
     
     r <- cor(t(as.matrix(dov2_pre, layer = "documents"))[,c("1789-Washington", "2021-Biden")], 
              t(as.matrix(dov2, layer = "documents"))[,c("1789-Washington", "2021-Biden")])
