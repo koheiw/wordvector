@@ -316,6 +316,36 @@ namespace w2v {
         }
     }
 
+    inline void trainThread_t::skipGram3(const std::vector<unsigned int> &_text, 
+                                         std::size_t _id, 
+                                         bool freeze) noexcept {
+        
+        std::size_t K = m_data.settings->size;
+        if (_text.size() == 0)
+            return;
+        auto docShift = _id * K;
+        for (std::size_t i = 0; i < _text.size(); ++i) {
+
+            // hidden layer initialized with 0 values for each context word
+            std::memset(m_hiddenLayerValues->data(), 0, m_hiddenLayerValues->size() * sizeof(float));
+            std::memset(m_hiddenLayerErrors->data(), 0, m_hiddenLayerErrors->size() * sizeof(float));
+            
+            for (std::size_t k = 0; k < K; ++k) {
+                (*m_hiddenLayerValues)[k] += (*m_data.docValues)[k + docShift];
+            }
+            
+            if (m_data.settings->withHS) {
+                hierarchicalSoftmax(_text[i], *m_hiddenLayerErrors, *m_hiddenLayerValues, 0, freeze);
+            } else {
+                negativeSampling(_text[i], *m_hiddenLayerErrors, *m_hiddenLayerValues, 0, freeze);
+            }
+            
+            for (std::size_t k = 0; k < m_data.settings->size; ++k) {
+                (*m_data.docValues)[k + docShift] += (*m_hiddenLayerErrors)[k];
+            }
+        }
+    }
+
     inline void trainThread_t::hierarchicalSoftmax(std::size_t _word,
                                                    std::vector<float> &_hiddenLayerErrors,
                                                    std::vector<float> &_hiddenLayerValues,

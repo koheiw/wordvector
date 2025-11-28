@@ -56,7 +56,7 @@ namespace w2v {
         data_t m_data;
         std::random_device m_randomDevice;
         std::mt19937_64 m_randomGenerator;
-        std::uniform_int_distribution<short> m_rndWindowShift;
+        //std::uniform_int_distribution<short> m_rndWindowShift;
         std::uniform_int_distribution<short> m_rndWindow;
         std::unique_ptr<downSampling_t> m_downSampling;
         std::unique_ptr<nsDistribution_t> m_nsDistribution;
@@ -96,6 +96,8 @@ namespace w2v {
         inline void skipGram(const std::vector<unsigned int> &_text) noexcept;
         inline void skipGram2(const std::vector<unsigned int> &_text, 
                               std::size_t _id, bool doc2vec = false, bool freeze = false) noexcept;
+        inline void skipGram3(const std::vector<unsigned int> &_text, 
+                              std::size_t _id, bool freeze = false) noexcept;
         inline void hierarchicalSoftmax(std::size_t _word,
                                         std::vector<float> &_hiddenLayer,
                                         std::vector<float> &_trainLayer, 
