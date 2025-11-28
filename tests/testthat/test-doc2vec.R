@@ -87,9 +87,9 @@ test_that("textmodel_doc2vec works", {
         class(dov2)
     )
     
-    expect_equal(
-        rownames(probability(dov2, c("good", "bad"), layer = "words", mode = "numeric")),
-        rownames(dov2$values$word)
+    expect_error(
+        probability(dov2, c("good", "bad"), layer = "words", mode = "numeric"),
+        "x does not have the layer for words"
     )
     
     expect_equal(
