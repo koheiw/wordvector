@@ -9,7 +9,7 @@ textmodel_word2vec(
   dim = 50,
   type = c("cbow", "sg", "dm"),
   min_count = 5,
-  window = ifelse(type == "cbow", 5, 10),
+  window = ifelse(type == "sg", 10, 5),
   iter = 10,
   alpha = 0.05,
   model = NULL,
