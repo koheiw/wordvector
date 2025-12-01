@@ -10,9 +10,13 @@ dat2$doc_id <- paste0(dat2$doc_id, "_copy")
 dat3 <- rbind(dat, dat2)
 rownames(dat3) <- dat3$doc_id
 
+corp <- corpus(dat3)
+toks <- tokens(corp)
+dfmt <- dfm(toks, remove_padding = TRUE)
+
 # doc2vec package -----------------------------
 
-d2v <- paragraph2vec(dat3, dim = 50, threads = 8, type = "PV-DBOW", trace = FALSE)
+d2v <- paragraph2vec(dat3, dim = 50, threads = 8, type = "PV-DBOW", trace = FALSE, iter = 10)
 mat_d2v <- as.matrix(d2v, which = "docs", normalize = FALSE)
 hist(mat_d2v["4362315",, drop = TRUE])
 
@@ -28,7 +32,7 @@ sim_d2v <- proxyC::simil(
 
 hist(rowSums(sim_d2v))
 tail(sort(s <- rowSums(sim_d2v)))
-print(tail(dat3[order(s),]))
+#print(tail(dat3[order(s),]))
 
 sim_d2v_all <- proxyC::simil(
     mat_d2v,
@@ -38,11 +42,8 @@ mean(diag(sim_d2v_all)) - mean(sim_d2v_all)
 
 # wordvector package -------------------------
 
-corp <- corpus(dat3)
-toks <- tokens(corp)
-dfmt <- dfm(toks, remove_padding = TRUE)
 options(wordvector_threads = 8)
-wdv <- textmodel_doc2vec(toks, dim = 50, type = "dbow2", min_count = 5, verbose = TRUE, iter = 5,
+wdv <- textmodel_doc2vec(toks, dim = 50, type = "dbow", min_count = 5, verbose = FALSE, iter = 10,
                          tolower = FALSE, alpha = 0.05)
 mat_wdv <- as.matrix(wdv, layer = "documents", normalize = FALSE)
 hist(mat_wdv["4362315",, drop = TRUE])
@@ -59,7 +60,7 @@ sim_wdv <- proxyC::simil(
 
 hist(rowSums(sim_wdv))
 tail(sort(s <- rowSums(sim_wdv)))
-tail(dat3[order(s),])
+#tail(dat3[order(s),])
 
 sim_wdv_all <- proxyC::simil(
     mat_wdv,
