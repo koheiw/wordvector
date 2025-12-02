@@ -160,6 +160,7 @@ wordvector <- function(x, dim = 50, type = c("cbow", "sg", "dm", "dbow"),
     
     result$type <- type
     result$min_count <- min_count
+    result$tolower <- tolower
     result$concatenator <- meta(x, field = "concatenator", type = "object")
     if (include_data) # NOTE: consider removing
         result$data <- y
