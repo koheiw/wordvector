@@ -95,8 +95,8 @@ similarity <- function(x, targets, layer = c("words", "documents"),
 #' Compute probability of words
 #'
 #' Compute the probability of words given other words.
-#' @param x a `textmodel_wordvector` object fitted with `normalize = FALSE`.
-#' @param targets words for which probability is computed.
+#' @param x a trained `textmodel_wordvector` object.
+#' @param targets words for which probabilities are computed.
 #' @param layer the layer based on which probability is computed.
 #' @param mode specify the type of resulting object.
 #' @return a matrix of words or documents sorted in descending order by the probability 
@@ -164,6 +164,27 @@ probability <- function(x, targets, layer = c("words", "documents"),
     return(res)
 }
 
+#' Compute perplexity of a model
+#'
+#' Compute the perplexity of a train word2vec model with data.
+#' @param x a trained `textmodel_wordvector` object.
+#' @param targets words for which probabilities are computed.
+#' @param data the probabilities words are tested against occurrences of words in `data`;
+#'    should be a [quanteda::tokens] or [quanteda::dfm].
+#' @export
+#' @keywords internal
+perplexity <- function(x, targets, data) {
+    x <- upgrade_pre06(x)
+    if (!is.tokens(data) && !is.dfm(data))
+        stop("data must be a tokens or dfm")
+    if (is.tokens(data))
+        data <- dfm(data, tolower = x$tolwoer)
+    p <- probability(x, targets, mode = "numeric")
+    pred <- dfm_match(dfm_weight(data, "prop"), rownames(p)) %*% p
+    tri <- Matrix::mat2triplet(dfm_match(data, colnames(pred)))
+    exp(-sum(tri$x * log(pred[cbind(tri$i, tri$j)])) / sum(tri$x))
+}
+
 get_threads <- function() {
     
     # respect other settings
@@ -193,6 +214,9 @@ upgrade_pre06 <- function(x) {
     }
     if (is.numeric(x$type)) {
         x$type <- c("cbow", "sg")[x$type]
+    }
+    if (is.null(x$tolower)) {
+        x$tolower <- TRUE
     }
     return(x)
 }
