@@ -9,7 +9,7 @@ textmodel_doc2vec(
   dim = 50,
   type = c("dm", "dbow"),
   min_count = 5,
-  window = ifelse(type == "dm", 5, 10),
+  window = 5,
   iter = 10,
   alpha = 0.05,
   model = NULL,
@@ -33,8 +33,8 @@ textmodel_doc2vec(
 \item{min_count}{the minimum frequency of the words. Words less frequent than
 this in \code{x} are removed before training.}
 
-\item{window}{the size of the word window. Words within this window are considered
-to be the context of a target word.}
+\item{window}{the size of the window for context words. Ignored when \code{type = "dbow"} as
+its context window is the entire document (sentence or paragraph).}
 
 \item{iter}{the number of iterations in model training.}
 

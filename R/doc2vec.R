@@ -4,6 +4,8 @@
 #' @export
 #' @param type the architecture of the model; either "dm" (distributed memory) or 
 #'   "dbow" (distributed bag-of-words).
+#' @param window the size of the window for context words. Ignored when `type = "dbow"` as
+#'   its context window is the entire document (sentence or paragraph).
 #' @inheritParams textmodel_word2vec
 #' @return 
 #' Returns a textmodel_doc2vec object with matrices for word and document vector values in `values`.
@@ -12,7 +14,7 @@
 #'   Le, Q. V., & Mikolov, T. (2014). Distributed Representations of Sentences and 
 #'   Documents (No. arXiv:1405.4053). arXiv. https://doi.org/10.48550/arXiv.1405.4053
 textmodel_doc2vec <- function(x, dim = 50, type = c("dm", "dbow"), 
-                              min_count = 5, window = ifelse(type == "dm", 5, 10), 
+                              min_count = 5, window = 5, 
                               iter = 10, alpha = 0.05, model = NULL, 
                               use_ns = TRUE, ns_size = 5, sample = 0.001, tolower = TRUE,
                               include_data = FALSE, verbose = FALSE, ...) {
@@ -22,7 +24,7 @@ textmodel_doc2vec <- function(x, dim = 50, type = c("dm", "dbow"),
 #' @export
 #' @method textmodel_doc2vec tokens
 textmodel_doc2vec.tokens <- function(x, dim = 50, type = c("dm", "dbow"), 
-                                     min_count = 5, window = ifelse(type == "dm", 5, 10), 
+                                     min_count = 5, window = 5, 
                                      iter = 10, alpha = 0.05, model = NULL, 
                                      use_ns = TRUE, ns_size = 5, sample = 0.001, tolower = TRUE,
                                      include_data = FALSE, verbose = FALSE, ...) {

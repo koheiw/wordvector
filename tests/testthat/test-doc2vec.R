@@ -98,6 +98,39 @@ test_that("textmodel_doc2vec works", {
     )
 })
 
+test_that("textmodel_doc2vec works hierachical softmax", {
+    
+    skip_on_cran()
+    
+    # DM
+    dov1 <- textmodel_doc2vec(head(toks, 1000), dim = 10, type = "dm", use_ns = FALSE)
+    expect_equal(
+        class(dov1), 
+        c("textmodel_doc2vec", "textmodel_wordvector")
+    )
+    expect_false(
+        dov1$use_ns
+    )
+    expect_equal(
+        dov1$type, 
+        "dm"
+    )
+    
+    # DBOW
+    dov2 <- textmodel_doc2vec(head(toks, 1000), dim = 10, type = "dbow", use_ns = FALSE)
+    expect_equal(
+        class(dov2), 
+        c("textmodel_doc2vec", "textmodel_wordvector")
+    )
+    expect_false(
+        dov2$use_ns
+    )
+    expect_equal(
+        dov2$type, 
+        "dbow"
+    )
+})
+
 test_that("textmodel_doc2vec works with pre-trained models", {
     
     skip_on_cran()
@@ -114,21 +147,21 @@ test_that("textmodel_doc2vec works with pre-trained models", {
     dov1_pre <- textmodel_doc2vec(toks, type = "dm")
     dov1 <- textmodel_doc2vec(toks, type = "dm", iter = 5, model = dov1_pre)
     
-    r <- cor(t(as.matrix(dov1_pre, layer = "words"))[,c("house", "winter")], 
-             t(as.matrix(dov1, layer = "words"))[,c("house", "winter")])
-    expect_true(all(diag(r) > 0.9))
+    r <- cor(t(as.matrix(dov1_pre, layer = "words"))[,1:1000], 
+             t(as.matrix(dov1, layer = "words"))[,1:1000])
+    expect_gt(median(diag(r)), 0.9)
     
-    r <- cor(t(as.matrix(dov1_pre, layer = "documents"))[,c("1789-Washington", "2021-Biden")], 
-             t(as.matrix(dov1, layer = "documents"))[,c("1789-Washington", "2021-Biden")])
-    expect_true(all(diag(r) > 0.7))
+    r <- cor(t(as.matrix(dov1_pre, layer = "documents")),
+             t(as.matrix(dov1, layer = "documents")))
+    expect_gt(median(diag(r)), 0.8)
     
     # DBOW
     dov2_pre <- textmodel_doc2vec(toks, type = "dbow")
     dov2 <- textmodel_doc2vec(toks, type = "dbow", iter = 5, model = dov2_pre)
     
-    r <- cor(t(as.matrix(dov2_pre, layer = "documents"))[,c("1789-Washington", "2021-Biden")], 
-             t(as.matrix(dov2, layer = "documents"))[,c("1789-Washington", "2021-Biden")])
-    expect_true(all(diag(r) > 0.7))
+    r <- cor(t(as.matrix(dov2_pre, layer = "documents")), 
+             t(as.matrix(dov2, layer = "documents")))
+    expect_gt(median(diag(r)), 0.8)
     
     # errors
     expect_error(

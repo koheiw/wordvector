@@ -72,7 +72,7 @@
 #' head(similarity(wov, analogy(~ berlin - germany + france), mode = "words"))
 #' }
 textmodel_word2vec <- function(x, dim = 50, type = c("cbow", "sg", "dm"), 
-                               min_count = 5, window = ifelse(type == "cbow", 5, 10), 
+                               min_count = 5, window = ifelse(type == "sg", 10, 5), 
                                iter = 10, alpha = 0.05, model = NULL, 
                                use_ns = TRUE, ns_size = 5, sample = 0.001, tolower = TRUE,
                                include_data = FALSE, verbose = FALSE, ...) {
@@ -85,7 +85,7 @@ textmodel_word2vec <- function(x, dim = 50, type = c("cbow", "sg", "dm"),
 #' @method textmodel_word2vec tokens
 #' 
 textmodel_word2vec.tokens <- function(x, dim = 50, type = c("cbow", "sg", "dm"), 
-                               min_count = 5, window = ifelse(type == "cbow", 5, 10), 
+                               min_count = 5, window = ifelse(type == "sg", 10, 5), 
                                iter = 10, alpha = 0.05, model = NULL, 
                                use_ns = TRUE, ns_size = 5, sample = 0.001, tolower = TRUE,
                                include_data = FALSE, verbose = FALSE, ...) {
@@ -99,7 +99,7 @@ textmodel_word2vec.tokens <- function(x, dim = 50, type = c("cbow", "sg", "dm"),
 
 wordvector <- function(x, dim = 50, type = c("cbow", "sg", "dm", "dbow"), 
                        doc2vec = FALSE, 
-                       min_count = 5, window = ifelse(type == "cbow", 5, 10), 
+                       min_count = 5, window = ifelse(type == "sg", 10, 5), 
                        iter = 10, alpha = 0.05, model = NULL, 
                        use_ns = TRUE, ns_size = 5, sample = 0.001, tolower = TRUE,
                        include_data = FALSE, verbose = FALSE, ..., 

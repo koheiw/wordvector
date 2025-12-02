@@ -141,6 +141,58 @@ test_that("textmodel_word2vec works", {
     
 })
 
+
+test_that("textmodel_word2vec works hierachical softmax", {
+    
+    skip_on_cran()
+    
+    # CBOW
+    wov1 <- textmodel_word2vec(head(toks, 1000), type = "cbow", dim = 10, use_ns = FALSE)
+    expect_equal(
+        class(wov1), 
+        c("textmodel_word2vec", "textmodel_wordvector")
+    )
+    expect_false(
+        wov1$use_ns
+    )
+    expect_equal(
+        wov1$type, 
+        "cbow"
+    )
+    
+    # SG
+    
+    wov2 <- textmodel_word2vec(head(toks, 1000), dim = 10, type = "sg", use_ns = FALSE)
+    expect_equal(
+        class(wov2), 
+        c("textmodel_word2vec", "textmodel_wordvector")
+    )
+    expect_false(
+        wov2$use_ns
+    )
+    expect_equal(
+        wov2$type, 
+        "sg"
+    )
+})
+
+test_that("works with old names of type", {
+    
+    expect_output(
+        wov <- textmodel_word2vec(head(toks, 10), dim = 50, iter = 10, 
+                                   type = "skip-gram", verbose = TRUE),
+        "Training skip-gram model with 50 dimensions"
+    )
+    expect_equal(
+        wov$window,
+        10L
+    )
+    expect_equal(
+        wov$type, 
+        "sg"
+    )
+})
+
 test_that("textmodel_word2vec works with include_data", {
     
     skip_on_cran()
