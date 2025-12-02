@@ -15,6 +15,6 @@ perplexity(x, targets, data)
 should be a \link[quanteda:tokens]{quanteda::tokens} or \link[quanteda:dfm]{quanteda::dfm}.}
 }
 \description{
-Compute the perplexity of a train word2vec model with data.
+Compute the perplexity of a trained word2vec model with data.
 }
 \keyword{internal}
