@@ -449,6 +449,11 @@ test_that("perplexity works", {
     expect_equal(ppl2, 2.719, tol = 0.001)
     
     expect_error(
+        perplexity(wov, c("good" = 1, "bad" = -1), dfmt),
+        "targets must be a character vector"
+    )
+    
+    expect_error(
         perplexity(wov, word2, list),
         "data must be a tokens or dfm"
     )

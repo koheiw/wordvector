@@ -97,7 +97,7 @@ similarity <- function(x, targets, layer = c("words", "documents"),
 #' Compute the probability of words given other words.
 #' @param x a trained `textmodel_wordvector` object.
 #' @param targets words for which probabilities are computed.
-#' @param layer the layer based on which probability is computed.
+#' @param layer the layer based on which probabilities are computed.
 #' @param mode specify the type of resulting object.
 #' @return a matrix of words or documents sorted in descending order by the probability 
 #'   scores when `mode = "character"`; a matrix of the probability scores when `mode = "numeric"`.
@@ -166,11 +166,11 @@ probability <- function(x, targets, layer = c("words", "documents"),
 
 #' Compute perplexity of a model
 #'
-#' Compute the perplexity of a train word2vec model with data.
+#' Compute the perplexity of a trained word2vec model with data.
 #' @param x a trained `textmodel_wordvector` object.
 #' @param targets words for which probabilities are computed.
-#' @param data the probabilities words are tested against occurrences of words in `data`;
-#'    should be a [quanteda::tokens] or [quanteda::dfm].
+#' @param data a [quanteda::tokens] or [quanteda::dfm]; the probabilities of words are 
+#'    tested against occurrences of words in it.
 #' @export
 #' @keywords internal
 perplexity <- function(x, targets, data) {
@@ -179,6 +179,8 @@ perplexity <- function(x, targets, data) {
         stop("data must be a tokens or dfm")
     if (is.tokens(data))
         data <- dfm(data, tolower = x$tolwoer)
+    if (!is.character(targets))
+        stop("targets must be a character vector")
     p <- probability(x, targets, mode = "numeric")
     pred <- dfm_match(dfm_weight(data, "prop"), rownames(p)) %*% p
     tri <- Matrix::mat2triplet(dfm_match(data, colnames(pred)))
