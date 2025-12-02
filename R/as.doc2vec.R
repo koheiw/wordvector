@@ -65,6 +65,7 @@ as.textmodel_doc2vec.dfm <- function(x, model = NULL, normalize = FALSE,
     result <- list(
         "values" = list("word" = wov, "doc" = dov),
         "dim" = model$dim,
+        "tolower" = model$tolower,
         "concatenator" = conc, 
         "docvars" = x@docvars,
         "normalize" = normalize,

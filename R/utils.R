@@ -95,9 +95,9 @@ similarity <- function(x, targets, layer = c("words", "documents"),
 #' Compute probability of words
 #'
 #' Compute the probability of words given other words.
-#' @param x a `textmodel_wordvector` object fitted with `normalize = FALSE`.
-#' @param targets words for which probability is computed.
-#' @param layer the layer based on which probability is computed.
+#' @param x a trained `textmodel_wordvector` object.
+#' @param targets words for which probabilities are computed.
+#' @param layer the layer based on which probabilities are computed.
 #' @param mode specify the type of resulting object.
 #' @return a matrix of words or documents sorted in descending order by the probability 
 #'   scores when `mode = "character"`; a matrix of the probability scores when `mode = "numeric"`.
@@ -164,6 +164,31 @@ probability <- function(x, targets, layer = c("words", "documents"),
     return(res)
 }
 
+#' Compute perplexity of a model
+#'
+#' Compute the perplexity of a trained word2vec model with data.
+#' @param x a trained `textmodel_wordvector` object.
+#' @param targets words for which probabilities are computed.
+#' @param data a [quanteda::tokens] or [quanteda::dfm]; the probabilities of words are 
+#'    tested against occurrences of words in it.
+#' @export
+#' @keywords internal
+perplexity <- function(x, targets, data) {
+    x <- upgrade_pre06(x)
+    
+    if (!is.character(targets))
+        stop("targets must be a character vector")
+    
+    if (!is.tokens(data) && !is.dfm(data))
+        stop("data must be a tokens or dfm")
+    data <- dfm(data, remove_padding = TRUE, tolower = x$tolower)
+    
+    p <- probability(x, targets, mode = "numeric")
+    pred <- dfm_match(dfm_weight(data, "prop"), rownames(p)) %*% p
+    tri <- Matrix::mat2triplet(dfm_match(data, colnames(pred)))
+    exp(-sum(tri$x * log(pred[cbind(tri$i, tri$j)])) / sum(tri$x))
+}
+
 get_threads <- function() {
     
     # respect other settings
@@ -193,6 +218,9 @@ upgrade_pre06 <- function(x) {
     }
     if (is.numeric(x$type)) {
         x$type <- c("cbow", "sg")[x$type]
+    }
+    if (is.null(x$tolower)) {
+        x$tolower <- TRUE
     }
     return(x)
 }

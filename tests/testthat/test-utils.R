@@ -430,3 +430,37 @@ test_that("old arguments still works", {
     )
     
 })
+
+test_that("perplexity works", {
+    
+    # infrequent words
+    word1 <- c("good", "nice", "excellent", "positive", "fortunate", "correct", "superior", 
+              "bad", "nasty", "poor", "negative", "unfortunate",  "wrong", "inferior")
+    suppressWarnings(
+        ppl1 <- perplexity(wov, word1, dfmt)
+    )
+    expect_gt(ppl1, 3.0)
+    
+    # frequent words
+    word2 <- c("america", "us", "people", "government", "state", "nation", "world", "peace", "public")
+    suppressWarnings(
+        ppl2 <- perplexity(wov, word2, dfmt)
+    )
+    expect_lt(ppl2, ppl1)
+    
+    # tokens_object
+    suppressWarnings(
+        ppl3 <- perplexity(wov, word2, toks)
+    )
+    expect_equal(ppl3, ppl2)
+    
+    expect_error(
+        perplexity(wov, c("good" = 1, "bad" = -1), dfmt),
+        "targets must be a character vector"
+    )
+    
+    expect_error(
+        perplexity(wov, word2, list),
+        "data must be a tokens or dfm"
+    )
+})

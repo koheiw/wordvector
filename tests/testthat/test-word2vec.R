@@ -49,6 +49,9 @@ test_that("textmodel_word2vec works", {
         featfreq(dfm_trim(dfm(toks), 2)),
         wov1$frequency
     )
+    expect_true(
+        wov1$tolower
+    )
     
     expect_output(
         print(wov1),
@@ -112,6 +115,9 @@ test_that("textmodel_word2vec works", {
     expect_identical(
         featfreq(dfm_trim(dfm(toks), 2)),
         wov2$frequency
+    )
+    expect_true(
+        wov2$tolower
     )
     
     expect_output(

@@ -12,11 +12,11 @@ probability(
 )
 }
 \arguments{
-\item{x}{a \code{textmodel_wordvector} object fitted with \code{normalize = FALSE}.}
+\item{x}{a trained \code{textmodel_wordvector} object.}
 
-\item{targets}{words for which probability is computed.}
+\item{targets}{words for which probabilities are computed.}
 
-\item{layer}{the layer based on which probability is computed.}
+\item{layer}{the layer based on which probabilities are computed.}
 
 \item{mode}{specify the type of resulting object.}
 }
