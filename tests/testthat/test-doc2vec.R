@@ -98,6 +98,39 @@ test_that("textmodel_doc2vec works", {
     )
 })
 
+test_that("textmodel_doc2vec works hierachical softmax", {
+    
+    skip_on_cran()
+    
+    # DM
+    dov1 <- textmodel_doc2vec(head(toks, 1000), dim = 10, use_ns = FALSE)
+    expect_equal(
+        class(dov1), 
+        c("textmodel_doc2vec", "textmodel_wordvector")
+    )
+    expect_false(
+        dov1$use_ns
+    )
+    expect_equal(
+        dov1$type, 
+        "dm"
+    )
+    
+    # SG
+    dov2 <- textmodel_doc2vec(head(toks, 1000), dim = 10, type = "dbow", use_ns = FALSE)
+    expect_equal(
+        class(dov2), 
+        c("textmodel_doc2vec", "textmodel_wordvector")
+    )
+    expect_false(
+        dov2$use_ns
+    )
+    expect_equal(
+        dov2$type, 
+        "dbow"
+    )
+})
+
 test_that("textmodel_doc2vec works with pre-trained models", {
     
     skip_on_cran()
