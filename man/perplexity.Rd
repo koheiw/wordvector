@@ -11,8 +11,8 @@ perplexity(x, targets, data)
 
 \item{targets}{words for which probabilities are computed.}
 
-\item{data}{the probabilities words are tested against occurrences of words in \code{data};
-should be a \link[quanteda:tokens]{quanteda::tokens} or \link[quanteda:dfm]{quanteda::dfm}.}
+\item{data}{a \link[quanteda:tokens]{quanteda::tokens} or \link[quanteda:dfm]{quanteda::dfm}; the probabilities of words are
+tested against occurrences of words in it.}
 }
 \description{
 Compute the perplexity of a trained word2vec model with data.
