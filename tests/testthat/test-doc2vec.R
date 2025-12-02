@@ -21,7 +21,8 @@ test_that("textmodel_doc2vec works", {
     expect_equal(
         names(dov1),
         c("values", "weights", "type", "dim", "frequency", "window",  "iter", "alpha", 
-          "use_ns", "ns_size", "sample", "normalize",  "min_count", "concatenator", "docvars", "call", "version")
+          "use_ns", "ns_size", "sample", "normalize",  "min_count", "tolower",
+          "concatenator", "docvars", "call", "version")
     )
     expect_equal(
         dim(dov1$values$word), c(5363L, 50L)

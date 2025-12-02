@@ -20,7 +20,7 @@ test_that("textmodel_doc2vec works", {
     expect_false(dov1$normalize)
     expect_equal(
         names(dov1),
-        c("values", "dim", "concatenator", "docvars", "normalize", "call", "version")
+        c("values", "dim", "tolower", "concatenator", "docvars", "normalize", "call", "version")
     )
     expect_equal(
         dim(dov1$values$word), c(5363L, 50L)
