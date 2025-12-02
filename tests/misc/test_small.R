@@ -30,28 +30,36 @@ wdv$weights["america",]
 wdv2$weights["america",]
 wdv3$weights["america",]
 
-#dov <- textmodel_doc2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose = TRUE, iter = 10)
-dov <- textmodel_doc2vec(toks, dim = 50, type = "skip-gram", min_count = 5, verbose = TRUE, iter = 10)
+dov <- textmodel_doc2vec(toks, dim = 100, type = "dm", min_count = 5, verbose = TRUE, iter = 10)
+dov2 <- textmodel_doc2vec(toks, dim = 100, type = "dm", min_count = 5, verbose = TRUE, iter = 20)
 
-similarity(dov, analogy(~ washington - america + france)) %>% 
-    head()
-
-probability(dov, c("good")) %>% 
-    head()
-
-sim <- proxyC::simil(
-    dov$values$doc,
-    dov$values$doc["4263794",, drop = FALSE]
-)
-sim <- proxyC::simil(
-    dov$values$doc,
-    dov$values$doc["3016236",, drop = FALSE]
-)
 sim <- proxyC::simil(
     dov$values$doc,
     dov$values$doc["3555430",, drop = FALSE]
 )
+tail(sort(s <- rowSums(sim)))
 
+sim2 <- proxyC::simil(
+    dov2$values$doc,
+    dov2$values$doc["3555430",, drop = FALSE]
+)
+tail(sort(s2 <- rowSums(sim2)))
+
+identical(s, s2)
+cor(s, s2)
+
+sim <- proxyC::simil(
+    dov2$values$doc,
+    dov2$values$doc["4263794",, drop = FALSE]
+)
+sim <- proxyC::simil(
+    dov2$values$doc,
+    dov2$values$doc["3016236",, drop = FALSE]
+)
+sim <- proxyC::simil(
+    dov2$values$doc,
+    dov2$values$doc["3555430",, drop = FALSE]
+)
 tail(sort(s <- rowSums(sim)))
 print(tail(toks[order(s)]), max_ntoken = -1)
 
