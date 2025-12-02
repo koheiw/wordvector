@@ -147,7 +147,7 @@ test_that("textmodel_word2vec works hierachical softmax", {
     skip_on_cran()
     
     # CBOW
-    wov1 <- textmodel_word2vec(head(toks, 1000), dim = 10, use_ns = FALSE)
+    wov1 <- textmodel_word2vec(head(toks, 1000), type = "cbow", dim = 10, use_ns = FALSE)
     expect_equal(
         class(wov1), 
         c("textmodel_word2vec", "textmodel_wordvector")
