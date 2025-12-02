@@ -175,12 +175,14 @@ probability <- function(x, targets, layer = c("words", "documents"),
 #' @keywords internal
 perplexity <- function(x, targets, data) {
     x <- upgrade_pre06(x)
-    if (!is.tokens(data) && !is.dfm(data))
-        stop("data must be a tokens or dfm")
-    if (is.tokens(data))
-        data <- dfm(data, tolower = x$tolwoer)
+    
     if (!is.character(targets))
         stop("targets must be a character vector")
+    
+    if (!is.tokens(data) && !is.dfm(data))
+        stop("data must be a tokens or dfm")
+    data <- dfm(data, remove_padding = TRUE, tolower = x$tolower)
+    
     p <- probability(x, targets, mode = "numeric")
     pred <- dfm_match(dfm_weight(data, "prop"), rownames(p)) %*% p
     tri <- Matrix::mat2triplet(dfm_match(data, colnames(pred)))

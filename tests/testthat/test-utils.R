@@ -446,7 +446,13 @@ test_that("perplexity works", {
     suppressWarnings(
         ppl2 <- perplexity(wov, word2, dfmt)
     )
-    expect_lt(ppl2, 3.0)
+    expect_lt(ppl2, ppl1)
+    
+    # tokens_object
+    suppressWarnings(
+        ppl3 <- perplexity(wov, word2, toks)
+    )
+    expect_equal(ppl3, ppl2)
     
     expect_error(
         perplexity(wov, c("good" = 1, "bad" = -1), dfmt),
