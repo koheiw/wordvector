@@ -4,6 +4,7 @@
 #include <mutex>
 #include "word2vec/word2vec.hpp"
 #include "tokens.h"
+#include "dev.h"
 
 typedef XPtr<TokensObj> TokensPtr;
 typedef std::vector<std::string> vocabulary_t;
@@ -35,8 +36,32 @@ Rcpp::NumericMatrix get_documents(w2v::word2vec_t model) {
         return Rcpp::NumericMatrix();
     if (model.vectorSize() * model.corpusSize() != mat.size())
         throw std::runtime_error("Invalid document matrix");
+    dev::Timer timer;
+    dev::start_timer("create matrix", timer);
     Rcpp::NumericMatrix mat_(model.vectorSize(), model.corpusSize(), mat.begin());
-    return Rcpp::transpose(mat_);
+    dev::stop_timer("create matrix", timer);
+    dev::start_timer("transpose matrix", timer);
+    mat_ = Rcpp::transpose(mat_);
+    dev::stop_timer("transpose matrix", timer);
+    return mat_;
+}
+
+Rcpp::NumericMatrix get_documents2(w2v::word2vec_t model) {
+    std::vector<float> val = model.docValues();
+    if (val.size() == 0)
+        return Rcpp::NumericMatrix();
+    if (model.vectorSize() * model.corpusSize() != val.size())
+        throw std::runtime_error("Invalid document matrix");
+    dev::Timer timer;
+    dev::start_timer("create & transpose matrix", timer);
+    Rcpp::NumericMatrix mat_(model.corpusSize(), model.vectorSize());
+    for (std::size_t i = 0; i < model.corpusSize(); ++i) {
+        for (std::size_t j = 0; j < model.vectorSize(); ++j) {
+            mat_(i, j) = val[i * model.vectorSize() + j];
+        }    
+    }
+    dev::stop_timer("create & transpose matrix", timer);
+    return mat_;
 }
 
 Rcpp::NumericMatrix get_weights(w2v::word2vec_t model) {
@@ -183,6 +208,9 @@ Rcpp::List cpp_word2vec(TokensPtr xptr,
     } else if (type == 4) { // dbow
         values = Rcpp::List::create(
             Rcpp::Named("doc") = get_documents(word2vec)
+        );
+        List values2 = Rcpp::List::create(
+            Rcpp::Named("doc") = get_documents2(word2vec)
         );
     } else { // cbow or dbow
         values = Rcpp::List::create(
