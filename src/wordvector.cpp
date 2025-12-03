@@ -21,56 +21,48 @@ Rcpp::CharacterVector encode(std::vector<std::string> types){
     return types_;
 }
 
-Rcpp::NumericMatrix get_words(w2v::word2vec_t model) {
-    std::vector<float> mat = model.values();
-    if (model.vectorSize() * model.vocabularySize() != mat.size())
-        throw std::runtime_error("Invalid word matrix");
-    Rcpp::NumericMatrix mat_(model.vectorSize(), model.vocabularySize(), mat.begin());
-    colnames(mat_) = encode(model.vocabulary()); 
-    return Rcpp::transpose(mat_);
-}
-
-Rcpp::NumericMatrix get_documents(w2v::word2vec_t model) {
-    std::vector<float> mat = model.docValues();
+Rcpp::NumericMatrix as_matrix(std::vector<float> mat, 
+                              std::size_t nrow, std::size_t ncol) {
+    
     if (mat.size() == 0)
         return Rcpp::NumericMatrix();
-    if (model.vectorSize() * model.corpusSize() != mat.size())
-        throw std::runtime_error("Invalid document matrix");
-    dev::Timer timer;
-    dev::start_timer("create matrix", timer);
-    Rcpp::NumericMatrix mat_(model.vectorSize(), model.corpusSize(), mat.begin());
-    dev::stop_timer("create matrix", timer);
-    dev::start_timer("transpose matrix", timer);
-    mat_ = Rcpp::transpose(mat_);
-    dev::stop_timer("transpose matrix", timer);
+    if (nrow * ncol != mat.size())
+        throw std::runtime_error("Invalid matrix size");
+    Rcpp::NumericMatrix mat_(nrow, ncol);
+    for (std::size_t i = 0; i < nrow; ++i) {
+        for (std::size_t j = 0; j < ncol; ++j) {
+            mat_(i, j) = mat[i * ncol + j];
+        }
+    }
     return mat_;
 }
 
-Rcpp::NumericMatrix get_documents2(w2v::word2vec_t model) {
-    std::vector<float> val = model.docValues();
-    if (val.size() == 0)
-        return Rcpp::NumericMatrix();
-    if (model.vectorSize() * model.corpusSize() != val.size())
-        throw std::runtime_error("Invalid document matrix");
-    dev::Timer timer;
-    dev::start_timer("create & transpose matrix", timer);
-    Rcpp::NumericMatrix mat_(model.corpusSize(), model.vectorSize());
-    for (std::size_t i = 0; i < model.corpusSize(); ++i) {
-        for (std::size_t j = 0; j < model.vectorSize(); ++j) {
-            mat_(i, j) = val[i * model.vectorSize() + j];
-        }    
-    }
-    dev::stop_timer("create & transpose matrix", timer);
-    return mat_;
-}
 
 Rcpp::NumericMatrix get_weights(w2v::word2vec_t model) {
     std::vector<float> mat = model.weights();
     if (model.vectorSize() * model.vocabularySize() != mat.size())
         throw std::runtime_error("Invalid weight matrix");
-    Rcpp::NumericMatrix mat_(model.vectorSize(), model.vocabularySize(), mat.begin());
-    colnames(mat_) = encode(model.vocabulary()); 
-    return Rcpp::transpose(mat_);
+    Rcpp::NumericMatrix mat_ = as_matrix(mat, model.vocabularySize(), model.vectorSize());
+    rownames(mat_) = encode(model.vocabulary()); 
+    return mat_;
+}
+
+Rcpp::NumericMatrix get_words(w2v::word2vec_t model) {
+    std::vector<float> mat = model.values();
+    if (model.vectorSize() * model.vocabularySize() != mat.size())
+        throw std::runtime_error("Invalid word matrix");
+    Rcpp::NumericMatrix mat_ = as_matrix(mat, model.vocabularySize(), model.vectorSize());
+    rownames(mat_) = encode(model.vocabulary()); 
+    return mat_;
+}
+
+Rcpp::NumericMatrix get_documents(w2v::word2vec_t model) {
+    std::vector<float> mat = model.docValues();
+    if (model.vectorSize() * model.corpusSize() != mat.size())
+        throw std::runtime_error("Invalid document matrix");
+    Rcpp::NumericMatrix mat_ = as_matrix(mat, model.corpusSize(), model.vectorSize());
+    // TODO: add document names here
+    return mat_;
 }
 
 Rcpp::NumericVector get_frequency(w2v::corpus_t corpus) {
@@ -208,9 +200,6 @@ Rcpp::List cpp_word2vec(TokensPtr xptr,
     } else if (type == 4) { // dbow
         values = Rcpp::List::create(
             Rcpp::Named("doc") = get_documents(word2vec)
-        );
-        List values2 = Rcpp::List::create(
-            Rcpp::Named("doc") = get_documents2(word2vec)
         );
     } else { // cbow or dbow
         values = Rcpp::List::create(
