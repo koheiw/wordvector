@@ -4,6 +4,7 @@
 #include <mutex>
 #include "word2vec/word2vec.hpp"
 #include "tokens.h"
+#include "dev.h"
 
 typedef XPtr<TokensObj> TokensPtr;
 typedef std::vector<std::string> vocabulary_t;
@@ -20,32 +21,48 @@ Rcpp::CharacterVector encode(std::vector<std::string> types){
     return types_;
 }
 
-Rcpp::NumericMatrix get_words(w2v::word2vec_t model) {
-    std::vector<float> mat = model.values();
-    if (model.vectorSize() * model.vocabularySize() != mat.size())
-        throw std::runtime_error("Invalid word matrix");
-    Rcpp::NumericMatrix mat_(model.vectorSize(), model.vocabularySize(), mat.begin());
-    colnames(mat_) = encode(model.vocabulary()); 
-    return Rcpp::transpose(mat_);
-}
-
-Rcpp::NumericMatrix get_documents(w2v::word2vec_t model) {
-    std::vector<float> mat = model.docValues();
+Rcpp::NumericMatrix as_matrix(std::vector<float> mat, 
+                              std::size_t nrow, std::size_t ncol) {
+    
     if (mat.size() == 0)
         return Rcpp::NumericMatrix();
-    if (model.vectorSize() * model.corpusSize() != mat.size())
-        throw std::runtime_error("Invalid document matrix");
-    Rcpp::NumericMatrix mat_(model.vectorSize(), model.corpusSize(), mat.begin());
-    return Rcpp::transpose(mat_);
+    if (nrow * ncol != mat.size())
+        throw std::runtime_error("Invalid matrix size");
+    Rcpp::NumericMatrix mat_(nrow, ncol);
+    for (std::size_t i = 0; i < nrow; ++i) {
+        for (std::size_t j = 0; j < ncol; ++j) {
+            mat_(i, j) = mat[i * ncol + j];
+        }
+    }
+    return mat_;
 }
+
 
 Rcpp::NumericMatrix get_weights(w2v::word2vec_t model) {
     std::vector<float> mat = model.weights();
     if (model.vectorSize() * model.vocabularySize() != mat.size())
         throw std::runtime_error("Invalid weight matrix");
-    Rcpp::NumericMatrix mat_(model.vectorSize(), model.vocabularySize(), mat.begin());
-    colnames(mat_) = encode(model.vocabulary()); 
-    return Rcpp::transpose(mat_);
+    Rcpp::NumericMatrix mat_ = as_matrix(mat, model.vocabularySize(), model.vectorSize());
+    rownames(mat_) = encode(model.vocabulary()); 
+    return mat_;
+}
+
+Rcpp::NumericMatrix get_words(w2v::word2vec_t model) {
+    std::vector<float> mat = model.values();
+    if (model.vectorSize() * model.vocabularySize() != mat.size())
+        throw std::runtime_error("Invalid word matrix");
+    Rcpp::NumericMatrix mat_ = as_matrix(mat, model.vocabularySize(), model.vectorSize());
+    rownames(mat_) = encode(model.vocabulary()); 
+    return mat_;
+}
+
+Rcpp::NumericMatrix get_documents(w2v::word2vec_t model) {
+    std::vector<float> mat = model.docValues();
+    if (model.vectorSize() * model.corpusSize() != mat.size())
+        throw std::runtime_error("Invalid document matrix");
+    Rcpp::NumericMatrix mat_ = as_matrix(mat, model.corpusSize(), model.vectorSize());
+    // TODO: add document names here
+    return mat_;
 }
 
 Rcpp::NumericVector get_frequency(w2v::corpus_t corpus) {
