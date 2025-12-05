@@ -207,6 +207,12 @@ get_threads <- function() {
 
 upgrade_pre06 <- function(x) {
     
+    if (is.null(x$tolower)) {
+        x$tolower <- TRUE
+    }
+    if (is.numeric(x$type)) {
+        x$type <- c("cbow", "sg")[x$type]
+    }
     if (is.list(x$values))
         return(x)
     if (identical(class(x), "textmodel_wordvector")) {
@@ -215,12 +221,6 @@ upgrade_pre06 <- function(x) {
     } else if (identical(class(x), "textmodel_docvector")) {
         x$values  <- list(doc = x$values)
         class(x) <- c("textmodel_doc2vec", "textmodel_wordvector")
-    }
-    if (is.numeric(x$type)) {
-        x$type <- c("cbow", "sg")[x$type]
-    }
-    if (is.null(x$tolower)) {
-        x$tolower <- TRUE
     }
     return(x)
 }
