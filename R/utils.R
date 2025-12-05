@@ -145,7 +145,7 @@ probability <- function(x, targets, layer = c("words", "documents"),
     targets <- targets[b]
     
     values <- as.matrix(x, layer = layer, normalize = FALSE)
-    e <- exp(values %*% t(x$weights[names(targets),, drop = FALSE]))
+    e <- exp(tcrossprod(values, x$weights[names(targets),, drop = FALSE]))
     prob <- e / (e + 1) # sigmoid function
     
     res <- prob %*% diag(targets)
@@ -184,7 +184,7 @@ perplexity <- function(x, targets, data) {
     data <- dfm(data, remove_padding = TRUE, tolower = x$tolower)
     
     p <- probability(x, targets, mode = "numeric")
-    pred <- dfm_match(dfm_weight(data, "prop"), rownames(p)) %*% p
+    pred <- crossprod(t(dfm_match(dfm_weight(data, "prop"), rownames(p))), p)
     tri <- Matrix::mat2triplet(dfm_match(data, colnames(pred)))
     exp(-sum(tri$x * log(pred[cbind(tri$i, tri$j)])) / sum(tri$x))
 }
