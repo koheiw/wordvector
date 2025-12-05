@@ -145,7 +145,7 @@ probability <- function(x, targets, layer = c("words", "documents"),
     targets <- targets[b]
     
     values <- as.matrix(x, layer = layer, normalize = FALSE)
-    e <- exp(values %*% t(x$weights[names(targets),, drop = FALSE]))
+    e <- exp(tcrossprod(values, x$weights[names(targets),, drop = FALSE]))
     prob <- e / (e + 1) # sigmoid function
     
     res <- prob %*% diag(targets)
@@ -184,7 +184,7 @@ perplexity <- function(x, targets, data) {
     data <- dfm(data, remove_padding = TRUE, tolower = x$tolower)
     
     p <- probability(x, targets, mode = "numeric")
-    pred <- dfm_match(dfm_weight(data, "prop"), rownames(p)) %*% p
+    pred <- crossprod(t(dfm_match(dfm_weight(data, "prop"), rownames(p))), p)
     tri <- Matrix::mat2triplet(dfm_match(data, colnames(pred)))
     exp(-sum(tri$x * log(pred[cbind(tri$i, tri$j)])) / sum(tri$x))
 }
@@ -207,6 +207,12 @@ get_threads <- function() {
 
 upgrade_pre06 <- function(x) {
     
+    if (is.null(x$tolower)) {
+        x$tolower <- TRUE
+    }
+    if (is.numeric(x$type)) {
+        x$type <- c("cbow", "sg")[x$type]
+    }
     if (is.list(x$values))
         return(x)
     if (identical(class(x), "textmodel_wordvector")) {
@@ -215,12 +221,6 @@ upgrade_pre06 <- function(x) {
     } else if (identical(class(x), "textmodel_docvector")) {
         x$values  <- list(doc = x$values)
         class(x) <- c("textmodel_doc2vec", "textmodel_wordvector")
-    }
-    if (is.numeric(x$type)) {
-        x$type <- c("cbow", "sg")[x$type]
-    }
-    if (is.null(x$tolower)) {
-        x$tolower <- TRUE
     }
     return(x)
 }
