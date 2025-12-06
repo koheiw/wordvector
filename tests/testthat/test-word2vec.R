@@ -145,6 +145,75 @@ test_that("textmodel_word2vec works", {
         "textmodel_word2vec does not have the layer for documents"
     )
     
+    # DM
+    expect_output(
+        wov3 <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1,
+                                   type = "dm", verbose = TRUE),
+        "Training distributed memory model with 50 dimensions"
+    )
+    expect_equal(
+        class(wov3), 
+        c("textmodel_word2vec", "textmodel_wordvector")
+    )
+    expect_true(
+        wov3$use_ns
+    )
+    expect_identical(
+        wov3$ns_size, 5L
+    )
+    expect_identical(
+        wov3$window, 5L
+    )
+    expect_identical(
+        dim(wov3$values$word), c(5360L, 50L)
+    )
+    expect_null(
+        wov3$values$doc
+    )
+    expect_identical(
+        dim(wov3$weights), c(5360L, 50L)
+    )
+    expect_identical(
+        wov3$sample, 1.0
+    )
+    expect_equal(
+        wov3$min_count, 2L
+    )
+    expect_false(
+        wov3$normalize
+    )
+    expect_identical(
+        featfreq(dfm_trim(dfm(toks), 2)),
+        wov3$frequency
+    )
+    expect_true(
+        wov3$tolower
+    )
+    
+    expect_output(
+        print(wov3),
+        paste(
+            "",
+            "Call:",
+            "textmodel_word2vec(x = toks, dim = 50, type = \"dm\", min_count = 2, ",
+            "    iter = 10, sample = 1, verbose = TRUE)",
+            "",
+            "50 dimensions; 5,360 words.", sep = "\n"), fixed = TRUE
+    )
+    expect_equal(
+        class(expect_output(print(wov3))), 
+        class(wov3)
+    )
+    
+    expect_equal(
+        rownames(probability(wov3, c("good", "bad"), layer = "words", mode = "numeric")),
+        rownames(wov3$values$word)
+    )
+    
+    expect_error(
+        probability(wov3, c("good", "bad"), layer = "documents", mode = "numeric"),
+        "textmodel_word2vec does not have the layer for documents"
+    )
 })
 
 
