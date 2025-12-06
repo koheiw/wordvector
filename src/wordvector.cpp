@@ -192,16 +192,18 @@ Rcpp::List cpp_word2vec(TokensPtr xptr,
         Rprintf(" ...complete\n");
     
     Rcpp::List values;
-    if (type == 3) { // dm
-        values = Rcpp::List::create(
-            Rcpp::Named("word") = get_words(word2vec), 
-            Rcpp::Named("doc") = get_documents(word2vec)
-        );
-    } else if (type == 4) { // dbow
-        values = Rcpp::List::create(
-            Rcpp::Named("doc") = get_documents(word2vec)
-        );
-    } else { // cbow or dbow
+    if (doc2vec) {
+        if (type == 4) { // dbow
+            values = Rcpp::List::create(
+                Rcpp::Named("doc") = get_documents(word2vec)
+            );
+        } else { // dm
+            values = Rcpp::List::create(
+                Rcpp::Named("word") = get_words(word2vec), 
+                Rcpp::Named("doc") = get_documents(word2vec)
+            );
+        }
+    } else { // cbow, sg, dm
         values = Rcpp::List::create(
             Rcpp::Named("word") = get_words(word2vec)
         );
