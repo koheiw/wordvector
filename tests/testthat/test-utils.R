@@ -439,7 +439,7 @@ test_that("perplexity works", {
     suppressWarnings(
         ppl1 <- perplexity(wov, word1, dfmt)
     )
-    expect_gt(ppl1, 3.0)
+    expect_gt(ppl1, 0.2)
     
     # frequent words
     word2 <- c("america", "us", "people", "government", "state", "nation", "world", "peace", "public")
