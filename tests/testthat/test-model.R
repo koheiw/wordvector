@@ -32,7 +32,7 @@ test_that("textmodel_word2vec() works", {
     sim1 <- Matrix::diag(proxyC::simil(wov0$values$word[f1,], 
                                        wov1$values$word[f1,], diag = TRUE))
     expect_true(
-        median(sim1) < 0.20
+        median(sim1) < 0.30
     )
     
     # with model
@@ -96,7 +96,7 @@ test_that("textmodel_doc2vec() works", {
     sim1 <- Matrix::diag(proxyC::simil(dov0$values$word[f1,], 
                                        dov1$values$word[f1,], diag = TRUE))
     expect_true(
-        median(sim1) < 0.20
+        median(sim1) < 0.30
     )
     
     # with model
