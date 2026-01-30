@@ -222,7 +222,6 @@ Rcpp::List cpp_word2vec(TokensPtr xptr,
         Rcpp::Named("use_ns") = !with_hs,
         Rcpp::Named("ns_size") = negative,
         Rcpp::Named("sample") = sample,
-        Rcpp::Named("init_min") = init_min,
         Rcpp::Named("normalize") = normalize
     );
     return res;
