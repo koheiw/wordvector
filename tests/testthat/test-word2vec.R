@@ -362,3 +362,30 @@ test_that("textmodel_word2vec is robust", {
     )
   
 })  
+
+test_that("init_min is working", {
+    
+    wov1 <- textmodel_word2vec(toks, dim = 50, min_count = 1)
+    wov2 <- textmodel_word2vec(toks, dim = 50, min_count = 1, init_min = TRUE)
+    
+    expect_gt(
+        mean(wov1$values$word > wov2$values$word),
+        0.8
+    )
+    
+    expect_gt(
+        mean(probability(wov1, c("good", "bad"), mode = "numeric") > 
+             probability(wov2, c("good", "bad"), mode = "numeric")),
+        0.8
+    )
+    
+    expect_error(
+        textmodel_word2vec(toks, dim = 50, min_count = 1, init_min = NULL),
+        "init_min cannot be NULL"
+    )
+    
+    expect_error(
+        textmodel_word2vec(toks, dim = 50, min_count = 1, init_min = c(TRUE, FALSE)),
+        "The length of init_min must be 1"
+    )
+})

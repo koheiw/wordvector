@@ -152,7 +152,7 @@ wordvector <- function(x, dim = 50, type = c("cbow", "sg", "dm", "dbow"),
                            threads = get_threads(), iterations = iter,
                            alpha = alpha, 
                            type = match(type, c("cbow", "sg", "dm", "dbow", "dbow2")), 
-                           normalize = FALSE, 
+                           normalize = FALSE, init_min = init_min,
                            doc2vec = doc2vec,
                            verbose = verbose)
     
