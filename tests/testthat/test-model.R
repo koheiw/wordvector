@@ -15,8 +15,8 @@ test_that("textmodel_word2vec() works", {
     
     skip_on_cran()
     
-    wov0 <- textmodel_word2vec(toks0, dim = 50, type = "cbow", alpha = 0.5)
-    wov1 <- textmodel_word2vec(toks1, dim = 50, type = "cbow", alpha = 0.5)
+    wov0 <- textmodel_word2vec(toks0, dim = 50, type = "cbow")
+    wov1 <- textmodel_word2vec(toks1, dim = 50, type = "cbow")
     wov2 <- textmodel_word2vec(toks1, dim = 50, type = "cbow", model = wov0)
     
     expect_false(identical(rownames(wov1$values$word), 
@@ -70,8 +70,8 @@ test_that("textmodel_doc2vec() works", {
     
     skip_on_cran()
     
-    dov0 <- textmodel_doc2vec(toks0, dim = 50, type = "dm", alpha = 0.5)
-    dov1 <- textmodel_doc2vec(toks1, dim = 50, type = "dm", alpha = 0.5)
+    dov0 <- textmodel_doc2vec(toks0, dim = 50, type = "dm")
+    dov1 <- textmodel_doc2vec(toks1, dim = 50, type = "dm")
     dov2 <- textmodel_doc2vec(toks1, dim = 50, type = "dm", model = dov0)
     
     # word layer
