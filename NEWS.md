@@ -1,11 +1,15 @@
-## Change in v0.6.0
+## Changes in v0.6.1
+
+- Change initial values of hidden layers to avoid random high probabilities of infrequent words.
+
+## Changes in v0.6.0
 
 - Upgrade `textmodel_doc2vec` to train the distributed memory (DM) and distributed bag-of-word (DBOW) models.
 - Add `as.textmodel_doc2vec()` to create document vectors as weighted average of word vectors.
 - Add `layer` to `as.matrix()` to choose between word or document vectors.
 - `normalize` is now defunct in `textmodel_word2vec()`.
 
-## Change in v0.5.1
+## Changes in v0.5.1
 
 - Add `normalize` to `textmodel_doc2vec()` and pass it to `as.matrix()`.
 - Add `weights` to `textmodel_doc2vec()` to adjust the salience of words in the document vectors.
