@@ -31,8 +31,8 @@ test_that("textmodel_word2vec() works", {
                     rownames(wov1$values$word))
     sim1 <- Matrix::diag(proxyC::simil(wov0$values$word[f1,], 
                                        wov1$values$word[f1,], diag = TRUE))
-    expect_true(
-        median(sim1) < 0.30
+    expect_lt(
+        median(sim1), 0.30
     )
     
     # with model
@@ -40,8 +40,8 @@ test_that("textmodel_word2vec() works", {
                     rownames(wov2$values$word))
     sim2 <- Matrix::diag(proxyC::simil(wov0$values$word[f2,], 
                                        wov2$values$word[f2,], diag = TRUE))
-    expect_true(
-        median(sim2) > 0.70
+    expect_gt(
+        median(sim2), 0.70
     )
     
     expect_error(
@@ -95,8 +95,8 @@ test_that("textmodel_doc2vec() works", {
                     rownames(dov1$values$word))
     sim1 <- Matrix::diag(proxyC::simil(dov0$values$word[f1,], 
                                        dov1$values$word[f1,], diag = TRUE))
-    expect_true(
-        median(sim1) < 0.30
+    expect_lt(
+        median(sim1), 0.30
     )
     
     # with model
@@ -104,8 +104,8 @@ test_that("textmodel_doc2vec() works", {
                     rownames(dov2$values$word))
     sim2 <- Matrix::diag(proxyC::simil(dov0$values$word[f2,], 
                                        dov2$values$word[f2,], diag = TRUE))
-    expect_true(
-        median(sim2) > 0.70
+    expect_gt(
+        median(sim2), 0.70
     )
     
     expect_error(
