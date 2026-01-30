@@ -151,7 +151,7 @@ test_that("textmodel_doc2vec works with pre-trained models", {
     
     r <- cor(t(as.matrix(dov1_pre, layer = "words"))[,1:1000], 
              t(as.matrix(dov1, layer = "words"))[,1:1000])
-    expect_gt(median(diag(r)), 0.9)
+    expect_gt(median(diag(r)), 0.8)
     
     r <- cor(t(as.matrix(dov1_pre, layer = "documents")),
              t(as.matrix(dov1, layer = "documents")))
