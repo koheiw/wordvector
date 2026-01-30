@@ -182,11 +182,14 @@ perplexity <- function(x, targets, data) {
     if (!is.tokens(data) && !is.dfm(data))
         stop("data must be a tokens or dfm")
     data <- dfm(data, remove_padding = TRUE, tolower = x$tolower)
-    
+
     p <- probability(x, targets, mode = "numeric")
-    pred <- crossprod(t(dfm_match(dfm_weight(data, "prop"), rownames(p))), p)
-    tri <- Matrix::mat2triplet(dfm_match(data, colnames(pred)))
-    exp(-sum(tri$x * log(pred[cbind(tri$i, tri$j)])) / sum(tri$x))
+    pred <- dfm_match(data, rownames(p)) %*% p
+    pred <- pred / rowSums(pred)
+    
+    data <- dfm_match(data, colnames(pred))
+    data <- Matrix::mat2triplet(data)
+    exp(-sum(data$x * log(pred[cbind(data$i, data$j)])) / sum(data$x))
 }
 
 get_threads <- function() {
