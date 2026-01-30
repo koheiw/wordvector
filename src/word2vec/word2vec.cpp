@@ -46,7 +46,9 @@ namespace w2v {
             data.corpus = corpus;
             
             // initialize variables
-            std::uniform_real_distribution<float> rndMatrixInitializer(-0.005f, 0.005f);
+            //std::uniform_real_distribution<float> rndMatrixInitializer(-0.005f, 0.005f);
+            std::uniform_real_distribution<float> rndMatrixInitializer(settings->expValueMax * -1, 
+                                                                       settings->expValueMax * -1 + 0.01f);
             
             // word vector
             data.bpWeights.reset(new std::vector<float>(matrixSize, 0.0f));
