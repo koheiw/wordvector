@@ -103,7 +103,7 @@ wordvector <- function(x, dim = 50, type = c("cbow", "sg", "dm", "dbow"),
                        iter = 10, alpha = 0.05, model = NULL, 
                        use_ns = TRUE, ns_size = 5, sample = 0.001, tolower = TRUE,
                        include_data = FALSE, verbose = FALSE, ..., 
-                       normalize = FALSE) {
+                       init_min = FALSE, normalize = FALSE) {
 
     type <- match.arg(type)
     dim <- check_integer(dim, min = 2)
@@ -117,6 +117,7 @@ wordvector <- function(x, dim = 50, type = c("cbow", "sg", "dm", "dbow"),
     normalize <- check_logical(normalize)
     tolower <- check_logical(tolower)
     include_data <- check_logical(include_data)
+    init_min <- check_logical(init_min)
     verbose <- check_logical(verbose)
     
     if (normalize)

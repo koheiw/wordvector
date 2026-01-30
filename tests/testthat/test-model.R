@@ -15,8 +15,8 @@ test_that("textmodel_word2vec() works", {
     
     skip_on_cran()
     
-    wov0 <- textmodel_word2vec(toks0, dim = 50, type = "cbow")
-    wov1 <- textmodel_word2vec(toks1, dim = 50, type = "cbow")
+    wov0 <- textmodel_word2vec(toks0, dim = 50, type = "cbow", alpha = 0.5)
+    wov1 <- textmodel_word2vec(toks1, dim = 50, type = "cbow", alpha = 0.5)
     wov2 <- textmodel_word2vec(toks1, dim = 50, type = "cbow", model = wov0)
     
     expect_false(identical(rownames(wov1$values$word), 
@@ -32,7 +32,7 @@ test_that("textmodel_word2vec() works", {
     sim1 <- Matrix::diag(proxyC::simil(wov0$values$word[f1,], 
                                        wov1$values$word[f1,], diag = TRUE))
     expect_lt(
-        median(sim1), 0.30
+        median(sim1), 0.20
     )
     
     # with model
@@ -70,8 +70,8 @@ test_that("textmodel_doc2vec() works", {
     
     skip_on_cran()
     
-    dov0 <- textmodel_doc2vec(toks0, dim = 50, type = "dm")
-    dov1 <- textmodel_doc2vec(toks1, dim = 50, type = "dm")
+    dov0 <- textmodel_doc2vec(toks0, dim = 50, type = "dm", alpha = 0.5)
+    dov1 <- textmodel_doc2vec(toks1, dim = 50, type = "dm", alpha = 0.5)
     dov2 <- textmodel_doc2vec(toks1, dim = 50, type = "dm", model = dov0)
     
     # word layer
@@ -95,8 +95,12 @@ test_that("textmodel_doc2vec() works", {
                     rownames(dov1$values$word))
     sim1 <- Matrix::diag(proxyC::simil(dov0$values$word[f1,], 
                                        dov1$values$word[f1,], diag = TRUE))
+    
+    sim1 <- Matrix::diag(proxyC::simil(as.matrix(dov0, layer = "word")[f1,], 
+                                       as.matrix(dov1, layer = "word")[f1,], diag = TRUE))
+    
     expect_lt(
-        median(sim1), 0.30
+        median(sim1), 0.20
     )
     
     # with model

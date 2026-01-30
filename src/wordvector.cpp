@@ -127,13 +127,14 @@ Rcpp::List cpp_word2vec(TokensPtr xptr,
                         uint16_t size = 100,
                         uint16_t window = 5,
                         float sample = 0.001,
-                        bool withHS = false,
+                        bool with_hs = false,
                         uint16_t negative = 5,
                         uint16_t threads = 1,
                         uint16_t iterations = 5,
                         float alpha = 0.05,
                         int type = 1,
                         bool doc2vec = false,
+                        bool init_min = false,
                         bool verbose = false,
                         bool normalize = true) {
   
@@ -166,13 +167,14 @@ Rcpp::List cpp_word2vec(TokensPtr xptr,
     settings.expTableSize = 1000;
     settings.expValueMax = 6;
     settings.sample = sample;
-    settings.withHS = withHS;
+    settings.withHS = with_hs;
     settings.negative = negative;
     settings.threads = threads > 0 ? threads : std::thread::hardware_concurrency();
     settings.iterations = iterations;
     settings.alpha = alpha;
     settings.type = type;
     settings.random = (uint32_t)(Rcpp::runif(1)[0] * std::numeric_limits<uint32_t>::max());
+    settings.initMin = init_min;
     settings.verbose = verbose;
     
     // NOTE: consider initializing models with corpus
@@ -217,9 +219,10 @@ Rcpp::List cpp_word2vec(TokensPtr xptr,
         Rcpp::Named("window") = window,
         Rcpp::Named("iter") = iterations,
         Rcpp::Named("alpha") = alpha,
-        Rcpp::Named("use_ns") = !withHS,
+        Rcpp::Named("use_ns") = !with_hs,
         Rcpp::Named("ns_size") = negative,
         Rcpp::Named("sample") = sample,
+        Rcpp::Named("init_min") = init_min,
         Rcpp::Named("normalize") = normalize
     );
     return res;
