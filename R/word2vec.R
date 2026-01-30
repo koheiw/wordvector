@@ -148,7 +148,7 @@ wordvector <- function(x, dim = 50, type = c("cbow", "sg", "dm", "dbow"),
     x <- tokens_trim(x, min_termfreq = min_count, termfreq_type = "count")
     
     result <- cpp_word2vec(x, model, size = dim, window = window,
-                           sample = sample, withHS = !use_ns, negative = ns_size, 
+                           sample = sample, with_hs = !use_ns, negative = ns_size, 
                            threads = get_threads(), iterations = iter,
                            alpha = alpha, 
                            type = match(type, c("cbow", "sg", "dm", "dbow", "dbow2")), 
