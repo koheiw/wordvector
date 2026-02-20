@@ -47,6 +47,7 @@ as.matrix.textmodel_doc2vec <- function(x, normalize = TRUE,
     if (layer == "words") {
         result <- x$values$word
     } else {
+        # TODO: add grouping by docid
         result <- x$values$doc
     }
     if (is.null(result))
