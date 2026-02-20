@@ -165,7 +165,7 @@ wordvector <- function(x, dim = 50, type = c("cbow", "sg", "dm", "dbow"),
     if (include_data) # NOTE: consider removing
         result$data <- y
     if (doc2vec) {
-        result$docvars <- docvars(x)
+        result$docvars <- attr(toks, "docvars")
         rownames(result$docvars) <- docnames(x)
         rownames(result$values$doc) <- docnames(x)
     }
