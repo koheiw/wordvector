@@ -5,7 +5,13 @@
 \alias{as.matrix.textmodel_word2vec}
 \title{Extract word or document vectors}
 \usage{
-\method{as.matrix}{textmodel_doc2vec}(x, normalize = TRUE, layer = c("documents", "words"), ...)
+\method{as.matrix}{textmodel_doc2vec}(
+  x,
+  normalize = TRUE,
+  layer = c("documents", "words"),
+  group = FALSE,
+  ...
+)
 
 \method{as.matrix}{textmodel_word2vec}(x, normalize = TRUE, layer = "words", ...)
 }
