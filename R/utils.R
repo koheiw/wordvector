@@ -99,6 +99,7 @@ similarity <- function(x, targets, layer = c("words", "documents"),
 #' @param targets words for which probabilities are computed.
 #' @param layer the layer based on which probabilities are computed.
 #' @param mode specify the type of resulting object.
+#' @param ... passed to `as.matrix()`.
 #' @return a matrix of words or documents sorted in descending order by the probability 
 #'   scores when `mode = "character"`; a matrix of the probability scores when `mode = "numeric"`.
 #'   When `words` is a named numeric vector, probability scores are weighted by
@@ -106,7 +107,7 @@ similarity <- function(x, targets, layer = c("words", "documents"),
 #' @export
 #' @seealso [similarity()]
 probability <- function(x, targets, layer = c("words", "documents"),
-                        mode = c("character", "numeric")) {
+                        mode = c("character", "numeric"), ...) {
     
     layer <- match.arg(layer)
     mode <- ifelse(mode == "words", "character", mode) # for < v0.6.0
@@ -144,7 +145,7 @@ probability <- function(x, targets, layer = c("words", "documents"),
     }
     targets <- targets[b]
     
-    values <- as.matrix(x, layer = layer, normalize = FALSE)
+    values <- as.matrix(x, layer = layer, normalize = FALSE, ...)
     e <- exp(tcrossprod(values, x$weights[names(targets),, drop = FALSE]))
     prob <- e / (e + 1) # sigmoid function
     
