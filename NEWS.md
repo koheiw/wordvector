@@ -3,6 +3,7 @@
 - Mention doc2vec in package description.
 - Add `perplexity()` to asses models' the goodness-of-fit.
 - Save quanteda's internal docvars in the `textmodel_doc2vec` objects.
+- Add `group` to `as.matrix()` to average sentence or paragraph vectors from the same documents.
 
 ## Changes in v0.6.0
 
