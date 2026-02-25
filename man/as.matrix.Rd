@@ -5,7 +5,13 @@
 \alias{as.matrix.textmodel_word2vec}
 \title{Extract word or document vectors}
 \usage{
-\method{as.matrix}{textmodel_doc2vec}(x, normalize = TRUE, layer = c("documents", "words"), ...)
+\method{as.matrix}{textmodel_doc2vec}(
+  x,
+  normalize = TRUE,
+  layer = c("documents", "words"),
+  group = FALSE,
+  ...
+)
 
 \method{as.matrix}{textmodel_word2vec}(x, normalize = TRUE, layer = "words", ...)
 }
@@ -15,6 +21,9 @@
 \item{normalize}{if \code{TRUE}, returns normalized vectors.}
 
 \item{layer}{the layer from which the vectors are extracted.}
+
+\item{group}{[experimental] average sentence or paragraph vectors from the same document.
+Silently ignored when \code{layer = "word"}.}
 
 \item{...}{not used.}
 }

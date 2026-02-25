@@ -1,11 +1,18 @@
-## Change in v0.6.0
+## Changes in v0.6.1
+
+- Mention doc2vec in package description.
+- Add `perplexity()` to asses models' the goodness-of-fit.
+- Save quanteda's internal docvars in the `textmodel_doc2vec` objects.
+- Add `group` to `as.matrix()` to average sentence or paragraph vectors from the same documents.
+
+## Changes in v0.6.0
 
 - Upgrade `textmodel_doc2vec` to train the distributed memory (DM) and distributed bag-of-word (DBOW) models.
 - Add `as.textmodel_doc2vec()` to create document vectors as weighted average of word vectors.
 - Add `layer` to `as.matrix()` to choose between word or document vectors.
 - `normalize` is now defunct in `textmodel_word2vec()`.
 
-## Change in v0.5.1
+## Changes in v0.5.1
 
 - Add `normalize` to `textmodel_doc2vec()` and pass it to `as.matrix()`.
 - Add `weights` to `textmodel_doc2vec()` to adjust the salience of words in the document vectors.

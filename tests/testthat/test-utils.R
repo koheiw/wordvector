@@ -45,6 +45,16 @@ test_that("as.matrix works", {
         identical(as.matrix(dov, normalize = FALSE), dov$values$doc)
     )
     
+    # doc2vec with group
+    expect_setequal(
+        rownames(as.matrix(dov, layer = "document", group = TRUE)),
+        docnames(dfm_group(dfmt))
+    )
+    
+    expect_error(
+        as.matrix(dov, layer = "document", group = c(TRUE, FALSE)),
+        "The length of group must be 1"
+    )
 })
 
 test_that("analogy works", {

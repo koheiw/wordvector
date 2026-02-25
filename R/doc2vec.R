@@ -38,17 +38,24 @@ textmodel_doc2vec.tokens <- function(x, dim = 50, type = c("dm", "dbow"),
 #' @rdname as.matrix
 #' @export
 as.matrix.textmodel_doc2vec <- function(x, normalize = TRUE, 
-                                        layer = c("documents", "words"), ...) {
+                                        layer = c("documents", "words"), 
+                                        group = FALSE, ...) {
     
     x <- upgrade_pre06(x)
     normalize <- check_logical(normalize)
     layer <- match.arg(layer)
+    group <- check_logical(group)
     
     if (layer == "words") {
         result <- x$values$word
     } else {
         # TODO: add grouping by docid
-        result <- x$values$doc
+        if (group) {
+            lis <- split.data.frame(x$values$doc, x$docvars[["docid_"]])
+            result <- t(sapply(lis, colMeans))
+        } else {
+            result <- x$values$doc 
+        }
     }
     if (is.null(result))
         stop("x does not have the layer for ", layer)
