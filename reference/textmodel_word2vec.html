@@ -224,29 +224,29 @@ https://arxiv.org/abs/1310.4546.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># find similar words</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="similarity.html">similarity</a></span><span class="op">(</span><span class="va">wov</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"berlin"</span>, <span class="st">"germany"</span>, <span class="st">"france"</span><span class="op">)</span>, mode <span class="op">=</span> <span class="st">"words"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      berlin      germany     france      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] "berlin"    "germany"   "france"    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] "german"    "frankfurt" "germany"   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3,] "germany"   "hamburg"   "toulouse"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [4,] "frankfurt" "stuttgart" "norway"    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [5,] "amsterdam" "berlin"    "kazakhstan"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [6,] "warsaw"    "france"    "belgium"   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      berlin      germany     france    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] "berlin"    "germany"   "france"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] "german"    "hamburg"   "germany" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3,] "germany"   "stuttgart" "paris"   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4,] "frankfurt" "berlin"    "anglet"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5,] "amsterdam" "latvia"    "toulouse"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [6,] "warsaw"    "bremen"    "araud"   </span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="similarity.html">similarity</a></span><span class="op">(</span><span class="va">wov</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"berlin"</span> <span class="op">=</span> <span class="fl">1</span>, <span class="st">"germany"</span> <span class="op">=</span> <span class="op">-</span><span class="fl">1</span>, <span class="st">"france"</span> <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>, mode <span class="op">=</span> <span class="st">"values"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                  [,1]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> somali     0.06735107</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> reporters  0.17921132</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> released   0.12120764</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> bail       0.21391338</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> still     -0.12096084</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> jailed     0.04449241</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> somali     0.02646075</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> reporters  0.16945282</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> released   0.07821281</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> bail       0.15221701</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> still     -0.17936419</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> jailed     0.03730465</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="similarity.html">similarity</a></span><span class="op">(</span><span class="va">wov</span>, <span class="fu"><a href="analogy.html">analogy</a></span><span class="op">(</span><span class="op">~</span> <span class="va">berlin</span> <span class="op">-</span> <span class="va">germany</span> <span class="op">+</span> <span class="va">france</span><span class="op">)</span>, mode <span class="op">=</span> <span class="st">"words"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      [,1]        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] "france"    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] "berlin"    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3,] "paris"     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [4,] "amsterdam" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [5,] "french"    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [6,] "strasbourg"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      [,1]       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] "paris"    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] "france"   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3,] "berlin"   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4,] "french"   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5,] "amsterdam"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [6,] "anglet"   </span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
