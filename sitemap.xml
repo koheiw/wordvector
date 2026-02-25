@@ -1,0 +1,21 @@
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>/404.html</loc></url>
+<url><loc>/LICENSE-text.html</loc></url>
+<url><loc>/authors.html</loc></url>
+<url><loc>/index.html</loc></url>
+<url><loc>/news/index.html</loc></url>
+<url><loc>/reference/analogy.html</loc></url>
+<url><loc>/reference/as.matrix.html</loc></url>
+<url><loc>/reference/as.textmodel_doc2vec.html</loc></url>
+<url><loc>/reference/data_corpus_news2014.html</loc></url>
+<url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/perplexity.html</loc></url>
+<url><loc>/reference/print.textmodel_doc2vec.html</loc></url>
+<url><loc>/reference/print.textmodel_word2vec.html</loc></url>
+<url><loc>/reference/probability.html</loc></url>
+<url><loc>/reference/similarity.html</loc></url>
+<url><loc>/reference/textmodel_doc2vec.html</loc></url>
+<url><loc>/reference/textmodel_lsa.html</loc></url>
+<url><loc>/reference/textmodel_word2vec.html</loc></url>
+</urlset>
+
