@@ -26,7 +26,7 @@ probability(
 \value{
 a matrix of words or documents sorted in descending order by the probability
 scores when \code{mode = "character"}; a matrix of the probability scores when \code{mode = "numeric"}.
-When \code{words} is a named numeric vector, probability scores are weighted by
+When \code{targets} is a named numeric vector, probability scores are weighted by
 the values.
 }
 \description{

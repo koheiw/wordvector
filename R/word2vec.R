@@ -226,7 +226,7 @@ print.textmodel_doc2vec <- function(x, ...) {
 #' @param normalize if `TRUE`, returns normalized vectors.
 #' @param layer the layer from which the vectors are extracted.
 #' @param group \[experimental\] average sentence or paragraph vectors from the same document. 
-#'   Silently ignored when `layer = "word"`. 
+#'   Silently ignored when `layer = "words"`. 
 #' @param ... not used.
 #' @return a matrix that contain the word or document vectors in rows.
 #' @export

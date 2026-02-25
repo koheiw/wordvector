@@ -41,7 +41,7 @@ analogy <- function(formula) {
 #' @param mode specify the type of resulting object.
 #' @return a `matrix` of cosine similarity scores when `mode = "numeric"` or of 
 #'   words sorted in descending order by the similarity scores when `mode = "character"`.
-#'   When `words` is a named numeric vector, word (or document) vectors are weighted and summed 
+#'   When `targets` is a named numeric vector, word (or document) vectors are weighted and summed 
 #'   before computing similarity scores.
 #' @export
 #' @seealso [probability()]
@@ -102,7 +102,7 @@ similarity <- function(x, targets, layer = c("words", "documents"),
 #' @param ... passed to `as.matrix()`.
 #' @return a matrix of words or documents sorted in descending order by the probability 
 #'   scores when `mode = "character"`; a matrix of the probability scores when `mode = "numeric"`.
-#'   When `words` is a named numeric vector, probability scores are weighted by
+#'   When `targets` is a named numeric vector, probability scores are weighted by
 #'   the values.
 #' @export
 #' @seealso [similarity()]

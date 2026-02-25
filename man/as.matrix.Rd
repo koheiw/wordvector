@@ -23,7 +23,7 @@
 \item{layer}{the layer from which the vectors are extracted.}
 
 \item{group}{[experimental] average sentence or paragraph vectors from the same document.
-Silently ignored when \code{layer = "word"}.}
+Silently ignored when \code{layer = "words"}.}
 
 \item{...}{not used.}
 }

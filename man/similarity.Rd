@@ -24,7 +24,7 @@ when \code{targets} are document names.}
 \value{
 a \code{matrix} of cosine similarity scores when \code{mode = "numeric"} or of
 words sorted in descending order by the similarity scores when \code{mode = "character"}.
-When \code{words} is a named numeric vector, word (or document) vectors are weighted and summed
+When \code{targets} is a named numeric vector, word (or document) vectors are weighted and summed
 before computing similarity scores.
 }
 \description{
