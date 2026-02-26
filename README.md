@@ -1,6 +1,19 @@
 
 # Wordvector: word and document vector models
 
+<!-- badges: start -->
+
+[![CRAN
+Version](https://www.r-pkg.org/badges/version/wordvector)](https://CRAN.R-project.org/package=wordvector)
+[![Downloads](https://cranlogs.r-pkg.org/badges/wordvector)](https://CRAN.R-project.org/package=wordvector)
+[![Total
+Downloads](https://cranlogs.r-pkg.org/badges/grand-total/wordvector?color=orange)](https://CRAN.R-project.org/package=wordvector)
+[![R build
+status](https://github.com/koheiw/wordvector/workflows/R-CMD-check/badge.svg)](https://github.com/koheiw/wordvector/actions)
+[![codecov](https://codecov.io/gh/koheiw/wordvector/branch/master/graph/badge.svg)](https://app.codecov.io/gh/koheiw/wordvector)
+
+<!-- badges: end -->
+
 The **wordvector** package is developed to create word and document
 vectors using **quanteda**. This package currently supports word2vec
 ([Mikolov et al., 2013](http://arxiv.org/abs/1310.4546)), doc2vec ([Le,
@@ -61,20 +74,20 @@ toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>%
 
 # Train word2vec
 wov <- textmodel_word2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose = TRUE)
-## Training CBOW model with 50 dimensions
+## Training continuous BOW model with 50 dimensions
 ##  ...using 16 threads for distributed computing
 ##  ...initializing
 ##  ...negative sampling in 10 iterations
-##  ......iteration 1 elapsed time: 6.44 seconds (alpha: 0.0455)
-##  ......iteration 2 elapsed time: 13.22 seconds (alpha: 0.0408)
-##  ......iteration 3 elapsed time: 19.80 seconds (alpha: 0.0363)
-##  ......iteration 4 elapsed time: 26.97 seconds (alpha: 0.0317)
-##  ......iteration 5 elapsed time: 34.22 seconds (alpha: 0.0270)
-##  ......iteration 6 elapsed time: 41.09 seconds (alpha: 0.0224)
-##  ......iteration 7 elapsed time: 47.71 seconds (alpha: 0.0178)
-##  ......iteration 8 elapsed time: 54.47 seconds (alpha: 0.0131)
-##  ......iteration 9 elapsed time: 61.07 seconds (alpha: 0.0085)
-##  ......iteration 10 elapsed time: 67.54 seconds (alpha: 0.0041)
+##  ......iteration 1 elapsed time: 5.91 seconds (alpha: 0.0453)
+##  ......iteration 2 elapsed time: 12.12 seconds (alpha: 0.0404)
+##  ......iteration 3 elapsed time: 18.30 seconds (alpha: 0.0357)
+##  ......iteration 4 elapsed time: 24.58 seconds (alpha: 0.0309)
+##  ......iteration 5 elapsed time: 31.38 seconds (alpha: 0.0259)
+##  ......iteration 6 elapsed time: 40.15 seconds (alpha: 0.0203)
+##  ......iteration 7 elapsed time: 49.13 seconds (alpha: 0.0143)
+##  ......iteration 8 elapsed time: 57.64 seconds (alpha: 0.0086)
+##  ......iteration 9 elapsed time: 64.40 seconds (alpha: 0.0044)
+##  ......iteration 10 elapsed time: 69.44 seconds (alpha: 0.0017)
 ##  ...complete
 ```
 
@@ -85,20 +98,13 @@ wov <- textmodel_word2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose 
 ``` r
 head(similarity(wov, c("amazon", "forests", "obama", "america", "afghanistan"), 
                 mode = "character"))
-##      amazon       forests       obama                   america          
-## [1,] "amazon"     "forests"     "obama"                 "america"        
-## [2,] "rainforest" "herds"       "biden"                 "america-focused"
-## [3,] "peat"       "rainforests" "relationship-building" "carolina"       
-## [4,] "re-grown"   "farmland"    "kerry"                 "american"       
-## [5,] "peatlands"  "rainforest"  "hagel"                 "dakota"         
-## [6,] "sunflower"  "forest"      "clinton"               "africa"         
-##      afghanistan  
-## [1,] "afghanistan"
-## [2,] "afghan"     
-## [3,] "taliban"    
-## [4,] "kabul"      
-## [5,] "afghans"    
-## [6,] "pakistan"
+##      amazon         forests       obama     america    afghanistan  
+## [1,] "amazon"       "forests"     "obama"   "america"  "afghanistan"
+## [2,] "peatlands"    "herds"       "barack"  "africa"   "afghan"     
+## [3,] "rainforest"   "wetlands"    "biden"   "american" "taliban"    
+## [4,] "americana"    "rainforests" "kerry"   "dakota"   "kabul"      
+## [5,] "ranches"      "rainforest"  "hagel"   "carolina" "pakistan"   
+## [6,] "forestethics" "grasslands"  "clinton" "korea"    "iraq"
 ```
 
 ### Arithmetic operations of word vectors
@@ -108,13 +114,13 @@ head(similarity(wov, c("amazon", "forests", "obama", "america", "afghanistan"),
 ``` r
 # What is Amazon without forests?
 head(similarity(wov, analogy(~ amazon - forests))) 
-##      [,1]            
-## [1,] "yahoo"         
-## [2,] "smash-hit"     
-## [3,] "gawker"        
-## [4,] "aggregators"   
-## [5,] "troll"         
-## [6,] "globe-spanning"
+##      [,1]         
+## [1,] "smash-hit"  
+## [2,] "tripadvisor"
+## [3,] "rihanna"    
+## [4,] "yahoo"      
+## [5,] "pandora"    
+## [6,] "univision"
 ```
 
 ``` r
@@ -122,11 +128,11 @@ head(similarity(wov, analogy(~ amazon - forests)))
 head(similarity(wov, analogy(~ obama - america + afghanistan))) 
 ##      [,1]         
 ## [1,] "afghanistan"
-## [2,] "karzai"     
-## [3,] "afghan"     
-## [4,] "taliban"    
-## [5,] "obama"      
-## [6,] "nato"
+## [2,] "afghan"     
+## [3,] "taliban"    
+## [4,] "karzai"     
+## [5,] "nato"       
+## [6,] "hamid"
 ```
 
 These examples replicates analogical tasks in the original word2vec
@@ -137,21 +143,21 @@ paper.
 head(similarity(wov, analogy(~ berlin - germany + france))) 
 ##      [,1]        
 ## [1,] "paris"     
-## [2,] "strasbourg"
+## [2,] "berlin"    
 ## [3,] "brussels"  
-## [4,] "berlin"    
-## [5,] "amsterdam" 
+## [4,] "strasbourg"
+## [5,] "bourget"   
 ## [6,] "france"
 ```
 
 ``` r
 # What is for slowly as quick for quickly?
 head(similarity(wov, analogy(~ quick - quickly + slowly)))
-##      [,1]       
-## [1,] "uneven"   
-## [2,] "stumble"  
-## [3,] "backwards"
-## [4,] "fades"    
-## [5,] "slow"     
-## [6,] "upside"
+##      [,1]         
+## [1,] "slow"       
+## [2,] "sideways"   
+## [3,] "uneven"     
+## [4,] "dim"        
+## [5,] "heralds"    
+## [6,] "bounce-back"
 ```
