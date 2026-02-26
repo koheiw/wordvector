@@ -85,7 +85,9 @@ word vectors to save storage space. \link{textmodel_doc2vec} should be
 used to access document vectors.
 
 Users can changed the number of processors used for the parallel computing via
-\code{options(wordvector_threads)}.
+\code{options(wordvector_threads)}. When the value is large than one, the result
+of every execution becomes slightly different even if \code{set.seed()} is used because
+parameters are updated in different orders by processors.
 }
 \examples{
 \donttest{
