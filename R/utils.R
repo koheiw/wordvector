@@ -188,8 +188,8 @@ perplexity <- function(x, targets, data, layer = c("words", "documents")) {
 
     p <- probability(x, targets, mode = "numeric", layer = layer)
     if (layer == "words") {
+        data <- dfm_weight(data, "prop")
         pred <- dfm_match(data, rownames(p)) %*% p
-        pred <- pred / rowSums(pred)
     } else {
         if (!all(docnames(data) %in% rownames(p)))
             stop("x must be trained on the documents in data")
