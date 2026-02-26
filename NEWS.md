@@ -1,5 +1,6 @@
 ## Changes in v0.6.2
 
+- Update `perplexity()` to correct how it calculate scores.
 - Add `layer` to `perplexity()` for `textmodel_doc2vec` models.
 
 ## Changes in v0.6.1
