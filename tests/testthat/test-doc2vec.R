@@ -61,6 +61,19 @@ test_that("textmodel_doc2vec works", {
         levels(dov1$docvars$docid_)
     )
     
+    expect_true(
+        is.numeric(perplexity(dov1, c("good", "bad"), toks, layer = "documents"))
+    )
+    
+    expect_true(
+        is.numeric(perplexity(dov1, c("good", "bad"), toks, layer = "words"))
+    )
+    
+    expect_error(
+        is.numeric(perplexity(dov1, c("good", "bad"), tokens("a b c"), layer = "documents")),
+        "x must be trained on the documents in data"
+    )
+    
     # DBOW
     expect_output(
         dov2 <- textmodel_doc2vec(toks, dim = 50, type = "dbow", iter = 5, min_count = 2, verbose = TRUE),
@@ -109,6 +122,20 @@ test_that("textmodel_doc2vec works", {
         rownames(probability(dov2, c("good", "bad"), layer = "documents", mode = "numeric",
                              group = TRUE)),
         levels(dov2$docvars$docid_)
+    )
+    
+    expect_true(
+        is.numeric(perplexity(dov2, c("good", "bad"), toks, layer = "documents"))
+    )
+    
+    expect_error(
+        is.numeric(perplexity(dov2, c("good", "bad"), toks, layer = "words")),
+        "x does not have the layer for words"
+    )
+
+    expect_error(
+        is.numeric(perplexity(dov2, c("good", "bad"), tokens("a b c"), layer = "documents")),
+        "x must be trained on the documents in data"
     )
 })
 
