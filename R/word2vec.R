@@ -45,7 +45,7 @@
 #'  Users can changed the number of processors used for the parallel computing via
 #'  `options(wordvector_threads)`. When the value is large than one, the result 
 #'  of every execution becomes slightly different even if `set.seed()` is used because 
-#'  parameters are updated in different orders.
+#'  parameters are updated in different orders by the processors.
 #' 
 #' @references 
 #'   Mikolov, T., Sutskever, I., Chen, K., Corrado, G., & Dean, J. (2013). 
