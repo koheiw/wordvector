@@ -166,7 +166,7 @@ probability <- function(x, targets, layer = c("words", "documents"),
     return(res)
 }
 
-#' Compute perplexity of a model
+#' \[experimental\] Compute perplexity of a model
 #'
 #' Compute the perplexity of a trained word2vec model with data.
 #' @param x a trained `textmodel_wordvector` object.
