@@ -149,7 +149,8 @@ probability <- function(x, targets, layer = c("words", "documents"),
     e <- exp(tcrossprod(values, x$weights[names(targets),, drop = FALSE]))
     prob <- e / (e + 1) # sigmoid function
     
-    res <- prob %*% diag(targets)
+    if (any(targets != 1.0))
+        res <- prob %*% diag(targets)
     colnames(res) <- names(targets)
     if (weighted)
         res <- cbind(rowSums(res))
