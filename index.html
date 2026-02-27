@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">wordvector</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.2</span>
       </span>
     </div>
 
@@ -68,6 +68,9 @@
 <div class="section level1">
 <div class="page-header"><h1 id="wordvector-word-and-document-vector-models">Wordvector: word and document vector models<a class="anchor" aria-label="anchor" href="#wordvector-word-and-document-vector-models"></a>
 </h1></div>
+<!-- badges: start -->
+
+<!-- badges: end -->
 <p>The <strong>wordvector</strong> package is developed to create word and document vectors using <strong>quanteda</strong>. This package currently supports word2vec (<a href="http://arxiv.org/abs/1310.4546" class="external-link">Mikolov et al., 2013</a>), doc2vec (<a href="https://doi.org/10.48550/arXiv.1405.4053" class="external-link">Le, Q. V., &amp; Mikolov, T., 2014</a>) and latent semantic analysis (<a href="https://doi.org/10.1002/(SICI)1097-4571(199009)41:6%3C391::AID-ASI1%3E3.0.CO;2-9" class="external-link">Deerwester et al., 1990</a>).</p>
 <div class="section level2">
 <h2 id="how-to-install">How to install<a class="anchor" aria-label="anchor" href="#how-to-install"></a>
@@ -116,20 +119,20 @@
 <span></span>
 <span><span class="co"># Train word2vec</span></span>
 <span><span class="va">wov</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/textmodel_word2vec.html">textmodel_word2vec</a></span><span class="op">(</span><span class="va">toks</span>, dim <span class="op">=</span> <span class="fl">50</span>, type <span class="op">=</span> <span class="st">"cbow"</span>, min_count <span class="op">=</span> <span class="fl">5</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">## Training CBOW model with 50 dimensions</span></span>
+<span><span class="co">## Training continuous BOW model with 50 dimensions</span></span>
 <span><span class="co">##  ...using 16 threads for distributed computing</span></span>
 <span><span class="co">##  ...initializing</span></span>
 <span><span class="co">##  ...negative sampling in 10 iterations</span></span>
-<span><span class="co">##  ......iteration 1 elapsed time: 6.44 seconds (alpha: 0.0455)</span></span>
-<span><span class="co">##  ......iteration 2 elapsed time: 13.22 seconds (alpha: 0.0408)</span></span>
-<span><span class="co">##  ......iteration 3 elapsed time: 19.80 seconds (alpha: 0.0363)</span></span>
-<span><span class="co">##  ......iteration 4 elapsed time: 26.97 seconds (alpha: 0.0317)</span></span>
-<span><span class="co">##  ......iteration 5 elapsed time: 34.22 seconds (alpha: 0.0270)</span></span>
-<span><span class="co">##  ......iteration 6 elapsed time: 41.09 seconds (alpha: 0.0224)</span></span>
-<span><span class="co">##  ......iteration 7 elapsed time: 47.71 seconds (alpha: 0.0178)</span></span>
-<span><span class="co">##  ......iteration 8 elapsed time: 54.47 seconds (alpha: 0.0131)</span></span>
-<span><span class="co">##  ......iteration 9 elapsed time: 61.07 seconds (alpha: 0.0085)</span></span>
-<span><span class="co">##  ......iteration 10 elapsed time: 67.54 seconds (alpha: 0.0041)</span></span>
+<span><span class="co">##  ......iteration 1 elapsed time: 5.91 seconds (alpha: 0.0453)</span></span>
+<span><span class="co">##  ......iteration 2 elapsed time: 12.12 seconds (alpha: 0.0404)</span></span>
+<span><span class="co">##  ......iteration 3 elapsed time: 18.30 seconds (alpha: 0.0357)</span></span>
+<span><span class="co">##  ......iteration 4 elapsed time: 24.58 seconds (alpha: 0.0309)</span></span>
+<span><span class="co">##  ......iteration 5 elapsed time: 31.38 seconds (alpha: 0.0259)</span></span>
+<span><span class="co">##  ......iteration 6 elapsed time: 40.15 seconds (alpha: 0.0203)</span></span>
+<span><span class="co">##  ......iteration 7 elapsed time: 49.13 seconds (alpha: 0.0143)</span></span>
+<span><span class="co">##  ......iteration 8 elapsed time: 57.64 seconds (alpha: 0.0086)</span></span>
+<span><span class="co">##  ......iteration 9 elapsed time: 64.40 seconds (alpha: 0.0044)</span></span>
+<span><span class="co">##  ......iteration 10 elapsed time: 69.44 seconds (alpha: 0.0017)</span></span>
 <span><span class="co">##  ...complete</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -139,20 +142,13 @@
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="reference/similarity.html">similarity</a></span><span class="op">(</span><span class="va">wov</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"amazon"</span>, <span class="st">"forests"</span>, <span class="st">"obama"</span>, <span class="st">"america"</span>, <span class="st">"afghanistan"</span><span class="op">)</span>, </span>
 <span>                mode <span class="op">=</span> <span class="st">"character"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">##      amazon       forests       obama                   america          </span></span>
-<span><span class="co">## [1,] "amazon"     "forests"     "obama"                 "america"        </span></span>
-<span><span class="co">## [2,] "rainforest" "herds"       "biden"                 "america-focused"</span></span>
-<span><span class="co">## [3,] "peat"       "rainforests" "relationship-building" "carolina"       </span></span>
-<span><span class="co">## [4,] "re-grown"   "farmland"    "kerry"                 "american"       </span></span>
-<span><span class="co">## [5,] "peatlands"  "rainforest"  "hagel"                 "dakota"         </span></span>
-<span><span class="co">## [6,] "sunflower"  "forest"      "clinton"               "africa"         </span></span>
-<span><span class="co">##      afghanistan  </span></span>
-<span><span class="co">## [1,] "afghanistan"</span></span>
-<span><span class="co">## [2,] "afghan"     </span></span>
-<span><span class="co">## [3,] "taliban"    </span></span>
-<span><span class="co">## [4,] "kabul"      </span></span>
-<span><span class="co">## [5,] "afghans"    </span></span>
-<span><span class="co">## [6,] "pakistan"</span></span></code></pre></div>
+<span><span class="co">##      amazon         forests       obama     america    afghanistan  </span></span>
+<span><span class="co">## [1,] "amazon"       "forests"     "obama"   "america"  "afghanistan"</span></span>
+<span><span class="co">## [2,] "peatlands"    "herds"       "barack"  "africa"   "afghan"     </span></span>
+<span><span class="co">## [3,] "rainforest"   "wetlands"    "biden"   "american" "taliban"    </span></span>
+<span><span class="co">## [4,] "americana"    "rainforests" "kerry"   "dakota"   "kabul"      </span></span>
+<span><span class="co">## [5,] "ranches"      "rainforest"  "hagel"   "carolina" "pakistan"   </span></span>
+<span><span class="co">## [6,] "forestethics" "grasslands"  "clinton" "korea"    "iraq"</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="arithmetic-operations-of-word-vectors">Arithmetic operations of word vectors<a class="anchor" aria-label="anchor" href="#arithmetic-operations-of-word-vectors"></a>
@@ -161,44 +157,44 @@
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># What is Amazon without forests?</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="reference/similarity.html">similarity</a></span><span class="op">(</span><span class="va">wov</span>, <span class="fu"><a href="reference/analogy.html">analogy</a></span><span class="op">(</span><span class="op">~</span> <span class="va">amazon</span> <span class="op">-</span> <span class="va">forests</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> </span>
-<span><span class="co">##      [,1]            </span></span>
-<span><span class="co">## [1,] "yahoo"         </span></span>
-<span><span class="co">## [2,] "smash-hit"     </span></span>
-<span><span class="co">## [3,] "gawker"        </span></span>
-<span><span class="co">## [4,] "aggregators"   </span></span>
-<span><span class="co">## [5,] "troll"         </span></span>
-<span><span class="co">## [6,] "globe-spanning"</span></span></code></pre></div>
+<span><span class="co">##      [,1]         </span></span>
+<span><span class="co">## [1,] "smash-hit"  </span></span>
+<span><span class="co">## [2,] "tripadvisor"</span></span>
+<span><span class="co">## [3,] "rihanna"    </span></span>
+<span><span class="co">## [4,] "yahoo"      </span></span>
+<span><span class="co">## [5,] "pandora"    </span></span>
+<span><span class="co">## [6,] "univision"</span></span></code></pre></div>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># What is for Afghanistan as Obama for America? </span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="reference/similarity.html">similarity</a></span><span class="op">(</span><span class="va">wov</span>, <span class="fu"><a href="reference/analogy.html">analogy</a></span><span class="op">(</span><span class="op">~</span> <span class="va">obama</span> <span class="op">-</span> <span class="va">america</span> <span class="op">+</span> <span class="va">afghanistan</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> </span>
 <span><span class="co">##      [,1]         </span></span>
 <span><span class="co">## [1,] "afghanistan"</span></span>
-<span><span class="co">## [2,] "karzai"     </span></span>
-<span><span class="co">## [3,] "afghan"     </span></span>
-<span><span class="co">## [4,] "taliban"    </span></span>
-<span><span class="co">## [5,] "obama"      </span></span>
-<span><span class="co">## [6,] "nato"</span></span></code></pre></div>
+<span><span class="co">## [2,] "afghan"     </span></span>
+<span><span class="co">## [3,] "taliban"    </span></span>
+<span><span class="co">## [4,] "karzai"     </span></span>
+<span><span class="co">## [5,] "nato"       </span></span>
+<span><span class="co">## [6,] "hamid"</span></span></code></pre></div>
 <p>These examples replicates analogical tasks in the original word2vec paper.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># What is for France as Berlin for Germany?</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="reference/similarity.html">similarity</a></span><span class="op">(</span><span class="va">wov</span>, <span class="fu"><a href="reference/analogy.html">analogy</a></span><span class="op">(</span><span class="op">~</span> <span class="va">berlin</span> <span class="op">-</span> <span class="va">germany</span> <span class="op">+</span> <span class="va">france</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> </span>
 <span><span class="co">##      [,1]        </span></span>
 <span><span class="co">## [1,] "paris"     </span></span>
-<span><span class="co">## [2,] "strasbourg"</span></span>
+<span><span class="co">## [2,] "berlin"    </span></span>
 <span><span class="co">## [3,] "brussels"  </span></span>
-<span><span class="co">## [4,] "berlin"    </span></span>
-<span><span class="co">## [5,] "amsterdam" </span></span>
+<span><span class="co">## [4,] "strasbourg"</span></span>
+<span><span class="co">## [5,] "bourget"   </span></span>
 <span><span class="co">## [6,] "france"</span></span></code></pre></div>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># What is for slowly as quick for quickly?</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="reference/similarity.html">similarity</a></span><span class="op">(</span><span class="va">wov</span>, <span class="fu"><a href="reference/analogy.html">analogy</a></span><span class="op">(</span><span class="op">~</span> <span class="va">quick</span> <span class="op">-</span> <span class="va">quickly</span> <span class="op">+</span> <span class="va">slowly</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">##      [,1]       </span></span>
-<span><span class="co">## [1,] "uneven"   </span></span>
-<span><span class="co">## [2,] "stumble"  </span></span>
-<span><span class="co">## [3,] "backwards"</span></span>
-<span><span class="co">## [4,] "fades"    </span></span>
-<span><span class="co">## [5,] "slow"     </span></span>
-<span><span class="co">## [6,] "upside"</span></span></code></pre></div>
+<span><span class="co">##      [,1]         </span></span>
+<span><span class="co">## [1,] "slow"       </span></span>
+<span><span class="co">## [2,] "sideways"   </span></span>
+<span><span class="co">## [3,] "uneven"     </span></span>
+<span><span class="co">## [4,] "dim"        </span></span>
+<span><span class="co">## [5,] "heralds"    </span></span>
+<span><span class="co">## [6,] "bounce-back"</span></span></code></pre></div>
 </div>
 </div>
 </div>
@@ -237,7 +233,16 @@
 </ul>
 </div>
 
-
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://CRAN.R-project.org/package=wordvector" class="external-link"><img src="https://www.r-pkg.org/badges/version/wordvector" alt="CRAN Version"></a></li>
+<li><a href="https://CRAN.R-project.org/package=wordvector" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/wordvector" alt="Downloads"></a></li>
+<li><a href="https://CRAN.R-project.org/package=wordvector" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/grand-total/wordvector?color=orange" alt="Total Downloads"></a></li>
+<li><a href="https://github.com/koheiw/wordvector/actions" class="external-link"><img src="https://github.com/koheiw/wordvector/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
+<li><a href="https://app.codecov.io/gh/koheiw/wordvector" class="external-link"><img src="https://codecov.io/gh/koheiw/wordvector/branch/master/graph/badge.svg" alt="codecov"></a></li>
+</ul>
+</div>
 
   </div>
 </div>
