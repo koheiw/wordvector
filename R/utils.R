@@ -149,10 +149,14 @@ probability <- function(x, targets, layer = c("words", "documents"),
     e <- exp(tcrossprod(values, x$weights[names(targets),, drop = FALSE]))
     prob <- e / (e + 1) # sigmoid function
     
-    res <- prob %*% diag(targets)
-    colnames(res) <- names(targets)
-    if (weighted)
+    if (weighted) {
+        res <- prob %*% diag(targets)
+        colnames(res) <- names(targets)
         res <- cbind(rowSums(res))
+    } else {
+        res <- prob
+    }
+    
     if (ncol(res) == 0) {
         res <- matrix(nrow = 0, ncol = 0)
     } else {
@@ -165,17 +169,19 @@ probability <- function(x, targets, layer = c("words", "documents"),
     return(res)
 }
 
-#' Compute perplexity of a model
+#' \[experimental\] Compute perplexity of a model
 #'
 #' Compute the perplexity of a trained word2vec model with data.
 #' @param x a trained `textmodel_wordvector` object.
-#' @param targets words for which probabilities are computed.
 #' @param data a [quanteda::tokens] or [quanteda::dfm]; the probabilities of words are 
 #'    tested against occurrences of words in it.
+#' @inheritParams probability
 #' @export
 #' @keywords internal
-perplexity <- function(x, targets, data) {
+perplexity <- function(x, targets, data, layer = c("words", "documents")) {
+    
     x <- upgrade_pre06(x)
+    layer <- match.arg(layer)
     
     if (!is.character(targets))
         stop("targets must be a character vector")
@@ -184,10 +190,16 @@ perplexity <- function(x, targets, data) {
         stop("data must be a tokens or dfm")
     data <- dfm(data, remove_padding = TRUE, tolower = x$tolower)
 
-    p <- probability(x, targets, mode = "numeric")
-    pred <- dfm_match(data, rownames(p)) %*% p
+    p <- probability(x, targets, mode = "numeric", layer = layer)
+    if (layer == "words") {
+        pred <- dfm_match(data, rownames(p)) %*% p
+    } else {
+        if (!all(docnames(data) %in% rownames(p)))
+            stop("x must be trained on the documents in data")
+        pred <- p[docnames(data),,drop = FALSE]
+    }
     pred <- pred / rowSums(pred)
-    
+        
     data <- dfm_match(data, colnames(pred))
     data <- Matrix::mat2triplet(data)
     exp(-sum(data$x * log(pred[cbind(data$i, data$j)])) / sum(data$x))
