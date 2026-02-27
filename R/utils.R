@@ -189,14 +189,14 @@ perplexity <- function(x, targets, data, layer = c("words", "documents")) {
 
     p <- probability(x, targets, mode = "numeric", layer = layer)
     if (layer == "words") {
-        data <- dfm_weight(data, "prop")
         pred <- dfm_match(data, rownames(p)) %*% p
     } else {
         if (!all(docnames(data) %in% rownames(p)))
             stop("x must be trained on the documents in data")
         pred <- p[docnames(data),,drop = FALSE]
     }
-    
+    pred <- pred / rowSums(pred)
+        
     data <- dfm_match(data, colnames(pred))
     data <- Matrix::mat2triplet(data)
     exp(-sum(data$x * log(pred[cbind(data$i, data$j)])) / sum(data$x))
