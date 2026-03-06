@@ -1,0 +1,43 @@
+---
+title: "Word2vec"
+author: "Kohei Watanabe"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Word2vec}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(quanteda)
+library(wordvector)
+```
+
+```{r}
+# Load data
+f <- tempfile()
+download.file('https://www.dropbox.com/s/e19kslwhuu9yc2z/yahoo-news.RDS?dl=1', 
+              f, mode = "wb")
+dat <- readRDS(f)
+dat$text <- paste0(dat$head, ". ", dat$body)
+corp <- corpus(dat, text_field = 'text', docid_field = "tid")
+```
+
+```{r}
+# Pre-processing
+toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>% 
+    tokens_remove(stopwords("en", "marimo"), padding = TRUE) %>% 
+    tokens_select("^[a-zA-Z-]+$", valuetype = "regex", case_insensitive = FALSE,
+                  padding = TRUE)
+```
+
+```{r}
+# Train word2vec
+wov <- textmodel_word2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose = TRUE)
+```
+
