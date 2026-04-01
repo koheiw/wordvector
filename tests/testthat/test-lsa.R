@@ -10,7 +10,7 @@ toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>%
 dfmt <- dfm(toks, remove_padding = TRUE) 
 
 set.seed(1234)
-wov <- textmodel_lsa(toks, dim = 50, min_count = 2, sample = 0)
+wov <- textmodel_lsa(toks, dim = 50, min_count = 2, sample = 1)
 dov <- as.textmodel_doc2vec(dfmt, wov)
 dov_gp <- as.textmodel_doc2vec(dfmt, wov, group_data = TRUE)
 
@@ -39,7 +39,7 @@ test_that("word2vec words", {
         paste(
             "",
             "Call:",
-            "textmodel_lsa(x = toks, dim = 50, min_count = 2, sample = 0)",
+            "textmodel_lsa(x = toks, dim = 50, min_count = 2, sample = 1)",
             "",
             "50 dimensions; 5,360 words.", sep = "\n"), fixed = TRUE
     )
@@ -58,7 +58,7 @@ test_that("word2vec words", {
         dim(dov$values$word), c(5360L, 50L)
     )
     expect_equal(
-        dim(dov$values$doc), c(5234L, 50L)
+        dim(dov$values$doc), c(5296L, 50L)
     )
     expect_equal(
         class(dov), 
@@ -71,7 +71,7 @@ test_that("word2vec words", {
             "Call:",
             "as.textmodel_doc2vec(x = dfmt, model = wov)",
             "",
-            "50 dimensions; 5,234 documents.", sep = "\n"), fixed = TRUE
+            "50 dimensions; 5,296 documents.", sep = "\n"), fixed = TRUE
     )
     expect_equal(
         class(expect_output(print(dov))), 
