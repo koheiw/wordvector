@@ -49,7 +49,7 @@ test_that("word2vec words", {
     )
     expect_equal(
         names(dov),
-        c("values", "dim", "tolower", "concatenator", "docvars", "normalize", 
+        c("values", "weights", "dim", "tolower", "concatenator", "docvars", "normalize", 
           "call", "version")
     )
     
@@ -58,7 +58,7 @@ test_that("word2vec words", {
         dim(dov$values$word), c(5360L, 50L)
     )
     expect_equal(
-        dim(dov$values$doc), c(5234L, 50L)
+        dim(dov$values$doc), c(5296L, 50L)
     )
     expect_equal(
         class(dov), 
@@ -71,7 +71,7 @@ test_that("word2vec words", {
             "Call:",
             "as.textmodel_doc2vec(x = dfmt, model = wov)",
             "",
-            "50 dimensions; 5,234 documents.", sep = "\n"), fixed = TRUE
+            "50 dimensions; 5,296 documents.", sep = "\n"), fixed = TRUE
     )
     expect_equal(
         class(expect_output(print(dov))), 
@@ -79,7 +79,7 @@ test_that("word2vec words", {
     )
     expect_equal(
         names(dov),
-        c("values", "dim", "tolower", "concatenator", "docvars", "normalize", "call", "version")
+        c("values", "weights", "dim", "tolower", "concatenator", "docvars", "normalize", "call", "version")
     )
     
     # docvector with grouped data
@@ -95,7 +95,7 @@ test_that("word2vec words", {
     )
     expect_equal(
         names(dov_gp),
-        c("values", "dim", "tolower", "concatenator", "docvars", "normalize", "call", "version")
+        c("values", "weights", "dim", "tolower", "concatenator", "docvars", "normalize", "call", "version")
     )
 })
 
