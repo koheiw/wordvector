@@ -1,6 +1,7 @@
 ## Changes in v0.6.2
 
 - Add `layer` to `perplexity()` for `textmodel_doc2vec` models.
+- Update `as.textmode_doc2vec()` to save output layer weights.
 
 ## Changes in v0.6.1
 

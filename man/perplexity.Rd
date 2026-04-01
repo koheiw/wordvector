@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{perplexity}
 \alias{perplexity}
-\title{Compute perplexity of a model}
+\title{[experimental] Compute perplexity of a model}
 \usage{
 perplexity(x, targets, data, layer = c("words", "documents"))
 }
