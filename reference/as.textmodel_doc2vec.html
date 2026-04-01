@@ -53,15 +53,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">as.textmodel_doc2vec</span><span class="op">(</span></span>
-<span>  <span class="va">x</span>,</span>
-<span>  <span class="va">model</span>,</span>
-<span>  normalize <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  weights <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  pattern <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  group_data <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  <span class="va">...</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">as.textmodel_doc2vec</span><span class="op">(</span><span class="va">x</span>, <span class="va">model</span>, normalize <span class="op">=</span> <span class="cn">FALSE</span>, group_data <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -78,15 +70,6 @@
 
 <dt id="arg-normalize">normalize<a class="anchor" aria-label="anchor" href="#arg-normalize"></a></dt>
 <dd><p>if <code>TRUE</code>, normalized word vectors before creating document vectors.</p></dd>
-
-
-<dt id="arg-weights">weights<a class="anchor" aria-label="anchor" href="#arg-weights"></a></dt>
-<dd><p>weight the word vectors by user-provided values; either a single value or
-multiple values sorted in the same order as the word vectors.</p></dd>
-
-
-<dt id="arg-pattern">pattern<a class="anchor" aria-label="anchor" href="#arg-pattern"></a></dt>
-<dd><p><a href="https://quanteda.io/reference/pattern.html" class="external-link">quanteda::pattern</a> to select words to apply <code>weights</code>.</p></dd>
 
 
 <dt id="arg-group-data">group_data<a class="anchor" aria-label="anchor" href="#arg-group-data"></a></dt>
