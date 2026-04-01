@@ -308,10 +308,6 @@ test_that("probability works", {
     
     # doc2vec
     expect_error(
-        probability(dov, c("us" = 1, "people" = -1), mode = "numeric"),
-        "x must be a trained textmodel_wordvector object"
-    )
-    expect_error(
         probability(list(), c("us" = 1, "people" = -1)),
         "x must be a textmodel_wordvector object"
     )

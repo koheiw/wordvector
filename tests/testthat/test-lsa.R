@@ -49,7 +49,7 @@ test_that("word2vec words", {
     )
     expect_equal(
         names(dov),
-        c("values", "dim", "tolower", "concatenator", "docvars", "normalize", 
+        c("values", "weights", "dim", "tolower", "concatenator", "docvars", "normalize", 
           "call", "version")
     )
     
@@ -79,7 +79,7 @@ test_that("word2vec words", {
     )
     expect_equal(
         names(dov),
-        c("values", "dim", "tolower", "concatenator", "docvars", "normalize", "call", "version")
+        c("values", "weights", "dim", "tolower", "concatenator", "docvars", "normalize", "call", "version")
     )
     
     # docvector with grouped data
@@ -95,7 +95,7 @@ test_that("word2vec words", {
     )
     expect_equal(
         names(dov_gp),
-        c("values", "dim", "tolower", "concatenator", "docvars", "normalize", "call", "version")
+        c("values", "weights", "dim", "tolower", "concatenator", "docvars", "normalize", "call", "version")
     )
 })
 
