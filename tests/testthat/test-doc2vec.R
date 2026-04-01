@@ -22,7 +22,7 @@ test_that("textmodel_doc2vec works", {
         names(dov1),
         c("values", "weights", "type", "dim", "frequency", "window",  "iter", "alpha", 
           "use_ns", "ns_size", "sample", "normalize",  "min_count", "tolower",
-          "concatenator", "docvars", "call", "version")
+          "concatenator", "docvars", "ntoken", "call", "version")
     )
     expect_equal(
         dim(dov1$values$word), c(5363L, 50L)
@@ -61,6 +61,11 @@ test_that("textmodel_doc2vec works", {
         levels(dov1$docvars$docid_)
     )
     
+    expect_identical(
+        dov1$ntoken,
+        ntoken(tokens_trim(tokens_tolower(toks), min_termfreq = 2), remove_padding = TRUE)
+    )
+    
     expect_true(
         is.numeric(perplexity(dov1, c("good", "bad"), toks, layer = "documents"))
     )
@@ -85,7 +90,7 @@ test_that("textmodel_doc2vec works", {
         names(dov2),
         c("values", "weights", "type", "dim", "frequency", "window",  "iter", "alpha", 
           "use_ns", "ns_size", "sample", "normalize",  "min_count", "tolower",
-          "concatenator", "docvars", "call", "version")
+          "concatenator", "docvars", "ntoken", "call", "version")
     )
     expect_null(
         dov2$values$word
@@ -122,6 +127,11 @@ test_that("textmodel_doc2vec works", {
         rownames(probability(dov2, c("good", "bad"), layer = "documents", mode = "numeric",
                              group = TRUE)),
         levels(dov2$docvars$docid_)
+    )
+    
+    expect_identical(
+        dov2$ntoken,
+        ntoken(tokens_trim(tokens_tolower(toks), min_termfreq = 2), remove_padding = TRUE)
     )
     
     expect_true(
