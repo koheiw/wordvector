@@ -8,8 +8,9 @@
 #'   its context window is the entire document (sentence or paragraph).
 #' @inheritParams textmodel_word2vec
 #' @return 
-#' Returns a textmodel_doc2vec object with matrices for word and document vector values in `values`.
-#' Other elements are the same as [wordvector::textmodel_word2vec].
+#' Returns a textmodel_doc2vec object with matrices for word and document vector 
+#' values, [quanteda::docvars] and [quanteda::ntoken] of `x`. Other elements are 
+#' the same as [wordvector::textmodel_word2vec]. 
 #' @references 
 #'   Le, Q. V., & Mikolov, T. (2014). Distributed Representations of Sentences and 
 #'   Documents (No. arXiv:1405.4053). arXiv. https://doi.org/10.48550/arXiv.1405.4053

@@ -168,6 +168,7 @@ wordvector <- function(x, dim = 50, type = c("cbow", "sg", "dm", "dbow"),
         result$data <- y
     if (doc2vec) {
         result$docvars <- attr(x, "docvars")
+        result$ntoken <- ntoken(x, remove_padding = TRUE)
         rownames(result$docvars) <- docnames(x)
         rownames(result$values$doc) <- docnames(x)
     }

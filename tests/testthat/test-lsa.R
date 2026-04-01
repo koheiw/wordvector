@@ -10,7 +10,7 @@ toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>%
 dfmt <- dfm(toks, remove_padding = TRUE) 
 
 set.seed(1234)
-wov <- textmodel_lsa(toks, dim = 50, min_count = 2, sample = 0)
+wov <- textmodel_lsa(toks, dim = 50, min_count = 2, sample = 1)
 dov <- as.textmodel_doc2vec(dfmt, wov)
 dov_gp <- as.textmodel_doc2vec(dfmt, wov, group_data = TRUE)
 
@@ -39,7 +39,7 @@ test_that("word2vec words", {
         paste(
             "",
             "Call:",
-            "textmodel_lsa(x = toks, dim = 50, min_count = 2, sample = 0)",
+            "textmodel_lsa(x = toks, dim = 50, min_count = 2, sample = 1)",
             "",
             "50 dimensions; 5,360 words.", sep = "\n"), fixed = TRUE
     )
