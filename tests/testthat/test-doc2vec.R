@@ -2,7 +2,8 @@ library(quanteda)
 library(wordvector)
 options(wordvector_threads = 2)
 
-corp <- head(data_corpus_inaugural, 59)
+corp <- head(data_corpus_inaugural, 59) %>% 
+    corpus_reshape()
 
 toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE,
                concatenator = " ") %>% 
@@ -28,7 +29,7 @@ test_that("textmodel_doc2vec works", {
         dim(dov1$values$word), c(5363L, 50L)
     )
     expect_equal(
-        dim(dov1$values$doc), c(59L, 50L)
+        dim(dov1$values$doc), c(5296L, 50L)
     )
     expect_output(
         print(dov1),
@@ -38,7 +39,7 @@ test_that("textmodel_doc2vec works", {
             "textmodel_doc2vec(x = toks, dim = 50, min_count = 2, iter = 5, ",
             "    verbose = TRUE)",
             "",
-            "50 dimensions; 59 documents.", sep = "\n"), fixed = TRUE
+            "50 dimensions; 5,296 documents.", sep = "\n"), fixed = TRUE
     )
     expect_equal(
         class(expect_output(print(dov1))), 
@@ -96,7 +97,7 @@ test_that("textmodel_doc2vec works", {
         dov2$values$word
     )
     expect_equal(
-        dim(dov2$values$doc), c(59L, 50L)
+        dim(dov2$values$doc), c(5296L, 50L)
     )
     expect_output(
         print(dov2),
@@ -106,7 +107,7 @@ test_that("textmodel_doc2vec works", {
             "textmodel_doc2vec(x = toks, dim = 50, type = \"dbow\", min_count = 2, ", 
             "    iter = 5, verbose = TRUE)",
             "",
-            "50 dimensions; 59 documents.", sep = "\n"), fixed = TRUE
+            "50 dimensions; 5,296 documents.", sep = "\n"), fixed = TRUE
     )
     expect_equal(
         class(expect_output(print(dov2))), 
