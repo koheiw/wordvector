@@ -1,3 +1,8 @@
+## Changes in v0.6.3
+
+- Add `padding` to `as.matrix()` for using word2vec as a pre-trained model in **torch**.
+- Update internal functions for **quanteda** v4.5.0.
+
 ## Changes in v0.6.2
 
 - Add `layer` to `perplexity()` for `textmodel_doc2vec` models.
