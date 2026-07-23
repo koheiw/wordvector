@@ -145,8 +145,8 @@ wordvector <- function(x, dim = 50, type = c("cbow", "sg", "dm", "dbow"),
     
     x <- as.tokens_xptr(x)
     if (tolower)
-        x <- tokens_tolower(x)
-    x <- tokens_trim(x, min_termfreq = min_count, termfreq_type = "count")
+        x <- tokens_tolower(x, verbose = FALSE)
+    x <- tokens_trim(x, min_termfreq = min_count, termfreq_type = "count", verbose = FALSE)
     
     result <- cpp_word2vec(x, model, size = dim, window = window,
                            sample = sample, withHS = !use_ns, negative = ns_size, 
