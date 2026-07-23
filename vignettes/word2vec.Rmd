@@ -1,10 +1,10 @@
 ---
-title: "Word2vec"
+title: "word2vec"
 author: "Kohei Watanabe"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Word2vec}
+  %\VignetteIndexEntry{word2vec}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
@@ -14,21 +14,21 @@ editor_options:
 This article shows how to fit [word2vec](https://arxiv.org/abs/1310.4546) using **wordvector**. Since the model is trained on **quanteda**'s tokens objects, users can easily integrate the model in their current work flow. 
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE, collapse = TRUE)
 ```
 
 ## Prepare data
 
 Download the corpus of news summaries.
 
-```{r, eval = FALSE}
+```{r, eval=FALSE}
 # Load data
 f <- tempfile()
 download.file('https://www.dropbox.com/s/e19kslwhuu9yc2z/yahoo-news.RDS?dl=1', 
               f, mode = "wb")
 ```
 
-```{r echo = FALSE}
+```{r echo=FALSE}
 f <- "~/yahoo-news.RDS"
 ```
 

@@ -12,7 +12,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Wordvector: word and document vector models
+# wordvector: word and document vector models
 
 
 <!-- badges: start -->

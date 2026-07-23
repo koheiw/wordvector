@@ -1,5 +1,5 @@
 
-# Wordvector: word and document vector models
+# wordvector: word and document vector models
 
 <!-- badges: start -->
 
@@ -55,7 +55,7 @@ download.file('https://www.dropbox.com/s/e19kslwhuu9yc2z/yahoo-news.RDS?dl=1',
 ``` r
 library(wordvector)
 library(quanteda)
-## Package version: 4.3.1
+## Package version: 4.5.0.9000
 ## Unicode version: 15.1
 ## ICU version: 74.1
 ## Parallel computing: 16 of 16 threads used.
@@ -78,16 +78,16 @@ wov <- textmodel_word2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose 
 ##  ...using 16 threads for distributed computing
 ##  ...initializing
 ##  ...negative sampling in 10 iterations
-##  ......iteration 1 elapsed time: 5.91 seconds (alpha: 0.0453)
-##  ......iteration 2 elapsed time: 12.12 seconds (alpha: 0.0404)
-##  ......iteration 3 elapsed time: 18.30 seconds (alpha: 0.0357)
-##  ......iteration 4 elapsed time: 24.58 seconds (alpha: 0.0309)
-##  ......iteration 5 elapsed time: 31.38 seconds (alpha: 0.0259)
-##  ......iteration 6 elapsed time: 40.15 seconds (alpha: 0.0203)
-##  ......iteration 7 elapsed time: 49.13 seconds (alpha: 0.0143)
-##  ......iteration 8 elapsed time: 57.64 seconds (alpha: 0.0086)
-##  ......iteration 9 elapsed time: 64.40 seconds (alpha: 0.0044)
-##  ......iteration 10 elapsed time: 69.44 seconds (alpha: 0.0017)
+##  ......iteration 1 elapsed time: 6.14 seconds (alpha: 0.0455)
+##  ......iteration 2 elapsed time: 12.83 seconds (alpha: 0.0409)
+##  ......iteration 3 elapsed time: 18.90 seconds (alpha: 0.0364)
+##  ......iteration 4 elapsed time: 25.03 seconds (alpha: 0.0320)
+##  ......iteration 5 elapsed time: 31.32 seconds (alpha: 0.0275)
+##  ......iteration 6 elapsed time: 37.58 seconds (alpha: 0.0230)
+##  ......iteration 7 elapsed time: 45.09 seconds (alpha: 0.0183)
+##  ......iteration 8 elapsed time: 51.82 seconds (alpha: 0.0139)
+##  ......iteration 9 elapsed time: 58.50 seconds (alpha: 0.0095)
+##  ......iteration 10 elapsed time: 65.41 seconds (alpha: 0.0049)
 ##  ...complete
 ```
 
@@ -98,13 +98,13 @@ wov <- textmodel_word2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose 
 ``` r
 head(similarity(wov, c("amazon", "forests", "obama", "america", "afghanistan"), 
                 mode = "character"))
-##      amazon         forests       obama     america    afghanistan  
-## [1,] "amazon"       "forests"     "obama"   "america"  "afghanistan"
-## [2,] "peatlands"    "herds"       "barack"  "africa"   "afghan"     
-## [3,] "rainforest"   "wetlands"    "biden"   "american" "taliban"    
-## [4,] "americana"    "rainforests" "kerry"   "dakota"   "kabul"      
-## [5,] "ranches"      "rainforest"  "hagel"   "carolina" "pakistan"   
-## [6,] "forestethics" "grasslands"  "clinton" "korea"    "iraq"
+##      amazon       forests      obama     america           afghanistan  
+## [1,] "amazon"     "forests"    "obama"   "america"         "afghanistan"
+## [2,] "peatlands"  "herds"      "barack"  "dakota"          "afghan"     
+## [3,] "rainforest" "rainforest" "biden"   "american"        "kabul"      
+## [4,] "soy"        "farmland"   "kerry"   "carolina"        "taliban"    
+## [5,] "zijin"      "grasslands" "hagel"   "africa"          "pakistan"   
+## [6,] "warm-water" "forest"     "clinton" "america-focused" "afghans"
 ```
 
 ### Arithmetic operations of word vectors
@@ -114,13 +114,13 @@ head(similarity(wov, c("amazon", "forests", "obama", "america", "afghanistan"),
 ``` r
 # What is Amazon without forests?
 head(similarity(wov, analogy(~ amazon - forests))) 
-##      [,1]         
-## [1,] "smash-hit"  
-## [2,] "tripadvisor"
-## [3,] "rihanna"    
-## [4,] "yahoo"      
-## [5,] "pandora"    
-## [6,] "univision"
+##      [,1]          
+## [1,] "smash-hit"   
+## [2,] "activision"  
+## [3,] "iovine"      
+## [4,] "nbcuniversal"
+## [5,] "telephony"   
+## [6,] "pandora"
 ```
 
 ``` r
@@ -128,11 +128,11 @@ head(similarity(wov, analogy(~ amazon - forests)))
 head(similarity(wov, analogy(~ obama - america + afghanistan))) 
 ##      [,1]         
 ## [1,] "afghanistan"
-## [2,] "afghan"     
-## [3,] "taliban"    
+## [2,] "taliban"    
+## [3,] "afghan"     
 ## [4,] "karzai"     
-## [5,] "nato"       
-## [6,] "hamid"
+## [5,] "obama"      
+## [6,] "nato"
 ```
 
 These examples replicates analogical tasks in the original word2vec
@@ -141,23 +141,23 @@ paper.
 ``` r
 # What is for France as Berlin for Germany?
 head(similarity(wov, analogy(~ berlin - germany + france))) 
-##      [,1]        
-## [1,] "paris"     
-## [2,] "berlin"    
-## [3,] "brussels"  
-## [4,] "strasbourg"
-## [5,] "bourget"   
-## [6,] "france"
+##      [,1]      
+## [1,] "paris"   
+## [2,] "berlin"  
+## [3,] "brussels"
+## [4,] "london"  
+## [5,] "france"  
+## [6,] "kourou"
 ```
 
 ``` r
 # What is for slowly as quick for quickly?
 head(similarity(wov, analogy(~ quick - quickly + slowly)))
-##      [,1]         
-## [1,] "slow"       
-## [2,] "sideways"   
-## [3,] "uneven"     
-## [4,] "dim"        
-## [5,] "heralds"    
-## [6,] "bounce-back"
+##      [,1]                   
+## [1,] "fades"                
+## [2,] "pitching"             
+## [3,] "uneven"               
+## [4,] "earlier-than-expected"
+## [5,] "sideways"             
+## [6,] "bumpy"
 ```
