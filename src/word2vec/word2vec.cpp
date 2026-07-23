@@ -142,8 +142,8 @@ namespace w2v {
                 thread->join();
             }
             
-            m_wordValues = *data.wordValues;
             m_bpWeights = *data.bpWeights;
+            m_wordValues = *data.wordValues;
             m_docValues = *data.docValues;
             
             return true;
