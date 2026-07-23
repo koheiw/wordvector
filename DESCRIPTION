@@ -12,7 +12,6 @@ Description: Create dense vector representation of words and documents using 'qu
 URL: https://github.com/koheiw/wordvector, https://koheiw.github.io/wordvector/
 License: Apache License (>= 2.0)
 Encoding: UTF-8
-RoxygenNote: 7.3.3
 Depends: 
     R (>= 3.5.0)
 Imports: 
@@ -32,3 +31,4 @@ LinkingTo: Rcpp, quanteda
 Roxygen: list(markdown = TRUE)
 Language: en-US
 LazyData: true
+Config/roxygen2/version: 8.0.0
