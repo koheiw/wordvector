@@ -1,6 +1,7 @@
 library(quanteda)
 library(wordvector)
 options(wordvector_threads = 8)
+quanteda_options(verbose = TRUE)
 
 corp <- data_corpus_news2014
 toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>%
@@ -9,14 +10,14 @@ toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>%
                  padding = TRUE) %>%
     tokens_tolower()
 
-wdv <- textmodel_word2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose = TRUE, iter = 10)
+wdv <- textmodel_word2vec(toks, dim = 50, type = "cbow", min_count = 5, iter = 10)
 similarity(wdv, analogy(~ washington - america + france)) %>% 
     head()
 
-wdv2 <- textmodel_word2vec(toks[1:1000], dim = 50, type = "cbow", min_count = 2, verbose = TRUE, iter = 10, 
-                           model = wdv, update_weights = TRUE)
-wdv3 <- textmodel_word2vec(toks[1:1000], dim = 50, type = "cbow", min_count = 2, verbose = TRUE, iter = 10, 
-                           model = wdv, update_weights = FALSE)
+wdv2 <- textmodel_word2vec(toks[1:1000], dim = 50, type = "cbow", min_count = 2, iter = 10, 
+                           model = wdv, update_weights = TRUE, verbose = TRUE)
+wdv3 <- textmodel_word2vec(toks[1:1000], dim = 50, type = "cbow", min_count = 2, iter = 10, 
+                           model = wdv, update_weights = FALSE, verbose = TRUE)
 
 
 similarity(wdv, analogy(~ washington - america + france)) %>% 
@@ -30,8 +31,8 @@ wdv$weights["america",]
 wdv2$weights["america",]
 wdv3$weights["america",]
 
-dov <- textmodel_doc2vec(toks, dim = 100, type = "dm", min_count = 5, verbose = TRUE, iter = 10)
-dov2 <- textmodel_doc2vec(toks, dim = 100, type = "dm", min_count = 5, verbose = TRUE, iter = 20)
+dov <- textmodel_doc2vec(toks, dim = 100, type = "dm", min_count = 5, iter = 10, verbose = TRUE)
+dov2 <- textmodel_doc2vec(toks, dim = 100, type = "dm", min_count = 5, iter = 20, verbose = TRUE)
 
 sim <- proxyC::simil(
     dov$values$doc,
@@ -65,7 +66,7 @@ print(tail(toks[order(s)]), max_ntoken = -1)
 
 for (i in 1:10) {
     cat(i, "\n")
-    wdv <- textmodel_word2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose = TRUE, iter = 30)
+    wdv <- textmodel_word2vec(toks, dim = 50, type = "cbow", min_count = 5, iter = 30, verbose = TRUE)
 }
 
 # word2vec -------------------------------------
@@ -79,7 +80,7 @@ similarity(wdv, analogy(~ berlin - germany + france)) %>%
 
 # -----------------------------
 
-dov <- textmodel_doc2vec(toks, dim = 50, type = "skip-gram", min_count = 5, verbose = TRUE, iter = 10)
+dov <- textmodel_doc2vec(toks, dim = 50, type = "skip-gram", min_count = 5, iter = 10, verbose = TRUE)
 seed <- LSX::seedwords("sentiment")
 doc <- probability(dov, seed, layer = "documents")[,1]
 print(toks[head(doc)], -1, -1)
