@@ -1,5 +1,5 @@
 ---
-title: "Word2vec"
+title: "Doc2vec"
 author: "Kohei Watanabe"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -45,25 +45,20 @@ toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>%
 # set the number of processors
 options(wordvector_threads = 8)
 
-# Train word2vec
-wov <- textmodel_word2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose = TRUE)
+# Train doc2vec
+dov <- textmodel_doc2vec(toks, dim = 50, type = "dm", min_count = 5, verbose = TRUE)
 ```
 
 ```{r}
+# Extract document vector
+dim(as.matrix(dov, layer = "documents"))
 # Extract word vector
-dim(as.matrix(wov))
-```
-
-# Find similar words
-
-```{r}
-head(similarity(wov, "bad"))
-head(similarity(wov, analogy(~ good - bad)))
+dim(as.matrix(dov, layer = "words"))
 ```
 
 # Predict probability
 
 ```{r}
-head(probability(wov, "bad", mode = "numeric"))
+head(probability(dov, c("bad", "good"), mode = "numeric"))
 ```
 
