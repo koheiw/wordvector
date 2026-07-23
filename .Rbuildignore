@@ -10,3 +10,5 @@
 ^vignettes/pkgdown$
 ^\.github$
 ^LICENSE$
+^\.positai$
+^\.claude$
