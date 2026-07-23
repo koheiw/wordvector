@@ -95,7 +95,7 @@ namespace w2v {
         
         // word vector
         std::size_t m_vectorSize = 0;
-        std::vector<float> m_pjLayerValues;
+        std::vector<float> m_wordValues;
         std::vector<float> m_bpWeights;
         
         // document vector
@@ -110,18 +110,18 @@ namespace w2v {
         word2vec_t() {};
         word2vec_t(std::vector<std::string> vocabulary_,
                    std::size_t vectorSize_,
-                   std::vector<float> pjLayerValues_,
+                   std::vector<float> wordValues_,
                    std::vector<float> bpWeights_): 
                    m_vocabulary(vocabulary_),
                    m_vocabularySize(vocabulary_.size()),
                    m_vectorSize(vectorSize_),
-                   m_pjLayerValues(pjLayerValues_),
+                   m_wordValues(wordValues_),
                    m_bpWeights(bpWeights_) {}
     
         // virtual destructor
         virtual ~word2vec_t() = default;
         
-        const std::vector<float> &values() {return m_pjLayerValues;}  // TODO: change to wordValues
+        const std::vector<float> &values() {return m_wordValues;}  // TODO: change to wordValues
         const std::vector<float> &weights() {return m_bpWeights;}
         const std::vector<float> &docValues() {return m_docValues;} 
         
@@ -146,13 +146,13 @@ namespace w2v {
         //     for(std::size_t i = 0; i < m_vocabularySize; i += m_vectorSize) {
         //         float ss = 0.0f;
         //         for(std::size_t j = 0; j < m_vectorSize; ++j) {
-        //             ss += m_pjLayerValues[i + j] * m_pjLayerValues[i + j];
+        //             ss += m_wordValues[i + j] * m_wordValues[i + j];
         //         }
         //         if (ss <= 0.0f) 
-        //             throw std::runtime_error("failed to normalize pjLayerValues");
+        //             throw std::runtime_error("failed to normalize wordValues");
         //         float d = std::sqrt(ss / m_vectorSize);
         //         for(std::size_t j = 0; j < m_vectorSize; ++j) {
-        //             m_pjLayerValues[i + j] = m_pjLayerValues[i + j] / d;
+        //             m_wordValues[i + j] = m_wordValues[i + j] / d;
         //         }
         //     }
         // }

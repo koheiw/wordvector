@@ -40,11 +40,9 @@ namespace w2v {
         struct data_t final {
             std::shared_ptr<settings_t> settings; ///< settings structure
             std::shared_ptr<corpus_t> corpus; ///< train data 
-            std::shared_ptr<std::vector<float>> pjLayerValues; ///< projection layer values
-            std::shared_ptr<std::vector<float>> bpWeights; ///< back propagation weights
-            //std::shared_ptr<std::vector<float>> wordValues; ///< projection layer values
-            //std::shared_ptr<std::vector<float>> wordWeights; ///< back propagation weights
-            std::shared_ptr<std::vector<float>> docValues; ///< document vector
+			std::shared_ptr<std::vector<float>> wordValues; ///< hidden layer values for words
+            std::shared_ptr<std::vector<float>> docValues; ///< hidden layer values for documents
+			std::shared_ptr<std::vector<float>> bpWeights; ///< back propagation weights
             std::shared_ptr<std::vector<float>> expTable; ///< exp(x) / (exp(x) + 1) values lookup table
             std::shared_ptr<huffmanTree_t> huffmanTree; ///< Huffman tree used by hierarchical softmax
             std::shared_ptr<std::atomic<std::size_t>> processedWords; ///< total words processed by train threads
@@ -61,8 +59,8 @@ namespace w2v {
         std::unique_ptr<downSampling_t> m_downSampling;
         std::unique_ptr<nsDistribution_t> m_nsDistribution;
         // word vector
-        std::unique_ptr<std::vector<float>> m_hiddenLayerValues; 
-        std::unique_ptr<std::vector<float>> m_hiddenLayerErrors;
+        std::unique_ptr<std::vector<float>> m_pjLayerValues; 
+        std::unique_ptr<std::vector<float>> m_pjLayerErrors;
         // document vector
         std::unique_ptr<std::vector<float>> m_docLayerValues;
         std::unique_ptr<std::vector<float>> m_docLayerErrors;
@@ -97,12 +95,12 @@ namespace w2v {
         inline void dbow(const std::vector<unsigned int> &_text, 
                          std::size_t _id, bool freeze) noexcept;
         inline void hierarchicalSoftmax(std::size_t _word,
-                                        std::vector<float> &_hiddenLayer,
+                                        std::vector<float> &_pjLayer,
                                         std::vector<float> &_trainLayer, 
                                         std::size_t _trainLayerShift,
                                         bool freezeWeights) noexcept;
         inline void negativeSampling(std::size_t _word,
-                                     std::vector<float> &_hiddenLayer,
+                                     std::vector<float> &_pjLayer,
                                      std::vector<float> &_trainLayer, 
                                      std::size_t _trainLayerShift,
                                      bool freezeWeights) noexcept;
