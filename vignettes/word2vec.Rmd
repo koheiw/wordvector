@@ -11,12 +11,19 @@ editor_options:
   chunk_output_type: console
 ---
 
+This article shows how to fit word2vec model using **quanteda**. Since **wordvector** trains word2vec on tokens objects, users can easily integrate the model in their work flow. 
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
 library(quanteda)
 library(wordvector)
+options_quanteda(verbose = TRUE)
 ```
+
+## Prepare data
+
+Download the corpus of news summaries.
 
 ```{r, eval = FALSE}
 # Load data
@@ -30,19 +37,24 @@ f <- "~/yahoo-news.RDS"
 ```
 
 ```{r}
+# Construct corpus
 dat <- readRDS(f)
 dat$text <- paste0(dat$head, ". ", dat$body)
-corp <- corpus(dat, text_field = 'text', docid_field = "tid")
+corp <- corpus(dat, text_field = 'text')
 
-# Pre-processing
+# Tokenize
 toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>% 
     tokens_remove(stopwords("en", "marimo"), padding = TRUE) %>% 
     tokens_select("^[a-zA-Z-]+$", valuetype = "regex", case_insensitive = FALSE,
                   padding = TRUE)
 ```
 
+## Train word2vec
+
+`textmodel_word2vec()` supports both `cbow` (continuous bag-of-words) and `sg` (skip-gram) models.
+
 ```{r}
-# set the number of processors
+# Set the number of processors
 options(wordvector_threads = 8)
 
 # Train word2vec
@@ -56,12 +68,16 @@ dim(as.matrix(wov))
 
 # Find similar words
 
+`similarity()` is a user-friendly utility function to find similar words. Using the `analogy()` wrapper, you can also add or subtract word vectors before finding similar words. 
+
 ```{r}
 head(similarity(wov, "bad"))
 head(similarity(wov, analogy(~ good - bad)))
 ```
 
 # Predict probability
+
+As a language model, the model allows you to compute the probability of the word in the context of other words.
 
 ```{r}
 head(probability(wov, "bad", mode = "numeric"))

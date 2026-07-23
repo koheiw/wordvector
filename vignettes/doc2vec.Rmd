@@ -11,12 +11,18 @@ editor_options:
   chunk_output_type: console
 ---
 
+In this article, **wordvector** is used to train doc2vec on **quanteda**'s tokens objects.
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
 library(quanteda)
 library(wordvector)
 ```
+
+## Prepare data
+
+Download the corpus of news summaries.
 
 ```{r, eval = FALSE}
 # Load data
@@ -30,35 +36,45 @@ f <- "~/yahoo-news.RDS"
 ```
 
 ```{r}
+# Construct corpus
 dat <- readRDS(f)
 dat$text <- paste0(dat$head, ". ", dat$body)
-corp <- corpus(dat, text_field = 'text', docid_field = "tid")
+corp <- corpus(dat, text_field = 'text')
 
-# Pre-processing
+# Tokenize
 toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>% 
     tokens_remove(stopwords("en", "marimo"), padding = TRUE) %>% 
     tokens_select("^[a-zA-Z-]+$", valuetype = "regex", case_insensitive = FALSE,
                   padding = TRUE)
 ```
 
+## Train doc2vec
+
+`textmodel_doc2vec()` supports both `dm` (distributed memory) and `sg` (distributed bag-of-words) models.
+
 ```{r}
-# set the number of processors
+# Set the number of processors
 options(wordvector_threads = 8)
 
 # Train doc2vec
 dov <- textmodel_doc2vec(toks, dim = 50, type = "dm", min_count = 5, verbose = TRUE)
 ```
 
+Since the distributed memory model has hidden layers for documents and words, you can extract document and word vectors using `as.matrix()`
+
 ```{r}
 # Extract document vector
 dim(as.matrix(dov, layer = "documents"))
+
 # Extract word vector
 dim(as.matrix(dov, layer = "words"))
 ```
 
 # Predict probability
 
+If `probabitliy()` is applied to a fitted doc2vec model, you receive the predicted probability of the words in each document.
+
 ```{r}
-head(probability(dov, c("bad", "good"), mode = "numeric"))
+head(probability(dov, c("bad", "good"), mode = "numeric", layer = "documents"))
 ```
 
