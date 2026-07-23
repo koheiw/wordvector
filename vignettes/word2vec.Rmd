@@ -11,14 +11,10 @@ editor_options:
   chunk_output_type: console
 ---
 
-This article shows how to fit word2vec model using **quanteda**. Since **wordvector** trains word2vec on tokens objects, users can easily integrate the model in their work flow. 
+This article shows how to fit [word2vec](https://arxiv.org/abs/1310.4546) using **wordvector**. Since the model is trained on **quanteda**'s tokens objects, users can easily integrate the model in their current work flow. 
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-
-library(quanteda)
-library(wordvector)
-options_quanteda(verbose = TRUE)
 ```
 
 ## Prepare data
@@ -37,6 +33,10 @@ f <- "~/yahoo-news.RDS"
 ```
 
 ```{r}
+library(quanteda)
+library(wordvector)
+quanteda_options(verbose = TRUE)
+
 # Construct corpus
 dat <- readRDS(f)
 dat$text <- paste0(dat$head, ". ", dat$body)
