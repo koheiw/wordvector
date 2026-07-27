@@ -106,7 +106,10 @@ wordvector <- function(x, dim = 50, type = c("cbow", "sg", "dm", "dbow"),
                        use_ns = TRUE, ns_size = 5, sample = 0.001, tolower = TRUE,
                        include_data = FALSE, verbose = FALSE, ..., 
                        normalize = FALSE) {
-
+    
+    opt <- quanteda_options("verbose")
+    quanteda_options(verbose = FALSE)
+    
     type <- match.arg(type)
     dim <- check_integer(dim, min = 2)
     min_count <- check_integer(min_count, min = 0)
@@ -168,6 +171,7 @@ wordvector <- function(x, dim = 50, type = c("cbow", "sg", "dm", "dbow"),
         result$data <- y
     if (doc2vec) {
         result$docvars <- attr(x, "docvars")
+        result$ntoken <- ntoken(x, remove_padding = TRUE)
         rownames(result$docvars) <- docnames(x)
         rownames(result$values$doc) <- docnames(x)
     }
@@ -178,6 +182,8 @@ wordvector <- function(x, dim = 50, type = c("cbow", "sg", "dm", "dbow"),
     } else {
         class(result) <- c("textmodel_word2vec", "textmodel_wordvector")
     }
+    
+    quanteda_options(verbose = opt) # restore
     return(result)
 }
 
@@ -229,21 +235,25 @@ print.textmodel_doc2vec <- function(x, ...) {
 #' @param layer the layer from which the vectors are extracted.
 #' @param group \[experimental\] average sentence or paragraph vectors from the same document. 
 #'   Silently ignored when `layer = "words"`. 
+#' @param padding if `TRUE`, add a row with zeros before the word vectors. 
 #' @param ... not used.
 #' @return a matrix that contain the word or document vectors in rows.
 #' @export
 as.matrix.textmodel_word2vec <- function(x, normalize = TRUE, 
-                                         layer = "words", ...){
+                                         layer = "words", padding = FALSE, ...){
     
     x <- upgrade_pre06(x)
     layer <- match.arg(layer)
     normalize <- check_logical(normalize)
+    padding <- check_logical(padding)
     
     result <- x$values$word
     if (normalize) {
         v <- sqrt(rowSums(result ^ 2) / ncol(result))
         result <- result / v
     }
+    if (padding)
+        result <- rbind(rep(0, x$dim), result)
     return(result) 
 }
 

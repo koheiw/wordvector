@@ -48,7 +48,7 @@ Rcpp::NumericMatrix get_weights(w2v::word2vec_t model) {
 }
 
 Rcpp::NumericMatrix get_words(w2v::word2vec_t model) {
-    std::vector<float> mat = model.values();
+    std::vector<float> mat = model.wordValues();
     if (model.vectorSize() * model.vocabularySize() != mat.size())
         throw std::runtime_error("Invalid word matrix");
     Rcpp::NumericMatrix mat_ = as_matrix(mat, model.vocabularySize(), model.vectorSize());

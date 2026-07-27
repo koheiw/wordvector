@@ -32,6 +32,13 @@ test_that("as.matrix works", {
         identical(as.matrix(wov, normalize = FALSE), wov$values$word)
     )
     
+    expect_identical(
+        dim(as.matrix(wov, padding = TRUE)), c(5361L, 50L)
+    )
+    expect_identical(
+        dim(as.matrix(wov, padding = FALSE)), c(5360L, 50L)
+    )
+    
     # doc2vec
     expect_setequal(rownames(as.matrix(dov)), 
                     docnames(dfmt))
@@ -307,10 +314,6 @@ test_that("probability works", {
     )
     
     # doc2vec
-    expect_error(
-        probability(dov, c("us" = 1, "people" = -1), mode = "numeric"),
-        "x must be a trained textmodel_wordvector object"
-    )
     expect_error(
         probability(list(), c("us" = 1, "people" = -1)),
         "x must be a textmodel_wordvector object"

@@ -47,11 +47,11 @@ namespace w2v {
             
             // initialize variables
             std::uniform_real_distribution<float> rndMatrixInitializer(-0.005f, 0.005f);
+            data.bpWeights.reset(new std::vector<float>(matrixSize, 0.0f));
             
             // word vector
-            data.bpWeights.reset(new std::vector<float>(matrixSize, 0.0f));
-            data.pjLayerValues.reset(new std::vector<float>(matrixSize, 0.0f));
-            std::generate((*data.pjLayerValues).begin(), (*data.pjLayerValues).end(), [&]() {
+            data.wordValues.reset(new std::vector<float>(matrixSize, 0.0f));
+            std::generate((*data.wordValues).begin(), (*data.wordValues).end(), [&]() {
                 return rndMatrixInitializer(randomGenerator);
             });
             // document vector
@@ -86,7 +86,7 @@ namespace w2v {
                 for (std::size_t j = 0; j < _model.m_vocabularySize; ++j) {
                     if (auto it = map.find(_model.m_vocabulary[j]); it != map.end()) {
                         for (std::size_t k = 0; k < m_vectorSize; k++) {
-                            (*data.pjLayerValues)[k + (it->second * m_vectorSize)] = _model.m_pjLayerValues[k + (j * _model.m_vectorSize)];
+                            (*data.wordValues)[k + (it->second * m_vectorSize)] = _model.m_wordValues[k + (j * _model.m_vectorSize)];
                             (*data.bpWeights)[k + (it->second * m_vectorSize)] = _model.m_bpWeights[k + (j * _model.m_vectorSize)];
                         }
                     }
@@ -142,8 +142,8 @@ namespace w2v {
                 thread->join();
             }
             
-            m_pjLayerValues = *data.pjLayerValues;
             m_bpWeights = *data.bpWeights;
+            m_wordValues = *data.wordValues;
             m_docValues = *data.docValues;
             
             return true;

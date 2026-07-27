@@ -2,7 +2,7 @@ library(quanteda)
 library(wordvector)
 options(wordvector_threads = 2)
 
-corp <- head(data_corpus_inaugural, 59) 
+corp <- head(data_corpus_inaugural, 59)
 
 toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE,
                concatenator = " ") %>% 
@@ -20,7 +20,8 @@ test_that("textmodel_doc2vec works", {
     expect_false(dov1$normalize)
     expect_equal(
         names(dov1),
-        c("values", "dim", "tolower", "concatenator", "docvars", "normalize", "call", "version")
+        c("values", "weights", "dim", "tolower", "concatenator", "docvars", 
+          "normalize", "call", "version")
     )
     expect_equal(
         dim(dov1$values$word), c(5363L, 50L)
@@ -40,44 +41,29 @@ test_that("textmodel_doc2vec works", {
             "",
             "50 dimensions; 59 documents.", sep = "\n"), fixed = TRUE
     )
+    expect_equal(
+        rownames(probability(dov1, c("good", "bad"), layer = "words", mode = "numeric")),
+        rownames(dov1$values$word)
+    )
+    expect_equal(
+        rownames(probability(dov1, c("good", "bad"), layer = "documents", mode = "numeric")),
+        rownames(dov1$values$doc)
+    )
     
     # normalize
     dov2 <- as.textmodel_doc2vec(dfmt, wov, normalize = TRUE)
     expect_false(identical(dov1$values, dov2$values))
     expect_true(dov2$normalize)
     
-    # weights
-    w <- abs(rnorm(nrow(wov$values$word)))
-    dov3 <- as.textmodel_doc2vec(dfmt, wov, weights = w)
-    expect_false(identical(dov1$values, dov3$values))
-    
-    # pattern
-    dov4 <- as.textmodel_doc2vec(dfmt, wov, weights = 2.0, 
-                                 pattern = data_dictionary_LSD2015)
-    expect_false(identical(dov1$values$doc, dov4$values$doc))
-    
-    dict <- dictionary(list(hard = "hard *"))
-    dov5 <- as.textmodel_doc2vec(dfmt, wov, weights = 2.0, 
-                                 pattern = dict)
-    expect_false(identical(dov1$values$doc, dov5$values$doc))
-    
-    # errors
     expect_error(
-        as.textmodel_doc2vec(dfmt, wov, weights = c(0.1, 0.2, 0.2)),
-        "The length of weights must be 5363"
+        probability(dov2, c("good", "bad"), layer = "words"),
+        "x must be trained with normalize = FALSE"
+    )
+    expect_error(
+        probability(dov2, c("good", "bad"), layer = "documents"),
+        "x must be trained with normalize = FALSE"
     )
     
-    w <- sample(c(1.0, NA), 5363, replace = TRUE)
-    expect_error(
-        as.textmodel_doc2vec(dfmt, wov, weights = w),
-        "The value of weights cannot be NA"
-    )
-    
-    expect_error(
-        as.textmodel_doc2vec(dfmt, wov, weights = -0.1),
-        "The value of weights must be between 0 and Inf"
-    )
-
 })
 
 test_that("as.textmodel_doc2vec works with different objects", {

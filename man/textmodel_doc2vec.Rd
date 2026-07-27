@@ -59,8 +59,9 @@ disabled when \code{sample = 1.0}}
 \item{...}{additional arguments.}
 }
 \value{
-Returns a textmodel_doc2vec object with matrices for word and document vector values in \code{values}.
-Other elements are the same as \link{textmodel_word2vec}.
+Returns a textmodel_doc2vec object with matrices for word and document vector
+values, \link[quanteda:docvars]{quanteda::docvars} and \link[quanteda:ntoken]{quanteda::ntoken} of \code{x}. Other elements are
+the same as \link{textmodel_word2vec}.
 }
 \description{
 Train a doc2vec model (Le & Mikolov, 2014) using a \link[quanteda:tokens]{quanteda::tokens} object.

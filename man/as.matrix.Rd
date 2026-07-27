@@ -13,7 +13,7 @@
   ...
 )
 
-\method{as.matrix}{textmodel_word2vec}(x, normalize = TRUE, layer = "words", ...)
+\method{as.matrix}{textmodel_word2vec}(x, normalize = TRUE, layer = "words", padding = FALSE, ...)
 }
 \arguments{
 \item{x}{a \code{textmodel_word2vec} or \code{textmodel_doc2vec} object.}
@@ -26,6 +26,8 @@
 Silently ignored when \code{layer = "words"}.}
 
 \item{...}{not used.}
+
+\item{padding}{if \code{TRUE}, add a row with zeros before the word vectors.}
 }
 \value{
 a matrix that contain the word or document vectors in rows.
