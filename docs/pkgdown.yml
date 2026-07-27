@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   doc2vec: doc2vec.html
   word2vec: word2vec.html
-last_built: 2026-07-27T08:44Z
+last_built: 2026-07-27T11:55Z
 urls:
   reference: https://koheiw.github.io/wordvector/reference
   article: https://koheiw.github.io/wordvector/articles

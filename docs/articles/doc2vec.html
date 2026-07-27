@@ -127,7 +127,7 @@ Watanabe</h4>
 <span><span class="co">##  ...preserving social media tags (#, @)</span></span>
 <span><span class="co">##  ...removing separators, punctuation, symbols</span></span>
 <span><span class="co">##  ...298,565 unique types</span></span>
-<span><span class="co">##  ...complete, elapsed time: 90.4 seconds.</span></span>
+<span><span class="co">##  ...complete, elapsed time: 65.2 seconds.</span></span>
 <span><span class="co">## Finished constructing tokens from 656,334 documents</span></span>
 <span><span class="co">## tokens_remove() changed from 298,565 types (656,334 documents, 45,194,192 tokens) to 298,002 types (656,334 documents, 28,232,774 tokens)</span></span>
 <span><span class="co">## tokens_keep() changed from 298,002 types (656,334 documents, 28,232,774 tokens) to 239,782 types (656,334 documents, 26,564,509 tokens)</span></span></code></pre></div>
@@ -148,16 +148,16 @@ models.</p>
 <span><span class="co">##  ...using 16 threads for distributed computing</span></span>
 <span><span class="co">##  ...initializing</span></span>
 <span><span class="co">##  ...negative sampling in 10 iterations</span></span>
-<span><span class="co">##  ......iteration 1 elapsed time: 5.99 seconds (alpha: 0.0446)</span></span>
-<span><span class="co">##  ......iteration 2 elapsed time: 11.97 seconds (alpha: 0.0390)</span></span>
-<span><span class="co">##  ......iteration 3 elapsed time: 17.96 seconds (alpha: 0.0335)</span></span>
-<span><span class="co">##  ......iteration 4 elapsed time: 23.80 seconds (alpha: 0.0281)</span></span>
-<span><span class="co">##  ......iteration 5 elapsed time: 29.79 seconds (alpha: 0.0225)</span></span>
-<span><span class="co">##  ......iteration 6 elapsed time: 35.41 seconds (alpha: 0.0176)</span></span>
-<span><span class="co">##  ......iteration 7 elapsed time: 39.89 seconds (alpha: 0.0136)</span></span>
-<span><span class="co">##  ......iteration 8 elapsed time: 43.84 seconds (alpha: 0.0101)</span></span>
-<span><span class="co">##  ......iteration 9 elapsed time: 47.40 seconds (alpha: 0.0072)</span></span>
-<span><span class="co">##  ......iteration 10 elapsed time: 50.93 seconds (alpha: 0.0043)</span></span>
+<span><span class="co">##  ......iteration 1 elapsed time: 5.65 seconds (alpha: 0.0450)</span></span>
+<span><span class="co">##  ......iteration 2 elapsed time: 11.41 seconds (alpha: 0.0398)</span></span>
+<span><span class="co">##  ......iteration 3 elapsed time: 16.94 seconds (alpha: 0.0347)</span></span>
+<span><span class="co">##  ......iteration 4 elapsed time: 22.50 seconds (alpha: 0.0296)</span></span>
+<span><span class="co">##  ......iteration 5 elapsed time: 28.06 seconds (alpha: 0.0245)</span></span>
+<span><span class="co">##  ......iteration 6 elapsed time: 33.70 seconds (alpha: 0.0194)</span></span>
+<span><span class="co">##  ......iteration 7 elapsed time: 38.74 seconds (alpha: 0.0148)</span></span>
+<span><span class="co">##  ......iteration 8 elapsed time: 42.21 seconds (alpha: 0.0117)</span></span>
+<span><span class="co">##  ......iteration 9 elapsed time: 45.19 seconds (alpha: 0.0091)</span></span>
+<span><span class="co">##  ......iteration 10 elapsed time: 48.04 seconds (alpha: 0.0067)</span></span>
 <span><span class="co">##  ...complete</span></span></code></pre></div>
 <p>Since the distributed memory model has hidden layers for documents
 and words, you can extract document and word vectors using
@@ -178,13 +178,13 @@ and words, you can extract document and word vectors using
 you receive the predicted probability of the words in each document.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/probability.html">probability</a></span><span class="op">(</span><span class="va">dov</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bad"</span>, <span class="st">"good"</span><span class="op">)</span>, mode <span class="op">=</span> <span class="st">"numeric"</span>, layer <span class="op">=</span> <span class="st">"documents"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">##             bad      good</span></span>
-<span><span class="co">## text1 0.1181946 0.2552574</span></span>
-<span><span class="co">## text2 0.4507970 0.3489597</span></span>
-<span><span class="co">## text3 0.2558150 0.1595985</span></span>
-<span><span class="co">## text4 0.5279363 0.6595684</span></span>
-<span><span class="co">## text5 0.4034797 0.4403722</span></span>
-<span><span class="co">## text6 0.4882109 0.5838685</span></span></code></pre></div>
+<span><span class="co">##             bad       good</span></span>
+<span><span class="co">## text1 0.2961347 0.36700336</span></span>
+<span><span class="co">## text2 0.2235611 0.20541178</span></span>
+<span><span class="co">## text3 0.1937207 0.09657207</span></span>
+<span><span class="co">## text4 0.5410651 0.77248983</span></span>
+<span><span class="co">## text5 0.4264923 0.34495969</span></span>
+<span><span class="co">## text6 0.4807113 0.56803432</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
