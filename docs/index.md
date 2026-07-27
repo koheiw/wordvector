@@ -1,18 +1,4 @@
-
 # wordvector: word and document vector models
-
-<!-- badges: start -->
-
-[![CRAN
-Version](https://www.r-pkg.org/badges/version/wordvector)](https://CRAN.R-project.org/package=wordvector)
-[![Downloads](https://cranlogs.r-pkg.org/badges/wordvector)](https://CRAN.R-project.org/package=wordvector)
-[![Total
-Downloads](https://cranlogs.r-pkg.org/badges/grand-total/wordvector?color=orange)](https://CRAN.R-project.org/package=wordvector)
-[![R build
-status](https://github.com/koheiw/wordvector/workflows/R-CMD-check/badge.svg)](https://github.com/koheiw/wordvector/actions)
-[![codecov](https://codecov.io/gh/koheiw/wordvector/branch/master/graph/badge.svg)](https://app.codecov.io/gh/koheiw/wordvector)
-
-<!-- badges: end -->
 
 The **wordvector** package is developed to create word and document
 vectors using **quanteda**. This package currently supports word2vec
@@ -26,12 +12,14 @@ and latent semantic analysis ([Deerwester et al.,
 **wordvector** is available on CRAN.
 
 ``` r
+
 install.packages("wordvector")
 ```
 
 The latest version is available on Github.
 
 ``` r
+
 remotes::install_github("koheiw/wordvector")
 ```
 
@@ -45,6 +33,7 @@ RSS between 2012 and 2016.
 ### Download data
 
 ``` r
+
 # download data
 download.file('https://www.dropbox.com/s/e19kslwhuu9yc2z/yahoo-news.RDS?dl=1', 
               '~/yahoo-news.RDS', mode = "wb")
@@ -53,6 +42,7 @@ download.file('https://www.dropbox.com/s/e19kslwhuu9yc2z/yahoo-news.RDS?dl=1',
 ### Train word2vec
 
 ``` r
+
 library(wordvector)
 library(quanteda)
 ## Package version: 4.5.0.9000
@@ -93,9 +83,11 @@ wov <- textmodel_word2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose 
 
 ### Similarity between word vectors
 
-`similarity()` computes cosine similarity between word vectors.
+[`similarity()`](https://koheiw.github.io/wordvector/reference/similarity.md)
+computes cosine similarity between word vectors.
 
 ``` r
+
 head(similarity(wov, c("amazon", "forests", "obama", "america", "afghanistan"), 
                 mode = "character"))
 ##      amazon       forests      obama     america           afghanistan  
@@ -109,9 +101,11 @@ head(similarity(wov, c("amazon", "forests", "obama", "america", "afghanistan"),
 
 ### Arithmetic operations of word vectors
 
-`analogy()` offers interface for arithmetic operations of word vectors.
+[`analogy()`](https://koheiw.github.io/wordvector/reference/analogy.md)
+offers interface for arithmetic operations of word vectors.
 
 ``` r
+
 # What is Amazon without forests?
 head(similarity(wov, analogy(~ amazon - forests))) 
 ##      [,1]          
@@ -124,6 +118,7 @@ head(similarity(wov, analogy(~ amazon - forests)))
 ```
 
 ``` r
+
 # What is for Afghanistan as Obama for America? 
 head(similarity(wov, analogy(~ obama - america + afghanistan))) 
 ##      [,1]         
@@ -139,6 +134,7 @@ These examples replicates analogical tasks in the original word2vec
 paper.
 
 ``` r
+
 # What is for France as Berlin for Germany?
 head(similarity(wov, analogy(~ berlin - germany + france))) 
 ##      [,1]      
@@ -151,6 +147,7 @@ head(similarity(wov, analogy(~ berlin - germany + france)))
 ```
 
 ``` r
+
 # What is for slowly as quick for quickly?
 head(similarity(wov, analogy(~ quick - quickly + slowly)))
 ##      [,1]                   

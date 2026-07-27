@@ -1,0 +1,77 @@
+---
+title: "doc2vec"
+author: "Kohei Watanabe"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{doc2vec}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+---
+
+In this article, **wordvector** is used to train [doc2vec](https://doi.org/10.48550/arXiv.1405.4053) on **quanteda**'s tokens objects.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE, collapse = TRUE)
+```
+
+## Prepare data
+
+Download the corpus of news summaries.
+
+```{r, eval=TRUE, cache=TRUE}
+# Load data
+f <- tempfile()
+download.file('https://www.dropbox.com/s/e19kslwhuu9yc2z/yahoo-news.RDS?dl=1', 
+              f, mode = "wb")
+```
+
+```{r}
+library(quanteda)
+library(wordvector)
+quanteda_options(verbose = TRUE)
+
+# Construct corpus
+dat <- readRDS(f)
+dat$text <- paste0(dat$head, ". ", dat$body)
+corp <- corpus(dat, text_field = 'text')
+
+# Tokenize
+toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>% 
+    tokens_remove(stopwords("en", "marimo"), padding = TRUE) %>% 
+    tokens_select("^[a-zA-Z-]+$", valuetype = "regex", case_insensitive = FALSE,
+                  padding = TRUE)
+```
+
+## Train doc2vec
+
+`textmodel_doc2vec()` supports both `dm` (distributed memory) and `dbow` (distributed bag-of-words) models.
+
+```{r, cache=TRUE}
+# Set the number of processors
+options(wordvector_threads = 16)
+
+# Train doc2vec
+dov <- textmodel_doc2vec(toks, dim = 50, type = "dm", min_count = 5, verbose = TRUE)
+```
+
+Since the distributed memory model has hidden layers for documents and words, you can extract document and word vectors using `as.matrix()`
+
+```{r}
+# Extract document vector
+dim(as.matrix(dov, layer = "documents"))
+
+# Extract word vector
+dim(as.matrix(dov, layer = "words"))
+```
+
+## Predict probability
+
+If `probabitliy()` is applied to a fitted doc2vec model, you receive the predicted probability of the words in each document.
+
+```{r}
+head(probability(dov, c("bad", "good"), mode = "numeric", layer = "documents"))
+```
+
