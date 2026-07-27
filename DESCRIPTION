@@ -32,3 +32,4 @@ Roxygen: list(markdown = TRUE)
 Language: en-US
 LazyData: true
 Config/roxygen2/version: 8.0.0
+VignetteBuilder: knitr
