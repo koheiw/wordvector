@@ -27,7 +27,8 @@ Suggests:
     testthat,
     word2vec, 
     spelling,
-    rmarkdown
+    rmarkdown,
+    knitr
 LinkingTo: Rcpp, quanteda
 Roxygen: list(markdown = TRUE)
 Language: en-US
