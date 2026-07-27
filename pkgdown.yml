@@ -1,5 +1,10 @@
 pandoc: 3.8.3
 pkgdown: 2.2.1
 pkgdown_sha: ~
-articles: {}
-last_built: 2026-07-27T04:54Z
+articles:
+  doc2vec: doc2vec.html
+  word2vec: word2vec.html
+last_built: 2026-07-27T21:33Z
+urls:
+  reference: https://koheiw.github.io/wordvector/reference
+  article: https://koheiw.github.io/wordvector/articles
