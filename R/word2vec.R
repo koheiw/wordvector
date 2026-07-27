@@ -235,21 +235,25 @@ print.textmodel_doc2vec <- function(x, ...) {
 #' @param layer the layer from which the vectors are extracted.
 #' @param group \[experimental\] average sentence or paragraph vectors from the same document. 
 #'   Silently ignored when `layer = "words"`. 
+#' @param padding if `TRUE`, add a row with zeros before the word vectors. 
 #' @param ... not used.
 #' @return a matrix that contain the word or document vectors in rows.
 #' @export
 as.matrix.textmodel_word2vec <- function(x, normalize = TRUE, 
-                                         layer = "words", ...){
+                                         layer = "words", padding = FALSE, ...){
     
     x <- upgrade_pre06(x)
     layer <- match.arg(layer)
     normalize <- check_logical(normalize)
+    padding <- check_logical(padding)
     
     result <- x$values$word
     if (normalize) {
         v <- sqrt(rowSums(result ^ 2) / ncol(result))
         result <- result / v
     }
+    if (padding)
+        result <- rbind(rep(0, x$dim), result)
     return(result) 
 }
 
