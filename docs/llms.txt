@@ -1,0 +1,191 @@
+# wordvector: word and document vector models
+
+The **wordvector** package is developed to create word and document
+vectors using **quanteda**. This package currently supports word2vec
+([Mikolov et al., 2013](http://arxiv.org/abs/1310.4546)), doc2vec ([Le,
+Q. V., & Mikolov, T., 2014](https://doi.org/10.48550/arXiv.1405.4053))
+and latent semantic analysis ([Deerwester et al.,
+1990](https://doi.org/10.1002/(SICI)1097-4571(199009)41:6%3C391::AID-ASI1%3E3.0.CO;2-9)).
+
+## How to install
+
+**wordvector** is available on CRAN.
+
+``` r
+
+install.packages("wordvector")
+```
+
+The latest version is available on Github.
+
+``` r
+
+remotes::install_github("koheiw/wordvector")
+```
+
+## Example
+
+We train the word2vec model on a [corpus of news summaries collected
+from Yahoo
+News](https://www.dropbox.com/s/e19kslwhuu9yc2z/yahoo-news.RDS?dl=1) via
+RSS between 2012 and 2016.
+
+### Download data
+
+``` r
+
+# download data
+download.file('https://www.dropbox.com/s/e19kslwhuu9yc2z/yahoo-news.RDS?dl=1', 
+              '~/yahoo-news.RDS', mode = "wb")
+```
+
+### Train word2vec
+
+``` r
+
+library(wordvector)
+library(quanteda)
+## Package version: 4.5.0.9000
+## Unicode version: 15.1
+## ICU version: 74.1
+## Parallel computing: 16 of 16 threads used.
+## See https://quanteda.io for tutorials and examples.
+
+# Load data
+dat <- readRDS('~/yahoo-news.RDS')
+dat$text <- paste0(dat$head, ". ", dat$body)
+corp <- corpus(dat, text_field = 'text', docid_field = "tid")
+
+# Pre-processing
+toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>% 
+    tokens_remove(stopwords("en", "marimo"), padding = TRUE) %>% 
+    tokens_select("^[a-zA-Z-]+$", valuetype = "regex", case_insensitive = FALSE,
+                  padding = TRUE)
+
+# Train word2vec
+wov <- textmodel_word2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose = TRUE)
+## Training continuous BOW model with 50 dimensions
+##  ...using 16 threads for distributed computing
+##  ...initializing
+##  ...negative sampling in 10 iterations
+##  ......iteration 1 elapsed time: 6.14 seconds (alpha: 0.0455)
+##  ......iteration 2 elapsed time: 12.83 seconds (alpha: 0.0409)
+##  ......iteration 3 elapsed time: 18.90 seconds (alpha: 0.0364)
+##  ......iteration 4 elapsed time: 25.03 seconds (alpha: 0.0320)
+##  ......iteration 5 elapsed time: 31.32 seconds (alpha: 0.0275)
+##  ......iteration 6 elapsed time: 37.58 seconds (alpha: 0.0230)
+##  ......iteration 7 elapsed time: 45.09 seconds (alpha: 0.0183)
+##  ......iteration 8 elapsed time: 51.82 seconds (alpha: 0.0139)
+##  ......iteration 9 elapsed time: 58.50 seconds (alpha: 0.0095)
+##  ......iteration 10 elapsed time: 65.41 seconds (alpha: 0.0049)
+##  ...complete
+```
+
+### Similarity between word vectors
+
+[`similarity()`](https://koheiw.github.io/wordvector/reference/similarity.md)
+computes cosine similarity between word vectors.
+
+``` r
+
+head(similarity(wov, c("amazon", "forests", "obama", "america", "afghanistan"), 
+                mode = "character"))
+##      amazon       forests      obama     america           afghanistan  
+## [1,] "amazon"     "forests"    "obama"   "america"         "afghanistan"
+## [2,] "peatlands"  "herds"      "barack"  "dakota"          "afghan"     
+## [3,] "rainforest" "rainforest" "biden"   "american"        "kabul"      
+## [4,] "soy"        "farmland"   "kerry"   "carolina"        "taliban"    
+## [5,] "zijin"      "grasslands" "hagel"   "africa"          "pakistan"   
+## [6,] "warm-water" "forest"     "clinton" "america-focused" "afghans"
+```
+
+### Arithmetic operations of word vectors
+
+[`analogy()`](https://koheiw.github.io/wordvector/reference/analogy.md)
+offers interface for arithmetic operations of word vectors.
+
+``` r
+
+# What is Amazon without forests?
+head(similarity(wov, analogy(~ amazon - forests))) 
+##      [,1]          
+## [1,] "smash-hit"   
+## [2,] "activision"  
+## [3,] "iovine"      
+## [4,] "nbcuniversal"
+## [5,] "telephony"   
+## [6,] "pandora"
+```
+
+``` r
+
+# What is for Afghanistan as Obama for America? 
+head(similarity(wov, analogy(~ obama - america + afghanistan))) 
+##      [,1]         
+## [1,] "afghanistan"
+## [2,] "taliban"    
+## [3,] "afghan"     
+## [4,] "karzai"     
+## [5,] "obama"      
+## [6,] "nato"
+```
+
+These examples replicates analogical tasks in the original word2vec
+paper.
+
+``` r
+
+# What is for France as Berlin for Germany?
+head(similarity(wov, analogy(~ berlin - germany + france))) 
+##      [,1]      
+## [1,] "paris"   
+## [2,] "berlin"  
+## [3,] "brussels"
+## [4,] "london"  
+## [5,] "france"  
+## [6,] "kourou"
+```
+
+``` r
+
+# What is for slowly as quick for quickly?
+head(similarity(wov, analogy(~ quick - quickly + slowly)))
+##      [,1]                   
+## [1,] "fades"                
+## [2,] "pitching"             
+## [3,] "uneven"               
+## [4,] "earlier-than-expected"
+## [5,] "sideways"             
+## [6,] "bumpy"
+```
+
+# Package index
+
+## All functions
+
+- [`analogy()`](https://koheiw.github.io/wordvector/reference/analogy.md)
+  : Convert formula to named character vector
+- [`as.matrix(`*`<textmodel_doc2vec>`*`)`](https://koheiw.github.io/wordvector/reference/as.matrix.md)
+  [`as.matrix(`*`<textmodel_word2vec>`*`)`](https://koheiw.github.io/wordvector/reference/as.matrix.md)
+  : Extract word or document vectors
+- [`as.textmodel_doc2vec()`](https://koheiw.github.io/wordvector/reference/as.textmodel_doc2vec.md)
+  : Create distributed representation of documents
+- [`data_corpus_news2014`](https://koheiw.github.io/wordvector/reference/data_corpus_news2014.md)
+  : Yahoo News summaries from 2014
+- [`probability()`](https://koheiw.github.io/wordvector/reference/probability.md)
+  : Compute probability of words
+- [`similarity()`](https://koheiw.github.io/wordvector/reference/similarity.md)
+  : Compute similarity between word or document vectors
+- [`textmodel_doc2vec()`](https://koheiw.github.io/wordvector/reference/textmodel_doc2vec.md)
+  : Doc2vec model
+- [`textmodel_lsa()`](https://koheiw.github.io/wordvector/reference/textmodel_lsa.md)
+  : Latent Semantic Analysis model
+- [`textmodel_word2vec()`](https://koheiw.github.io/wordvector/reference/textmodel_word2vec.md)
+  : Word2vec model
+
+# Articles
+
+### All vignettes
+
+- [doc2vec](https://koheiw.github.io/wordvector/articles/doc2vec.md):
+- [word2vec](https://koheiw.github.io/wordvector/articles/word2vec.md):
