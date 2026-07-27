@@ -55,7 +55,7 @@ toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>%
 
 ```{r}
 # Set the number of processors
-options(wordvector_threads = 8)
+options(wordvector_threads = 16)
 
 # Train doc2vec
 dov <- textmodel_doc2vec(toks, dim = 50, type = "dm", min_count = 5, verbose = TRUE)
@@ -71,7 +71,7 @@ dim(as.matrix(dov, layer = "documents"))
 dim(as.matrix(dov, layer = "words"))
 ```
 
-# Predict probability
+## Predict probability
 
 If `probabitliy()` is applied to a fitted doc2vec model, you receive the predicted probability of the words in each document.
 
