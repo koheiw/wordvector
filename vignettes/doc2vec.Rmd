@@ -51,7 +51,7 @@ toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>%
 
 ## Train doc2vec
 
-`textmodel_doc2vec()` supports both `dm` (distributed memory) and `sg` (distributed bag-of-words) models.
+`textmodel_doc2vec()` supports both `dm` (distributed memory) and `dbow` (distributed bag-of-words) models.
 
 ```{r}
 # Set the number of processors
