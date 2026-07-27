@@ -26,7 +26,8 @@ Imports:
 Suggests: 
     testthat,
     word2vec, 
-    spelling
+    spelling,
+    rmarkdown
 LinkingTo: Rcpp, quanteda
 Roxygen: list(markdown = TRUE)
 Language: en-US
