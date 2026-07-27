@@ -106,7 +106,10 @@ wordvector <- function(x, dim = 50, type = c("cbow", "sg", "dm", "dbow"),
                        use_ns = TRUE, ns_size = 5, sample = 0.001, tolower = TRUE,
                        include_data = FALSE, verbose = FALSE, ..., 
                        normalize = FALSE) {
-
+    
+    opt <- quanteda_options("verbose")
+    quanteda_options(verbose = FALSE)
+    
     type <- match.arg(type)
     dim <- check_integer(dim, min = 2)
     min_count <- check_integer(min_count, min = 0)
@@ -179,6 +182,8 @@ wordvector <- function(x, dim = 50, type = c("cbow", "sg", "dm", "dbow"),
     } else {
         class(result) <- c("textmodel_word2vec", "textmodel_wordvector")
     }
+    
+    quanteda_options(verbose = opt) # restore
     return(result)
 }
 

@@ -52,7 +52,9 @@ test_that("textmodel_word2vec works", {
     expect_true(
         wov1$tolower
     )
-    
+    expect_silent(
+        textmodel_word2vec(toks[1:100], type = "cbow", verbose = FALSE)
+    )
     expect_output(
         print(wov1),
         paste(
@@ -119,7 +121,9 @@ test_that("textmodel_word2vec works", {
     expect_true(
         wov2$tolower
     )
-    
+    expect_silent(
+        textmodel_word2vec(toks[1:100], type = "sg", verbose = FALSE)
+    )
     expect_output(
         print(wov2),
         paste(
