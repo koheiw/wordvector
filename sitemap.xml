@@ -1,9 +1,9 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://koheiw.github.io/wordvector/404.html</loc></url>
 <url><loc>https://koheiw.github.io/wordvector/LICENSE-text.html</loc></url>
-<url><loc>https://koheiw.github.io/wordvector/articles/doc2vec.html</loc></url>
 <url><loc>https://koheiw.github.io/wordvector/articles/index.html</loc></url>
-<url><loc>https://koheiw.github.io/wordvector/articles/word2vec.html</loc></url>
+<url><loc>https://koheiw.github.io/wordvector/articles/pkgdown/doc2vec.html</loc></url>
+<url><loc>https://koheiw.github.io/wordvector/articles/pkgdown/word2vec.html</loc></url>
 <url><loc>https://koheiw.github.io/wordvector/authors.html</loc></url>
 <url><loc>https://koheiw.github.io/wordvector/index.html</loc></url>
 <url><loc>https://koheiw.github.io/wordvector/news/index.html</loc></url>

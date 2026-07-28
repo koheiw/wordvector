@@ -18,8 +18,8 @@
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/doc2vec.html">doc2vec</a></li>
-    <li><a class="dropdown-item" href="../articles/word2vec.html">word2vec</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/pkgdown/doc2vec.html">doc2vec</a></li>
+    <li><a class="dropdown-item" href="../articles/pkgdown/word2vec.html">word2vec</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -217,29 +217,29 @@ https://arxiv.org/abs/1310.4546.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># find similar words</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="similarity.html">similarity</a></span><span class="op">(</span><span class="va">wov</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"berlin"</span>, <span class="st">"germany"</span>, <span class="st">"france"</span><span class="op">)</span>, mode <span class="op">=</span> <span class="st">"words"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      berlin      germany        france     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] "berlin"    "germany"      "france"   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] "frankfurt" "hamburg"      "germany"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3,] "german"    "frankfurt"    "paris"    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [4,] "germany"   "braunschweig" "wolfsburg"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [5,] "munich"    "france"       "bastia"   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [6,] "hamburg"   "dortmund"     "belgium"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      berlin      germany        france   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] "berlin"    "germany"      "france" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] "frankfurt" "braunschweig" "paris"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3,] "german"    "hamburg"      "germany"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4,] "germany"   "sweden"       "belgium"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5,] "warsaw"    "frankfurt"    "mans"   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [6,] "munich"    "berlin"       "bastia" </span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="similarity.html">similarity</a></span><span class="op">(</span><span class="va">wov</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"berlin"</span> <span class="op">=</span> <span class="fl">1</span>, <span class="st">"germany"</span> <span class="op">=</span> <span class="op">-</span><span class="fl">1</span>, <span class="st">"france"</span> <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>, mode <span class="op">=</span> <span class="st">"values"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                  [,1]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> somali     0.16258054</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> reporters  0.07722922</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> released   0.04048994</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> bail       0.06987656</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> still     -0.12349955</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> jailed    -0.05849117</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> somali     0.05716008</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> reporters  0.06621919</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> released   0.14861892</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> bail       0.04502883</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> still     -0.05786038</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> jailed     0.01980167</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="similarity.html">similarity</a></span><span class="op">(</span><span class="va">wov</span>, <span class="fu"><a href="analogy.html">analogy</a></span><span class="op">(</span><span class="op">~</span> <span class="va">berlin</span> <span class="op">-</span> <span class="va">germany</span> <span class="op">+</span> <span class="va">france</span><span class="op">)</span>, mode <span class="op">=</span> <span class="st">"words"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      [,1]       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] "paris"    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] "berlin"   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3,] "france"   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [4,] "french"   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [5,] "frankfurt"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [6,] "normandy" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      [,1]      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] "paris"   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] "france"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3,] "berlin"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4,] "french"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5,] "normandy"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [6,] "mans"    </span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
