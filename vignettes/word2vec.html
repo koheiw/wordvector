@@ -12,7 +12,7 @@
 
 <meta name="author" content="Kohei Watanabe" />
 
-<meta name="date" content="2026-07-27" />
+<meta name="date" content="2026-07-28" />
 
 <title>word2vec</title>
 
@@ -341,7 +341,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">word2vec</h1>
 <h4 class="author">Kohei Watanabe</h4>
-<h4 class="date">2026-07-27</h4>
+<h4 class="date">2026-07-28</h4>
 
 
 
@@ -402,7 +402,7 @@ the model in their current work flow.</p>
 <span id="cb2-44"><a href="#cb2-44" tabindex="-1"></a><span class="do">##  ...preserving social media tags (#, @)</span></span>
 <span id="cb2-45"><a href="#cb2-45" tabindex="-1"></a><span class="do">##  ...removing separators, punctuation, symbols</span></span>
 <span id="cb2-46"><a href="#cb2-46" tabindex="-1"></a><span class="do">##  ...298,565 unique types</span></span>
-<span id="cb2-47"><a href="#cb2-47" tabindex="-1"></a><span class="do">##  ...complete, elapsed time: 83.2 seconds.</span></span>
+<span id="cb2-47"><a href="#cb2-47" tabindex="-1"></a><span class="do">##  ...complete, elapsed time: 45.4 seconds.</span></span>
 <span id="cb2-48"><a href="#cb2-48" tabindex="-1"></a><span class="do">## Finished constructing tokens from 656,334 documents</span></span>
 <span id="cb2-49"><a href="#cb2-49" tabindex="-1"></a><span class="do">## tokens_remove() changed from 298,565 types (656,334 documents, 45,194,192 tokens) to 298,002 types (656,334 documents, 28,232,774 tokens)</span></span>
 <span id="cb2-50"><a href="#cb2-50" tabindex="-1"></a><span class="do">## tokens_keep() changed from 298,002 types (656,334 documents, 28,232,774 tokens) to 239,782 types (656,334 documents, 26,564,509 tokens)</span></span></code></pre></div>
@@ -412,31 +412,31 @@ the model in their current work flow.</p>
 <p><code>textmodel_word2vec()</code> supports both <code>cbow</code>
 (continuous bag-of-words) and <code>sg</code> (skip-gram) models.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="co"># Set the number of processors</span></span>
-<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="fu">options</span>(<span class="at">wordvector_threads =</span> <span class="dv">8</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="fu">options</span>(<span class="at">wordvector_threads =</span> <span class="dv">16</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a></span>
 <span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="co"># Train word2vec</span></span>
 <span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>wov <span class="ot">&lt;-</span> <span class="fu">textmodel_word2vec</span>(toks, <span class="at">dim =</span> <span class="dv">50</span>, <span class="at">type =</span> <span class="st">&quot;cbow&quot;</span>, <span class="at">min_count =</span> <span class="dv">5</span>, <span class="at">verbose =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="do">## Training continuous BOW model with 50 dimensions</span></span>
-<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="do">##  ...using 8 threads for distributed computing</span></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="do">##  ...using 16 threads for distributed computing</span></span>
 <span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="do">##  ...initializing</span></span>
 <span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="do">##  ...negative sampling in 10 iterations</span></span>
-<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="do">##  ......iteration 1 elapsed time: 46.59 seconds (alpha: 0.0456)</span></span>
-<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="do">##  ......iteration 2 elapsed time: 95.60 seconds (alpha: 0.0411)</span></span>
-<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="do">##  ......iteration 3 elapsed time: 143.00 seconds (alpha: 0.0366)</span></span>
-<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="do">##  ......iteration 4 elapsed time: 189.11 seconds (alpha: 0.0320)</span></span>
-<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="do">##  ......iteration 5 elapsed time: 241.44 seconds (alpha: 0.0276)</span></span>
-<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="do">##  ......iteration 6 elapsed time: 292.22 seconds (alpha: 0.0231)</span></span>
-<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="do">##  ......iteration 7 elapsed time: 342.66 seconds (alpha: 0.0186)</span></span>
-<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a><span class="do">##  ......iteration 8 elapsed time: 393.51 seconds (alpha: 0.0141)</span></span>
-<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a><span class="do">##  ......iteration 9 elapsed time: 439.14 seconds (alpha: 0.0096)</span></span>
-<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a><span class="do">##  ......iteration 10 elapsed time: 490.09 seconds (alpha: 0.0052)</span></span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="do">##  ......iteration 1 elapsed time: 27.83 seconds (alpha: 0.0458)</span></span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="do">##  ......iteration 2 elapsed time: 54.46 seconds (alpha: 0.0417)</span></span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="do">##  ......iteration 3 elapsed time: 81.87 seconds (alpha: 0.0375)</span></span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="do">##  ......iteration 4 elapsed time: 109.77 seconds (alpha: 0.0333)</span></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="do">##  ......iteration 5 elapsed time: 137.56 seconds (alpha: 0.0291)</span></span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="do">##  ......iteration 6 elapsed time: 165.45 seconds (alpha: 0.0250)</span></span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="do">##  ......iteration 7 elapsed time: 193.80 seconds (alpha: 0.0207)</span></span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a><span class="do">##  ......iteration 8 elapsed time: 222.18 seconds (alpha: 0.0165)</span></span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a><span class="do">##  ......iteration 9 elapsed time: 250.55 seconds (alpha: 0.0122)</span></span>
+<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a><span class="do">##  ......iteration 10 elapsed time: 278.80 seconds (alpha: 0.0080)</span></span>
 <span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a><span class="do">##  ...complete</span></span></code></pre></div>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co"># Extract word vector</span></span>
 <span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="fu">dim</span>(<span class="fu">as.matrix</span>(wov))</span>
 <span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="do">## [1] 79259    50</span></span></code></pre></div>
 </div>
-<div id="find-similar-words" class="section level1">
-<h1>Find similar words</h1>
+<div id="find-similar-words" class="section level2">
+<h2>Find similar words</h2>
 <p><code>similarity()</code> is a user-friendly utility function to find
 similar words. Using the <code>analogy()</code> wrapper, you can also
 add or subtract word vectors before finding similar words.</p>
@@ -444,31 +444,31 @@ add or subtract word vectors before finding similar words.</p>
 <span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="do">##      bad      </span></span>
 <span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="do">## [1,] &quot;bad&quot;    </span></span>
 <span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="do">## [2,] &quot;good&quot;   </span></span>
-<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="do">## [3,] &quot;scary&quot;  </span></span>
-<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="do">## [4,] &quot;worse&quot;  </span></span>
-<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="do">## [5,] &quot;trouble&quot;</span></span>
-<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="do">## [6,] &quot;fatigue&quot;</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="do">## [3,] &quot;trouble&quot;</span></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="do">## [4,] &quot;scary&quot;  </span></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="do">## [5,] &quot;fatigue&quot;</span></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="do">## [6,] &quot;lot&quot;</span></span>
 <span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">similarity</span>(wov, <span class="fu">analogy</span>(<span class="sc">~</span> good <span class="sc">-</span> bad)))</span>
 <span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a><span class="do">##      [,1]        </span></span>
-<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a><span class="do">## [1,] &quot;courageous&quot;</span></span>
-<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a><span class="do">## [2,] &quot;thanking&quot;  </span></span>
-<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a><span class="do">## [3,] &quot;reaffirm&quot;  </span></span>
-<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a><span class="do">## [4,] &quot;rnc&quot;       </span></span>
-<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a><span class="do">## [5,] &quot;reaffirmed&quot;</span></span>
-<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a><span class="do">## [6,] &quot;thank&quot;</span></span></code></pre></div>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a><span class="do">## [1,] &quot;qualities&quot; </span></span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a><span class="do">## [2,] &quot;courageous&quot;</span></span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a><span class="do">## [3,] &quot;achieved&quot;  </span></span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a><span class="do">## [4,] &quot;loyalty&quot;   </span></span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a><span class="do">## [5,] &quot;thank&quot;     </span></span>
+<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a><span class="do">## [6,] &quot;reaffirmed&quot;</span></span></code></pre></div>
 </div>
-<div id="predict-probability" class="section level1">
-<h1>Predict probability</h1>
+<div id="predict-probability" class="section level2">
+<h2>Predict probability</h2>
 <p>As a language model, the model allows you to compute the probability
-of the word in the context of other words.</p>
+of the word conditional on context words.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">probability</span>(wov, <span class="st">&quot;bad&quot;</span>, <span class="at">mode =</span> <span class="st">&quot;numeric&quot;</span>))</span>
 <span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="do">##               bad</span></span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="do">## donald  0.2468928</span></span>
-<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="do">## trump   0.4155962</span></span>
-<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="do">## endorse 0.1653711</span></span>
-<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a><span class="do">## short   0.5514999</span></span>
-<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a><span class="do">## period  0.6825845</span></span>
-<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="do">## time    0.8982940</span></span></code></pre></div>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="do">## donald  0.4941241</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="do">## trump   0.7225504</span></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="do">## endorse 0.1574989</span></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a><span class="do">## short   0.7717753</span></span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a><span class="do">## period  0.6055675</span></span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="do">## time    0.8523718</span></span></code></pre></div>
 </div>
 
 
