@@ -13,3 +13,4 @@
 ^pkgdown$
 ^\.positai$
 ^\.claude$
+.*_cache$
