@@ -2,7 +2,7 @@
 % Please edit documentation in R/as.doc2vec.R
 \name{as.textmodel_doc2vec}
 \alias{as.textmodel_doc2vec}
-\title{Create distributed representation of documents}
+\title{Create a doc2vec model}
 \usage{
 as.textmodel_doc2vec(x, model, normalize = FALSE, group_data = FALSE, ...)
 }
@@ -18,7 +18,7 @@ as.textmodel_doc2vec(x, model, normalize = FALSE, group_data = FALSE, ...)
 \item{...}{additional arguments passed to \link[quanteda:object2id]{quanteda::object2id}.}
 }
 \value{
-Returns a textmodel_docvector object with the following elements:
+Returns a textmodel_doc2vec object with the following elements:
 \item{values}{a list of matrices for word and document vectors.}
 \item{dim}{the size of the document vectors.}
 \item{concatenator}{the concatenator in \code{x}.}
@@ -28,5 +28,5 @@ Returns a textmodel_docvector object with the following elements:
 \item{version}{the version of the wordvector package.}
 }
 \description{
-Create distributed representation of documents as weighted word vectors.
+Create a doc2vec model as weighted word vectors.
 }

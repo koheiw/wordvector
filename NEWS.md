@@ -1,3 +1,7 @@
+## Changes in v0.6.4
+
+- Add `as.textmodel_word2vec()` to convert a matrix to a `textmodel_word2vec` object.
+
 ## Changes in v0.6.3
 
 - Add `padding` to `as.matrix()` for using word2vec as a pre-trained model in **torch**.
