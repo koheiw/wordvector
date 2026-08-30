@@ -1,6 +1,6 @@
-# Create distributed representation of documents
+# Create a doc2vec model
 
-Create distributed representation of documents as weighted word vectors.
+Create a doc2vec model as weighted word vectors.
 
 ## Usage
 
@@ -34,7 +34,7 @@ as.textmodel_doc2vec(x, model, normalize = FALSE, group_data = FALSE, ...)
 
 ## Value
 
-Returns a textmodel_docvector object with the following elements:
+Returns a textmodel_doc2vec object with the following elements:
 
 - values:
 

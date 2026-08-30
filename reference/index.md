@@ -8,7 +8,9 @@
   [`as.matrix(`*`<textmodel_word2vec>`*`)`](https://koheiw.github.io/wordvector/reference/as.matrix.md)
   : Extract word or document vectors
 - [`as.textmodel_doc2vec()`](https://koheiw.github.io/wordvector/reference/as.textmodel_doc2vec.md)
-  : Create distributed representation of documents
+  : Create a doc2vec model
+- [`as.textmodel_word2vec()`](https://koheiw.github.io/wordvector/reference/as.textmodel_word2vec.md)
+  : Create a word2vec model
 - [`data_corpus_news2014`](https://koheiw.github.io/wordvector/reference/data_corpus_news2014.md)
   : Yahoo News summaries from 2014
 - [`probability()`](https://koheiw.github.io/wordvector/reference/probability.md)

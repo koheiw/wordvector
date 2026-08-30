@@ -20,13 +20,13 @@ Source:
 [`DESCRIPTION`](https://github.com/koheiw/wordvector/blob/master/DESCRIPTION)
 
 Watanabe K, Wijffels J (2026). *wordvector: Word and Document Vector
-Models*. R package version 0.6.3,
+Models*. R package version 0.6.4,
 <https://github.com/koheiw/wordvector>.
 
     @Manual{,
       title = {wordvector: Word and Document Vector Models},
       author = {Kohei Watanabe and Jan Wijffels},
       year = {2026},
-      note = {R package version 0.6.3},
+      note = {R package version 0.6.4},
       url = {https://github.com/koheiw/wordvector},
     }

@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../../index.html">wordvector</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -61,7 +61,7 @@
                         <h4 data-toc-skip class="author">Kohei
 Watanabe</h4>
             
-            <h4 data-toc-skip class="date">2026-07-28</h4>
+            <h4 data-toc-skip class="date">2026-08-30</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/koheiw/wordvector/blob/master/vignettes/pkgdown/doc2vec.Rmd" class="external-link"><code>vignettes/pkgdown/doc2vec.Rmd</code></a></small>
       <div class="d-none name"><code>doc2vec.Rmd</code></div>
@@ -82,7 +82,7 @@ Watanabe</h4>
 <span>              <span class="va">f</span>, mode <span class="op">=</span> <span class="st">"wb"</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://quanteda.io" class="external-link">quanteda</a></span><span class="op">)</span></span>
-<span><span class="co">## Package version: 4.4</span></span>
+<span><span class="co">## Package version: 4.5.0</span></span>
 <span><span class="co">## Unicode version: 15.1</span></span>
 <span><span class="co">## ICU version: 74.2</span></span>
 <span><span class="co">## Parallel computing: disabled</span></span>
@@ -132,10 +132,10 @@ Watanabe</h4>
 <span><span class="co">##  ...preserving social media tags (#, @)</span></span>
 <span><span class="co">##  ...removing separators, punctuation, symbols</span></span>
 <span><span class="co">##  ...298,565 unique types</span></span>
-<span><span class="co">##  ...complete, elapsed time: 86.4 seconds.</span></span>
+<span><span class="co">##  ...complete, elapsed time: 92.7 seconds.</span></span>
 <span><span class="co">## Finished constructing tokens from 656,334 documents</span></span>
-<span><span class="co">## tokens_remove() changed from 45,194,192 tokens (656,334 documents) to 28,232,774 tokens (656,334 documents)</span></span>
-<span><span class="co">## tokens_keep() changed from 28,232,774 tokens (656,334 documents) to 26,564,509 tokens (656,334 documents)</span></span></code></pre></div>
+<span><span class="co">## tokens_remove() changed from 298,565 types (656,334 documents, 45,194,192 tokens) to 298,002 types (656,334 documents, 28,232,774 tokens)</span></span>
+<span><span class="co">## tokens_keep() changed from 298,002 types (656,334 documents, 28,232,774 tokens) to 239,782 types (656,334 documents, 26,564,509 tokens)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="train-doc2vec">Train doc2vec<a class="anchor" aria-label="anchor" href="#train-doc2vec"></a>
@@ -153,16 +153,16 @@ models.</p>
 <span><span class="co">##  ...using 16 threads for distributed computing</span></span>
 <span><span class="co">##  ...initializing</span></span>
 <span><span class="co">##  ...negative sampling in 10 iterations</span></span>
-<span><span class="co">##  ......iteration 1 elapsed time: 18.37 seconds (alpha: 0.0456)</span></span>
-<span><span class="co">##  ......iteration 2 elapsed time: 38.51 seconds (alpha: 0.0407)</span></span>
-<span><span class="co">##  ......iteration 3 elapsed time: 59.38 seconds (alpha: 0.0356)</span></span>
-<span><span class="co">##  ......iteration 4 elapsed time: 77.16 seconds (alpha: 0.0313)</span></span>
-<span><span class="co">##  ......iteration 5 elapsed time: 95.55 seconds (alpha: 0.0269)</span></span>
-<span><span class="co">##  ......iteration 6 elapsed time: 116.96 seconds (alpha: 0.0218)</span></span>
-<span><span class="co">##  ......iteration 7 elapsed time: 138.85 seconds (alpha: 0.0167)</span></span>
-<span><span class="co">##  ......iteration 8 elapsed time: 160.27 seconds (alpha: 0.0116)</span></span>
-<span><span class="co">##  ......iteration 9 elapsed time: 180.52 seconds (alpha: 0.0066)</span></span>
-<span><span class="co">##  ......iteration 10 elapsed time: 191.99 seconds (alpha: 0.0038)</span></span>
+<span><span class="co">##  ......iteration 1 elapsed time: 15.97 seconds (alpha: 0.0455)</span></span>
+<span><span class="co">##  ......iteration 2 elapsed time: 31.26 seconds (alpha: 0.0412)</span></span>
+<span><span class="co">##  ......iteration 3 elapsed time: 47.82 seconds (alpha: 0.0365)</span></span>
+<span><span class="co">##  ......iteration 4 elapsed time: 64.30 seconds (alpha: 0.0318)</span></span>
+<span><span class="co">##  ......iteration 5 elapsed time: 78.56 seconds (alpha: 0.0278)</span></span>
+<span><span class="co">##  ......iteration 6 elapsed time: 92.31 seconds (alpha: 0.0238)</span></span>
+<span><span class="co">##  ......iteration 7 elapsed time: 107.89 seconds (alpha: 0.0194)</span></span>
+<span><span class="co">##  ......iteration 8 elapsed time: 125.45 seconds (alpha: 0.0145)</span></span>
+<span><span class="co">##  ......iteration 9 elapsed time: 141.73 seconds (alpha: 0.0098)</span></span>
+<span><span class="co">##  ......iteration 10 elapsed time: 155.76 seconds (alpha: 0.0059)</span></span>
 <span><span class="co">##  ...complete</span></span></code></pre></div>
 <p>Since the distributed memory model has hidden layers for documents
 and words, you can extract document and word vectors using
@@ -184,12 +184,12 @@ you receive the predicted probability of the words in each document.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../../reference/probability.html">probability</a></span><span class="op">(</span><span class="va">dov</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bad"</span>, <span class="st">"good"</span><span class="op">)</span>, mode <span class="op">=</span> <span class="st">"numeric"</span>, layer <span class="op">=</span> <span class="st">"documents"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">##             bad       good</span></span>
-<span><span class="co">## text1 0.2356755 0.33294834</span></span>
-<span><span class="co">## text2 0.2033403 0.17415359</span></span>
-<span><span class="co">## text3 0.1424676 0.07495828</span></span>
-<span><span class="co">## text4 0.4886010 0.79879816</span></span>
-<span><span class="co">## text5 0.4922210 0.45500447</span></span>
-<span><span class="co">## text6 0.7270843 0.62980089</span></span></code></pre></div>
+<span><span class="co">## text1 0.2249760 0.35471095</span></span>
+<span><span class="co">## text2 0.2127922 0.20887366</span></span>
+<span><span class="co">## text3 0.1193357 0.07309437</span></span>
+<span><span class="co">## text4 0.4751835 0.82790354</span></span>
+<span><span class="co">## text5 0.4708078 0.42594753</span></span>
+<span><span class="co">## text6 0.5450318 0.43063749</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

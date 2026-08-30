@@ -1,6 +1,14 @@
 # Changelog
 
+## Changes in v0.6.4
+
+- Add
+  [`as.textmodel_word2vec()`](https://koheiw.github.io/wordvector/reference/as.textmodel_word2vec.md)
+  to convert a matrix to a `textmodel_word2vec` object.
+
 ## Changes in v0.6.3
+
+CRAN release: 2026-07-28
 
 - Add `padding` to [`as.matrix()`](https://rdrr.io/r/base/matrix.html)
   for using word2vec as a pre-trained model in **torch**.
