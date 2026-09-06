@@ -271,7 +271,8 @@ check_model <- function(x, allow = c("word2vec", "doc2vec", "lsa")) {
     if (any(class(x)[1] == m & class(x)[2] == "textmodel_wordvector")) {
         return(x)
     } else {
-        stop("model must be a trained ", paste(m, collapse = " or "))
+        stop("model must be a trained ", 
+             stringi::stri_replace_last_fixed(paste(m, collapse = ", "), ", ", " or "))
     }
 }
 
