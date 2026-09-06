@@ -80,7 +80,27 @@ test_that("as.textmodel_doc2vec works with different objects", {
     
     expect_error(
         as.textmodel_doc2vec(dfmt, list()),
-        "model must be a trained textmodel_word2vec"
+        "model must be a trained textmodel_word2vec, textmodel_doc2vec or textmodel_lsa"
+    )
+})
+
+test_that("as.textmodel_doc2vec works only with DM", {
+    
+    skip_on_cran()
+    
+    # DM
+    dov1 <- textmodel_doc2vec(head(toks, 1000), dim = 10, type = "dm", use_ns = FALSE)
+    
+    expect_equal(
+        class(as.textmodel_doc2vec(dfmt, dov1)), 
+        c("textmodel_doc2vec", "textmodel_wordvector")
+    )
+    
+    # DBOW
+    dov2 <- textmodel_doc2vec(head(toks, 1000), dim = 10, type = "dbow", use_ns = FALSE)
+    expect_error(
+        as.textmodel_doc2vec(dfmt, dov2), 
+        "x does not have the layer for words"
     )
 })
 
