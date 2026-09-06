@@ -1,6 +1,7 @@
 ## Changes in v0.6.4
 
 - Add `as.textmodel_word2vec()` to convert a matrix to a `textmodel_word2vec` object.
+- Update `as.textmodel_doc2vec()` to support conversion from the distributed memory (DM) model.
 
 ## Changes in v0.6.3
 
