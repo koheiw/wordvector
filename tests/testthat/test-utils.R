@@ -356,6 +356,8 @@ test_that("get_threads are working", {
 
 test_that("old threads option still works", {
     
+    options("wordvector.threads" = NULL) # disable new option
+    
     options("wordvector_threads" = 3)
     expect_equal(
         wordvector:::get_threads(), 3
@@ -375,6 +377,8 @@ test_that("old threads option still works", {
         "wordvector.threads must be an integer"
     )
     options("wordvector_threads" = NULL)
+    
+    options("wordvector.threads" = 2) # reset new option
 })
 
 test_that("print and as.matrix works with old objects", {
