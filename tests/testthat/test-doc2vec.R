@@ -150,7 +150,7 @@ test_that("textmodel_doc2vec works", {
     )
 })
 
-test_that("textmodel_doc2vec works hierachical softmax", {
+test_that("textmodel_doc2vec works with hierachical softmax", {
     
     skip_on_cran()
     

@@ -31,6 +31,14 @@ analogy <- function(formula) {
     return(res)
 }
 
+#' Generic function to extract similarities
+#' @param x an object from which similarities are extracted.
+#' @param ... passed to underlying functions.
+#' @export
+similarity <- function(x, ...) {
+    UseMethod("similarity")
+}
+
 #' Compute similarity between word or document vectors
 #' 
 #' Compute the cosine similarity between word vectors for selected words.
@@ -39,14 +47,16 @@ analogy <- function(formula) {
 #' @param layer the layer based on which similarity is computed. This must be "documents" 
 #'   when `targets` are document names.
 #' @param mode specify the type of resulting object.
+#' @param ... not used.
 #' @return a `matrix` of cosine similarity scores when `mode = "numeric"` or of 
 #'   words sorted in descending order by the similarity scores when `mode = "character"`.
 #'   When `targets` is a named numeric vector, word (or document) vectors are weighted and summed 
 #'   before computing similarity scores.
 #' @export
+#' @method similarity textmodel_wordvector
 #' @seealso [probability()]
-similarity <- function(x, targets, layer = c("words", "documents"),
-                       mode = c("character", "numeric")) {
+similarity.textmodel_wordvector <- function(x, targets, layer = c("words", "documents"),
+                                            mode = c("character", "numeric"), ...) {
     
     layer <- match.arg(layer)
     mode <- ifelse(mode == "words", "character", mode) # for < v0.6.0
@@ -92,6 +102,14 @@ similarity <- function(x, targets, layer = c("words", "documents"),
     return(res)
 }
 
+#' Generic function to extract probabilities
+#' @param x an object from which probabilities are extracted.
+#' @param ... passed to underlying functions.
+#' @export
+probability <- function(x, ...) {
+    UseMethod("probability")
+}
+
 #' Compute probability of words
 #'
 #' Compute the probability of words given other words.
@@ -105,9 +123,10 @@ similarity <- function(x, targets, layer = c("words", "documents"),
 #'   When `targets` is a named numeric vector, probability scores are weighted by
 #'   the values.
 #' @export
+#' @method probability textmodel_wordvector
 #' @seealso [similarity()]
-probability <- function(x, targets, layer = c("words", "documents"),
-                        mode = c("character", "numeric"), ...) {
+probability.textmodel_wordvector <- function(x, targets, layer = c("words", "documents"),
+                                             mode = c("character", "numeric"), ...) {
     
     layer <- match.arg(layer)
     mode <- ifelse(mode == "words", "character", mode) # for < v0.6.0
@@ -208,15 +227,19 @@ perplexity <- function(x, targets, data, layer = c("words", "documents")) {
 get_threads <- function() {
     
     # respect other settings
-    default <- c("tbb" = as.integer(Sys.getenv("RCPP_PARALLEL_NUM_THREADS")),
+    default <- c(#"tbb" = as.integer(Sys.getenv("RCPP_PARALLEL_NUM_THREADS")),
                  "omp" = as.integer(Sys.getenv("OMP_THREAD_LIMIT")),
                  "max" = cpp_get_max_thread())
     default <- unname(min(default, na.rm = TRUE))
     suppressWarnings({
-        value <- as.integer(getOption("wordvector_threads", default))
+        if (!is.null(getOption("wordvector.threads"))) {
+            value <- as.integer(getOption("wordvector.threads", default))
+        } else {
+            value <- as.integer(getOption("wordvector_threads", default))
+        }
     })
     if (length(value) != 1 || is.na(value)) {
-        stop("wordvector_threads must be an integer")
+        stop("wordvector.threads must be an integer")
     }
     return(value)
 }
@@ -271,7 +294,8 @@ check_model <- function(x, allow = c("word2vec", "doc2vec", "lsa")) {
     if (any(class(x)[1] == m & class(x)[2] == "textmodel_wordvector")) {
         return(x)
     } else {
-        stop("model must be a trained ", paste(m, collapse = " or "))
+        stop("model must be a trained ", 
+             stringi::stri_replace_last_fixed(paste(m, collapse = ", "), ", ", " or "))
     }
 }
 

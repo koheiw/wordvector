@@ -9,12 +9,8 @@ perplexity(x, targets, data, layer = c("words", "documents"))
 \arguments{
 \item{x}{a trained \code{textmodel_wordvector} object.}
 
-\item{targets}{words for which probabilities are computed.}
-
 \item{data}{a \link[quanteda:tokens]{quanteda::tokens} or \link[quanteda:dfm]{quanteda::dfm}; the probabilities of words are
 tested against occurrences of words in it.}
-
-\item{layer}{the layer based on which probabilities are computed.}
 }
 \description{
 Compute the perplexity of a trained word2vec model with data.
