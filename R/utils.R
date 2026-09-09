@@ -47,6 +47,7 @@ similarity <- function(x, ...) {
 #' @param layer the layer based on which similarity is computed. This must be "documents" 
 #'   when `targets` are document names.
 #' @param mode specify the type of resulting object.
+#' @param ... not used.
 #' @return a `matrix` of cosine similarity scores when `mode = "numeric"` or of 
 #'   words sorted in descending order by the similarity scores when `mode = "character"`.
 #'   When `targets` is a named numeric vector, word (or document) vectors are weighted and summed 
@@ -55,7 +56,7 @@ similarity <- function(x, ...) {
 #' @method similarity textmodel_wordvector
 #' @seealso [probability()]
 similarity.textmodel_wordvector <- function(x, targets, layer = c("words", "documents"),
-                                           mode = c("character", "numeric")) {
+                                            mode = c("character", "numeric"), ...) {
     
     layer <- match.arg(layer)
     mode <- ifelse(mode == "words", "character", mode) # for < v0.6.0

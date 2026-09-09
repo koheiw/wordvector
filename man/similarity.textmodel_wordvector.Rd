@@ -8,7 +8,8 @@
   x,
   targets,
   layer = c("words", "documents"),
-  mode = c("character", "numeric")
+  mode = c("character", "numeric"),
+  ...
 )
 }
 \arguments{
@@ -20,6 +21,8 @@
 when \code{targets} are document names.}
 
 \item{mode}{specify the type of resulting object.}
+
+\item{...}{not used.}
 }
 \value{
 a \code{matrix} of cosine similarity scores when \code{mode = "numeric"} or of
