@@ -212,7 +212,7 @@ test_that("similarity works", {
     )
     expect_error(
         similarity(list(), c("us" = 1, "people" = -1)),
-        "x must be a textmodel_wordvector object"
+        "no applicable method for 'similarity'"
     )
 })
 
@@ -316,7 +316,7 @@ test_that("probability works", {
     # doc2vec
     expect_error(
         probability(list(), c("us" = 1, "people" = -1)),
-        "x must be a textmodel_wordvector object"
+        "no applicable method for 'probability'"
     )
 })
 
