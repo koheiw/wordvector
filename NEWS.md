@@ -3,6 +3,7 @@
 - Add `as.textmodel_word2vec()` to convert a matrix to a `textmodel_word2vec` object.
 - Update `as.textmodel_doc2vec()` to support conversion from the distributed memory (DM) model.
 - Add generic methods for `probability()` and `similarity()`. 
+- Change `wordvector_threads` to `wordvector.threads` in options with backward compatibility.
 
 ## Changes in v0.6.3
 
