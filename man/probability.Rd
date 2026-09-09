@@ -2,36 +2,15 @@
 % Please edit documentation in R/utils.R
 \name{probability}
 \alias{probability}
-\title{Compute probability of words}
+\title{Generic function to extract probabilities}
 \usage{
-probability(
-  x,
-  targets,
-  layer = c("words", "documents"),
-  mode = c("character", "numeric"),
-  ...
-)
+probability(x, ...)
 }
 \arguments{
-\item{x}{a trained \code{textmodel_wordvector} object.}
+\item{x}{an object from which probabilities are extracted.}
 
-\item{targets}{words for which probabilities are computed.}
-
-\item{layer}{the layer based on which probabilities are computed.}
-
-\item{mode}{specify the type of resulting object.}
-
-\item{...}{passed to \code{as.matrix()}.}
-}
-\value{
-a matrix of words or documents sorted in descending order by the probability
-scores when \code{mode = "character"}; a matrix of the probability scores when \code{mode = "numeric"}.
-When \code{targets} is a named numeric vector, probability scores are weighted by
-the values.
+\item{...}{passed to underlying functions.}
 }
 \description{
-Compute the probability of words given other words.
-}
-\seealso{
-\code{\link[=similarity]{similarity()}}
+Generic function to extract probabilities
 }

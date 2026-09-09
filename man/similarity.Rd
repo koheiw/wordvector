@@ -2,34 +2,15 @@
 % Please edit documentation in R/utils.R
 \name{similarity}
 \alias{similarity}
-\title{Compute similarity between word or document vectors}
+\title{Generic function to extract similarities}
 \usage{
-similarity(
-  x,
-  targets,
-  layer = c("words", "documents"),
-  mode = c("character", "numeric")
-)
+similarity(x, ...)
 }
 \arguments{
-\item{x}{a \code{textmodel_wordvector} object.}
+\item{x}{an object from which similarities are extracted.}
 
-\item{targets}{words or documents for which similarity is computed.}
-
-\item{layer}{the layer based on which similarity is computed. This must be "documents"
-when \code{targets} are document names.}
-
-\item{mode}{specify the type of resulting object.}
-}
-\value{
-a \code{matrix} of cosine similarity scores when \code{mode = "numeric"} or of
-words sorted in descending order by the similarity scores when \code{mode = "character"}.
-When \code{targets} is a named numeric vector, word (or document) vectors are weighted and summed
-before computing similarity scores.
+\item{...}{passed to underlying functions.}
 }
 \description{
-Compute the cosine similarity between word vectors for selected words.
-}
-\seealso{
-\code{\link[=probability]{probability()}}
+Generic function to extract similarities
 }

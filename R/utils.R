@@ -31,6 +31,14 @@ analogy <- function(formula) {
     return(res)
 }
 
+#' Generic function to extract similarities
+#' @param x an object from which similarities are extracted.
+#' @param ... passed to underlying functions.
+#' @export
+similarity <- function(x, ...) {
+    UseMethod("probability")
+}
+
 #' Compute similarity between word or document vectors
 #' 
 #' Compute the cosine similarity between word vectors for selected words.
@@ -44,9 +52,10 @@ analogy <- function(formula) {
 #'   When `targets` is a named numeric vector, word (or document) vectors are weighted and summed 
 #'   before computing similarity scores.
 #' @export
+#' @method similarity textmodel_wordvector
 #' @seealso [probability()]
-similarity <- function(x, targets, layer = c("words", "documents"),
-                       mode = c("character", "numeric")) {
+similarity.textmodel_wordvector <- function(x, targets, layer = c("words", "documents"),
+                                           mode = c("character", "numeric")) {
     
     layer <- match.arg(layer)
     mode <- ifelse(mode == "words", "character", mode) # for < v0.6.0
@@ -92,6 +101,14 @@ similarity <- function(x, targets, layer = c("words", "documents"),
     return(res)
 }
 
+#' Generic function to extract probabilities
+#' @param x an object from which probabilities are extracted.
+#' @param ... passed to underlying functions.
+#' @export
+probability <- function(x, ...) {
+    UseMethod("probability")
+}
+
 #' Compute probability of words
 #'
 #' Compute the probability of words given other words.
@@ -105,9 +122,10 @@ similarity <- function(x, targets, layer = c("words", "documents"),
 #'   When `targets` is a named numeric vector, probability scores are weighted by
 #'   the values.
 #' @export
+#' @method probability textmodel_wordvector
 #' @seealso [similarity()]
-probability <- function(x, targets, layer = c("words", "documents"),
-                        mode = c("character", "numeric"), ...) {
+probability.textmodel_wordvector <- function(x, targets, layer = c("words", "documents"),
+                                             mode = c("character", "numeric"), ...) {
     
     layer <- match.arg(layer)
     mode <- ifelse(mode == "words", "character", mode) # for < v0.6.0
