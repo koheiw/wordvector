@@ -239,7 +239,7 @@ get_threads <- function() {
         }
     })
     if (length(value) != 1 || is.na(value)) {
-        stop("wordvector_threads must be an integer")
+        stop("wordvector.threads must be an integer")
     }
     return(value)
 }

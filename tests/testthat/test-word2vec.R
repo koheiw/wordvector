@@ -1,6 +1,6 @@
 library(quanteda)
 library(wordvector)
-options(wordvector_threads = 2)
+options(wordvector.threads = 2)
 
 corp <- head(data_corpus_inaugural, 59) %>% 
     corpus_reshape()

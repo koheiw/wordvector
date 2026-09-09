@@ -322,19 +322,22 @@ test_that("probability works", {
 
 test_that("get_threads are working", {
     
-    options("wordvector_threads" = "abc")
+    options("wordvector.threads" = "abc")
     expect_error(
         suppressWarnings(wordvector:::get_threads()),
-        "wordvector_threads must be an integer"
+        "wordvector.threads must be an integer"
     )
-    options("wordvector_threads" = NA)
+    options("wordvector.threads" = NULL)
+    
+    options("wordvector.threads" = NA)
     expect_error(
         wordvector:::get_threads(),
-        "wordvector_threads must be an integer"
+        "wordvector.threads must be an integer"
     )
+    options("wordvector.threads" = NULL)
     
     ## respect other settings
-    options("wordvector_threads" = NULL)
+    options("wordvector.threads" = NULL)
     
     Sys.setenv("OMP_THREAD_LIMIT" = 2)
     expect_equal(
@@ -348,6 +351,29 @@ test_that("get_threads are working", {
     )
     Sys.unsetenv("RCPP_PARALLEL_NUM_THREADS")
     
+    options("wordvector.threads" = NULL)
+})
+
+test_that("old threads option still works", {
+    
+    options("wordvector_threads" = 3)
+    expect_equal(
+        wordvector:::get_threads(), 3
+    )
+    options("wordvector_threads" = 2)
+    
+    options("wordvector_threads" = "abc")
+    expect_error(
+        suppressWarnings(wordvector:::get_threads()),
+        "wordvector.threads must be an integer"
+    )
+    options("wordvector_threads" = NULL)
+    
+    options("wordvector_threads" = NA)
+    expect_error(
+        wordvector:::get_threads(),
+        "wordvector.threads must be an integer"
+    )
     options("wordvector_threads" = NULL)
 })
 
