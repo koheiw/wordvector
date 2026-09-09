@@ -36,7 +36,7 @@ analogy <- function(formula) {
 #' @param ... passed to underlying functions.
 #' @export
 similarity <- function(x, ...) {
-    UseMethod("probability")
+    UseMethod("similarity")
 }
 
 #' Compute similarity between word or document vectors
@@ -232,7 +232,11 @@ get_threads <- function() {
                  "max" = cpp_get_max_thread())
     default <- unname(min(default, na.rm = TRUE))
     suppressWarnings({
-        value <- as.integer(getOption("wordvector_threads", default))
+        if (!is.null(getOption("wordvector.threads"))) {
+            value <- as.integer(getOption("wordvector.threads", default))
+        } else {
+            value <- as.integer(getOption("wordvector_threads", default))
+        }
     })
     if (length(value) != 1 || is.na(value)) {
         stop("wordvector_threads must be an integer")
