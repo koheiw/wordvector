@@ -227,7 +227,7 @@ perplexity <- function(x, targets, data, layer = c("words", "documents")) {
 get_threads <- function() {
     
     # respect other settings
-    default <- c("tbb" = as.integer(Sys.getenv("RCPP_PARALLEL_NUM_THREADS")),
+    default <- c(#"tbb" = as.integer(Sys.getenv("RCPP_PARALLEL_NUM_THREADS")),
                  "omp" = as.integer(Sys.getenv("OMP_THREAD_LIMIT")),
                  "max" = cpp_get_max_thread())
     default <- unname(min(default, na.rm = TRUE))

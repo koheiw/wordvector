@@ -345,11 +345,11 @@ test_that("get_threads are working", {
     )
     Sys.unsetenv("OMP_THREAD_LIMIT")
     
-    Sys.setenv("RCPP_PARALLEL_NUM_THREADS" = 3)
-    expect_equal(
-        wordvector:::get_threads(), 3
-    )
-    Sys.unsetenv("RCPP_PARALLEL_NUM_THREADS")
+    # Sys.setenv("RCPP_PARALLEL_NUM_THREADS" = 1)
+    # expect_equal(
+    #     wordvector:::get_threads(), 1
+    # )
+    # Sys.unsetenv("RCPP_PARALLEL_NUM_THREADS")
     
     options("wordvector.threads" = NULL)
 })
@@ -362,7 +362,7 @@ test_that("old threads option still works", {
     expect_equal(
         wordvector:::get_threads(), 3
     )
-    options("wordvector_threads" = 2)
+    options("wordvector_threads" = NULL)
     
     options("wordvector_threads" = "abc")
     expect_error(
