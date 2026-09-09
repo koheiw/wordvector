@@ -93,16 +93,16 @@ wov <- textmodel_word2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose 
 ##  ...using 16 threads for distributed computing
 ##  ...initializing
 ##  ...negative sampling in 10 iterations
-##  ......iteration 1 elapsed time: 13.18 seconds (alpha: 0.0459)
-##  ......iteration 2 elapsed time: 26.34 seconds (alpha: 0.0417)
-##  ......iteration 3 elapsed time: 40.89 seconds (alpha: 0.0371)
-##  ......iteration 4 elapsed time: 56.89 seconds (alpha: 0.0320)
-##  ......iteration 5 elapsed time: 72.27 seconds (alpha: 0.0271)
-##  ......iteration 6 elapsed time: 86.84 seconds (alpha: 0.0224)
-##  ......iteration 7 elapsed time: 98.58 seconds (alpha: 0.0187)
-##  ......iteration 8 elapsed time: 111.69 seconds (alpha: 0.0146)
-##  ......iteration 9 elapsed time: 124.21 seconds (alpha: 0.0105)
-##  ......iteration 10 elapsed time: 136.37 seconds (alpha: 0.0068)
+##  ......iteration 1 elapsed time: 15.79 seconds (alpha: 0.0452)
+##  ......iteration 2 elapsed time: 29.47 seconds (alpha: 0.0410)
+##  ......iteration 3 elapsed time: 43.39 seconds (alpha: 0.0368)
+##  ......iteration 4 elapsed time: 58.59 seconds (alpha: 0.0322)
+##  ......iteration 5 elapsed time: 74.33 seconds (alpha: 0.0274)
+##  ......iteration 6 elapsed time: 89.97 seconds (alpha: 0.0226)
+##  ......iteration 7 elapsed time: 106.28 seconds (alpha: 0.0176)
+##  ......iteration 8 elapsed time: 122.80 seconds (alpha: 0.0126)
+##  ......iteration 9 elapsed time: 138.99 seconds (alpha: 0.0077)
+##  ......iteration 10 elapsed time: 153.59 seconds (alpha: 0.0032)
 ##  ...complete
 ```
 
@@ -129,16 +129,16 @@ head(similarity(wov, "bad"))
 ## [2,] "good"   
 ## [3,] "trouble"
 ## [4,] "scary"  
-## [5,] "hard"   
-## [6,] "fatigue"
+## [5,] "fatigue"
+## [6,] "hard"
 head(similarity(wov, analogy(~ good - bad)))
-##      [,1]         
-## [1,] "loyalty"    
-## [2,] "mujahideen" 
-## [3,] "thank"      
-## [4,] "achieved"   
-## [5,] "courageous" 
-## [6,] "affiliation"
+##      [,1]        
+## [1,] "thank"     
+## [2,] "loyalty"   
+## [3,] "courageous"
+## [4,] "mujahideen"
+## [5,] "achieved"  
+## [6,] "qualities"
 ```
 
 ## Predict probability
@@ -150,10 +150,10 @@ the word conditional on context words.
 
 head(probability(wov, "bad", mode = "numeric"))
 ##                bad
-## donald  0.67338855
-## trump   0.46823236
-## endorse 0.05663007
-## short   0.74546191
-## period  0.49961873
-## time    0.74974443
+## donald  0.63774326
+## trump   0.59399114
+## endorse 0.09597792
+## short   0.62881711
+## period  0.50086354
+## time    0.87365705
 ```
