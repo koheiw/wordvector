@@ -198,28 +198,28 @@ wov <- textmodel_word2vec(toks, dim = 50, type = "cbow", min_count = 5, sample =
 
 # find similar words
 head(similarity(wov, c("berlin", "germany", "france"), mode = "words"))
-#>      berlin       germany        france      
-#> [1,] "berlin"     "germany"      "france"    
-#> [2,] "frankfurt"  "braunschweig" "germany"   
-#> [3,] "german"     "frankfurt"    "paris"     
-#> [4,] "germany"    "stuttgart"    "bastia"    
-#> [5,] "amsterdam"  "eintracht"    "tour"      
-#> [6,] "chancellor" "hamburg"      "strasbourg"
+#>      berlin      germany        france      
+#> [1,] "berlin"    "germany"      "france"    
+#> [2,] "frankfurt" "braunschweig" "paris"     
+#> [3,] "german"    "belgium"      "germany"   
+#> [4,] "germany"   "frankfurt"    "strasbourg"
+#> [5,] "amsterdam" "norway"       "bastia"    
+#> [6,] "munich"    "berlin"       "tour"      
 head(similarity(wov, c("berlin" = 1, "germany" = -1, "france" = 1), mode = "values"))
 #>                  [,1]
-#> somali     0.02340221
-#> reporters  0.11548841
-#> released   0.15297020
-#> bail       0.06846910
-#> still     -0.11010499
-#> jailed    -0.01442355
+#> somali     0.07044679
+#> reporters  0.09180527
+#> released   0.10928428
+#> bail       0.09461177
+#> still     -0.09913196
+#> jailed     0.01454514
 head(similarity(wov, analogy(~ berlin - germany + france), mode = "words"))
-#>      [,1]       
-#> [1,] "berlin"   
-#> [2,] "france"   
-#> [3,] "paris"    
-#> [4,] "french"   
-#> [5,] "normandy" 
-#> [6,] "amsterdam"
+#>      [,1]      
+#> [1,] "paris"   
+#> [2,] "france"  
+#> [3,] "berlin"  
+#> [4,] "french"  
+#> [5,] "normandy"
+#> [6,] "mans"    
 # }
 ```

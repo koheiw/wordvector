@@ -61,7 +61,7 @@
                         <h4 data-toc-skip class="author">Kohei
 Watanabe</h4>
             
-            <h4 data-toc-skip class="date">2026-09-09</h4>
+            <h4 data-toc-skip class="date">2026-09-10</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/koheiw/wordvector/blob/master/vignettes/pkgdown/word2vec.Rmd" class="external-link"><code>vignettes/pkgdown/word2vec.Rmd</code></a></small>
       <div class="d-none name"><code>word2vec.Rmd</code></div>
@@ -134,7 +134,7 @@ the model in their current work flow.</p>
 <span><span class="co">##  ...preserving social media tags (#, @)</span></span>
 <span><span class="co">##  ...removing separators, punctuation, symbols</span></span>
 <span><span class="co">##  ...298,565 unique types</span></span>
-<span><span class="co">##  ...complete, elapsed time: 92.5 seconds.</span></span>
+<span><span class="co">##  ...complete, elapsed time: 97.2 seconds.</span></span>
 <span><span class="co">## Finished constructing tokens from 656,334 documents</span></span>
 <span><span class="co">## tokens_remove() changed from 298,565 types (656,334 documents, 45,194,192 tokens) to 298,002 types (656,334 documents, 28,232,774 tokens)</span></span>
 <span><span class="co">## tokens_keep() changed from 298,002 types (656,334 documents, 28,232,774 tokens) to 239,782 types (656,334 documents, 26,564,509 tokens)</span></span></code></pre></div>
@@ -154,16 +154,16 @@ the model in their current work flow.</p>
 <span><span class="co">##  ...using 16 threads for distributed computing</span></span>
 <span><span class="co">##  ...initializing</span></span>
 <span><span class="co">##  ...negative sampling in 10 iterations</span></span>
-<span><span class="co">##  ......iteration 1 elapsed time: 15.79 seconds (alpha: 0.0452)</span></span>
-<span><span class="co">##  ......iteration 2 elapsed time: 29.47 seconds (alpha: 0.0410)</span></span>
-<span><span class="co">##  ......iteration 3 elapsed time: 43.39 seconds (alpha: 0.0368)</span></span>
-<span><span class="co">##  ......iteration 4 elapsed time: 58.59 seconds (alpha: 0.0322)</span></span>
-<span><span class="co">##  ......iteration 5 elapsed time: 74.33 seconds (alpha: 0.0274)</span></span>
-<span><span class="co">##  ......iteration 6 elapsed time: 89.97 seconds (alpha: 0.0226)</span></span>
-<span><span class="co">##  ......iteration 7 elapsed time: 106.28 seconds (alpha: 0.0176)</span></span>
-<span><span class="co">##  ......iteration 8 elapsed time: 122.80 seconds (alpha: 0.0126)</span></span>
-<span><span class="co">##  ......iteration 9 elapsed time: 138.99 seconds (alpha: 0.0077)</span></span>
-<span><span class="co">##  ......iteration 10 elapsed time: 153.59 seconds (alpha: 0.0032)</span></span>
+<span><span class="co">##  ......iteration 1 elapsed time: 14.12 seconds (alpha: 0.0461)</span></span>
+<span><span class="co">##  ......iteration 2 elapsed time: 28.38 seconds (alpha: 0.0421)</span></span>
+<span><span class="co">##  ......iteration 3 elapsed time: 44.58 seconds (alpha: 0.0375)</span></span>
+<span><span class="co">##  ......iteration 4 elapsed time: 61.33 seconds (alpha: 0.0328)</span></span>
+<span><span class="co">##  ......iteration 5 elapsed time: 79.10 seconds (alpha: 0.0279)</span></span>
+<span><span class="co">##  ......iteration 6 elapsed time: 93.72 seconds (alpha: 0.0237)</span></span>
+<span><span class="co">##  ......iteration 7 elapsed time: 108.29 seconds (alpha: 0.0197)</span></span>
+<span><span class="co">##  ......iteration 8 elapsed time: 126.37 seconds (alpha: 0.0146)</span></span>
+<span><span class="co">##  ......iteration 9 elapsed time: 143.59 seconds (alpha: 0.0096)</span></span>
+<span><span class="co">##  ......iteration 10 elapsed time: 158.46 seconds (alpha: 0.0053)</span></span>
 <span><span class="co">##  ...complete</span></span></code></pre></div>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Extract word vector</span></span>
@@ -182,17 +182,17 @@ add or subtract word vectors before finding similar words.</p>
 <span><span class="co">## [1,] "bad"    </span></span>
 <span><span class="co">## [2,] "good"   </span></span>
 <span><span class="co">## [3,] "trouble"</span></span>
-<span><span class="co">## [4,] "scary"  </span></span>
-<span><span class="co">## [5,] "fatigue"</span></span>
+<span><span class="co">## [4,] "fatigue"</span></span>
+<span><span class="co">## [5,] "nasty"  </span></span>
 <span><span class="co">## [6,] "hard"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../../reference/similarity.html">similarity</a></span><span class="op">(</span><span class="va">wov</span>, <span class="fu"><a href="../../reference/analogy.html">analogy</a></span><span class="op">(</span><span class="op">~</span> <span class="va">good</span> <span class="op">-</span> <span class="va">bad</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">##      [,1]        </span></span>
-<span><span class="co">## [1,] "thank"     </span></span>
-<span><span class="co">## [2,] "loyalty"   </span></span>
-<span><span class="co">## [3,] "courageous"</span></span>
-<span><span class="co">## [4,] "mujahideen"</span></span>
-<span><span class="co">## [5,] "achieved"  </span></span>
-<span><span class="co">## [6,] "qualities"</span></span></code></pre></div>
+<span><span class="co">## [1,] "thanking"  </span></span>
+<span><span class="co">## [2,] "thank"     </span></span>
+<span><span class="co">## [3,] "qualities" </span></span>
+<span><span class="co">## [4,] "loyalty"   </span></span>
+<span><span class="co">## [5,] "courageous"</span></span>
+<span><span class="co">## [6,] "invite"</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="predict-probability">Predict probability<a class="anchor" aria-label="anchor" href="#predict-probability"></a>
@@ -202,12 +202,12 @@ of the word conditional on context words.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../../reference/probability.html">probability</a></span><span class="op">(</span><span class="va">wov</span>, <span class="st">"bad"</span>, mode <span class="op">=</span> <span class="st">"numeric"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">##                bad</span></span>
-<span><span class="co">## donald  0.63774326</span></span>
-<span><span class="co">## trump   0.59399114</span></span>
-<span><span class="co">## endorse 0.09597792</span></span>
-<span><span class="co">## short   0.62881711</span></span>
-<span><span class="co">## period  0.50086354</span></span>
-<span><span class="co">## time    0.87365705</span></span></code></pre></div>
+<span><span class="co">## donald  0.19628810</span></span>
+<span><span class="co">## trump   0.53202503</span></span>
+<span><span class="co">## endorse 0.06172312</span></span>
+<span><span class="co">## short   0.71963011</span></span>
+<span><span class="co">## period  0.59463669</span></span>
+<span><span class="co">## time    0.82154492</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
