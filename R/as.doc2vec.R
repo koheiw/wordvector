@@ -9,6 +9,10 @@
 #' @param group_data if `TRUE`, apply `dfm_group(x)` before creating document vectors.
 #' @param ... additional arguments passed to [quanteda::object2id].
 #' @details
+#' For Japanese or Chinese texts, `model$concatenator` must be empty (""). 
+#' The value is inherited from the tokens object on which the model was trained. 
+#' It triggers tokenization of words in `model` and compounding of characters in `x` 
+#' before creating document vectors.
 #' @returns Returns a textmodel_doc2vec object with the following elements:
 #'   \item{values}{a list of matrices for word and document vectors.}
 #'   \item{dim}{the size of the document vectors.}

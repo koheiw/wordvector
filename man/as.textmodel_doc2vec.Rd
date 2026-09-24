@@ -40,3 +40,9 @@ Returns a textmodel_doc2vec object with the following elements:
 \description{
 Create a doc2vec model as weighted word vectors.
 }
+\details{
+For Japanese or Chinese texts, \code{model$concatenator} must be empty ("").
+The value is inherited from the tokens object on which the model was trained.
+It triggers tokenization of words in \code{model} and compounding of characters in \code{x}
+before creating document vectors.
+}
