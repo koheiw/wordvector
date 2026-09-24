@@ -1,3 +1,7 @@
+## Changes in v0.6.5
+
+- Add `as.textmodel_doc2vec.tokens()` with `compound = TRUE` to handle multi-word expressions more easily.
+
 ## Changes in v0.6.4
 
 - Add `as.textmodel_word2vec()` to convert a matrix to a `textmodel_word2vec` object.

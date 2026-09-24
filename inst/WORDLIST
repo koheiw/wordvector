@@ -1,6 +1,8 @@
 ASI
 Compositionality
 Corrado
+DBOW
+DM
 Deerwester
 Dumais
 Furnas
@@ -15,14 +17,15 @@ Sutskever
 al
 arxiv
 cbow
+codecov
 concatenator
 dbow
 dm
 docvars
-docvector
 doi
 et
 https
+pre
 proxyC
 quanteda
 quanteda's

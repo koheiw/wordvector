@@ -74,8 +74,8 @@ test_that("as.textmodel_doc2vec works with different objects", {
     )
     
     expect_error(
-        as.textmodel_doc2vec(toks, wov),
-        "no applicable method for 'as.textmodel_doc2vec'"
+        class(as.textmodel_doc2vec(toks, wov)),
+        c("textmodel_doc2vec", "textmodel_wordvector")
     )
     
     expect_error(
@@ -112,3 +112,20 @@ test_that("textmodel_doc2vec returns zero for emptry documents (#17)", {
     expect_true(all(dov$values$doc[1,] != 0))
     expect_true(all(dov$values$doc[2,] == 0))
 })
+
+test_that("textmodel_doc2vec compounds tokens internally", {
+    
+    toks <- as.tokens(list("Hard work", "look forward"))
+    dov <- as.textmodel_doc2vec(toks, wov)
+    
+    expect_true(
+        all(dov$values$doc != 0)
+    )
+    
+    expect_error(
+        as.textmodel_doc2vec(toks, wov, compound = c(TRUE, FALSE)),
+        "The length of compound must be 1"
+    )
+})
+
+
