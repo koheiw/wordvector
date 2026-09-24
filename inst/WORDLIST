@@ -32,5 +32,6 @@ quanteda's
 sg
 softmax
 textmodel
+tokenization
 vec
 xptr
