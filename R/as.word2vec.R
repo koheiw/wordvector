@@ -12,7 +12,10 @@ as.textmodel_word2vec <- function(x, ...) {
 
 #' @export
 #' @method as.textmodel_word2vec matrix
-as.textmodel_word2vec.matrix <- function(x, ...) {
+as.textmodel_word2vec.matrix <- function(x, tolower = FALSE, concatenator = "_", ...) {
+    
+    tolower <- check_logical(tolower)
+    concatenator <- check_character(concatenator)
     
     if (is.null(rownames(x)))
         stop("x must have rownames for words")
@@ -24,8 +27,8 @@ as.textmodel_word2vec.matrix <- function(x, ...) {
         "values" = list("word" = x),
         "weights" = matrix(),
         "dim" = ncol(x),
-        "tolower" = FALSE,
-        "concatenator" = "_", 
+        "tolower" = tolower,
+        "concatenator" = concatenator, 
         "docvars" = data.frame(),
         "normalize" = FALSE,
         "call" = try(match.call(sys.function(-1), call = sys.call(-1)), silent = TRUE), 
