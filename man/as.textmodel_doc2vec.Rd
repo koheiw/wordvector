@@ -4,7 +4,14 @@
 \alias{as.textmodel_doc2vec}
 \title{Create a doc2vec model}
 \usage{
-as.textmodel_doc2vec(x, model, normalize = FALSE, group_data = FALSE, ...)
+as.textmodel_doc2vec(
+  x,
+  model,
+  normalize = FALSE,
+  compound = TRUE,
+  group_data = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{a \link[quanteda:tokens]{quanteda::tokens} or \link[quanteda:dfm]{quanteda::dfm} object.}
@@ -12,6 +19,9 @@ as.textmodel_doc2vec(x, model, normalize = FALSE, group_data = FALSE, ...)
 \item{model}{a textmodel_wordvector object.}
 
 \item{normalize}{if \code{TRUE}, normalized word vectors before creating document vectors.}
+
+\item{compound}{if \code{TRUE}, compound multi-word expressions in \code{x} based on \code{model}
+internally. Only applies when \code{x} is a \link[quanteda:tokens]{quanteda::tokens} object.}
 
 \item{group_data}{if \code{TRUE}, apply \code{dfm_group(x)} before creating document vectors.}
 
@@ -29,4 +39,10 @@ Returns a textmodel_doc2vec object with the following elements:
 }
 \description{
 Create a doc2vec model as weighted word vectors.
+}
+\details{
+For Japanese or Chinese texts, \code{model$concatenator} must be empty ("").
+The value is inherited from the tokens object on which the model was trained.
+It triggers tokenization of words in \code{model} and compounding of characters in \code{x}
+before creating document vectors.
 }

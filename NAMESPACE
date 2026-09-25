@@ -5,6 +5,7 @@ S3method(as.matrix,textmodel_docvector)
 S3method(as.matrix,textmodel_word2vec)
 S3method(as.matrix,textmodel_wordvector)
 S3method(as.textmodel_doc2vec,dfm)
+S3method(as.textmodel_doc2vec,tokens)
 S3method(as.textmodel_word2vec,matrix)
 S3method(print,textmodel_doc2vec)
 S3method(print,textmodel_docvector)
@@ -28,6 +29,8 @@ export(textmodel_word2vec)
 import(quanteda)
 importFrom(methods,as)
 importFrom(quanteda,dfm_weight)
-importFrom(utils,head)
-importFrom(utils,tail)
+importFrom(utils,
+  head,
+  tail
+)
 useDynLib(wordvector)

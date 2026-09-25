@@ -73,9 +73,9 @@ test_that("as.textmodel_doc2vec works with different objects", {
         c("textmodel_doc2vec", "textmodel_wordvector")
     )
     
-    expect_error(
-        as.textmodel_doc2vec(toks, wov),
-        "no applicable method for 'as.textmodel_doc2vec'"
+    expect_equal(
+        class(as.textmodel_doc2vec(toks, wov)),
+        c("textmodel_doc2vec", "textmodel_wordvector")
     )
     
     expect_error(
@@ -112,3 +112,39 @@ test_that("textmodel_doc2vec returns zero for emptry documents (#17)", {
     expect_true(all(dov$values$doc[1,] != 0))
     expect_true(all(dov$values$doc[2,] == 0))
 })
+
+test_that("textmodel_doc2vec compounds tokens internally", {
+    
+    toks1 <- tokens(c("Hard working", "look forward"))
+    mat1 <- matrix(rnorm(20), nrow = 2, dimnames = list(c("hard working", "look forward")))
+    wov1 <- as.textmodel_word2vec(mat1, concatenator = " ", tolower = TRUE)
+    dov1 <- as.textmodel_doc2vec(toks1, wov1)
+    
+    expect_true(
+        all(dov1$values$doc != 0)
+    )
+    expect_true(
+        wov1$tolower
+    )
+    expect_error(
+        as.textmodel_doc2vec(toks1, wov, compound = c(TRUE, FALSE)),
+        "The length of compound must be 1"
+    )
+    
+    toks2 <- tokens(c("働きもの", "期待する")) 
+    mat2 <- matrix(rnorm(20), nrow = 2, dimnames = list(c("働きもの", "期待する")))
+    wov2 <- as.textmodel_word2vec(mat2, concatenator = "", tolower = FALSE)
+    dov2 <- as.textmodel_doc2vec(toks2, wov2)
+    expect_true(
+        all(dov2$values$doc != 0)
+    )
+    expect_identical(
+        wov2$concatenator,
+        ""
+    )
+    expect_false(
+        wov2$tolower
+    )
+})
+
+
