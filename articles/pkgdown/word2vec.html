@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../../index.html">wordvector</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -61,7 +61,7 @@
                         <h4 data-toc-skip class="author">Kohei
 Watanabe</h4>
             
-            <h4 data-toc-skip class="date">2026-09-10</h4>
+            <h4 data-toc-skip class="date">2026-09-25</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/koheiw/wordvector/blob/master/vignettes/pkgdown/word2vec.Rmd" class="external-link"><code>vignettes/pkgdown/word2vec.Rmd</code></a></small>
       <div class="d-none name"><code>word2vec.Rmd</code></div>
@@ -134,7 +134,7 @@ the model in their current work flow.</p>
 <span><span class="co">##  ...preserving social media tags (#, @)</span></span>
 <span><span class="co">##  ...removing separators, punctuation, symbols</span></span>
 <span><span class="co">##  ...298,565 unique types</span></span>
-<span><span class="co">##  ...complete, elapsed time: 97.2 seconds.</span></span>
+<span><span class="co">##  ...complete, elapsed time: 74.9 seconds.</span></span>
 <span><span class="co">## Finished constructing tokens from 656,334 documents</span></span>
 <span><span class="co">## tokens_remove() changed from 298,565 types (656,334 documents, 45,194,192 tokens) to 298,002 types (656,334 documents, 28,232,774 tokens)</span></span>
 <span><span class="co">## tokens_keep() changed from 298,002 types (656,334 documents, 28,232,774 tokens) to 239,782 types (656,334 documents, 26,564,509 tokens)</span></span></code></pre></div>
@@ -154,16 +154,16 @@ the model in their current work flow.</p>
 <span><span class="co">##  ...using 16 threads for distributed computing</span></span>
 <span><span class="co">##  ...initializing</span></span>
 <span><span class="co">##  ...negative sampling in 10 iterations</span></span>
-<span><span class="co">##  ......iteration 1 elapsed time: 14.12 seconds (alpha: 0.0461)</span></span>
-<span><span class="co">##  ......iteration 2 elapsed time: 28.38 seconds (alpha: 0.0421)</span></span>
-<span><span class="co">##  ......iteration 3 elapsed time: 44.58 seconds (alpha: 0.0375)</span></span>
-<span><span class="co">##  ......iteration 4 elapsed time: 61.33 seconds (alpha: 0.0328)</span></span>
-<span><span class="co">##  ......iteration 5 elapsed time: 79.10 seconds (alpha: 0.0279)</span></span>
-<span><span class="co">##  ......iteration 6 elapsed time: 93.72 seconds (alpha: 0.0237)</span></span>
-<span><span class="co">##  ......iteration 7 elapsed time: 108.29 seconds (alpha: 0.0197)</span></span>
-<span><span class="co">##  ......iteration 8 elapsed time: 126.37 seconds (alpha: 0.0146)</span></span>
-<span><span class="co">##  ......iteration 9 elapsed time: 143.59 seconds (alpha: 0.0096)</span></span>
-<span><span class="co">##  ......iteration 10 elapsed time: 158.46 seconds (alpha: 0.0053)</span></span>
+<span><span class="co">##  ......iteration 1 elapsed time: 14.03 seconds (alpha: 0.0458)</span></span>
+<span><span class="co">##  ......iteration 2 elapsed time: 27.52 seconds (alpha: 0.0417)</span></span>
+<span><span class="co">##  ......iteration 3 elapsed time: 42.66 seconds (alpha: 0.0370)</span></span>
+<span><span class="co">##  ......iteration 4 elapsed time: 55.89 seconds (alpha: 0.0328)</span></span>
+<span><span class="co">##  ......iteration 5 elapsed time: 67.31 seconds (alpha: 0.0293)</span></span>
+<span><span class="co">##  ......iteration 6 elapsed time: 79.49 seconds (alpha: 0.0257)</span></span>
+<span><span class="co">##  ......iteration 7 elapsed time: 93.47 seconds (alpha: 0.0214)</span></span>
+<span><span class="co">##  ......iteration 8 elapsed time: 108.45 seconds (alpha: 0.0170)</span></span>
+<span><span class="co">##  ......iteration 9 elapsed time: 124.34 seconds (alpha: 0.0121)</span></span>
+<span><span class="co">##  ......iteration 10 elapsed time: 139.58 seconds (alpha: 0.0074)</span></span>
 <span><span class="co">##  ...complete</span></span></code></pre></div>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Extract word vector</span></span>
@@ -183,16 +183,16 @@ add or subtract word vectors before finding similar words.</p>
 <span><span class="co">## [2,] "good"   </span></span>
 <span><span class="co">## [3,] "trouble"</span></span>
 <span><span class="co">## [4,] "fatigue"</span></span>
-<span><span class="co">## [5,] "nasty"  </span></span>
-<span><span class="co">## [6,] "hard"</span></span>
+<span><span class="co">## [5,] "scary"  </span></span>
+<span><span class="co">## [6,] "worse"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../../reference/similarity.html">similarity</a></span><span class="op">(</span><span class="va">wov</span>, <span class="fu"><a href="../../reference/analogy.html">analogy</a></span><span class="op">(</span><span class="op">~</span> <span class="va">good</span> <span class="op">-</span> <span class="va">bad</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">##      [,1]        </span></span>
-<span><span class="co">## [1,] "thanking"  </span></span>
-<span><span class="co">## [2,] "thank"     </span></span>
-<span><span class="co">## [3,] "qualities" </span></span>
-<span><span class="co">## [4,] "loyalty"   </span></span>
+<span><span class="co">## [1,] "thank"     </span></span>
+<span><span class="co">## [2,] "reaffirm"  </span></span>
+<span><span class="co">## [3,] "loyalty"   </span></span>
+<span><span class="co">## [4,] "thanking"  </span></span>
 <span><span class="co">## [5,] "courageous"</span></span>
-<span><span class="co">## [6,] "invite"</span></span></code></pre></div>
+<span><span class="co">## [6,] "qualities"</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="predict-probability">Predict probability<a class="anchor" aria-label="anchor" href="#predict-probability"></a>
@@ -201,13 +201,13 @@ add or subtract word vectors before finding similar words.</p>
 of the word conditional on context words.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../../reference/probability.html">probability</a></span><span class="op">(</span><span class="va">wov</span>, <span class="st">"bad"</span>, mode <span class="op">=</span> <span class="st">"numeric"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">##                bad</span></span>
-<span><span class="co">## donald  0.19628810</span></span>
-<span><span class="co">## trump   0.53202503</span></span>
-<span><span class="co">## endorse 0.06172312</span></span>
-<span><span class="co">## short   0.71963011</span></span>
-<span><span class="co">## period  0.59463669</span></span>
-<span><span class="co">## time    0.82154492</span></span></code></pre></div>
+<span><span class="co">##               bad</span></span>
+<span><span class="co">## donald  0.5022700</span></span>
+<span><span class="co">## trump   0.6477878</span></span>
+<span><span class="co">## endorse 0.1480537</span></span>
+<span><span class="co">## short   0.7319176</span></span>
+<span><span class="co">## period  0.3745411</span></span>
+<span><span class="co">## time    0.8313454</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

@@ -5,7 +5,14 @@ Create a doc2vec model as weighted word vectors.
 ## Usage
 
 ``` r
-as.textmodel_doc2vec(x, model, normalize = FALSE, group_data = FALSE, ...)
+as.textmodel_doc2vec(
+  x,
+  model,
+  normalize = FALSE,
+  compound = TRUE,
+  group_data = FALSE,
+  ...
+)
 ```
 
 ## Arguments
@@ -22,6 +29,12 @@ as.textmodel_doc2vec(x, model, normalize = FALSE, group_data = FALSE, ...)
 - normalize:
 
   if `TRUE`, normalized word vectors before creating document vectors.
+
+- compound:
+
+  if `TRUE`, compound multi-word expressions in `x` based on `model`
+  internally. Only applies when `x` is a
+  [quanteda::tokens](https://quanteda.io/reference/tokens.html) object.
 
 - group_data:
 
@@ -63,3 +76,10 @@ Returns a textmodel_doc2vec object with the following elements:
 - version:
 
   the version of the wordvector package.
+
+## Details
+
+For Japanese or Chinese texts, `model$concatenator` must be empty ("").
+The value is inherited from the tokens object on which the model was
+trained. It triggers tokenization of words in `model` and compounding of
+characters in `x` before creating document vectors.

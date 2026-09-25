@@ -1,6 +1,13 @@
 # Changelog
 
+## Changes in v0.6.5
+
+- Add `as.textmodel_doc2vec.tokens()` with `compound = TRUE` to handle
+  multi-word expressions more easily.
+
 ## Changes in v0.6.4
+
+CRAN release: 2026-09-10
 
 - Add
   [`as.textmodel_word2vec()`](https://koheiw.github.io/wordvector/reference/as.textmodel_word2vec.md)
