@@ -20,14 +20,18 @@ test_that("textmodel_doc2vec works", {
     expect_false(dov1$normalize)
     expect_equal(
         names(dov1),
-        c("values", "weights", "dim", "tolower", "concatenator", "docvars", 
-          "normalize", "call", "version")
+        c("values", "weights", "dim", "frequency", "tolower", "concatenator", 
+          "docvars", "normalize", "call", "version")
     )
     expect_equal(
         dim(dov1$values$word), c(5363L, 50L)
     )
     expect_equal(
         dim(dov1$values$doc), c(59L, 50L)
+    )
+    expect_equal(
+        dov1$frequency,
+        featfreq(dfm_trim(dfmt, min_termfreq = 2))
     )
     expect_equal(
         class(dov1), c("textmodel_doc2vec", "textmodel_wordvector")
