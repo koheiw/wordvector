@@ -18,10 +18,12 @@ test_that("textmodel_doc2vec works", {
     
     dov1 <- as.textmodel_doc2vec(dfmt, wov)
     expect_false(dov1$normalize)
+    
     expect_equal(
         names(dov1),
-        c("values", "weights", "dim", "frequency", "tolower", "concatenator", 
-          "docvars", "normalize", "call", "version")
+        c("values", "weights", "type", "dim", "frequency", "window",  "iter", 
+          "alpha", "use_ns", "ns_size", "sample", "normalize",  "min_count", 
+          "tolower", "concatenator", "docvars", "ntoken",  "call", "version")
     )
     expect_equal(
         dim(dov1$values$word), c(5363L, 50L)
@@ -56,8 +58,16 @@ test_that("textmodel_doc2vec works", {
     
     # normalize
     dov2 <- as.textmodel_doc2vec(dfmt, wov, normalize = TRUE)
+    
     expect_false(identical(dov1$values, dov2$values))
     expect_true(dov2$normalize)
+    
+    expect_equal(
+        names(dov2),
+        c("values", "weights", "type", "dim", "frequency", "window",  "iter", 
+          "alpha", "use_ns", "ns_size", "sample", "normalize",  "min_count", 
+          "tolower", "concatenator", "docvars", "ntoken",  "call", "version")
+    )
     
     expect_error(
         probability(dov2, c("good", "bad"), layer = "words"),
