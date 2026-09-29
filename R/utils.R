@@ -272,14 +272,23 @@ normalize <- function(x) {
     return(x)
 }
 
+#' @rdname check_model
+#' @keywords internal
+#' @export
 is_word2vec <- function(x) {
     identical(class(x), c("textmodel_word2vec", "textmodel_wordvector"))
 }
 
+#' @rdname check_model
+#' @keywords internal
+#' @export
 is_doc2vec <- function(x) {
     identical(class(x), c("textmodel_doc2vec", "textmodel_wordvector"))
 }
 
+#' @rdname check_model
+#' @keywords internal
+#' @export
 check_word2vec <- function(x) {
     if (is_word2vec(x)) {
         return(x)
@@ -288,6 +297,9 @@ check_word2vec <- function(x) {
     }
 }
 
+#' @rdname check_model
+#' @keywords internal
+#' @export
 check_doc2vec <- function(x) {
     if (is_doc2vec(x)) {
         return(x)
@@ -296,6 +308,11 @@ check_doc2vec <- function(x) {
     }
 }
 
+#' Functions to check input objects
+#' @param x input object.
+#' @param allow type of object allowed.
+#' @keywords internal
+#' @export
 check_model <- function(x, allow = c("word2vec", "doc2vec", "lsa")) {
     allow <- match.arg(allow, several.ok = TRUE)
     m <- paste0("textmodel_", allow)
