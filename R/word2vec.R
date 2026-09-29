@@ -252,10 +252,8 @@ as.matrix.textmodel_word2vec <- function(x, normalize = TRUE,
     padding <- check_logical(padding)
     
     result <- x$values$word
-    if (normalize) {
-        v <- sqrt(rowSums(result ^ 2) / ncol(result))
-        result <- result / v
-    }
+    if (normalize)
+        result <- normalize(result)
     if (padding)
         result <- rbind(rep(0, x$dim), result)
     return(result) 

@@ -3,7 +3,7 @@ build_word2vec <- function(...) {
     args <- list(...)
     result <- list(
         values = list(),
-        weights = matrix(),
+        weights = NULL,
         type = NULL,
         dim = 50,
         frequency = NULL,
@@ -28,12 +28,12 @@ build_word2vec <- function(...) {
     return(result)
 }
 
-build_doc2vec <- function(docname, ...) {
+build_doc2vec <- function(...) {
     
     args <- list(...)
     result <- list(
         values = list(),
-        weights = matrix(),
+        weights = NULL,
         type = NULL,
         dim = 50,
         frequency = NULL,
@@ -56,8 +56,8 @@ build_doc2vec <- function(docname, ...) {
         result[m] <- args$model[m]
     for (n in intersect(names(result), names(args)))
         result[n] <- args[n]
-    rownames(result$values$doc) <- docname
-    rownames(result$docvars) <- docname
+    if ("docname" %in% names(args))
+        rownames(result$values$doc) <- args$docname
     class(result) <- c("textmodel_doc2vec", "textmodel_wordvector")
     return(result)
 }
