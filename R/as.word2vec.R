@@ -23,18 +23,15 @@ as.textmodel_word2vec.matrix <- function(x, tolower = FALSE, concatenator = "_",
         stop("x must be a numeric matrix without NA")
     colnames(x) <- NULL
     
-    result <- list(
-        "values" = list("word" = x),
-        "weights" = matrix(),
-        "dim" = ncol(x),
-        "tolower" = tolower,
-        "concatenator" = concatenator, 
-        "docvars" = data.frame(),
-        "normalize" = FALSE,
-        "call" = try(match.call(sys.function(-1), call = sys.call(-1)), silent = TRUE), 
-        "version" = utils::packageVersion("wordvector")
+    result <- build_word2vec(
+        values = list("word" = x),
+        dim = ncol(x),
+        tolower = tolower,
+        concatenator = concatenator, 
+        docvars = data.frame(),
+        normalize = FALSE,
+        call = try(match.call(sys.function(-1), call = sys.call(-1)), silent = TRUE)
     )
-    class(result) <- c("textmodel_word2vec", "textmodel_wordvector")
     return(result)
 }
 

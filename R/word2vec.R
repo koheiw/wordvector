@@ -151,7 +151,7 @@ wordvector <- function(x, dim = 50, type = c("cbow", "sg", "dm", "dbow"),
         x <- tokens_tolower(x)
     x <- tokens_trim(x, min_termfreq = min_count, termfreq_type = "count")
     
-    result <- cpp_word2vec(x, model, size = dim, window = window,
+    temp <- cpp_word2vec(x, model, size = dim, window = window,
                            sample = sample, withHS = !use_ns, negative = ns_size, 
                            threads = get_threads(), iterations = iter,
                            alpha = alpha, 
@@ -160,29 +160,33 @@ wordvector <- function(x, dim = 50, type = c("cbow", "sg", "dm", "dbow"),
                            doc2vec = doc2vec,
                            verbose = verbose)
     
-    if (!is.null(result$message))
-        stop("Failed to train word2vec (", result$message, ")")
+    if (!is.null(temp$message))
+        stop("Failed to train word2vec (", temp$message, ")")
     
-    result$type <- type
-    result$min_count <- min_count
-    result$tolower <- tolower
-    result$concatenator <- meta(x, field = "concatenator", type = "object")
+    if (doc2vec) {
+        result <- build_doc2vec(
+            model = temp,
+            docname = docnames(x),
+            type = type,
+            min_count = min_count,
+            tolower = tolower,
+            concatenator = meta(x, field = "concatenator", type = "object"),
+            docvars = attr(x, "docvars"),
+            ntoken = ntoken(x, remove_padding = TRUE),
+            call = try(match.call(sys.function(-2), call = sys.call(-2)), silent = TRUE)
+        )
+    } else {
+        result <- build_word2vec(
+            model = temp,
+            type = type,
+            min_count = min_count,
+            tolower = tolower,
+            concatenator = meta(x, field = "concatenator", type = "object"),
+            call = try(match.call(sys.function(-2), call = sys.call(-2)), silent = TRUE)
+        )
+    }
     if (include_data) # NOTE: consider removing
         result$data <- y
-    if (doc2vec) {
-        result$docvars <- attr(x, "docvars")
-        result$ntoken <- ntoken(x, remove_padding = TRUE)
-        rownames(result$docvars) <- docnames(x)
-        rownames(result$values$doc) <- docnames(x)
-    }
-    result$call <- try(match.call(sys.function(-2), call = sys.call(-2)), silent = TRUE)
-    result$version <- utils::packageVersion("wordvector")
-    if (doc2vec) {
-        class(result) <- c("textmodel_doc2vec", "textmodel_wordvector")
-    } else {
-        class(result) <- c("textmodel_word2vec", "textmodel_wordvector")
-    }
-    
     quanteda_options(verbose = opt) # restore
     return(result)
 }

@@ -29,7 +29,7 @@ as.textmodel_doc2vec <- function(x, model, normalize = FALSE,
 
 #' @export
 #' @method as.textmodel_doc2vec tokens
-as.textmodel_doc2vec.tokens <- function(x, model = NULL, normalize = FALSE, 
+as.textmodel_doc2vec.tokens <- function(x, model, normalize = FALSE, 
                                         compound = TRUE, group_data = FALSE, ...) {
     
     wov <- as.matrix(model, FALSE, layer = "words")
@@ -54,7 +54,7 @@ as.textmodel_doc2vec.tokens <- function(x, model = NULL, normalize = FALSE,
 
 #' @export
 #' @method as.textmodel_doc2vec dfm
-as.textmodel_doc2vec.dfm <- function(x, model = NULL, normalize = FALSE, 
+as.textmodel_doc2vec.dfm <- function(x, model, normalize = FALSE, 
                                      compound = TRUE, group_data = FALSE, ...) {
     
     model <- upgrade_pre06(model)
@@ -71,19 +71,16 @@ as.textmodel_doc2vec.dfm <- function(x, model = NULL, normalize = FALSE,
     dov <- dov / sqrt(rowSums(dov ^ 2) / ncol(dov))
     dov[l,] <- 0
     
-    result <- list(
-        "values" = list("word" = wov, "doc" = dov),
-        "weights" = model$weights,
-        "dim" = model$dim,
-        "frequency" = featfreq(x),
-        "tolower" = model$tolower,
-        "concatenator" = conc, 
-        "docvars" = x@docvars,
-        "normalize" = normalize,
-        "call" = try(match.call(sys.function(-1), call = sys.call(-1)), silent = TRUE), 
-        "version" = utils::packageVersion("wordvector")
+    result <- build_doc2vec(
+        docname = docnames(x),
+        model = model,
+        values = list("word" = wov, "doc" = dov),
+        frequency = featfreq(x),
+        concatenator = conc, 
+        docvars = x@docvars,
+        normalize = normalize,
+        call = try(match.call(sys.function(-1), call = sys.call(-1)), silent = TRUE)
     )
-    class(result) <- c("textmodel_doc2vec", "textmodel_wordvector")
     return(result)
 }
 
