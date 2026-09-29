@@ -13,7 +13,6 @@ dfmt <- dfm(toks, remove_padding = TRUE)
 
 set.seed(1234)
 wov <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1)
-mat <- matrix(rnorm(59 * 50), nrow = 59, dimnames = list(docnames(corp)))
 
 test_that("textmodel_doc2vec works", {
     
@@ -60,8 +59,12 @@ test_that("textmodel_doc2vec works", {
     )
     
     # tokens
-    dov2 <- as.textmodel_doc2vec(toks, wov)
+    dov2 <- as.textmodel_doc2vec(toks, wov, compound = FALSE)
     
+    expect_identical(
+        dov2$values$doc,
+        dov1$values$doc
+    )
     expect_equal(
         names(dov2),
         c("values", "weights", "type", "dim", "frequency", "window",  "iter", 
@@ -84,8 +87,13 @@ test_that("textmodel_doc2vec works", {
     )
     
     # matrix
+    mat <- as.matrix(dov1, normalize = FALSE)
     dov3 <- as.textmodel_doc2vec(mat)
     
+    expect_identical(
+        dov3$values$doc,
+        dov1$values$doc
+    )
     expect_equal(
         names(dov3),
         c("values", "weights", "type", "dim", "frequency", "window",  "iter", 

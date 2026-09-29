@@ -43,8 +43,8 @@ as.textmodel_doc2vec.tokens <- function(x, model, compound = TRUE,
         x <- tokens_compound(x, p, valuetype = "fixed", join = FALSE, 
                              concatenator = conc)
     }
-    x <- dfm(x, remove_padding = TRUE, tolower = model$tolower)
-    result <- as.textmodel_doc2vec(x, model = model, normalize = normalize, 
+    x <- dfm(x, tolower = model$tolower)
+    result <- as.textmodel_doc2vec(x, model = model, 
                                    group_data = group_data, ...)
     result$call = try(match.call(sys.function(-1), call = sys.call(-1)), silent = TRUE)
     return(result)
