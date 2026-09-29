@@ -4,28 +4,19 @@
 \alias{as.textmodel_doc2vec}
 \title{Create a doc2vec model}
 \usage{
-as.textmodel_doc2vec(
-  x,
-  model,
-  normalize = FALSE,
-  compound = TRUE,
-  group_data = FALSE,
-  ...
-)
+as.textmodel_doc2vec(x, model, compound = TRUE, group_data = FALSE, ...)
 }
 \arguments{
 \item{x}{a \link[quanteda:tokens]{quanteda::tokens} or \link[quanteda:dfm]{quanteda::dfm} object.}
 
 \item{model}{a textmodel_wordvector object.}
 
-\item{normalize}{if \code{TRUE}, normalized word vectors before creating document vectors.}
-
 \item{compound}{if \code{TRUE}, compound multi-word expressions in \code{x} based on \code{model}
 internally. Only applies when \code{x} is a \link[quanteda:tokens]{quanteda::tokens} object.}
 
 \item{group_data}{if \code{TRUE}, apply \code{dfm_group(x)} before creating document vectors.}
 
-\item{...}{additional arguments passed to \link[quanteda:object2id]{quanteda::object2id}.}
+\item{...}{additional arguments passed to the underlying function.}
 }
 \value{
 Returns a textmodel_doc2vec object with the following elements:
@@ -33,7 +24,6 @@ Returns a textmodel_doc2vec object with the following elements:
 \item{dim}{the size of the document vectors.}
 \item{concatenator}{the concatenator in \code{x}.}
 \item{docvars}{document variables copied from \code{x}.}
-\item{normalize}{if the document vectors are normalized.}
 \item{call}{the command used to execute the function.}
 \item{version}{the version of the wordvector package.}
 }
