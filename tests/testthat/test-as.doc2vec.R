@@ -124,7 +124,7 @@ test_that("textmodel_doc2vec works", {
         "x must be a numeric matrix without NA"
     )
     expect_error(
-        as.textmodel_doc2vec(matrix()),
+        as.textmodel_doc2vec(matrix(nrow = 0, ncol = 10)),
         "x is an empty matrix"
     )
 })
