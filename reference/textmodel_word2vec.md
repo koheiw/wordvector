@@ -201,25 +201,25 @@ head(similarity(wov, c("berlin", "germany", "france"), mode = "words"))
 #>      berlin      germany        france   
 #> [1,] "berlin"    "germany"      "france" 
 #> [2,] "frankfurt" "braunschweig" "paris"  
-#> [3,] "german"    "hamburg"      "germany"
-#> [4,] "germany"   "dortmund"     "belgium"
-#> [5,] "amsterdam" "eintracht"    "french" 
-#> [6,] "munich"    "sweden"       "tour"   
+#> [3,] "german"    "frankfurt"    "germany"
+#> [4,] "germany"   "belgium"      "bastia" 
+#> [5,] "munich"    "berlin"       "belgium"
+#> [6,] "amsterdam" "hamburg"      "tour"   
 head(similarity(wov, c("berlin" = 1, "germany" = -1, "france" = 1), mode = "values"))
-#>                   [,1]
-#> somali     0.092067296
-#> reporters  0.151489846
-#> released   0.035683017
-#> bail       0.139927321
-#> still     -0.162735082
-#> jailed     0.004740954
+#>                  [,1]
+#> somali     0.05760853
+#> reporters  0.05450943
+#> released   0.17266770
+#> bail       0.07799465
+#> still     -0.03740300
+#> jailed     0.05389497
 head(similarity(wov, analogy(~ berlin - germany + france), mode = "words"))
-#>      [,1]       
-#> [1,] "paris"    
-#> [2,] "berlin"   
-#> [3,] "france"   
-#> [4,] "french"   
-#> [5,] "normandy" 
-#> [6,] "frankfurt"
+#>      [,1]      
+#> [1,] "paris"   
+#> [2,] "france"  
+#> [3,] "berlin"  
+#> [4,] "french"  
+#> [5,] "normandy"
+#> [6,] "mans"    
 # }
 ```
