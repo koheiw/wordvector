@@ -37,4 +37,9 @@ test_that("as.textmodel_word2vec works", {
         "x must have rownames for words"
     )
     
+    expect_error(
+        as.textmodel_doc2vec(matrix()),
+        "x is an empty matrix"
+    )
+    
 })

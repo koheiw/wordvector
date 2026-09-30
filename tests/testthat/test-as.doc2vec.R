@@ -123,6 +123,10 @@ test_that("textmodel_doc2vec works", {
         as.textmodel_doc2vec(mat),
         "x must be a numeric matrix without NA"
     )
+    expect_error(
+        as.textmodel_doc2vec(matrix()),
+        "x is an empty matrix"
+    )
 })
 
 test_that("as.textmodel_doc2vec works only with DM", {
@@ -187,5 +191,4 @@ test_that("textmodel_doc2vec compounds tokens internally", {
         wov2$tolower
     )
 })
-
 

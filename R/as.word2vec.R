@@ -17,6 +17,8 @@ as.textmodel_word2vec.matrix <- function(x, tolower = FALSE, concatenator = "_",
     tolower <- check_logical(tolower)
     concatenator <- check_character(concatenator)
     
+    if (nrow(x) == 0 || ncol(x) == 0)
+        stop("x is an empty matrix")
     if (is.null(rownames(x)))
         stop("x must have rownames for words")
     if (!is.numeric(x) || any(is.na(x)))

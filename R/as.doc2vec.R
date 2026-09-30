@@ -85,6 +85,8 @@ as.textmodel_doc2vec.dfm <- function(x, model, compound = TRUE,
 #' @method as.textmodel_doc2vec matrix
 as.textmodel_doc2vec.matrix <- function(x, ...) {
     
+    if (nrow(x) == 0 || ncol(x) == 0)
+        stop("x is an empty matrix")
     if (is.null(rownames(x)))
         stop("x must have rownames for documents")
     if (!is.numeric(x) || any(is.na(x)))
