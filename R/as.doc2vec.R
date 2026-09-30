@@ -85,10 +85,12 @@ as.textmodel_doc2vec.dfm <- function(x, model, compound = TRUE,
 #' @method as.textmodel_doc2vec matrix
 as.textmodel_doc2vec.matrix <- function(x, ...) {
     
-    if (is.null(rownames(x)))
-        stop("x must have rownames for documents")
+    if (nrow(x) == 0 || ncol(x) == 0)
+        stop("x is an empty matrix")
     if (!is.numeric(x) || any(is.na(x)))
         stop("x must be a numeric matrix without NA")
+    if (is.null(rownames(x)))
+        stop("x must have rownames for documents")
     colnames(x) <- NULL
     
     result <- build_doc2vec(
@@ -100,7 +102,6 @@ as.textmodel_doc2vec.matrix <- function(x, ...) {
         call = try(match.call(sys.function(-1), call = sys.call(-1)), silent = TRUE),
         ...
     )
-    class(result) <- c("textmodel_doc2vec", "textmodel_wordvector")
     return(result)
 }
 
