@@ -2,6 +2,8 @@
 
 ## Changes in v0.6.5
 
+- Change how word and document vectors are normalized when
+  `normalized = TRUE`.
 - Add `as.textmodel_doc2vec.tokens()` with `compound = TRUE` to handle
   multi-word expressions more easily.
 

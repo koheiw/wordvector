@@ -138,20 +138,20 @@ head(similarity(lsa, c("berlin", "germany", "france"), mode = "words"))
 #> [5,] "germany"    "moscovici" "germany"    
 #> [6,] "lisbon"     "tougher"   "french"     
 head(similarity(lsa, c("berlin" = 1, "germany" = -1, "france" = 1), mode = "values"))
-#>                  [,1]
-#> somali    -0.05066583
-#> reporters -0.01372003
-#> released   0.01725500
-#> bail       0.08066897
-#> still      0.09478653
-#> jailed     0.02431590
+#>                   [,1]
+#> somali    -0.038089625
+#> reporters -0.008964522
+#> released  -0.002703661
+#> bail       0.075543128
+#> still      0.111822740
+#> jailed     0.012370513
 head(similarity(lsa, analogy(~ berlin - germany + france)))
 #>      [,1]       
 #> [1,] "paris"    
 #> [2,] "berlin"   
 #> [3,] "koscielny"
 #> [4,] "mans"     
-#> [5,] "nibali"   
-#> [6,] "hertha"   
+#> [5,] "france"   
+#> [6,] "nibali"   
 # }
 ```

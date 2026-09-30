@@ -5,14 +5,7 @@ Create a doc2vec model as weighted word vectors.
 ## Usage
 
 ``` r
-as.textmodel_doc2vec(
-  x,
-  model,
-  normalize = FALSE,
-  compound = TRUE,
-  group_data = FALSE,
-  ...
-)
+as.textmodel_doc2vec(x, model, compound = TRUE, group_data = FALSE, ...)
 ```
 
 ## Arguments
@@ -26,10 +19,6 @@ as.textmodel_doc2vec(
 
   a textmodel_wordvector object.
 
-- normalize:
-
-  if `TRUE`, normalized word vectors before creating document vectors.
-
 - compound:
 
   if `TRUE`, compound multi-word expressions in `x` based on `model`
@@ -42,8 +31,7 @@ as.textmodel_doc2vec(
 
 - ...:
 
-  additional arguments passed to
-  [quanteda::object2id](https://quanteda.io/reference/object2id.html).
+  additional arguments passed to the underlying function.
 
 ## Value
 
@@ -64,10 +52,6 @@ Returns a textmodel_doc2vec object with the following elements:
 - docvars:
 
   document variables copied from `x`.
-
-- normalize:
-
-  if the document vectors are normalized.
 
 - call:
 
