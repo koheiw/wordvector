@@ -60,10 +60,8 @@ as.matrix.textmodel_doc2vec <- function(x, normalize = TRUE,
     }
     if (is.null(result))
         stop("x does not have the layer for ", layer)
-    if (normalize) {
-        v <- sqrt(rowSums(result ^ 2) / ncol(result))
-        result <- result / v
-    }
+    if (normalize)
+        result <- normalize(result)
     return(result) 
 }
 

@@ -264,6 +264,14 @@ upgrade_pre06 <- function(x) {
     return(x)
 }
 
+normalize <- function(x) {
+    s <- rowSums(abs(x))
+    l <- s == 0
+    x <- x / (s / ncol(x))
+    x[l,] <- 0 # replace NA with zero
+    return(x)
+}
+
 #' @rdname check_model
 #' @keywords internal
 #' @export

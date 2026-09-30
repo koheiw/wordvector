@@ -16,18 +16,26 @@ wov <- textmodel_word2vec(toks, dim = 50, iter = 10, min_count = 2, sample = 1)
 
 test_that("textmodel_doc2vec works", {
     
+    # dfm
     dov1 <- as.textmodel_doc2vec(dfmt, wov)
-    expect_false(dov1$normalize)
+    
     expect_equal(
         names(dov1),
-        c("values", "weights", "dim", "tolower", "concatenator", "docvars", 
-          "normalize", "call", "version")
+        c("values", "weights", "type", "dim", "frequency", "window",  "iter", 
+          "alpha", "use_ns", "ns_size", "sample", "normalize",  "min_count", 
+          "tolower", "concatenator", "docvars", "ntoken",  "call", "version")
     )
     expect_equal(
         dim(dov1$values$word), c(5363L, 50L)
     )
     expect_equal(
         dim(dov1$values$doc), c(59L, 50L)
+    )
+    expect_null(dov1$weights)
+    expect_false(dov1$normalize)
+    expect_equal(
+        dov1$frequency,
+        featfreq(dfm_trim(dfmt, min_termfreq = 2))
     )
     expect_equal(
         class(dov1), c("textmodel_doc2vec", "textmodel_wordvector")
@@ -41,46 +49,79 @@ test_that("textmodel_doc2vec works", {
             "",
             "50 dimensions; 59 documents.", sep = "\n"), fixed = TRUE
     )
-    expect_equal(
-        rownames(probability(dov1, c("good", "bad"), layer = "words", mode = "numeric")),
-        rownames(dov1$values$word)
-    )
-    expect_equal(
-        rownames(probability(dov1, c("good", "bad"), layer = "documents", mode = "numeric")),
-        rownames(dov1$values$doc)
-    )
-    
-    # normalize
-    dov2 <- as.textmodel_doc2vec(dfmt, wov, normalize = TRUE)
-    expect_false(identical(dov1$values, dov2$values))
-    expect_true(dov2$normalize)
-    
     expect_error(
-        probability(dov2, c("good", "bad"), layer = "words"),
-        "x must be trained with normalize = FALSE"
+        probability(dov1),
+        "x must be a trained textmodel_wordvector object"
     )
-    expect_error(
-        probability(dov2, c("good", "bad"), layer = "documents"),
-        "x must be trained with normalize = FALSE"
-    )
-    
-})
-
-test_that("as.textmodel_doc2vec works with different objects", {
-    
-    expect_equal(
-        class(as.textmodel_doc2vec(dfmt, wov)),
-        c("textmodel_doc2vec", "textmodel_wordvector")
-    )
-    
-    expect_equal(
-        class(as.textmodel_doc2vec(toks, wov)),
-        c("textmodel_doc2vec", "textmodel_wordvector")
-    )
-    
     expect_error(
         as.textmodel_doc2vec(dfmt, list()),
         "model must be a trained textmodel_word2vec, textmodel_doc2vec or textmodel_lsa"
+    )
+    
+    # tokens
+    dov2 <- as.textmodel_doc2vec(toks, wov, compound = FALSE)
+    
+    expect_identical(
+        dov2$values$doc,
+        dov1$values$doc
+    )
+    expect_equal(
+        names(dov2),
+        c("values", "weights", "type", "dim", "frequency", "window",  "iter", 
+          "alpha", "use_ns", "ns_size", "sample", "normalize",  "min_count", 
+          "tolower", "concatenator", "docvars", "ntoken",  "call", "version")
+    )
+    expect_equal(
+        dim(dov2$values$word), c(5363L, 50L)
+    )
+    expect_equal(
+        dim(dov2$values$doc), c(59L, 50L)
+    )
+    expect_equal(
+        docnames(toks),
+        rownames(dov2$values$doc)
+    )
+    expect_error(
+        probability(dov2),
+        "x must be a trained textmodel_wordvector object"
+    )
+    
+    # matrix
+    mat <- as.matrix(dov1, normalize = FALSE)
+    dov3 <- as.textmodel_doc2vec(mat)
+    
+    expect_identical(
+        dov3$values$doc,
+        dov1$values$doc
+    )
+    expect_equal(
+        names(dov3),
+        c("values", "weights", "type", "dim", "frequency", "window",  "iter", 
+          "alpha", "use_ns", "ns_size", "sample", "normalize",  "min_count", 
+          "tolower", "concatenator", "docvars", "ntoken",  "call", "version")
+    )
+    expect_null(
+        dov3$values$word
+    )
+    expect_equal(
+        dim(dov3$values$doc), c(59L, 50L)
+    )
+    expect_equal(
+        docnames(toks),
+        rownames(dov3$values$doc)
+    )
+    expect_error(
+        probability(dov3),
+        "x must be a trained textmodel_wordvector object"
+    )
+    expect_error(
+        as.textmodel_doc2vec(unname(mat)),
+        "x must have rownames for documents"
+    )
+    mat[3,] <- NA
+    expect_error(
+        as.textmodel_doc2vec(mat),
+        "x must be a numeric matrix without NA"
     )
 })
 

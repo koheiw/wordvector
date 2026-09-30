@@ -2,7 +2,7 @@ library(quanteda)
 library(wordvector)
 options(wordvector_threads = 2)
 
-test_that("as.textmodel_doc2vec works", {
+test_that("as.textmodel_word2vec works", {
     
     mat <- matrix(rnorm(500), nrow = 5, 
                   dimnames = list(c("a", "b", "c", "d", "e"), NULL))
