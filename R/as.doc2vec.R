@@ -99,6 +99,7 @@ as.textmodel_doc2vec.matrix <- function(x, ...) {
         weights = NULL,
         dim = ncol(x),
         normalize = FALSE,
+        docvars = data.frame(docname_ = rownames(x)),
         call = try(match.call(sys.function(-1), call = sys.call(-1)), silent = TRUE),
         ...
     )
