@@ -31,6 +31,14 @@ test_that("textmodel_doc2vec works", {
     expect_equal(
         dim(dov1$values$doc), c(59L, 50L)
     )
+    expect_equal(
+        rownames(dov1$values$doc),
+        docnames(dfmt)
+    )
+    expect_equal(
+        dov1$docvars,
+        dfmt@docvars
+    )
     expect_null(dov1$weights)
     expect_false(dov1$normalize)
     expect_equal(
@@ -78,8 +86,12 @@ test_that("textmodel_doc2vec works", {
         dim(dov2$values$doc), c(59L, 50L)
     )
     expect_equal(
-        docnames(toks),
-        rownames(dov2$values$doc)
+        rownames(dov2$values$doc),
+        docnames(toks)
+    )
+    expect_equal(
+        dov2$docvars,
+        attr(toks, "docvars")
     )
     expect_error(
         probability(dov2),
@@ -107,9 +119,14 @@ test_that("textmodel_doc2vec works", {
         dim(dov3$values$doc), c(59L, 50L)
     )
     expect_equal(
-        docnames(toks),
-        rownames(dov3$values$doc)
+        rownames(dov3$values$doc),
+        rownames(mat)
     )
+    expect_equal(
+        dov3$docvars$docname_,
+        rownames(mat)
+    )
+    
     expect_error(
         probability(dov3),
         "x must be a trained textmodel_wordvector object"
