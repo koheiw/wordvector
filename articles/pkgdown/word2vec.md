@@ -70,7 +70,7 @@ toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>%
 ##  ...preserving social media tags (#, @)
 ##  ...removing separators, punctuation, symbols
 ##  ...298,565 unique types
-##  ...complete, elapsed time: 65.6 seconds.
+##  ...complete, elapsed time: 83.7 seconds.
 ## Finished constructing tokens from 656,334 documents
 ## tokens_remove() changed from 298,565 types (656,334 documents, 45,194,192 tokens) to 298,002 types (656,334 documents, 28,232,774 tokens)
 ## tokens_keep() changed from 298,002 types (656,334 documents, 28,232,774 tokens) to 239,782 types (656,334 documents, 26,564,509 tokens)
@@ -93,16 +93,16 @@ wov <- textmodel_word2vec(toks, dim = 50, type = "cbow", min_count = 5, verbose 
 ##  ...using 16 threads for distributed computing
 ##  ...initializing
 ##  ...negative sampling in 10 iterations
-##  ......iteration 1 elapsed time: 8.36 seconds (alpha: 0.0464)
-##  ......iteration 2 elapsed time: 16.20 seconds (alpha: 0.0431)
-##  ......iteration 3 elapsed time: 24.46 seconds (alpha: 0.0395)
-##  ......iteration 4 elapsed time: 33.84 seconds (alpha: 0.0354)
-##  ......iteration 5 elapsed time: 41.96 seconds (alpha: 0.0319)
-##  ......iteration 6 elapsed time: 50.65 seconds (alpha: 0.0281)
-##  ......iteration 7 elapsed time: 59.84 seconds (alpha: 0.0241)
-##  ......iteration 8 elapsed time: 71.43 seconds (alpha: 0.0194)
-##  ......iteration 9 elapsed time: 80.73 seconds (alpha: 0.0157)
-##  ......iteration 10 elapsed time: 91.34 seconds (alpha: 0.0113)
+##  ......iteration 1 elapsed time: 14.91 seconds (alpha: 0.0460)
+##  ......iteration 2 elapsed time: 30.33 seconds (alpha: 0.0419)
+##  ......iteration 3 elapsed time: 46.60 seconds (alpha: 0.0376)
+##  ......iteration 4 elapsed time: 63.59 seconds (alpha: 0.0329)
+##  ......iteration 5 elapsed time: 81.39 seconds (alpha: 0.0281)
+##  ......iteration 6 elapsed time: 99.42 seconds (alpha: 0.0233)
+##  ......iteration 7 elapsed time: 113.12 seconds (alpha: 0.0195)
+##  ......iteration 8 elapsed time: 129.32 seconds (alpha: 0.0151)
+##  ......iteration 9 elapsed time: 144.24 seconds (alpha: 0.0110)
+##  ......iteration 10 elapsed time: 160.82 seconds (alpha: 0.0065)
 ##  ...complete
 ```
 
@@ -130,14 +130,14 @@ head(similarity(wov, "bad"))
 ## [3,] "trouble"
 ## [4,] "fatigue"
 ## [5,] "hard"   
-## [6,] "lot"
+## [6,] "cramp"
 head(similarity(wov, analogy(~ good - bad)))
 ##      [,1]        
 ## [1,] "thank"     
-## [2,] "courageous"
-## [3,] "reaffirm"  
-## [4,] "maa"       
-## [5,] "loyalty"   
+## [2,] "loyalty"   
+## [3,] "emphasised"
+## [4,] "courageous"
+## [5,] "achieved"  
 ## [6,] "mujahideen"
 ```
 
@@ -149,11 +149,11 @@ the word conditional on context words.
 ``` r
 
 head(probability(wov, "bad", mode = "numeric"))
-##               bad
-## donald  0.4097764
-## trump   0.6317458
-## endorse 0.1036490
-## short   0.7665463
-## period  0.5402827
-## time    0.8686413
+##                bad
+## donald  0.36206009
+## trump   0.63168903
+## endorse 0.06808261
+## short   0.65680662
+## period  0.52982887
+## time    0.84272220
 ```

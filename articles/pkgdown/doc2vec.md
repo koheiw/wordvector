@@ -69,7 +69,7 @@ toks <- tokens(corp, remove_punct = TRUE, remove_symbols = TRUE) %>%
 ##  ...preserving social media tags (#, @)
 ##  ...removing separators, punctuation, symbols
 ##  ...298,565 unique types
-##  ...complete, elapsed time: 64 seconds.
+##  ...complete, elapsed time: 84.7 seconds.
 ## Finished constructing tokens from 656,334 documents
 ## tokens_remove() changed from 298,565 types (656,334 documents, 45,194,192 tokens) to 298,002 types (656,334 documents, 28,232,774 tokens)
 ## tokens_keep() changed from 298,002 types (656,334 documents, 28,232,774 tokens) to 239,782 types (656,334 documents, 26,564,509 tokens)
@@ -92,16 +92,16 @@ dov <- textmodel_doc2vec(toks, dim = 50, type = "dm", min_count = 5, verbose = T
 ##  ...using 16 threads for distributed computing
 ##  ...initializing
 ##  ...negative sampling in 10 iterations
-##  ......iteration 1 elapsed time: 10.52 seconds (alpha: 0.0458)
-##  ......iteration 2 elapsed time: 21.75 seconds (alpha: 0.0411)
-##  ......iteration 3 elapsed time: 34.40 seconds (alpha: 0.0359)
-##  ......iteration 4 elapsed time: 46.54 seconds (alpha: 0.0311)
-##  ......iteration 5 elapsed time: 57.79 seconds (alpha: 0.0266)
-##  ......iteration 6 elapsed time: 68.49 seconds (alpha: 0.0224)
-##  ......iteration 7 elapsed time: 79.67 seconds (alpha: 0.0180)
-##  ......iteration 8 elapsed time: 91.26 seconds (alpha: 0.0135)
-##  ......iteration 9 elapsed time: 103.68 seconds (alpha: 0.0086)
-##  ......iteration 10 elapsed time: 113.74 seconds (alpha: 0.0048)
+##  ......iteration 1 elapsed time: 17.46 seconds (alpha: 0.0456)
+##  ......iteration 2 elapsed time: 35.01 seconds (alpha: 0.0410)
+##  ......iteration 3 elapsed time: 52.20 seconds (alpha: 0.0366)
+##  ......iteration 4 elapsed time: 68.67 seconds (alpha: 0.0325)
+##  ......iteration 5 elapsed time: 87.31 seconds (alpha: 0.0280)
+##  ......iteration 6 elapsed time: 105.37 seconds (alpha: 0.0234)
+##  ......iteration 7 elapsed time: 123.57 seconds (alpha: 0.0188)
+##  ......iteration 8 elapsed time: 142.76 seconds (alpha: 0.0140)
+##  ......iteration 9 elapsed time: 160.45 seconds (alpha: 0.0095)
+##  ......iteration 10 elapsed time: 177.67 seconds (alpha: 0.0052)
 ##  ...complete
 ```
 
@@ -129,10 +129,10 @@ predicted probability of the words in each document.
 
 head(probability(dov, c("bad", "good"), mode = "numeric", layer = "documents"))
 ##             bad       good
-## text1 0.2077502 0.33610878
-## text2 0.2641876 0.25477550
-## text3 0.1897842 0.09682273
-## text4 0.5272741 0.83915497
-## text5 0.3670905 0.31113614
-## text6 0.4699462 0.43580479
+## text1 0.2424138 0.38202923
+## text2 0.2928447 0.24526121
+## text3 0.1369551 0.09770031
+## text4 0.5417757 0.81530448
+## text5 0.4184809 0.33288182
+## text6 0.5321456 0.54890594
 ```

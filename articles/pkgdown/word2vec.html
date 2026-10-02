@@ -61,7 +61,7 @@
                         <h4 data-toc-skip class="author">Kohei
 Watanabe</h4>
             
-            <h4 data-toc-skip class="date">2026-09-30</h4>
+            <h4 data-toc-skip class="date">2026-10-02</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/koheiw/wordvector/blob/master/vignettes/pkgdown/word2vec.Rmd" class="external-link"><code>vignettes/pkgdown/word2vec.Rmd</code></a></small>
       <div class="d-none name"><code>word2vec.Rmd</code></div>
@@ -134,7 +134,7 @@ the model in their current work flow.</p>
 <span><span class="co">##  ...preserving social media tags (#, @)</span></span>
 <span><span class="co">##  ...removing separators, punctuation, symbols</span></span>
 <span><span class="co">##  ...298,565 unique types</span></span>
-<span><span class="co">##  ...complete, elapsed time: 65.6 seconds.</span></span>
+<span><span class="co">##  ...complete, elapsed time: 83.7 seconds.</span></span>
 <span><span class="co">## Finished constructing tokens from 656,334 documents</span></span>
 <span><span class="co">## tokens_remove() changed from 298,565 types (656,334 documents, 45,194,192 tokens) to 298,002 types (656,334 documents, 28,232,774 tokens)</span></span>
 <span><span class="co">## tokens_keep() changed from 298,002 types (656,334 documents, 28,232,774 tokens) to 239,782 types (656,334 documents, 26,564,509 tokens)</span></span></code></pre></div>
@@ -154,16 +154,16 @@ the model in their current work flow.</p>
 <span><span class="co">##  ...using 16 threads for distributed computing</span></span>
 <span><span class="co">##  ...initializing</span></span>
 <span><span class="co">##  ...negative sampling in 10 iterations</span></span>
-<span><span class="co">##  ......iteration 1 elapsed time: 8.36 seconds (alpha: 0.0464)</span></span>
-<span><span class="co">##  ......iteration 2 elapsed time: 16.20 seconds (alpha: 0.0431)</span></span>
-<span><span class="co">##  ......iteration 3 elapsed time: 24.46 seconds (alpha: 0.0395)</span></span>
-<span><span class="co">##  ......iteration 4 elapsed time: 33.84 seconds (alpha: 0.0354)</span></span>
-<span><span class="co">##  ......iteration 5 elapsed time: 41.96 seconds (alpha: 0.0319)</span></span>
-<span><span class="co">##  ......iteration 6 elapsed time: 50.65 seconds (alpha: 0.0281)</span></span>
-<span><span class="co">##  ......iteration 7 elapsed time: 59.84 seconds (alpha: 0.0241)</span></span>
-<span><span class="co">##  ......iteration 8 elapsed time: 71.43 seconds (alpha: 0.0194)</span></span>
-<span><span class="co">##  ......iteration 9 elapsed time: 80.73 seconds (alpha: 0.0157)</span></span>
-<span><span class="co">##  ......iteration 10 elapsed time: 91.34 seconds (alpha: 0.0113)</span></span>
+<span><span class="co">##  ......iteration 1 elapsed time: 14.91 seconds (alpha: 0.0460)</span></span>
+<span><span class="co">##  ......iteration 2 elapsed time: 30.33 seconds (alpha: 0.0419)</span></span>
+<span><span class="co">##  ......iteration 3 elapsed time: 46.60 seconds (alpha: 0.0376)</span></span>
+<span><span class="co">##  ......iteration 4 elapsed time: 63.59 seconds (alpha: 0.0329)</span></span>
+<span><span class="co">##  ......iteration 5 elapsed time: 81.39 seconds (alpha: 0.0281)</span></span>
+<span><span class="co">##  ......iteration 6 elapsed time: 99.42 seconds (alpha: 0.0233)</span></span>
+<span><span class="co">##  ......iteration 7 elapsed time: 113.12 seconds (alpha: 0.0195)</span></span>
+<span><span class="co">##  ......iteration 8 elapsed time: 129.32 seconds (alpha: 0.0151)</span></span>
+<span><span class="co">##  ......iteration 9 elapsed time: 144.24 seconds (alpha: 0.0110)</span></span>
+<span><span class="co">##  ......iteration 10 elapsed time: 160.82 seconds (alpha: 0.0065)</span></span>
 <span><span class="co">##  ...complete</span></span></code></pre></div>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Extract word vector</span></span>
@@ -184,14 +184,14 @@ add or subtract word vectors before finding similar words.</p>
 <span><span class="co">## [3,] "trouble"</span></span>
 <span><span class="co">## [4,] "fatigue"</span></span>
 <span><span class="co">## [5,] "hard"   </span></span>
-<span><span class="co">## [6,] "lot"</span></span>
+<span><span class="co">## [6,] "cramp"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../../reference/similarity.html">similarity</a></span><span class="op">(</span><span class="va">wov</span>, <span class="fu"><a href="../../reference/analogy.html">analogy</a></span><span class="op">(</span><span class="op">~</span> <span class="va">good</span> <span class="op">-</span> <span class="va">bad</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">##      [,1]        </span></span>
 <span><span class="co">## [1,] "thank"     </span></span>
-<span><span class="co">## [2,] "courageous"</span></span>
-<span><span class="co">## [3,] "reaffirm"  </span></span>
-<span><span class="co">## [4,] "maa"       </span></span>
-<span><span class="co">## [5,] "loyalty"   </span></span>
+<span><span class="co">## [2,] "loyalty"   </span></span>
+<span><span class="co">## [3,] "emphasised"</span></span>
+<span><span class="co">## [4,] "courageous"</span></span>
+<span><span class="co">## [5,] "achieved"  </span></span>
 <span><span class="co">## [6,] "mujahideen"</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -201,13 +201,13 @@ add or subtract word vectors before finding similar words.</p>
 of the word conditional on context words.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../../reference/probability.html">probability</a></span><span class="op">(</span><span class="va">wov</span>, <span class="st">"bad"</span>, mode <span class="op">=</span> <span class="st">"numeric"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">##               bad</span></span>
-<span><span class="co">## donald  0.4097764</span></span>
-<span><span class="co">## trump   0.6317458</span></span>
-<span><span class="co">## endorse 0.1036490</span></span>
-<span><span class="co">## short   0.7665463</span></span>
-<span><span class="co">## period  0.5402827</span></span>
-<span><span class="co">## time    0.8686413</span></span></code></pre></div>
+<span><span class="co">##                bad</span></span>
+<span><span class="co">## donald  0.36206009</span></span>
+<span><span class="co">## trump   0.63168903</span></span>
+<span><span class="co">## endorse 0.06808261</span></span>
+<span><span class="co">## short   0.65680662</span></span>
+<span><span class="co">## period  0.52982887</span></span>
+<span><span class="co">## time    0.84272220</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
