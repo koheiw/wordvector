@@ -1,6 +1,8 @@
 ## Changes in v0.6.5
 
 - Change how word and document vectors are normalized when `normalized = TRUE`.
+- Export `is_word2vec()`, `is_doc2vec()` and `check_model()` for package development.
+- Improve the consistency of `textmodel_word2vec` and `textmodel_doc2vec` objects.
 - Add `as.textmodel_doc2vec.tokens()` with `compound = TRUE` to handle multi-word expressions more easily.
 
 ## Changes in v0.6.4
