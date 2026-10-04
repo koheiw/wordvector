@@ -4,6 +4,14 @@
 
 - Change how word and document vectors are normalized when
   `normalized = TRUE`.
+- Export
+  [`is_word2vec()`](https://koheiw.github.io/wordvector/reference/check_model.md),
+  [`is_doc2vec()`](https://koheiw.github.io/wordvector/reference/check_model.md)
+  and
+  [`check_model()`](https://koheiw.github.io/wordvector/reference/check_model.md)
+  for package development.
+- Improve the consistency of `textmodel_word2vec` and
+  `textmodel_doc2vec` objects.
 - Add `as.textmodel_doc2vec.tokens()` with `compound = TRUE` to handle
   multi-word expressions more easily.
 
