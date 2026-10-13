@@ -1,7 +1,6 @@
 ## Change in v0.6.6
 
-- Improve the efficiency of `as.textmodel_doc2vec()`.
-
+- Improve the efficiency of `as.textmodel_doc2vec()` when the model is very large.
 
 ## Changes in v0.6.5
 
