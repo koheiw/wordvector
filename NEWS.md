@@ -1,3 +1,8 @@
+## Change in v0.6.6
+
+- Improve the efficiency of `as.textmodel_doc2vec()`.
+
+
 ## Changes in v0.6.5
 
 - Change normalization of word and document when `normalized = TRUE`.
