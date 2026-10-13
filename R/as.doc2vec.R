@@ -60,6 +60,7 @@ as.textmodel_doc2vec.dfm <- function(x, model, compound = TRUE,
     conc <- meta(x, field = "concatenator", type = "object")
 
     wov <- as.matrix(model, normalize = FALSE, layer = "words")
+    wov <- wov[intersect(featnames(x), rownames(wov)),,drop = FALSE]
     if (group_data)
         x <- dfm_group(x)
     x <- dfm_match(x, rownames(wov))
