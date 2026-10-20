@@ -165,9 +165,14 @@ probability.textmodel_wordvector <- function(x, targets, layer = c("words", "doc
     targets <- targets[b]
     
     values <- as.matrix(x, layer = layer, normalize = FALSE, ...)
-    e <- exp(tcrossprod(values, x$weights[names(targets),, drop = FALSE]))
-    prob <- e / (e + 1) # sigmoid function
+    weights <- x$weights[names(targets),, drop = FALSE]
+    if (packageVersion("proxyC") >= "0.6.0") {
+        e <- as.matrix(exp(proxyC::tcrossprod(values, weights)))
+    } else {
+        e <- as.matrix(exp(Matrix::tcrossprod(values, weights)))
+    }
     
+    prob <- e / (e + 1) # sigmoid function
     if (weighted) {
         res <- prob %*% diag(targets)
         colnames(res) <- names(targets)
