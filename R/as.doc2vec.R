@@ -60,10 +60,15 @@ as.textmodel_doc2vec.dfm <- function(x, model, compound = TRUE,
     conc <- meta(x, field = "concatenator", type = "object")
 
     wov <- as.matrix(model, normalize = FALSE, layer = "words")
+    wov <- wov[intersect(rownames(wov), featnames(x)),,drop = FALSE]
     if (group_data)
         x <- dfm_group(x)
     x <- dfm_match(x, rownames(wov))
-    dov <- as.matrix(Matrix::tcrossprod(x, t(wov)))
+    if (packageVersion("proxyC") >= "0.6.0") {
+        dov <- as.matrix(proxyC::tcrossprod(x, t(wov), sparse = FALSE))
+    } else {
+        dov <- as.matrix(Matrix::tcrossprod(x, t(wov)))
+    }
     dov <- normalize(dov)
     
     result <- build_doc2vec(
