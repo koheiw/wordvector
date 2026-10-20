@@ -2,8 +2,9 @@
 
 ## Changes in v0.6.5
 
-- Change how word and document vectors are normalized when
-  `normalized = TRUE`.
+CRAN release: 2026-10-08
+
+- Change normalization of word and document when `normalized = TRUE`.
 - Export
   [`is_word2vec()`](https://koheiw.github.io/wordvector/reference/check_model.md),
   [`is_doc2vec()`](https://koheiw.github.io/wordvector/reference/check_model.md)
