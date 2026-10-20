@@ -167,7 +167,7 @@ probability.textmodel_wordvector <- function(x, targets, layer = c("words", "doc
     values <- as.matrix(x, layer = layer, normalize = FALSE, ...)
     weights <- x$weights[names(targets),, drop = FALSE]
     if (packageVersion("proxyC") >= "0.6.0") {
-        e <- as.matrix(exp(proxyC::tcrossprod(values, weights)))
+        e <- as.matrix(exp(proxyC::tcrossprod(values, weights, sparse = FALSE)))
     } else {
         e <- as.matrix(exp(Matrix::tcrossprod(values, weights)))
     }

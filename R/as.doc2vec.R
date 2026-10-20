@@ -65,7 +65,7 @@ as.textmodel_doc2vec.dfm <- function(x, model, compound = TRUE,
         x <- dfm_group(x)
     x <- dfm_match(x, rownames(wov))
     if (packageVersion("proxyC") >= "0.6.0") {
-        dov <- as.matrix(proxyC::tcrossprod(x, t(wov)))
+        dov <- as.matrix(proxyC::tcrossprod(x, t(wov), sparse = FALSE))
     } else {
         dov <- as.matrix(Matrix::tcrossprod(x, t(wov)))
     }
