@@ -366,3 +366,24 @@ test_that("textmodel_word2vec is robust", {
     )
   
 })  
+
+test_that("textmodel_word2vec check if tokens are recompiled", {
+    
+    xtoks <- as.tokens_xptr(toks)
+    xtoks <- quanteda:::cpp_set_types(xtoks, rep(types(xtoks), 2)) # duplicate types
+    xtoks <- quanteda:::cpp_set_recompiled(xtoks, FALSE)
+    
+    expect_true(
+        any(duplicated(types(xtoks)))
+    )
+    
+    wov <- textmodel_word2vec(toks, dim = 50, iter = 1, min_count = 1)
+    
+    expect_all_false(
+        duplicated(rownames(wov$value$word))
+    )
+    expect_all_false(
+        duplicated(names(wov$frequency))
+    )
+})
+
