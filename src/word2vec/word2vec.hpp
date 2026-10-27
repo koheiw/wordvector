@@ -29,15 +29,15 @@ namespace w2v {
      */    
     class corpus_t final {
     public:
-        texts_t texts;
-        types_t types;
+        const texts_t texts;
+        const types_t types;
         frequency_t frequency;
         size_t totalWords;
         size_t trainWords;
         
         // constructors
         corpus_t(): texts() {}
-        corpus_t(texts_t _texts, types_t _types): 
+        corpus_t(const texts_t &_texts, const types_t &_types): 
                  texts(_texts), types(_types) {}
 
         void setWordFreq() {

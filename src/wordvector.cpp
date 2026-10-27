@@ -153,11 +153,10 @@ Rcpp::List cpp_word2vec(TokensPtr xptr,
         Rprintf(" ...initializing\n");
     }
     
-    xptr->recompile();
-    texts_t texts = xptr->texts;
-    types_t types = xptr->types;
-    
-    w2v::corpus_t corpus(texts, types);
+    if (!xptr->recompiled)
+        xptr->recompile();
+
+    w2v::corpus_t corpus(xptr->texts, xptr->types);
     corpus.setWordFreq();
       
     w2v::settings_t settings;;
