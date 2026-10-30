@@ -107,9 +107,9 @@ Harshman, R. A. (1990). Indexing by latent semantic analysis. JASIS,
 ``` r
 # \donttest{
 library(quanteda)
-#> Package version: 4.5.0
-#> Unicode version: 15.1
-#> ICU version: 74.2
+#> Package version: 4.5.1
+#> Unicode version: 17.0
+#> ICU version: 78.2
 #> Parallel computing: disabled
 #> See https://quanteda.io for tutorials and examples.
 library(wordvector)
