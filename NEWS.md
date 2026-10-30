@@ -1,6 +1,7 @@
 ## Change in v0.6.6
 
 - Improve the efficiency of `as.textmodel_doc2vec()` when the model is very large.
+- Reduce the memory usage significantly in `textmodel_word2vec` and `textmodel_doc2vec`.
 - Use `proxyC::tcrossprod()` instead of `Matrix::tcrossprod()` if **proxyC** v0.6.0 or 
   greater is installed. 
 
